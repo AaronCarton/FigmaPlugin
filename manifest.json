@@ -1,0 +1,12 @@
+{
+  "name": "Propertize",
+  "id": "1217741474609568641",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": [
+    "figma"
+  ],
+  "ui": "ui.html"
+}
