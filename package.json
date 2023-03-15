@@ -5,7 +5,8 @@
   "main": "code.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "watch": "npm run build -- --watch"
+    "watch": "npm run build -- --watch",
+    "lint": "eslint . --ext .ts"
   },
   "author": "",
   "license": "",
