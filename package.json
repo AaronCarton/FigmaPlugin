@@ -5,7 +5,7 @@
   "main": "code.js",
   "scripts": {
     "build": "rimraf dist && node ./esbuild.js",
-    "watch": "npm run build -- --watch",
+    "watch": "node ./eswatch.js --watch",
     "lint": "eslint . --ext .ts"
   },
   "author": "",
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "esbuild": "0.17.11",
+    "node-watch": "^0.7.3",
     "rimraf": "^4.4.0"
   }
 }

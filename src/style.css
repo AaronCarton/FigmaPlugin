@@ -1,4 +1,45 @@
-/*main css file, import all css in here*/
-h2 {
-    color: red;
+body {
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    margin: 0;
+}
+
+.c-nav {
+    font-weight: 600;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid #E6E6E6;
+}
+
+.c-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.c-nav-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #909090;
+}
+
+.c-plugin {
+    padding: 10px 16px 20px 16px;
+}
+
+.js-settings-icon {
+    fill: #909090;
+}
+
+.close {
+    display: none;
+}
+
+.selected {
+    color: #000;
+    fill: #000;
 }
