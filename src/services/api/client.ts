@@ -46,6 +46,7 @@ export default () => {
     if (response.status !== 200 && response.status !== 201) {
       switch (response.status) {
         case 404:
+          // TODO: write custom error class, so we can check for error type
           throw new Error("API URL not found, please check your URL")
         case 401:
           throw new Error("Unauthorized, please check your API key")
