@@ -18,14 +18,14 @@ const minify = require("html-minifier-terser").minify
     bundle: true,
     minify: true,
     write: false,
-    target: ["chrome58", "firefox57", "safari11", "edge16"],
+    target: ["chrome58", "firefox57", "safari11", "edge18"],
   })
   const css = esbuild.buildSync({
     entryPoints: ["src/style.css"],
     bundle: true,
     minify: true,
     write: false,
-    target: ["chrome58", "firefox57", "safari11", "edge16"],
+    target: ["chrome58", "firefox57", "safari11", "edge18"],
   })
 
   const html = await readFile("src/ui.html", "utf8")
