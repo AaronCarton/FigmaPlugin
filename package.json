@@ -1,7 +1,7 @@
 {
-  "name": "Propertize",
+  "name": "propertize-plugin",
   "version": "1.0.0",
-  "description": "Your Figma Plugin",
+  "description": "A figma plugin for Delaware",
   "main": "code.js",
   "scripts": {
     "build": "rimraf dist && node ./esbuild.js",
