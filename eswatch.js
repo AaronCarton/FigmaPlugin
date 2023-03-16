@@ -1,31 +1,39 @@
-const esbuild = require('esbuild');
-const watch = require('node-watch');
-const build = ()=>{
-    esbuild
-  .build({
-    entryPoints: ['src/code.ts'],
-    bundle: true,
-    platform: 'node',
-    target: ['node10.4'],
-    outfile: 'dist/code.js'
-  })
-  .catch(() => process.exit(1));
-  
-  const {readFile, writeFile} = require('fs').promises;
-  const minify = require('html-minifier-terser').minify;
-// iframe UI
+const esbuild = require("esbuild")
+const watch = require("node-watch")
+const build = () => {
+  console.log("currently building")
+  const esbuild = require("esbuild")
+  esbuild
+    .build({
+      entryPoints: ["src/code.ts"],
+      bundle: true,
+      platform: "node",
+      target: ["node10.4"],
+      outfile: "dist/code.js",
+    })
+    .catch(() => process.exit(1))
+  const { readFile, writeFile } = require("fs").promises
+  const minify = require("html-minifier-terser").minify
+  // iframe UI
 
-(async () => {
+  ;(async () => {
     const script = esbuild.buildSync({
-      entryPoints: ['src/ui.ts'],
+      entryPoints: ["src/ui.ts"],
       bundle: true,
       minify: true,
       write: false,
-      target: ['chrome58', 'firefox57', 'safari11', 'edge16']
-    });
-  
-    const html = await readFile('src/ui.html', 'utf8');
-    const css = await readFile('src/style.css', 'utf8');
+      target: ["chrome58", "firefox57", "safari11", "edge16"],
+    })
+    const css = esbuild.buildSync({
+      entryPoints: ["src/style.css"],
+      bundle: true,
+      minify: true,
+      write: false,
+      target: ["chrome58", "firefox57", "safari11", "edge16"],
+    })
+
+    const html = await readFile("src/ui.html", "utf8")
+    // const css = await readFile('src/style.css', 'utf8');
 
     const minifyOptions = {
       collapseWhitespace: true,
@@ -35,14 +43,18 @@ const build = ()=>{
       removeScriptTypeAttributes: true,
       removeStyleLinkTypeAttributes: true,
       useShortDoctype: true,
-      minifyCSS: true
-    };
-  
+      minifyCSS: true,
+    }
+
     await writeFile(
-      'dist/ui.html',
-      `<script>${script.outputFiles[0].text}</script><style>${await minify(css, minifyOptions)}</style>${await minify(html, minifyOptions)}`
-    );
-  })();
+      "dist/ui.html",
+      `<style>${await minify(css.outputFiles[0].text, minifyOptions)}</style>${await minify(
+        html,
+        minifyOptions,
+      )}
+      <script>${script.outputFiles[0].text}</script>`,
+    )
+  })().then((x) => console.log("done, waiting for file changes..."))
 }
 
-watch('./src', {recursive: true}, build);
+watch("./src", { recursive: true }, build)
