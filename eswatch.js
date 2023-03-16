@@ -48,10 +48,11 @@ const build = () => {
 
     await writeFile(
       "dist/ui.html",
-      `<script>${script.outputFiles[0].text}</script><style>${await minify(
+      `<style>${await minify(
         css.outputFiles[0].text,
         minifyOptions,
-      )}</style>${await minify(html, minifyOptions)}`,
+      )}</style>${await minify(html, minifyOptions)}
+      <script>${script.outputFiles[0].text}</script>`,
     )
   })().then((x) => console.log("done, waiting for file changes..."))
 }

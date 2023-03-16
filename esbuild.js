@@ -44,9 +44,10 @@ const minify = require("html-minifier-terser").minify
 
   await writeFile(
     "dist/ui.html",
-    `<script>${script.outputFiles[0].text}</script><style>${await minify(
+    `<style>${await minify(
       css.outputFiles[0].text,
       minifyOptions,
-    )}</style>${await minify(html, minifyOptions)}`,
+    )}</style>${await minify(html, minifyOptions)}
+    <script>${script.outputFiles[0].text}</script>`,
   )
 })()
