@@ -1,4 +1,2 @@
 /*main css file, import all css in here*/
-h2 {
-    color: red;
-}
+@import url('./css/test.css');

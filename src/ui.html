@@ -1,24 +1,9 @@
-<head>
+<!-- <head>
   <link rel="stylesheet" href="./style.css">
-</head>
+</head> -->
 <body>
   <h2>Propertize</h2>
   <p>Count: <input id="count" value="5"></p>
   <button id="create" class="c-create">Create</button>
   <button id="cancel">Cancel</button>
 </body>
-
-<script>
-  document.getElementById('create').onclick = () => {
-    const textbox = document.getElementById('count');
-    const count = parseInt(textbox.value, 10);
-    parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-  }
-
-  document.getElementById('cancel').onclick = () => {
-    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-  }
-</script> 
-<style>
-  @import url("style.css");
-</style>

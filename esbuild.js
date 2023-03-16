@@ -18,11 +18,18 @@ esbuild
       bundle: true,
       minify: true,
       write: false,
-      target: ['chrome58', 'firefox57', 'safari11', 'edge16']
+      target: ['chrome58', 'firefox57', 'safari11', 'edge16'],
     });
+    const css = esbuild.buildSync({
+        entryPoints: ['src/style.css'],
+        bundle: true,
+        minify: true,
+        write: false,
+        target: ['chrome58', 'firefox57', 'safari11', 'edge16'],
+      });
   
     const html = await readFile('src/ui.html', 'utf8');
-    const css = await readFile('src/style.css', 'utf8');
+    // const css = await readFile('src/style.css', 'utf8');
 
     const minifyOptions = {
       collapseWhitespace: true,
@@ -37,6 +44,6 @@ esbuild
   
     await writeFile(
       'dist/ui.html',
-      `<script>${script.outputFiles[0].text}</script><style>${await minify(css, minifyOptions)}</style>${await minify(html, minifyOptions)}`
+      `<script>${script.outputFiles[0].text}</script><style>${await minify(css.outputFiles[0].text, minifyOptions)}</style>${await minify(html, minifyOptions)}`
     );
   })();
