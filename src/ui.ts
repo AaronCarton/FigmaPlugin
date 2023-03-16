@@ -1,12 +1,12 @@
-let connect = document.querySelector(".js-connect")
-let settings = document.querySelector(".js-settings")
-let usage = document.querySelector(".js-usage")
+const connect = document.querySelector(".js-connect")
+const settings = document.querySelector(".js-settings")
+const usage = document.querySelector(".js-usage")
 
-let connectView = document.querySelector(".js-connect-view")
-let settingsView = document.querySelector(".js-settings-view")
-let usageView = document.querySelector(".js-usage-view")
+const connectView = document.querySelector(".js-connect-view")
+const settingsView = document.querySelector(".js-settings-view")
+const usageView = document.querySelector(".js-usage-view")
 
-let settingsIcon = document.querySelector(".js-settings-icon")
+const settingsIcon = document.querySelector(".js-settings-icon")
 
 connect?.addEventListener("click", function () {
   connect?.classList.add("selected")
