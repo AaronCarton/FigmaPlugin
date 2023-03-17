@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios"
 import Annotation from "../../interfaces/interface.annotation"
 import APIError from "../../interfaces/ODS/interface.APIerror"
+import ODSobject from "../../interfaces/ODS/interface.ODSobject"
 import ODSresponse from "../../interfaces/ODS/interface.ODSresponse"
 
 let APIclient: AxiosInstance
@@ -34,7 +35,17 @@ export default () => {
     return APIclient
   }
 
-  async function getData<T>(url: string, options: RequestOptions) {
+  /**
+   * Generic function to make API calls
+   * @template T - Optional type of returned data. If not provided, a string will be returned.
+   * @param {string} url - API endpoint
+   * @param {RequestOptions} options - Request options
+   * @returns {Promise<T extends string ? string : ODSresponse<T>>} - Response data, either as string or ODSresponse<T>
+   * */
+  async function getData<T = string>(
+    url: string,
+    options: RequestOptions,
+  ): Promise<T extends string ? string : ODSresponse<T>> {
     // check if API client is initialized
     if (!APIclient) {
       throw new Error("API client not initialized")
@@ -87,8 +98,22 @@ export default () => {
     return res
   }
 
+  /**
+   * Update or create an annotation
+   * @param {Annotation} annotation - Annotation to update or create
+   * */
+  const upsertAnnotation = async (annotation: Annotation) => {
+    await getData("api/search/annotation", {
+      method: "PUT",
+      apiKey: SOURCE_APIKEY,
+      body: {
+        annotation,
+      },
+    })
+  }
   return {
     connect,
     searchAnnotations,
+    upsertAnnotation,
   }
 }
