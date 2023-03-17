@@ -1,18 +1,27 @@
 import axios, { AxiosInstance } from "axios"
 import Annotation from "../../interfaces/interface.annotation"
+import APIError from "../../interfaces/ODS/interface.APIerror"
 import ODSresponse from "../../interfaces/ODS/interface.ODSresponse"
 
 let APIclient: AxiosInstance
+let CLIENT_APIKEY: string
+let SOURCE_APIKEY: string
 
 interface RequestOptions {
-  method: "GET" | "PUT"
+  method: "GET" | "PUT" | "POST" | "DELETE"
   apiKey: string
   body?: unknown
   metadata?: boolean
 }
 
 export default () => {
-  const connect = async (baseURL: string) => {
+  /**
+   * Connect to ODS API
+   * @param {string} baseURL - Base URL of the ODS API
+   * @param {string} clientKey - Client API key
+   * @param {string} sourceKey - Source API key
+   */
+  const connect = async (baseURL: string, clientKey: string, sourceKey: string) => {
     APIclient = axios.create({
       baseURL: baseURL,
       timeout: 2000,
@@ -20,6 +29,8 @@ export default () => {
         "content-type": "application/json",
       },
     })
+    CLIENT_APIKEY = clientKey
+    SOURCE_APIKEY = sourceKey
     return APIclient
   }
 
@@ -46,14 +57,13 @@ export default () => {
     if (response.status !== 200 && response.status !== 201) {
       switch (response.status) {
         case 404:
-          // TODO: write custom error class, so we can check for error type
-          throw new Error("API URL not found, please check your URL")
+          throw new APIError(404, "API URL not found, please check your URL")
         case 401:
-          throw new Error("Unauthorized, please check your API key")
+          throw new APIError(401, "Unauthorized, please check your API key")
         case 500:
-          throw new Error("Internal Server Error")
+          throw new APIError(500, "Internal Server Error")
         default:
-          throw new Error("Something went wrong, please try again later")
+          throw new APIError(response.status, "Something went wrong, please try again later")
       }
     }
 
@@ -62,6 +72,10 @@ export default () => {
 
   ////////* API calls *////////
 
+  /**
+   *  Search annotations by project key
+   *  @param {string} projectKey - Key of the project to search annotations for
+   */
   const searchAnnotations = async (projectKey: string): Promise<ODSresponse<Annotation>> => {
     const res = await getData<Annotation>(
       `api/search/annotation?filter=projectKey.eq.${projectKey}`,
