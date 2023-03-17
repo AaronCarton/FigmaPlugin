@@ -42,7 +42,7 @@ export default () => {
 
     // create request
     const { method, body, apiKey, metadata } = options
-    const response = await APIclient({
+    const res = await APIclient({
       url: url,
       method: method,
       data: body,
@@ -54,20 +54,20 @@ export default () => {
     })
 
     // error handling
-    if (response.status !== 200 && response.status !== 201) {
-      switch (response.status) {
+    if (![200, 201, 204].includes(res.status)) {
+      switch (res.status) {
         case 404:
-          throw new APIError(404, "API URL not found, please check your URL")
+          throw new APIError(res, "API URL not found, please check your URL")
         case 401:
-          throw new APIError(401, "Unauthorized, please check your API key")
+          throw new APIError(res, "Unauthorized, please check your API key")
         case 500:
-          throw new APIError(500, "Internal Server Error")
+          throw new APIError(res, "Internal Server Error")
         default:
-          throw new APIError(response.status, "Something went wrong, please try again later")
+          throw new APIError(res, "Something went wrong, please try again later")
       }
     }
 
-    return response.data as ODSresponse<T> // TODO: provide generic parent type
+    return res.data // TODO: provide generic parent type
   }
 
   ////////* API calls *////////
