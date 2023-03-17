@@ -6,6 +6,8 @@ const checkConnection = async () => {
   //later change with the correct fetch request when api client is done
   //add form validtion when we have the parameters for example the api key + url
   console.log(dbURL, apiKey)
+  //if connection == 200 change text to refresh
+  //else connection == 401 aka unauthorized or fields are empty change to connect
 }
 
 const toggleAnnotations = (e: Event) => {
