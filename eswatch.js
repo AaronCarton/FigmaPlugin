@@ -1,8 +1,13 @@
 const esbuild = require("esbuild")
 const watch = require("node-watch")
+const { readFile, writeFile } = require("fs").promises
+const minify = require("html-minifier-terser").minify
+
+//putting the build logic in a class to make the watch command cleaner
 const build = () => {
   console.log("currently building")
-  const esbuild = require("esbuild")
+
+  //building and resolving all main code and putting it in the code.js in dist
   esbuild
     .build({
       entryPoints: ["src/code.ts"],
@@ -12,11 +17,9 @@ const build = () => {
       outfile: "dist/code.js",
     })
     .catch(() => process.exit(1))
-  const { readFile, writeFile } = require("fs").promises
-  const minify = require("html-minifier-terser").minify
-  // iframe UI
 
   ;(async () => {
+    //building and resolving all code for the ui
     const script = esbuild.buildSync({
       entryPoints: ["src/ui.ts"],
       bundle: true,
@@ -24,6 +27,8 @@ const build = () => {
       write: false,
       target: ["chrome58", "firefox57", "safari11", "edge16"],
     })
+
+    //building and resolving all css
     const css = esbuild.buildSync({
       entryPoints: ["src/style.css"],
       bundle: true,
@@ -32,9 +37,10 @@ const build = () => {
       target: ["chrome58", "firefox57", "safari11", "edge16"],
     })
 
+    //reading the html file where the css and ui code should be injected
     const html = await readFile("src/ui.html", "utf8")
-    // const css = await readFile('src/style.css', 'utf8');
 
+    //minifying options (see: https://www.npmjs.com/package/html-minifier-terser)
     const minifyOptions = {
       collapseWhitespace: true,
       keepClosingSlash: true,
@@ -46,6 +52,7 @@ const build = () => {
       minifyCSS: true,
     }
 
+    //injection logic into the html file for the ui.ts-code and the css
     await writeFile(
       "dist/ui.html",
       `<style>${await minify(css.outputFiles[0].text, minifyOptions)}</style>${await minify(
@@ -54,6 +61,7 @@ const build = () => {
       )}
       <script>${script.outputFiles[0].text}</script>`,
     )
+    //console logging that the logic is waiting for file changes
   })().then((x) => console.log("done, waiting for file changes..."))
 }
 

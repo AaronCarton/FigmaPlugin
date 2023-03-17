@@ -1,2 +1,3 @@
 /*main css file, import all css in here*/
-@import url("./css/test.css");
+@import "./style/navigation-tabs.css";
+@import "./style/settings.css";

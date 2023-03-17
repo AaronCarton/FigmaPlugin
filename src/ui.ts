@@ -1,2 +1,3 @@
 //ui code
-console.log("hello world")
+import "./ui/tabs"
+import "./ui/settings"
