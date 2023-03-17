@@ -11,8 +11,8 @@ const panelItems: NodeListOf<HTMLElement> = document.querySelectorAll(".js-panel
 
 const settingsIcon: HTMLElement = document.querySelector(".js-settings-icon")!
 
-const isSelected: string = "is-selected"
-const isActive: string = "is-active"
+const isSelected = "is-selected"
+const isActive = "is-active"
 
 connect.addEventListener("click", function () {
   navItems.forEach((item) => {
