@@ -3,13 +3,13 @@
 </head>
 <body>
   <nav class="c-nav">
-    <section class="c-nav-left">
-      <div class="c-nav-item js-connect selected">
+    <section class="c-nav__left">
+      <div class="c-nav__left-item js-connect js-nav-item is-selected">
         <span>Connect</span>
       </div>
-      <div class="c-nav-item js-settings">
+      <div class="c-nav__left-item js-settings js-nav-item">
         <svg
-          class="js-settings-icon"
+          class="a-settings-icon js-settings-icon"
           width="32"
           height="33"
           viewBox="0 0 32 33"
@@ -25,15 +25,15 @@
         <span>Settings</span>
       </div>
     </section>
-    <section class="c-nav-right">
-      <div class="c-nav-item js-usage">
+    <section class="c-nav__right">
+      <div class="c-nav__right-item js-usage js-nav-item">
         <span>How to use</span>
       </div>
     </section>
   </nav>
-  <div class="c-plugin">
-    <section class="js-connect-view">Connect</section>
-    <section class="js-settings-view close">Settings</section>
-    <section class="js-usage-view close">How to use</section>
+  <div class="c-content">
+    <section class="c-connect js-connect-view js-panel-item is-active">Connect</section>
+    <section class="c-settings js-settings-view js-panel-item">Settings</section>
+    <section class="c-usage js-usage-view js-panel-item">How to use</section>
   </div>
 </body>
