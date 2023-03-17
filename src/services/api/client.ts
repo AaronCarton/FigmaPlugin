@@ -77,13 +77,13 @@ export default () => {
    *  @param {string} projectKey - Key of the project to search annotations for
    */
   const searchAnnotations = async (projectKey: string): Promise<ODSresponse<Annotation>> => {
-    const res = await getData<Annotation>(
-      `api/search/annotation?filter=projectKey.eq.${projectKey}`,
-      {
-        method: "GET",
-        apiKey: "123",
+    const res = await getData<Annotation>("api/search/annotation", {
+      method: "POST",
+      apiKey: CLIENT_APIKEY,
+      body: {
+        filter: `projectKey.eq.${projectKey}`,
       },
-    )
+    })
     return res
   }
 
