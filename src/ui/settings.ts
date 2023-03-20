@@ -5,24 +5,19 @@ const $annotationToggle: HTMLInputElement | null = document.querySelector("#anno
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 //spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
-const $plugin: HTMLElement | null = document.querySelector("html");
+const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 const checkConnection = async () => {
   //adding spinner + adding no pointer class
   $plugin?.classList.add("no-pointer");
   $spinner?.removeAttribute("hidden");
-  console.log($spinner);
-  //making sure there are no spaces in the values, even if the user typed spaces
   const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
   const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
   console.log(dbURL, apiKey);
-  //test for spinner
   fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
     .then((response) => response.json())
-    .then((data) => {
-      //removing no pointer class and hiding spinner
+    .then(() => {
       $plugin?.classList.remove("no-pointer");
       $spinner?.setAttribute("hidden", "");
-      console.log(data);
     });
 };
 
@@ -36,7 +31,6 @@ const toggleAnnotations = (e: Event) => {
 };
 
 const disableFields = () => {
-  console.log($dbURL?.value);
   if ($dbURL !== null && $apiKey !== null && $annotationToggle !== null && $button !== null) {
     $annotationToggle.disabled = true;
     //replace makes sure people can not connect with empty strings (for example pressing spacebar)
