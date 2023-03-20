@@ -1,2 +1,1 @@
-//ui code
-console.log("hello world");
+import "./ui/navigation-tabs.ts";
