@@ -2,8 +2,62 @@
   <link rel="stylesheet" href="./style.css">
 </head> -->
 <body>
-  <h2>Propertize</h2>
-  <p>Count: <input id="count" value="5" /></p>
-  <button id="create" class="c-create">Create</button>
-  <button id="cancel">Cancel</button>
+  <nav class="c-nav">
+    <section class="c-nav-left">
+      <div class="c-nav-item js-connect selected">
+        <span>Connect</span>
+      </div>
+      <div class="c-nav-item js-settings">
+        <svg
+          class="js-settings-icon"
+          width="32"
+          height="33"
+          viewBox="0 0 32 33"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12 16.1806V9.13062H13V16.1806C14.1411 16.4123 15 17.4211 15 18.6306C15 19.8401 14.1411 20.849 13 21.0806V23.1306H12V21.0806C10.8589 20.849 10 19.8401 10 18.6306C10 17.4211 10.8589 16.4123 12 16.1806ZM14 18.6306C14 19.459 13.3284 20.1306 12.5 20.1306C11.6716 20.1306 11 19.459 11 18.6306C11 17.8022 11.6716 17.1306 12.5 17.1306C13.3284 17.1306 14 17.8022 14 18.6306ZM19 23.1306H20V16.0806C21.1411 15.849 22 14.8401 22 13.6306C22 12.4211 21.1411 11.4123 20 11.1806V9.13062H19V11.1806C17.8589 11.4123 17 12.4211 17 13.6306C17 14.8401 17.8589 15.849 19 16.0806V23.1306ZM21 13.6306C21 12.8022 20.3284 12.1306 19.5 12.1306C18.6716 12.1306 18 12.8022 18 13.6306C18 14.459 18.6716 15.1306 19.5 15.1306C20.3284 15.1306 21 14.459 21 13.6306Z"
+          />
+        </svg>
+        <span>Settings</span>
+      </div>
+    </section>
+    <section class="c-nav-right">
+      <div class="c-nav-item js-usage">
+        <span>How to use</span>
+      </div>
+    </section>
+  </nav>
+  <div class="c-plugin">
+    <section class="js-connect-view">Connect</section>
+    <section class="js-settings-view close">
+      <form class="c-plugin__form">
+        <div class="c-plugin__row">
+          <label class="c-plugin__settingsLabel" for="settings_dbLink"
+            >Connect to database, enter link:</label
+          >
+          <input class="c-plugin__input" id="settings_dbLink" type="text" />
+        </div>
+        <div class="c-plugin__row">
+          <label class="c-plugin__settingsLabel" for="settings_apiKey">API key:</label>
+          <input class="c-plugin__input" id="settings_apiKey" type="text" />
+        </div>
+        <div class="c-plugin__row--horizontal">
+          <p>Show annotations</p>
+          <label class="switch">
+            <input id="annotationToggle" type="checkbox" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="c-plugin__row--horizontal">
+          <p>Last update: <span id="settings_lastUpdate">14/07/2023</span></p>
+          <a class="c-plugin__btnConnect">Connect</a>
+        </div>
+      </form>
+    </section>
+    <section class="js-usage-view close">How to use</section>
+  </div>
 </body>
