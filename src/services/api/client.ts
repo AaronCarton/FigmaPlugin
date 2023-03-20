@@ -141,6 +141,8 @@ export default () => {
     });
   };
 
+  // TODO: add DELETE calls
+
   return {
     connect,
     searchAnnotations,

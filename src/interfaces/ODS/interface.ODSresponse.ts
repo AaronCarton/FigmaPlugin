@@ -1,6 +1,3 @@
-import Annotation from "../interface.annotation"
-import Project from "../interface.project"
-
 /**
  *  ODSresponse is a generic interface for the response from the ODS API.
  * @param T is the type of the item in the response (e.g. Annotation)
@@ -10,12 +7,11 @@ import Project from "../interface.project"
 export default interface ODSresponse<T, U = undefined, K extends string = ""> {
   results: Array<
     {
-      item: T
+      item: T;
     } & (U extends undefined
-      ? // eslint-disable-next-line @typescript-eslint/ban-types
-        {}
+      ? object // or {}
       : {
-          [P in K]: U
+          [P in K]: U;
         })
-  >
+  >;
 }
