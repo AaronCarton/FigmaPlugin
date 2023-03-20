@@ -8,11 +8,12 @@ let APIclient: AxiosInstance
 let CLIENT_APIKEY: string
 let SOURCE_APIKEY: string
 
-interface RequestOptions {
+interface RequestOptions<K> {
   method: "GET" | "PUT" | "POST" | "DELETE"
   apiKey: string
-  body?: unknown
+  body?: object
   metadata?: boolean
+  parent?: K
 }
 
 export default () => {
@@ -38,14 +39,16 @@ export default () => {
   /**
    * Generic function to make API calls
    * @template T - Optional type of returned data. If not provided, a string will be returned.
+   * @template U - Optional type of parent data. If not provided, no parent will be returned.
+   * @template K - Optional key under which parent data will be found.
    * @param {string} url - API endpoint
    * @param {RequestOptions} options - Request options
    * @returns {Promise<T extends string ? string : ODSresponse<T>>} - Response data, either as string or ODSresponse<T>
    * */
-  async function getData<T = string>(
+  async function getData<T = string, U = undefined, K extends string = "">(
     url: string,
-    options: RequestOptions,
-  ): Promise<T extends string ? string : ODSresponse<T>> {
+    options: RequestOptions<K>,
+  ): Promise<T extends string ? string : ODSresponse<T, U, K>> {
     // check if API client is initialized
     if (!APIclient) {
       throw new Error("API client not initialized")
@@ -60,7 +63,7 @@ export default () => {
       headers: {
         "x-api-key": apiKey,
         "x-include-metadata": metadata || false,
-        // TODO: add header to include parent-child
+        "x-expand": options.parent || "",
       },
     })
 
@@ -77,8 +80,7 @@ export default () => {
           throw new APIError(res, "Something went wrong, please try again later")
       }
     }
-
-    return res.data // TODO: provide generic parent type
+    return res.data
   }
 
   ////////* API calls *////////
@@ -103,9 +105,11 @@ export default () => {
    *  @param {string} projectKey - Key of the project to search annotations for
    */
   const searchAnnotations = async (projectKey: string): Promise<ODSresponse<Annotation>> => {
-    const res = await getData<Annotation>("api/search/annotation", {
+    // example of how to search for annotations by project key, with Project as parent
+    const res = await getData<Annotation, Project, "project">("api/search/annotation", {
       method: "POST",
       apiKey: CLIENT_APIKEY,
+      parent: "project",
       body: {
         filter: `projectKey.eq.${projectKey}`,
       },
@@ -121,9 +125,7 @@ export default () => {
     await getData("api/search/annotation", {
       method: "PUT",
       apiKey: SOURCE_APIKEY,
-      body: {
-        annotation,
-      },
+      body: annotation,
     })
   }
 
@@ -135,9 +137,7 @@ export default () => {
     await getData("api/search/project", {
       method: "PUT",
       apiKey: SOURCE_APIKEY,
-      body: {
-        project,
-      },
+      body: project,
     })
   }
 
