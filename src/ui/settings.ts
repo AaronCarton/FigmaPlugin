@@ -1,18 +1,16 @@
 import EventHub from "../services/events/events";
 
 //input elements
-const events = EventHub();
-const $dbURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
-const $apiKey: HTMLInputElement | null = document.querySelector("#settings_apiKey");
+const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
+const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 
 const checkConnection = async () => {
   //making sure there are no spaces in the values, even if the user typed spaces
-  const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
-  const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
-  $button?.addEventListener("click", events.makeConnection(dbURL, apiKey, "sourceKey"));
-  console.log(dbURL, apiKey);
+  const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
+  const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
+  console.log(baseURL, clientKey);
 };
 
 const toggleAnnotations = (e: Event) => {
@@ -25,19 +23,19 @@ const toggleAnnotations = (e: Event) => {
 };
 
 const disableFields = () => {
-  console.log($dbURL?.value);
-  if ($dbURL !== null && $apiKey !== null && $annotationToggle !== null && $button !== null) {
+  console.log($baseURL?.value);
+  if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null) {
     $annotationToggle.disabled = true;
     //replace makes sure people can not connect with empty strings (for example pressing spacebar)
-    if ($dbURL.value.replace(/\s/g, "") !== "") {
-      $apiKey.disabled = false;
+    if ($baseURL.value.replace(/\s/g, "") !== "") {
+      $clientKey.disabled = false;
     } else {
-      $apiKey.disabled = true;
+      $clientKey.disabled = true;
     }
-    if ($dbURL.value.replace(/\s/g, "") === "" || $apiKey.value.replace(/\s/g, "") === "") {
+    if ($baseURL.value.replace(/\s/g, "") === "" || $clientKey.value.replace(/\s/g, "") === "") {
       $button.removeEventListener("click", checkConnection);
     }
-    if ($dbURL.value.replace(/\s/g, "") !== "" && $apiKey.value.replace(/\s/g, "") !== "") {
+    if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
       $annotationToggle.disabled = false;
       $button.addEventListener("click", checkConnection);
     }
@@ -47,8 +45,8 @@ const disableFields = () => {
 const init = () => {
   disableFields();
   $annotationToggle?.addEventListener("click", toggleAnnotations);
-  $dbURL?.addEventListener("keyup", disableFields);
-  $apiKey?.addEventListener("keyup", disableFields);
+  $baseURL?.addEventListener("keyup", disableFields);
+  $clientKey?.addEventListener("keyup", disableFields);
 };
 
 init();
