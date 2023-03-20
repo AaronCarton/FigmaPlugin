@@ -51,6 +51,7 @@
   background: var(--icon-arrow) 96% center no-repeat;
   padding-inline: 8px;
   writing-mode: horizontal-tb;
+  color: var(--propertize-text-secondary);
 }
 
 .c-input__selector:hover,
@@ -58,6 +59,7 @@
   border: 1px solid var(--propertize-accent-color);
   width: 190px;
   outline: none;
+  color: var(--propertize-text-primary);
 }
 
 .c-input__text {
