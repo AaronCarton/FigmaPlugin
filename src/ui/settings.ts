@@ -1,4 +1,7 @@
+import EventHub from "../services/events/events";
+
 //input elements
+const events = EventHub();
 const $dbURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $apiKey: HTMLInputElement | null = document.querySelector("#settings_apiKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
@@ -8,6 +11,7 @@ const checkConnection = async () => {
   //making sure there are no spaces in the values, even if the user typed spaces
   const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
   const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
+  $button?.addEventListener("click", events.makeConnection(dbURL, apiKey, "sourceKey"));
   console.log(dbURL, apiKey);
 };
 

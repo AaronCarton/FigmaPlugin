@@ -22,7 +22,7 @@ export default () => {
    * @param {string} clientKey - Client API key
    * @param {string} sourceKey - Source API key
    */
-  const connect = async (baseURL: string, clientKey: string, sourceKey: string) => {
+  const connect = async (baseURL: string | undefined, clientKey: string, sourceKey: string) => {
     APIclient = axios.create({
       baseURL: baseURL,
       timeout: 2000,
