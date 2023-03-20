@@ -34,7 +34,81 @@
     </section>
   </nav>
   <div class="c-content">
-    <section class="c-connect js-panel-item is-active" id="connect">Connect</section>
+    <section class="c-connect js-panel-item is-active" id="connect">
+      <div class="js-connection c-connection is-active">
+        <div class="c-connect__item">
+          <div class="c-input">
+            <span class="c-input__title">Data source</span>
+            <select name="" id="data-source-select" class="c-input__selector is-active-field">
+              <option value="" selected disabled hidden class="">Choose source</option>
+              <option value="">Dummy data</option>
+              <option value="">Dummy data</option>
+            </select>
+            <div class="c-input__text" id="data-source-text">
+              <input type="text" class="c-sample__field" />
+            </div>
+          </div>
+          <button class="c-icon js-btn" data-target="data-source"></button>
+        </div>
+        <div class="c-connect__item">
+          <div class="c-input">
+            <span class="c-input__title">Entity</span>
+            <select name="" id="entity-select" class="c-input__selector is-active-field">
+              <option value="" selected disabled hidden>Choose entity</option>
+              <option value="">Dummy data</option>
+              <option value="">Dummy data</option>
+            </select>
+            <div class="c-input__text" id="entity-text">
+              <input type="text" class="c-sample__field" />
+            </div>
+          </div>
+          <button class="c-icon js-btn" data-target="entity"></button>
+        </div>
+        <div class="c-connect__item">
+          <div class="c-input">
+            <span class="c-input__title">Attribute</span>
+            <select name="" id="attribute-select" class="c-input__selector is-active-field">
+              <option value="" selected disabled hidden>Choose attribute</option>
+              <option value="">Dummy data</option>
+              <option value="">Dummy data</option>
+            </select>
+            <div class="c-input__text" id="attribute-text">
+              <input type="text" class="c-sample__field" />
+            </div>
+          </div>
+          <button class="c-icon js-btn" data-target="attribute"></button>
+        </div>
+        <div class="c-connect__item">
+          <div class="c-input">
+            <span class="c-input__title">Data type</span>
+            <select name="" id="data-type-select" class="c-input__selector is-active-field">
+              <option value="" selected disabled hidden>Choose type</option>
+              <option value="">Dummy data</option>
+              <option value="">Dummy data</option>
+            </select>
+            <div class="c-input__text" id="data-type-text">
+              <input type="text" class="c-sample__field" />
+            </div>
+          </div>
+          <button class="c-icon js-btn" data-target="data-type"></button>
+        </div>
+        <div class="c-connect__item c-connect__attribute">
+          <div class="c-input">
+            <span class="c-input__title">Sample value</span>
+            <div class="c-input__sample">
+              <input type="text" class="c-sample__field" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="js-no-connection c-no-connection">
+        <p class="c-no-connection__text">
+          <a class="a-paraph-bold">No connection</a> to database,
+          <a class="a-paraph-bold">go to the settings tab</a> to add the connection link and API
+          key.
+        </p>
+      </div>
+    </section>
     <section class="c-settings js-panel-item" id="settings">Settings</section>
     <section class="c-usage js-panel-item" id="usage">How to use</section>
   </div>

@@ -2,4 +2,7 @@
 @import "./style/elements/_elements.generic.css";
 @import "./style/settings/_settings.fonts.css";
 @import "./style/atoms/_atoms.navigation-tabs.css";
+@import "./style/atoms/_atoms.main-panel.css";
 @import "./style/components/_components.navigation-tabs.css";
+@import "./style/components/_components.main-panel.css";
+@import "./style/settings/_settings.views.css";

@@ -1,0 +1,18 @@
+.c-usage {
+  display: none;
+}
+
+.is-selected {
+  color: var(--propertize-text-primary);
+  fill: var(--propertize-text-primary);
+}
+
+.is-active-field {
+  display: flex;
+}
+
+.is-active {
+  display: block;
+  color: var(--propertize-text-primary);
+  fill: var(--propertize-text-primary);
+}
