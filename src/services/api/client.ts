@@ -147,5 +147,8 @@ export default () => {
     upsertAnnotation,
     searchProjects,
     upsertProject,
+
+    CLIENT_APIKEY,
+    SOURCE_APIKEY,
   };
 };
