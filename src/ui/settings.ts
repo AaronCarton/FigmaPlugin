@@ -5,8 +5,9 @@ const $annotationToggle: HTMLInputElement | null = document.querySelector("#anno
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect")
 
 const checkConnection = async () => {
-  const dbURL: string | null | undefined = $dbURL?.value
-  const apiKey: string | null | undefined = $apiKey?.value
+  //making sure there are no spaces in the values
+  const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim()
+  const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim()
   console.log(dbURL, apiKey)
 }
 
