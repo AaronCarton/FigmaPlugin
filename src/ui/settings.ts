@@ -3,12 +3,23 @@ const $dbURL: HTMLInputElement | null = document.querySelector("#settings_dbLink
 const $apiKey: HTMLInputElement | null = document.querySelector("#settings_apiKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
+const $spinner: HTMLElement | null = document.querySelector(".loader");
 
 const checkConnection = async () => {
+  //adding spinner
+  $spinner?.removeAttribute("hidden");
+  console.log($spinner);
   //making sure there are no spaces in the values, even if the user typed spaces
   const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
   const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
   console.log(dbURL, apiKey);
+  //test for spinner
+  fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
+    .then((response) => response.json())
+    .then((data) => {
+      $spinner?.setAttribute("hidden", "");
+      console.log(data);
+    });
 };
 
 const toggleAnnotations = (e: Event) => {
