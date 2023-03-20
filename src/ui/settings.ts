@@ -3,10 +3,12 @@ const $dbURL: HTMLInputElement | null = document.querySelector("#settings_dbLink
 const $apiKey: HTMLInputElement | null = document.querySelector("#settings_apiKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
+//spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
-
+const $plugin: HTMLElement | null = document.querySelector("html");
 const checkConnection = async () => {
-  //adding spinner
+  //adding spinner + adding no pointer class
+  $plugin?.classList.add("no-pointer");
   $spinner?.removeAttribute("hidden");
   console.log($spinner);
   //making sure there are no spaces in the values, even if the user typed spaces
@@ -17,6 +19,8 @@ const checkConnection = async () => {
   fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
     .then((response) => response.json())
     .then((data) => {
+      //removing no pointer class and hiding spinner
+      $plugin?.classList.remove("no-pointer");
       $spinner?.setAttribute("hidden", "");
       console.log(data);
     });

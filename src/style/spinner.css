@@ -1,3 +1,6 @@
+.no-pointer{
+    pointer-events: none;
+}
 .c-plugin__loader {
     z-index: 99;
     margin-left: calc(50% - 48px);
