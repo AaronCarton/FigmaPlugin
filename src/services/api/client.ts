@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios"
 import Annotation from "../../interfaces/interface.annotation"
+import Project from "../../interfaces/interface.project"
 import APIError from "../../interfaces/ODS/interface.APIerror"
-import ODSobject from "../../interfaces/ODS/interface.ODSobject"
 import ODSresponse from "../../interfaces/ODS/interface.ODSresponse"
 
 let APIclient: AxiosInstance
@@ -84,6 +84,21 @@ export default () => {
   ////////* API calls *////////
 
   /**
+   * Search projects by project key
+   * @param {string} projectKey - Key of the project to search for
+   * */
+  const searchProjects = async (projectKey: string): Promise<ODSresponse<Project>> => {
+    const res = await getData<Project>("api/search/project", {
+      method: "POST",
+      apiKey: CLIENT_APIKEY,
+      body: {
+        filter: `projectKey.eq.${projectKey}`,
+      },
+    })
+    return res
+  }
+
+  /**
    *  Search annotations by project key
    *  @param {string} projectKey - Key of the project to search annotations for
    */
@@ -111,9 +126,26 @@ export default () => {
       },
     })
   }
+
+  /**
+   * Update or create a project
+   * @param {Project} project - Project to update or create
+   * */
+  const upsertProject = async (project: Project) => {
+    await getData("api/search/project", {
+      method: "PUT",
+      apiKey: SOURCE_APIKEY,
+      body: {
+        project,
+      },
+    })
+  }
+
   return {
     connect,
     searchAnnotations,
     upsertAnnotation,
+    searchProjects,
+    upsertProject,
   }
 }
