@@ -15,15 +15,11 @@
 }
 
 .c-nav__left-item {
-  display: flex;
-  align-items: center;
   cursor: pointer;
   color: var(--propertize-text-secondary);
 }
 
 .c-nav__right-item {
-  display: flex;
-  align-items: center;
   cursor: pointer;
   color: var(--propertize-text-secondary);
 }
@@ -46,9 +42,6 @@
 
 .is-active {
   display: block;
-}
-
-.is-selected {
   color: var(--propertize-text-primary);
   fill: var(--propertize-text-primary);
 }
