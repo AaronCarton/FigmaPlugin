@@ -1,1 +1,1 @@
-import "./ui/navigation-tabs.ts"
+import "./ui/navigation-tabs.ts";
