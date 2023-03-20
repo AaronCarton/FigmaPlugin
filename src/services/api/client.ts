@@ -1,18 +1,18 @@
-import axios, { AxiosInstance } from "axios"
-import Annotation from "../../interfaces/interface.annotation"
-import Project from "../../interfaces/interface.project"
-import APIError from "../../interfaces/ODS/interface.APIerror"
-import ODSresponse from "../../interfaces/ODS/interface.ODSresponse"
+import axios, { AxiosInstance } from "axios";
+import Annotation from "../../interfaces/interface.annotation";
+import Project from "../../interfaces/interface.project";
+import APIError from "../../interfaces/ODS/interface.APIerror";
+import ODSresponse from "../../interfaces/ODS/interface.ODSresponse";
 
-let APIclient: AxiosInstance
-let CLIENT_APIKEY: string
-let SOURCE_APIKEY: string
+let APIclient: AxiosInstance;
+let CLIENT_APIKEY: string;
+let SOURCE_APIKEY: string;
 
 interface RequestOptions {
-  method: "GET" | "PUT" | "POST" | "DELETE"
-  apiKey: string
-  body?: unknown
-  metadata?: boolean
+  method: "GET" | "PUT" | "POST" | "DELETE";
+  apiKey: string;
+  body?: unknown;
+  metadata?: boolean;
 }
 
 export default () => {
@@ -29,11 +29,11 @@ export default () => {
       headers: {
         "content-type": "application/json",
       },
-    })
-    CLIENT_APIKEY = clientKey
-    SOURCE_APIKEY = sourceKey
-    return APIclient
-  }
+    });
+    CLIENT_APIKEY = clientKey;
+    SOURCE_APIKEY = sourceKey;
+    return APIclient;
+  };
 
   /**
    * Generic function to make API calls
@@ -48,11 +48,11 @@ export default () => {
   ): Promise<T extends string ? string : ODSresponse<T>> {
     // check if API client is initialized
     if (!APIclient) {
-      throw new Error("API client not initialized")
+      throw new Error("API client not initialized");
     }
 
     // create request
-    const { method, body, apiKey, metadata } = options
+    const { method, body, apiKey, metadata } = options;
     const res = await APIclient({
       url: url,
       method: method,
@@ -62,23 +62,23 @@ export default () => {
         "x-include-metadata": metadata || false,
         // TODO: add header to include parent-child
       },
-    })
+    });
 
     // error handling
     if (![200, 201, 204].includes(res.status)) {
       switch (res.status) {
         case 404:
-          throw new APIError(res, "API URL not found, please check your URL")
+          throw new APIError(res, "API URL not found, please check your URL");
         case 401:
-          throw new APIError(res, "Unauthorized, please check your API key")
+          throw new APIError(res, "Unauthorized, please check your API key");
         case 500:
-          throw new APIError(res, "Internal Server Error")
+          throw new APIError(res, "Internal Server Error");
         default:
-          throw new APIError(res, "Something went wrong, please try again later")
+          throw new APIError(res, "Something went wrong, please try again later");
       }
     }
 
-    return res.data // TODO: provide generic parent type
+    return res.data; // TODO: provide generic parent type
   }
 
   ////////* API calls *////////
@@ -94,9 +94,9 @@ export default () => {
       body: {
         filter: `projectKey.eq.${projectKey}`,
       },
-    })
-    return res
-  }
+    });
+    return res;
+  };
 
   /**
    *  Search annotations by project key
@@ -109,9 +109,9 @@ export default () => {
       body: {
         filter: `projectKey.eq.${projectKey}`,
       },
-    })
-    return res
-  }
+    });
+    return res;
+  };
 
   /**
    * Update or create an annotation
@@ -124,8 +124,8 @@ export default () => {
       body: {
         annotation,
       },
-    })
-  }
+    });
+  };
 
   /**
    * Update or create a project
@@ -138,8 +138,8 @@ export default () => {
       body: {
         project,
       },
-    })
-  }
+    });
+  };
 
   return {
     connect,
@@ -147,5 +147,5 @@ export default () => {
     upsertAnnotation,
     searchProjects,
     upsertProject,
-  }
-}
+  };
+};
