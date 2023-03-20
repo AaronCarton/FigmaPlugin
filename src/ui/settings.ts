@@ -3,7 +3,7 @@ const $dbURL: HTMLInputElement | null = document.querySelector("#settings_dbLink
 const $apiKey: HTMLInputElement | null = document.querySelector("#settings_apiKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
-const $spinner: HTMLElement | null = document.querySelector(".loader");
+const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 
 const checkConnection = async () => {
   //adding spinner

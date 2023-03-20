@@ -1,4 +1,4 @@
-.loader {
+.c-plugin__loader {
     z-index: 99;
     margin-left: calc(50% - 48px);
     margin-top: calc(50% - 48px);
@@ -10,7 +10,7 @@
     position: absolute;
     animation: rotate 1s linear infinite
   }
-  .loader::before , .loader::after {
+  .c-plugin__loader::before , .c-plugin__loader::after {
     content: "";
     box-sizing: border-box;
     position: absolute;
@@ -19,7 +19,7 @@
     border: 5px solid #b1b1b1;
     animation: prixClipFix 2s linear infinite ;
   }
-  .loader::after{
+  .c-plugin__loader::after{
     border-color: #FF3D00;
     animation: prixClipFix 2s linear infinite , rotate 0.5s linear infinite reverse;
     inset: 6px;
