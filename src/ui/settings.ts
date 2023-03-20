@@ -23,15 +23,16 @@ const disableFields = () => {
   console.log($dbURL?.value)
   if ($dbURL !== null && $apiKey !== null && $annotationToggle !== null && $button !== null) {
     $annotationToggle.disabled = true
-    if ($dbURL.value !== "") {
+    //replace makes sure people can not connect with empty strings (for example pressing spacebar)
+    if ($dbURL.value.replace(/\s/g, "") !== "") {
       $apiKey.disabled = false
     } else {
       $apiKey.disabled = true
     }
-    if ($dbURL.value === "" || $apiKey.value === "") {
+    if ($dbURL.value.replace(/\s/g, "") === "" || $apiKey.value.replace(/\s/g, "") === "") {
       $button.removeEventListener("click", checkConnection)
     }
-    if ($dbURL.value !== "" && $apiKey.value !== "") {
+    if ($dbURL.value.replace(/\s/g, "") !== "" && $apiKey.value.replace(/\s/g, "") !== "") {
       $annotationToggle.disabled = false
       $button.addEventListener("click", checkConnection)
     }
