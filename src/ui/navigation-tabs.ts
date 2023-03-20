@@ -16,10 +16,5 @@ tabs.forEach((trigger) =>
     });
     trigger.classList.add(isActive);
     document.getElementById(selectedTab)?.classList.add(isActive);
-    if (selectedTab === "settings") {
-      settingsIcon.classList.add(isActive);
-    } else {
-      settingsIcon.classList.remove(isActive);
-    }
   }),
 );

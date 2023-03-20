@@ -19,6 +19,10 @@
   color: var(--propertize-text-secondary);
 }
 
+.c-nav__left-item.is-active .a-settings-icon {
+  fill: var(--propertize-text-primary);
+}
+
 .c-nav__right-item {
   cursor: pointer;
   color: var(--propertize-text-secondary);
