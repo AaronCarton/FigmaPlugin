@@ -1,9 +1,11 @@
 import ODSobject from "./ODS/interface.ODSobject";
 
-export default interface Annotation extends ODSobject {
+export interface IAnnotation {
   dataSource: string;
   entity: string;
   attribute: string;
   dataType: string;
   value: string;
 }
+
+export default interface Annotation extends IAnnotation, ODSobject {}
