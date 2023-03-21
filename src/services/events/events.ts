@@ -1,5 +1,6 @@
 // import { RequestOptions } from "../api/client";
 import client from "../api/client";
+import Project from "../../interfaces/interface.project";
 
 export default () => {
   const api = client();
@@ -21,8 +22,9 @@ export default () => {
     // URL check to see if url is valid or not.
     validateUrl(baseURL);
 
-    if (await api.searchProjects(projectKey)) console.log("data needs to be returned");
-    else api.upsertProject();
+    if (await api.searchProjects(projectKey)) console.log("data needs to be returned (getdata function)");
+    else api.upsertProject(const project: Project = 
+      {lastUpdated: new Date().toISOString(), customerId: clientKey, itemType: "project", partition: "null", itemKey: clientKey, localized: []});
   }
 
   return {
