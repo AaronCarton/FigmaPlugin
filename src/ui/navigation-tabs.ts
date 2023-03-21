@@ -1,8 +1,6 @@
 const tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
 const panelItems: NodeListOf<HTMLElement> = document.querySelectorAll(".js-panel-item");
 
-const settingsIcon: HTMLElement = document.querySelector(".js-settings-icon")!;
-
 const isActive = "is-active";
 
 tabs.forEach((trigger) =>
@@ -16,5 +14,6 @@ tabs.forEach((trigger) =>
     });
     trigger.classList.add(isActive);
     document.getElementById(selectedTab)?.classList.add(isActive);
+    parent.postMessage({ pluginMessage: { type: "changeTab", tab: selectedTab } }, "*");
   }),
 );
