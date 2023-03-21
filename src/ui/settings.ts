@@ -1,15 +1,17 @@
 import EventHub from "../services/events/events";
 
-//input elements
+// input elements
+const events = EventHub();
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 
 const checkConnection = async () => {
-  //making sure there are no spaces in the values, even if the user typed spaces
-  const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
-  const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
+  // making sure there are no spaces in the values, even if the user typed spaces
+  const baseURL: string | undefined = $baseURL?.value.replace(/\s/g, "").trim();
+  const clientKey: string | undefined = $clientKey?.value.replace(/\s/g, "").trim();
+  $button?.addEventListener("click", () => events.makeConnection(baseURL, clientKey, "sourceKey"));
   console.log(baseURL, clientKey);
 };
 
