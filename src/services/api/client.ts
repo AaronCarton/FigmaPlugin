@@ -53,6 +53,12 @@ export default () => {
     if (!APIclient) {
       throw new Error("API client not initialized");
     }
+    if (!CLIENT_APIKEY) {
+      throw new Error("CLIENT_APIKEY not set");
+    }
+    if (!SOURCE_APIKEY) {
+      throw new Error("SOURCE_APIKEY not set");
+    }
 
     // create request
     const { method, body, apiKey, metadata } = options;
@@ -122,7 +128,7 @@ export default () => {
    * @param {Annotation} annotation - Annotation to update or create
    * */
   const upsertAnnotation = async (annotation: Annotation) => {
-    await getData("api/search/annotation", {
+    await getData(`/api/items/annotation/null/${annotation.itemKey}`, {
       method: "PUT",
       apiKey: SOURCE_APIKEY,
       body: annotation,
@@ -134,7 +140,7 @@ export default () => {
    * @param {Project} project - Project to update or create
    * */
   const upsertProject = async (project: Project) => {
-    await getData("api/search/project", {
+    await getData(`/api/items/project/null/${project.itemKey}`, {
       method: "PUT",
       apiKey: SOURCE_APIKEY,
       body: project,
