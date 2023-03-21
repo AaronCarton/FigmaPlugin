@@ -1,6 +1,7 @@
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
+const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 
@@ -22,13 +23,24 @@ const toggleAnnotations = (e: Event) => {
 
 const disableFields = () => {
   console.log($baseURL?.value);
-  if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null) {
+  if (
+    $baseURL !== null &&
+    $clientKey !== null &&
+    $sourceKey !== null &&
+    $annotationToggle !== null &&
+    $button !== null
+  ) {
     $annotationToggle.disabled = true;
     //replace makes sure people can not connect with empty strings (for example pressing spacebar)
     if ($baseURL.value.replace(/\s/g, "") !== "") {
       $clientKey.disabled = false;
     } else {
       $clientKey.disabled = true;
+    }
+    if ($clientKey.value.replace(/\s/g, "") !== "") {
+      $sourceKey.disabled = false;
+    } else {
+      $sourceKey.disabled = true;
     }
     if ($baseURL.value.replace(/\s/g, "") === "" || $clientKey.value.replace(/\s/g, "") === "") {
       $button.removeEventListener("click", checkConnection);
