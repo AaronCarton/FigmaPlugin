@@ -1,4 +1,4 @@
-// import { RequestOptions } from "../api/client";
+import { RequestOptions } from "../api/client";
 import client from "../api/client";
 import Project from "../../interfaces/interface.project";
 
@@ -11,10 +11,10 @@ export default () => {
     console.log(connection);
   }
 
-  // async function getData(baseURL: string, options: RequestOptions) {
-  //   const data = await api.getData(baseURL, options);
-  //   console.log(data);
-  // }
+  async function getData(baseURL: string, options: RequestOptions<unknown>) {
+    const data = await api.getData(baseURL, options);
+    console.log(data);
+  }
 
   // Function to check is the project already exists or not.
   // If project does not exist yet, a new project will be made with a projectKey, if it already exists the data will be returned.
@@ -22,9 +22,32 @@ export default () => {
     // URL check to see if url is valid or not.
     validateUrl(baseURL);
 
-    if (await api.searchProjects(projectKey)) console.log("data needs to be returned (getdata function)");
-    else api.upsertProject(const project: Project = 
-      {lastUpdated: new Date().toISOString(), customerId: clientKey, itemType: "project", partition: "null", itemKey: clientKey, localized: []});
+    if (await api.searchProjects(projectKey)) {
+      console.log("Project already exists");
+      const data = await getData(baseURL, {
+        method: "POST",
+        apiKey: clientKey,
+        body: {
+          query: {
+            bool: {
+              must: {
+                match: {
+                  itemKey: projectKey,
+                },
+              },
+            },
+          },
+        },
+      });
+    } else {
+      console.log("Project does not exist, creating new project");
+      api.upsertProject({
+        itemType: "project",
+        partition: "null",
+        itemKey: projectKey,
+        localized: [],
+      } as Project);
+    }
   }
 
   return {

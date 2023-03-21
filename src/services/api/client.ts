@@ -17,6 +17,8 @@ interface RequestOptions<K> {
   parent?: K;
 }
 
+export { RequestOptions };
+
 export default () => {
   /**
    * Connect to ODS API
