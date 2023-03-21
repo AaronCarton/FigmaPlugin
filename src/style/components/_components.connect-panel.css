@@ -83,6 +83,7 @@
 }
 
 .c-sample__field {
+  font-size: var(--propertize__font-size--tiny);
   border: none;
   padding: 0 8px;
   width: 100%;
