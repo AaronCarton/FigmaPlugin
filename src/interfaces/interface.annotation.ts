@@ -6,6 +6,7 @@ export interface IAnnotation {
   attribute: string;
   dataType: string;
   value: string;
+  deleted: boolean;
 }
 
 export default interface Annotation extends IAnnotation, ODSobject {}

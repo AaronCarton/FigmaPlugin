@@ -1,8 +1,9 @@
 import axios, { AxiosInstance } from "axios";
-import Annotation from "../../interfaces/interface.annotation";
+import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ODS/interface.APIerror";
 import ODSresponse from "../../interfaces/ODS/interface.ODSresponse";
+import convertODSchild from "../../utils/convertODSchild";
 
 let APIclient: AxiosInstance;
 let CLIENT_APIKEY: string;
@@ -26,7 +27,7 @@ export default () => {
   const connect = async (baseURL: string, clientKey: string, sourceKey: string) => {
     APIclient = axios.create({
       baseURL: baseURL,
-      timeout: 2000,
+      timeout: 10000,
       headers: {
         "content-type": "application/json",
       },
@@ -110,14 +111,17 @@ export default () => {
    *  Search annotations by project key
    *  @param {string} projectKey - Key of the project to search annotations for
    */
-  const searchAnnotations = async (projectKey: string): Promise<ODSresponse<Annotation>> => {
+  const searchAnnotations = async (
+    projectKey: string,
+    showDeleted = false,
+  ): Promise<ODSresponse<Annotation>> => {
     // example of how to search for annotations by project key, with Project as parent
     const res = await getData<Annotation, Project, "project">("api/search/annotation", {
       method: "POST",
       apiKey: CLIENT_APIKEY,
       parent: "project",
       body: {
-        filter: `projectKey.eq.${projectKey}`,
+        filter: `projectKey.eq.${projectKey}` + (showDeleted ? "" : "/deleted.eq.false"),
       },
     });
     return res;
@@ -149,10 +153,32 @@ export default () => {
 
   // TODO: add DELETE calls
 
+  const deleteAnnotation = async (annotation: Annotation) => {
+    // set deleted flag to true
+    annotation.deleted = true;
+    await getData(`/api/items/annotation/null/${annotation.itemKey}`, {
+      method: "PUT",
+      apiKey: SOURCE_APIKEY,
+      body: convertODSchild<IAnnotation>(annotation), // convert to IAnnotation to remove unwanted fields (e.g. itemKey, partition)
+    });
+  };
+
+  const restoreAnnotation = async (annotation: Annotation) => {
+    annotation.deleted = false;
+    await getData(`/api/items/annotation/null/${annotation.itemKey}`, {
+      method: "PUT",
+      apiKey: SOURCE_APIKEY,
+      body: convertODSchild<IAnnotation>(annotation),
+    });
+  };
+
   return {
     connect,
     searchAnnotations,
     upsertAnnotation,
+    deleteAnnotation,
+    restoreAnnotation,
+
     searchProjects,
     upsertProject,
 
