@@ -9,11 +9,9 @@ const connectionState = true;
 
 const checkConnection = () => {
   if (connectionState) {
-    console.log("Connection is active");
     connectionPanel.classList.add(isActive);
     noConnectionPanel.classList.remove(isActive);
   } else {
-    console.log("Connection is inactive");
     connectionPanel.classList.remove(isActive);
     noConnectionPanel.classList.add(isActive);
   }
