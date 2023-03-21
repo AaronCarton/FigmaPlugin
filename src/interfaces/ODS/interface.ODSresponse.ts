@@ -9,8 +9,7 @@ export default interface ODSresponse<T, U = undefined, K extends string = ""> {
     {
       item: T;
     } & (U extends undefined
-      ? // eslint-disable-next-line @typescript-eslint/ban-types
-        {}
+      ? object // or {}
       : {
           [P in K]: U;
         })
