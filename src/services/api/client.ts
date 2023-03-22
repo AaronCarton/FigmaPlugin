@@ -55,6 +55,7 @@ export default () => {
 
     // create request
     const { method, body, apiKey, metadata } = options;
+    console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey);
     const res = await fetch(BASE_URL + url, {
       method: method,
       body: JSON.stringify(body),
@@ -65,6 +66,7 @@ export default () => {
         "x-expand": options.parent || "",
       },
     });
+    console.debug(`[API] Response: ${method} ${url}`, res);
 
     // error handling
     if (!res.ok) {
