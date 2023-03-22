@@ -1,6 +1,3 @@
-//ui code
-console.log("hello world");
-
 import ApiClient from "./services/api/client";
 const api = ApiClient();
 
