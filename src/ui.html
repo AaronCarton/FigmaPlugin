@@ -33,14 +33,29 @@
       </div>
     </section>
   </nav>
-  <div class="c-plugin">
-    <span hidden class="c-plugin__loader"></span>
-    <section class="js-connect-view">Connect</section>
-    <section class="js-settings-view close">
-      <form class="c-plugin__form">
-        <div class="c-plugin__row">
-          <label class="c-plugin__settingsLabel" for="settings_dbLink">Connect to database, enter link:</label>
-          <input class="c-plugin__input" id="settings_dbLink" type="text" />
+  <div class="c-content">
+    <!-- #region CONNECT PANEL  -->
+    <section class="c-connect js-panel-item is-active" id="connect">
+      <div class="js-connection c-connection">
+        <div class="c-connect__item">
+          <div class="c-connect__input">
+            <span class="c-connect__input-title">Data source</span>
+            <select
+              name="data-source-select"
+              id="data-source-select"
+              class="c-connect__input-selector is-active"
+            >
+              <option value="" selected disabled hidden>Choose source</option>
+              <option value="">Dummy data</option>
+              <option value="">Dummy data</option>
+            </select>
+            <div class="c-connect__input-text" id="data-source-text">
+              <div class="c-connect__input-text-field">
+                <input type="text" class="c-connect__input-field" />
+              </div>
+            </div>
+          </div>
+          <button class="c-connect__icon js-btn" data-target="data-source"></button>
         </div>
         <div class="c-connect__item">
           <div class="c-connect__input">
