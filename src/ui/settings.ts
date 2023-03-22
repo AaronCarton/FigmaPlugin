@@ -12,8 +12,9 @@ const checkConnection = async () => {
   // making sure there are no spaces in the values, even if the user typed spaces
   const baseURL: string | undefined = $baseURL?.value.replace(/\s/g, "").trim();
   const clientKey: string | undefined = $clientKey?.value.replace(/\s/g, "").trim();
+  const sourceKey: string | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
   $button?.addEventListener("click", () =>
-    events.initializeClient(baseURL as string, clientKey as string, "sourceKey"),
+    events.initializeClient(<string>baseURL, <string>clientKey, <string>sourceKey),
   );
   console.log(baseURL, clientKey);
 };
@@ -28,6 +29,7 @@ const toggleAnnotations = (e: Event) => {
 };
 
 const disableFields = () => {
+  console.log($baseURL?.value);
   if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null) {
     $annotationToggle.disabled = true;
     $clientKey.disabled = true;
@@ -41,6 +43,11 @@ const disableFieldsWhenNecessary = () => {
     //replace makes sure people can not connect with empty strings (for example pressing spacebar)
     if ($baseURL.value.replace(/\s/g, "") !== "") {
       $clientKey.disabled = false;
+    } else {
+      $clientKey.disabled = true;
+    }
+    if ($baseURL.value.replace(/\s/g, "") === "" || $clientKey.value.replace(/\s/g, "") === "") {
+      $button.removeEventListener("click", checkConnection);
     }
     if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
       $annotationToggle.disabled = false;
