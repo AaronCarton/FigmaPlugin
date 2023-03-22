@@ -5,8 +5,7 @@ export default () => {
 
   async function initializeClient(baseURL: string, clientKey: string, sourceKey: string) {
     checkIfProjectExist(baseURL, "test");
-    const connection = await api.initializeClient(baseURL, clientKey, sourceKey);
-    console.log(connection);
+    await api.initializeClient(baseURL, clientKey, sourceKey);
   }
 
   // Function to check is the project already exists or not.
@@ -20,21 +19,19 @@ export default () => {
       getProjectData(projectKey);
       getAnnotationData(projectKey, false);
     } else {
-      console.error("Project key is not valid");
+      throw new Error("Project key is not valid");
     }
   }
 
   // Function to get project data from ODS
   async function getProjectData(projectKey: string) {
     const data = await api.searchProjects(projectKey);
-    console.log(data);
     return data;
   }
 
   // Function to get annotation data from ODS
   async function getAnnotationData(projectKey: string, showDeleted: boolean) {
     const data = await api.searchAnnotations(projectKey, showDeleted);
-    console.log(data);
     return data;
   }
 
@@ -44,15 +41,19 @@ export default () => {
 };
 
 // Function to check if given database URL is valid, for now just checks with a regex but needs to be checked with ODS to see if link exists.
-function validateUrl(url: string): void | string {
+async function validateUrl(url: string) {
   const urlPattern = /^(https:?|ftp):\/\/(-\.)?([^\s/?.#-]+\.?)+(\/[^\s]*)?$/i;
   const isValid = urlPattern.test(url);
 
-  if (isValid) {
-    console.log("Valid URL: " + url);
-  } else {
-    const errorMessage = "Invalid URL: " + url;
-    console.error(errorMessage);
-    return errorMessage;
+  try {
+    const response = await fetch(url);
+    if (response.status === 404) {
+      throw new Error("URL is not found");
+    }
+    if (!isValid) {
+      throw new Error("URL is not valid");
+    }
+  } catch (error) {
+    return error;
   }
 }
