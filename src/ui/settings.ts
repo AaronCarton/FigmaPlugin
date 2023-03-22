@@ -22,21 +22,41 @@ const toggleAnnotations = (e: Event) => {
 };
 
 const disableFields = () => {
-  if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null) {
+  if (
+    $baseURL !== null &&
+    $clientKey !== null &&
+    $annotationToggle !== null &&
+    $button !== null &&
+    $sourceKey !== null
+  ) {
     $annotationToggle.disabled = true;
     $clientKey.disabled = true;
+    $sourceKey.disabled = true;
     $button.removeEventListener("click", checkConnection);
   }
 };
 
 const disableFieldsWhenNecessary = () => {
   disableFields();
-  if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null) {
+  if (
+    $baseURL !== null &&
+    $clientKey !== null &&
+    $annotationToggle !== null &&
+    $button !== null &&
+    $sourceKey !== null
+  ) {
     //replace makes sure people can not connect with empty strings (for example pressing spacebar)
     if ($baseURL.value.replace(/\s/g, "") !== "") {
       $clientKey.disabled = false;
     }
     if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
+      $sourceKey.disabled = false;
+    }
+    if (
+      $baseURL.value.replace(/\s/g, "") !== "" &&
+      $sourceKey.value.replace(/\s/g, "") !== "" &&
+      $clientKey.value.replace(/\s/g, "") !== ""
+    ) {
       $annotationToggle.disabled = false;
       $button.addEventListener("click", checkConnection);
     }
@@ -47,6 +67,7 @@ const initAnnotationToggleEvents = () => {
   $annotationToggle?.addEventListener("click", toggleAnnotations);
   $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
   $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
+  $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
 };
 
 const init = () => {

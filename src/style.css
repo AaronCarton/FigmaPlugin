@@ -1,3 +1,4 @@
 /*main css file, import all css in here*/
 @import "./style/navigation-tabs.css";
 @import "./style/settings.css";
+@import "./style/vars.css";
