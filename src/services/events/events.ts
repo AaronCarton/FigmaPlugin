@@ -26,12 +26,14 @@ export default () => {
   // Function to get project data from ODS
   async function getProjectData(projectKey: string) {
     const data = await api.searchProjects(projectKey);
+    console.log(data); // DELETE THIS - temporary
     return data;
   }
 
   // Function to get annotation data from ODS
   async function getAnnotationData(projectKey: string, showDeleted: boolean) {
     const data = await api.searchAnnotations(projectKey, showDeleted);
+    console.log(data); // DELETE THIS - temporary
     return data;
   }
 
