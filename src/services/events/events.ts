@@ -46,8 +46,8 @@ async function validateUrl(url: string) {
   const isValid = urlPattern.test(url);
 
   try {
-    const response = await fetch(url);
-    if (response.status === 404) {
+    const response = await (await fetch(url)).status;
+    if (response === 404) {
       throw new Error("URL is not found");
     }
     if (!isValid) {
