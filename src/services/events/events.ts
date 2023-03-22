@@ -1,13 +1,11 @@
-import { RequestOptions } from "../api/client";
 import ApiClient from "../api/client";
-import Project from "../../interfaces/interface.project";
 
 export default () => {
   const api = ApiClient();
 
-  async function makeConnection(baseURL: string, clientKey: string, sourceKey: string) {
+  async function initializeClient(baseURL: string, clientKey: string, sourceKey: string) {
     checkIfProjectExist(baseURL, "test");
-    const connection = await api.connect(baseURL, clientKey, sourceKey);
+    const connection = await api.initializeClient(baseURL, clientKey, sourceKey);
     console.log(connection);
   }
 
@@ -34,14 +32,14 @@ export default () => {
   }
 
   // Function to get annotation data from ODS
-  async function getAnnotationData(projectKey: string, showDeleted: boolean){
+  async function getAnnotationData(projectKey: string, showDeleted: boolean) {
     const data = await api.searchAnnotations(projectKey, showDeleted);
     console.log(data);
     return data;
   }
 
   return {
-    makeConnection,
+    initializeClient,
   };
 };
 

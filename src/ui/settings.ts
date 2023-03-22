@@ -11,7 +11,9 @@ const checkConnection = async () => {
   // making sure there are no spaces in the values, even if the user typed spaces
   const baseURL: string | undefined = $baseURL?.value.replace(/\s/g, "").trim();
   const clientKey: string | undefined = $clientKey?.value.replace(/\s/g, "").trim();
-  $button?.addEventListener("click", () => events.makeConnection(baseURL, clientKey, "sourceKey"));
+  $button?.addEventListener("click", () =>
+    events.initializeClient(baseURL as string, clientKey as string, "sourceKey"),
+  );
   console.log(baseURL, clientKey);
 };
 
