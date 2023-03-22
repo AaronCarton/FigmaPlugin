@@ -34,98 +34,112 @@
     </section>
   </nav>
   <div class="c-content">
+    <!-- #region CONNECT PANEL  -->
     <section class="c-connect js-panel-item is-active" id="connect">
-      <div class="js-connection c-connection is-active">
+      <div class="js-connection c-connection">
         <div class="c-connect__item">
-          <div class="c-input">
-            <span class="c-input__title">Data source</span>
+          <div class="c-connect__input">
+            <span class="c-connect__input-title">Data source</span>
             <select
               name="data-source-select"
               id="data-source-select"
-              class="c-input__selector is-active-field"
+              class="c-connect__input-selector is-active"
             >
               <option value="" selected disabled hidden>Choose source</option>
               <option value="">Dummy data</option>
               <option value="">Dummy data</option>
             </select>
-            <div class="c-input__text" id="data-source-text">
-              <input type="text" class="c-sample__field" />
+            <div class="c-connect__input-text" id="data-source-text">
+              <div class="c-connect__input-text-field">
+                <input type="text" class="c-connect__input-field" />
+              </div>
             </div>
           </div>
-          <button class="c-icon js-btn" data-target="data-source"></button>
+          <button class="c-connect__icon js-btn" data-target="data-source"></button>
         </div>
         <div class="c-connect__item">
-          <div class="c-input">
-            <span class="c-input__title">Entity</span>
+          <div class="c-connect__input">
+            <span class="c-connect__input-title">Entity</span>
             <select
               name="entity-select"
               id="entity-select"
-              class="c-input__selector is-active-field"
+              class="c-connect__input-selector is-active"
             >
               <option value="" selected disabled hidden>Choose entity</option>
               <option value="">Dummy data</option>
               <option value="">Dummy data</option>
             </select>
-            <div class="c-input__text" id="entity-text">
-              <input type="text" class="c-sample__field" />
+            <div class="c-connect__input-text" id="entity-text">
+              <div class="c-connect__input-text-field">
+                <input type="text" class="c-connect__input-field" />
+              </div>
             </div>
           </div>
-          <button class="c-icon js-btn" data-target="entity"></button>
+          <button class="c-connect__icon js-btn" data-target="entity"></button>
         </div>
         <div class="c-connect__item">
-          <div class="c-input">
-            <span class="c-input__title">Attribute</span>
+          <div class="c-connect__input">
+            <span class="c-connect__input-title">Attribute</span>
             <select
               name="attribute-select"
               id="attribute-select"
-              class="c-input__selector is-active-field"
+              class="c-connect__input-selector is-active"
             >
               <option value="" selected disabled hidden>Choose attribute</option>
               <option value="">Dummy data</option>
               <option value="">Dummy data</option>
             </select>
-            <div class="c-input__text" id="attribute-text">
-              <input type="text" class="c-sample__field" />
+            <div class="c-connect__input-text" id="attribute-text">
+              <div class="c-connect__input-text-field">
+                <input type="text" class="c-connect__input-field" />
+              </div>
             </div>
           </div>
-          <button class="c-icon js-btn" data-target="attribute"></button>
+          <button class="c-connect__icon js-btn" data-target="attribute"></button>
         </div>
         <div class="c-connect__item">
-          <div class="c-input">
-            <span class="c-input__title">Data type</span>
+          <div class="c-connect__input">
+            <span class="c-connect__input-title">Data type</span>
             <select
               name="data-type-select"
               id="data-type-select"
-              class="c-input__selector is-active-field"
+              class="c-connect__input-selector is-active"
             >
               <option value="" selected disabled hidden>Choose type</option>
               <option value="">Dummy data</option>
               <option value="">Dummy data</option>
             </select>
-            <div class="c-input__text" id="data-type-text">
-              <input type="text" class="c-sample__field" />
+            <div class="c-connect__input-text" id="data-type-text">
+              <div class="c-connect__input-text-field">
+                <input type="text" class="c-connect__input-field" />
+              </div>
             </div>
           </div>
-          <button class="c-icon js-btn" data-target="data-type"></button>
+          <button class="c-connect__icon js-btn" data-target="data-type"></button>
         </div>
         <div class="c-connect__item c-connect__attribute">
-          <div class="c-input">
-            <span class="c-input__title">Sample value</span>
-            <div class="c-input__sample">
-              <input type="text" class="c-sample__field" />
+          <div class="c-connect__input">
+            <span class="c-connect__input-title">Sample value</span>
+            <div class="c-connect__input-sample">
+              <input type="text" class="c-connect__input-field" />
             </div>
           </div>
         </div>
       </div>
-      <div class="js-no-connection c-no-connection">
+      <div class="js-no-connection c-no-connection is-active">
         <p class="c-no-connection__text">
-          <a class="a-paraph-bold">No connection</a> to database,
-          <a class="a-paraph-bold">go to the settings tab</a> to add the connection link and API
+          <span class="u-txt-bold">No connection</span> to database,
+          <span class="u-txt-bold">go to the settings tab</span> to add the connection link and API
           key.
         </p>
       </div>
     </section>
+    <!-- #endregion -->
+    <!-- #region SETTINGS PANEL  -->
     <section class="c-settings js-panel-item" id="settings">Settings</section>
+    <!-- #endregion -->
+    <!-- #region HOW TO USE PANEL  -->
     <section class="c-usage js-panel-item" id="usage">How to use</section>
+    <!-- #endregion -->
   </div>
 </body>

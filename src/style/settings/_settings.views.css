@@ -7,10 +7,6 @@
   fill: var(--propertize-text-primary);
 }
 
-.is-active-field {
-  display: flex;
-}
-
 .is-active {
   display: block;
   color: var(--propertize-text-primary);

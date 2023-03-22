@@ -6,18 +6,18 @@
   margin-bottom: 5px;
 }
 
-.c-input {
+.c-connect__input {
   display: flex;
   align-items: center;
   gap: 11px;
 }
 
-.c-input__title {
+.c-connect__input-title {
   width: 70px;
   color: #909090;
 }
 
-.c-icon {
+.c-connect__icon {
   background-image: var(--icon-pencil);
   height: 32px;
   width: 32px;
@@ -36,7 +36,7 @@
   margin-bottom: 0px;
 }
 
-.c-input__selector {
+.c-connect__input-selector {
   display: none;
   align-items: center;
   width: 120px;
@@ -62,17 +62,22 @@
   color: var(--propertize-text-primary);
 }
 
-.c-input__text {
+.c-connect__input-text {
   display: none;
+}
+
+.c-connect__input-text-field {
+  display: flex;
   justify-content: start;
   align-items: center;
+  color: var(--propertize-text-secondary);
   width: 188px;
   height: 31px;
   border: 1px solid var(--propertize-accent-color);
   border-radius: 3px;
 }
 
-.c-input__sample {
+.c-connect__input-sample {
   display: flex;
   justify-content: start;
   align-items: center;
@@ -82,14 +87,14 @@
   border-radius: 3px;
 }
 
-.c-sample__field {
+.c-connect__input-field {
   font-size: var(--propertize__font-size--tiny);
   border: none;
   padding: 0 8px;
   width: 100%;
 }
 
-.c-sample__field:focus {
+.c-connect__input-field:focus {
   outline: none;
 }
 
