@@ -4,14 +4,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 var(--propertize__spacing-xl);
   border-bottom: 1px solid var(--propertize-accent-color);
 }
 
 .c-nav__left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--propertize__spacing-xl);
 }
 
 .c-nav__left-item {
@@ -26,20 +26,4 @@
 .c-nav__right-item {
   cursor: pointer;
   color: var(--propertize-text-secondary);
-}
-
-.c-content {
-  padding: 10px 16px 20px 16px;
-}
-
-.c-connect {
-  display: none;
-}
-
-.c-settings {
-  display: none;
-}
-
-.c-usage {
-  display: none;
 }

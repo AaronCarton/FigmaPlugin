@@ -1,0 +1,4 @@
+.c-content {
+  padding: var(--propertize__spacing-lg) var(--propertize__spacing-xl)
+    var(--propertize__spacing-xxl) var(--propertize__spacing-xl);
+}

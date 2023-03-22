@@ -2,7 +2,7 @@ const tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
 const panelItems: NodeListOf<HTMLElement> = document.querySelectorAll(".js-panel-item");
 
 const connectionPanel: HTMLElement = document.querySelector(".js-connection")!;
-const noConnectionPanel: HTMLElement = document.querySelector(".js-no-connection")!;
+const noConnectionPanel: HTMLElement = document.querySelector(".js-disconnected")!;
 
 const isActive = "is-active";
 

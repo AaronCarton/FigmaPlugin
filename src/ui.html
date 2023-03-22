@@ -36,7 +36,7 @@
   <div class="c-content">
     <!-- #region CONNECT PANEL  -->
     <section class="c-connect js-panel-item is-active" id="connect">
-      <div class="js-connection c-connection">
+      <div class="js-connection c-connect__container">
         <div class="c-connect__item">
           <div class="c-connect__input">
             <span class="c-connect__input-title">Data source</span>
@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          <button class="c-connect__icon js-btn" data-target="data-source"></button>
+          <button class="c-connect__cta js-btn" data-target="data-source"></button>
         </div>
         <div class="c-connect__item">
           <div class="c-connect__input">
@@ -75,7 +75,7 @@
               </div>
             </div>
           </div>
-          <button class="c-connect__icon js-btn" data-target="entity"></button>
+          <button class="c-connect__cta js-btn" data-target="entity"></button>
         </div>
         <div class="c-connect__item">
           <div class="c-connect__input">
@@ -95,7 +95,7 @@
               </div>
             </div>
           </div>
-          <button class="c-connect__icon js-btn" data-target="attribute"></button>
+          <button class="c-connect__cta js-btn" data-target="attribute"></button>
         </div>
         <div class="c-connect__item">
           <div class="c-connect__input">
@@ -115,7 +115,7 @@
               </div>
             </div>
           </div>
-          <button class="c-connect__icon js-btn" data-target="data-type"></button>
+          <button class="c-connect__cta js-btn" data-target="data-type"></button>
         </div>
         <div class="c-connect__item c-connect__attribute">
           <div class="c-connect__input">
@@ -126,8 +126,8 @@
           </div>
         </div>
       </div>
-      <div class="js-no-connection c-no-connection is-active">
-        <p class="c-no-connection__text">
+      <div class="js-disconnected c-disconnected is-active">
+        <p class="c-disconnected__text">
           <span class="u-txt-bold">No connection</span> to database,
           <span class="u-txt-bold">go to the settings tab</span> to add the connection link and API
           key.
