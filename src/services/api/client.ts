@@ -143,8 +143,6 @@ export default () => {
     });
   };
 
-  // TODO: add DELETE calls
-
   const deleteAnnotation = async (annotation: Annotation) => {
     // set deleted flag to true
     annotation.deleted = true;
