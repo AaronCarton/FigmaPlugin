@@ -1,9 +1,9 @@
-//input elements
+//Input elements
 const $dbURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $apiKey: HTMLInputElement | null = document.querySelector("#settings_apiKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
-//spinner
+//Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 const checkConnection = async () => {
