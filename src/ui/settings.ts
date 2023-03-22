@@ -31,7 +31,7 @@ const disableFields = () => {
   if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null) {
     $annotationToggle.disabled = true;
     $clientKey.disabled = true;
-    $button.removeEventListener("click", checkConnection);
+    $button.disabled = true;
   }
 };
 
@@ -53,16 +53,18 @@ const disableFieldsWhenNecessary = () => {
       $sourceKey.disabled = true;
     }
     if ($baseURL.value.replace(/\s/g, "") === "" || $clientKey.value.replace(/\s/g, "") === "") {
-      $button.removeEventListener("click", checkConnection);
+      $annotationToggle.disabled = true;
+      $button.disabled = true;
     }
     if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
       $annotationToggle.disabled = false;
-      $button.addEventListener("click", checkConnection);
+      $button.disabled = false;
     }
   }
 };
 
 const initAnnotationToggleEvents = () => {
+  $button?.addEventListener("click", checkConnection);
   $annotationToggle?.addEventListener("click", toggleAnnotations);
   $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
   $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
