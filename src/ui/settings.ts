@@ -13,11 +13,14 @@ const checkConnection = async () => {
   const baseURL: string | undefined = $baseURL?.value.replace(/\s/g, "").trim();
   const clientKey: string | undefined = $clientKey?.value.replace(/\s/g, "").trim();
   const sourceKey: string | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
-  $button?.addEventListener("click", () =>
-    events.initializeClient(<string>baseURL, <string>clientKey, <string>sourceKey),
-  );
+
+  makeConnection(<string>baseURL, <string>clientKey, <string>sourceKey);
+};
+
+const makeConnection = (baseURL: string, clientKey: string, sourceKey: string) => {
   $button?.addEventListener("click", () => console.log("clicked"));
-  console.log(baseURL, clientKey);
+  $button?.addEventListener("click", () => events.initializeClient(baseURL, clientKey, sourceKey));
+  console.log(baseURL, clientKey, sourceKey);
 };
 
 const toggleAnnotations = (e: Event) => {

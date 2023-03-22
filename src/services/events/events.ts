@@ -1,24 +1,29 @@
+import Annotation from "../../interfaces/interface.annotation";
 import ApiClient from "../api/client";
 
 export default () => {
   const api = ApiClient();
 
   async function initializeClient(baseURL: string, clientKey: string, sourceKey: string) {
-    checkIfProjectExist(baseURL, "test");
+    checkIfProjectExist(baseURL, "75009577");
+    console.log("voor log basurl etc");
+    console.log(baseURL, clientKey, sourceKey);
     await api.initializeClient(baseURL, clientKey, sourceKey);
+    getProjectData("75009577");
+    getAnnotationData("75009577", true);
+    console.log("na initialize client");
   }
 
   // Function to check is the project already exists or not.
   // If project does not exist yet, a new project will be made with a projectKey, if it already exists the data will be returned.
   async function checkIfProjectExist(baseURL: string, projectKey: string) {
     // URL check to see if url is valid or not.
+    console.log("in checkproject voor validateurl");
     validateUrl(baseURL);
+    console.log("in checkproject na validateurl");
 
     // Check if project exists
-    if (projectKey !== null || projectKey !== undefined) {
-      getProjectData(projectKey);
-      getAnnotationData(projectKey, false);
-    } else {
+    if (projectKey === null || projectKey === undefined) {
       throw new Error("Project key is not valid");
     }
   }
@@ -32,7 +37,14 @@ export default () => {
 
   // Function to get annotation data from ODS
   async function getAnnotationData(projectKey: string, showDeleted: boolean) {
-    const data = await api.searchAnnotations(projectKey, showDeleted);
+    const data = await api.searchAnnotations(projectKey, showDeleted).then((res) => {
+      const annotations = res.results.map((r) => r.item);
+      const someAnnotation = annotations.find((a) => a.attribute === "passwordField") as Annotation;
+
+      api.deleteAnnotation(someAnnotation).then((res) => {
+        console.log(res);
+      });
+    });
     console.log(data); // DELETE THIS - temporary
     return data;
   }
