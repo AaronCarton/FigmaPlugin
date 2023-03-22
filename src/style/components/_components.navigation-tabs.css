@@ -1,0 +1,45 @@
+.c-nav {
+  font-weight: var(--propertize__font-weight--semibold);
+  height: 39px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--propertize-accent-color);
+}
+
+.c-nav__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.c-nav__left-item {
+  cursor: pointer;
+  color: var(--propertize-text-secondary);
+}
+
+.c-nav__left-item.is-active .a-settings-icon {
+  fill: var(--propertize-text-primary);
+}
+
+.c-nav__right-item {
+  cursor: pointer;
+  color: var(--propertize-text-secondary);
+}
+
+.c-content {
+  padding: 10px 16px 20px 16px;
+}
+
+.c-connect {
+  display: none;
+}
+
+.c-settings {
+  display: none;
+}
+
+.c-usage {
+  display: none;
+}

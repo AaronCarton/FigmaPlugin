@@ -1,0 +1,8 @@
+.a-settings-icon {
+  fill: var(--propertize-text-secondary);
+}
+
+.a-settings-tab {
+  display: flex;
+  align-items: center;
+}

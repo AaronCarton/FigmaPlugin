@@ -1,0 +1,5 @@
+body {
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
+  margin: 0;
+}
