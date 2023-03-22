@@ -10,5 +10,3 @@ api.searchAnnotations("75059577", true).then((res) => {
     console.log(res);
   });
 });
-import "./ui/navigation-tabs.ts";
-import "./ui/connect-panel";
