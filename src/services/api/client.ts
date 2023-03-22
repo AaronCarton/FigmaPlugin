@@ -104,6 +104,7 @@ export default () => {
   /**
    *  Search annotations by project key
    *  @param {string} projectKey - Key of the project to search annotations for
+   *  @param {boolean} showDeleted - Whether to show deleted annotations as well, defaults to false
    */
   const searchAnnotations = async (
     projectKey: string,
