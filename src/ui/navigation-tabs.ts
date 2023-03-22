@@ -18,7 +18,10 @@ const checkConnection = () => {
     connectionPanel.classList.remove(isActive);
     noConnectionPanel.classList.add(isActive);
   }
-  parent.postMessage({ pluginMessage: { type: "connectionCheck", connection: connectionState } });
+  parent.postMessage(
+    { pluginMessage: { type: "connectionCheck", connection: connectionState } },
+    "*",
+  );
 };
 
 tabs.forEach((trigger) =>
@@ -32,9 +35,12 @@ tabs.forEach((trigger) =>
     });
     trigger.classList.add(isActive);
     document.getElementById(selectedTab)?.classList.add(isActive);
-    parent.postMessage({
-      pluginMessage: { type: "changeTab", tab: selectedTab, connection: connectionState },
-    });
+    parent.postMessage(
+      {
+        pluginMessage: { type: "changeTab", tab: selectedTab, connection: connectionState },
+      },
+      "*",
+    );
   }),
 );
 
