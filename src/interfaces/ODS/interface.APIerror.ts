@@ -1,9 +1,7 @@
-import { AxiosResponse } from "axios";
-
 export default class APIError extends Error {
-  response: AxiosResponse;
+  response: Response;
 
-  constructor(response: AxiosResponse, message: string) {
+  constructor(response: Response, message: string) {
     super(message);
     this.name = "APIError";
     this.response = response;

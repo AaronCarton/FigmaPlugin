@@ -1,11 +1,10 @@
-import axios, { AxiosInstance } from "axios";
 import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ODS/interface.APIerror";
 import ODSresponse from "../../interfaces/ODS/interface.ODSresponse";
 import convertODSchild from "../../utils/convertODSchild";
 
-let APIclient: AxiosInstance;
+let BASE_URL: string;
 let CLIENT_APIKEY: string;
 let SOURCE_APIKEY: string;
 
@@ -19,22 +18,15 @@ interface RequestOptions<K> {
 
 export default () => {
   /**
-   * Connect to ODS API
+   * Configure API client
    * @param {string} baseURL - Base URL of the ODS API
    * @param {string} clientKey - Client API key
    * @param {string} sourceKey - Source API key
    */
-  const connect = async (baseURL: string, clientKey: string, sourceKey: string) => {
-    APIclient = axios.create({
-      baseURL: baseURL,
-      timeout: 10000,
-      headers: {
-        "content-type": "application/json",
-      },
-    });
+  const initializeClient = async (baseURL: string, clientKey: string, sourceKey: string) => {
+    BASE_URL = baseURL;
     CLIENT_APIKEY = clientKey;
     SOURCE_APIKEY = sourceKey;
-    return APIclient;
   };
 
   /**
@@ -51,8 +43,8 @@ export default () => {
     options: RequestOptions<K>,
   ): Promise<T extends string ? string : ODSresponse<T, U, K>> {
     // check if API client is initialized
-    if (!APIclient) {
-      throw new Error("API client not initialized");
+    if (!BASE_URL) {
+      throw new Error("BASE_URL not set");
     }
     if (!CLIENT_APIKEY) {
       throw new Error("CLIENT_APIKEY not set");
@@ -63,19 +55,19 @@ export default () => {
 
     // create request
     const { method, body, apiKey, metadata } = options;
-    const res = await APIclient({
-      url: url,
+    const res = await fetch(BASE_URL + url, {
       method: method,
-      data: body,
+      body: JSON.stringify(body),
       headers: {
+        "Content-Type": "application/json",
         "x-api-key": apiKey,
-        "x-include-metadata": metadata || false,
+        "x-include-metadata": metadata ? "true" : "false",
         "x-expand": options.parent || "",
       },
     });
 
     // error handling
-    if (![200, 201, 204].includes(res.status)) {
+    if (!res.ok) {
       switch (res.status) {
         case 404:
           throw new APIError(res, "API URL not found, please check your URL");
@@ -87,7 +79,7 @@ export default () => {
           throw new APIError(res, "Something went wrong, please try again later");
       }
     }
-    return res.data;
+    return res.headers.get("content-type")?.includes("application/json") ? res.json() : res.text();
   }
 
   ////////* API calls *////////
@@ -97,7 +89,7 @@ export default () => {
    * @param {string} projectKey - Key of the project to search for
    * */
   const searchProjects = async (projectKey: string): Promise<ODSresponse<Project>> => {
-    const res = await getData<Project>("api/search/project", {
+    const res = await getData<Project>("/api/search/project", {
       method: "POST",
       apiKey: CLIENT_APIKEY,
       body: {
@@ -116,7 +108,7 @@ export default () => {
     showDeleted = false,
   ): Promise<ODSresponse<Annotation>> => {
     // example of how to search for annotations by project key, with Project as parent
-    const res = await getData<Annotation, Project, "project">("api/search/annotation", {
+    const res = await getData<Annotation, Project, "project">("/api/search/annotation", {
       method: "POST",
       apiKey: CLIENT_APIKEY,
       parent: "project",
@@ -173,7 +165,7 @@ export default () => {
   };
 
   return {
-    connect,
+    initializeClient,
     searchAnnotations,
     upsertAnnotation,
     deleteAnnotation,
