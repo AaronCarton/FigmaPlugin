@@ -1,4 +1,4 @@
-import ODSobject from "./ODS/interface.ODSobject";
+import ODSobject from "./ods/interface.ODSobject";
 
 export interface IAnnotation {
   dataSource: string;

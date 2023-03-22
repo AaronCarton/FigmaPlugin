@@ -1,7 +1,7 @@
 import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project from "../../interfaces/interface.project";
-import APIError from "../../interfaces/ODS/interface.APIerror";
-import ODSresponse from "../../interfaces/ODS/interface.ODSresponse";
+import APIError from "../../interfaces/ods/interface.APIerror";
+import ODSresponse from "../../interfaces/ods/interface.ODSresponse";
 import convertODSchild from "../../utils/convertODSchild";
 
 let BASE_URL: string;
