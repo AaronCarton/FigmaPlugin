@@ -6,7 +6,3 @@
 @import "./style/components/_components.navigation-tabs.css";
 @import "./style/components/_components.connect-panel.css";
 @import "./style/settings/_settings.views.css";
-/*main css file, import all css in here*/
-@import "./style/navigation-tabs.css";
-@import "./style/settings.css";
-@import "./style/vars.css";
