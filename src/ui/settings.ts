@@ -14,13 +14,7 @@ const checkConnection = async () => {
   const clientKey: string | undefined = $clientKey?.value.replace(/\s/g, "").trim();
   const sourceKey: string | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
 
-  makeConnection(<string>baseURL, <string>clientKey, <string>sourceKey);
-};
-
-const makeConnection = (baseURL: string, clientKey: string, sourceKey: string) => {
-  $button?.addEventListener("click", () => console.log("clicked"));
-  $button?.addEventListener("click", () => events.initializeClient(baseURL, clientKey, sourceKey));
-  console.log(baseURL, clientKey, sourceKey);
+  events.initializeClient(<string>baseURL, <string>clientKey, <string>sourceKey);
 };
 
 const toggleAnnotations = (e: Event) => {
