@@ -7,7 +7,9 @@ const $clientKey: HTMLInputElement | null = document.querySelector("#settings_cl
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
-
+//Spinner
+const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
+const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 const checkConnection = async () => {
   // making sure there are no spaces in the values, even if the user typed spaces
   const baseURL: string | undefined = $baseURL?.value.replace(/\s/g, "").trim();
@@ -17,6 +19,14 @@ const checkConnection = async () => {
     events.initializeClient(<string>baseURL, <string>clientKey, <string>sourceKey),
   );
   console.log(baseURL, clientKey);
+  $plugin?.classList.add("no-pointer");
+  $spinner?.removeAttribute("hidden");
+  fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
+    .then((response) => response.json())
+    .then(() => {
+      $plugin?.classList.remove("no-pointer");
+      $spinner?.setAttribute("hidden", "");
+    });
 };
 
 const toggleAnnotations = (e: Event) => {
