@@ -1,7 +1,7 @@
 import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
-import ODSresponse from "../../interfaces/ods/interface.ODSresponse";
+import { ODSresponse, ODSobject } from "../../interfaces/ods/interface.ODSresponse";
 import convertODSchild from "../../utils/convertODSchild";
 
 let BASE_URL: string;
@@ -41,7 +41,7 @@ export default () => {
   async function getData<T = string, U = undefined, K extends string = "">(
     url: string,
     options: RequestOptions<K>,
-  ): Promise<T extends string ? string : ODSresponse<T, U, K>> {
+  ): Promise<T extends ODSobject ? ODSresponse<T, U, K> : string> {
     // check if API client is initialized
     if (!BASE_URL) {
       throw new Error("BASE_URL not set");
