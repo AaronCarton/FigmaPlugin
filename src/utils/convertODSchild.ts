@@ -1,4 +1,4 @@
-import ODSobject from "../interfaces/ODS/interface.ODSobject";
+import { ODSobject } from "../interfaces/ODS/interface.ODSresponse";
 
 export default <T>(obj: ODSobject): T => {
   const x = obj as Partial<ODSobject>;

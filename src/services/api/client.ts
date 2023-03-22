@@ -1,7 +1,7 @@
 import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project from "../../interfaces/interface.project";
-import APIError from "../../interfaces/ODS/interface.APIerror";
-import ODSresponse from "../../interfaces/ODS/interface.ODSresponse";
+import APIError from "../../interfaces/ods/interface.APIerror";
+import { ODSresponse, ODSobject } from "../../interfaces/ods/interface.ODSresponse";
 import convertODSchild from "../../utils/convertODSchild";
 
 let BASE_URL: string;
@@ -43,7 +43,7 @@ export default () => {
   async function getData<T = string, U = undefined, K extends string = "">(
     url: string,
     options: RequestOptions<K>,
-  ): Promise<T extends string ? string : ODSresponse<T, U, K>> {
+  ): Promise<T extends ODSobject ? ODSresponse<T, U, K> : string> {
     // check if API client is initialized
     if (!BASE_URL) {
       throw new Error("BASE_URL not set");
@@ -57,6 +57,7 @@ export default () => {
 
     // create request
     const { method, body, apiKey, metadata } = options;
+    console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey);
     const res = await fetch(BASE_URL + url, {
       method: method,
       body: JSON.stringify(body),
@@ -67,6 +68,7 @@ export default () => {
         "x-expand": options.parent || "",
       },
     });
+    console.debug(`[API] Response: ${method} ${url}`, res);
 
     // error handling
     if (!res.ok) {
@@ -104,6 +106,7 @@ export default () => {
   /**
    *  Search annotations by project key
    *  @param {string} projectKey - Key of the project to search annotations for
+   *  @param {boolean} showDeleted - Whether to show deleted annotations as well, defaults to false
    */
   const searchAnnotations = async (
     projectKey: string,
@@ -144,8 +147,6 @@ export default () => {
       body: project,
     });
   };
-
-  // TODO: add DELETE calls
 
   const deleteAnnotation = async (annotation: Annotation) => {
     // set deleted flag to true
