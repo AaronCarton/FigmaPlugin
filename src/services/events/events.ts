@@ -1,16 +1,15 @@
-import Annotation from "../../interfaces/interface.annotation";
 import ApiClient from "../api/client";
 
 export default () => {
   const api = ApiClient();
 
   async function initializeClient(baseURL: string, clientKey: string, sourceKey: string) {
-    checkIfProjectExist(baseURL, "75009577");
+    checkIfProjectExist(baseURL, "75059577");
     console.log("voor log basurl etc");
     console.log(baseURL, clientKey, sourceKey);
     await api.initializeClient(baseURL, clientKey, sourceKey);
-    getProjectData("75009577");
-    getAnnotationData("75009577", true);
+    getProjectData("75059577");
+    getAnnotationData("75059577", true);
     console.log("na initialize client");
   }
 
@@ -30,21 +29,17 @@ export default () => {
 
   // Function to get project data from ODS
   async function getProjectData(projectKey: string) {
-    const data = await api.searchProjects(projectKey);
+    const data = await api.searchProjects(projectKey).then((res) => res.results.map((r) => r.item));
     console.log(data); // DELETE THIS - temporary
     return data;
   }
 
   // Function to get annotation data from ODS
   async function getAnnotationData(projectKey: string, showDeleted: boolean) {
-    const data = await api.searchAnnotations(projectKey, showDeleted).then((res) => {
-      const annotations = res.results.map((r) => r.item);
-      const someAnnotation = annotations.find((a) => a.attribute === "passwordField") as Annotation;
+    const data = await api
+      .searchAnnotations(projectKey, showDeleted)
+      .then((res) => res.results.map((r) => r.item));
 
-      api.deleteAnnotation(someAnnotation).then((res) => {
-        console.log(res);
-      });
-    });
     console.log(data); // DELETE THIS - temporary
     return data;
   }
@@ -59,15 +54,16 @@ async function validateUrl(url: string) {
   const urlPattern = /^(https:?|ftp):\/\/(-\.)?([^\s/?.#-]+\.?)+(\/[^\s]*)?$/i;
   const isValid = urlPattern.test(url);
 
-  try {
-    const response = await (await fetch(url)).status;
-    if (response === 404) {
-      throw new Error("URL is not found");
-    }
-    if (!isValid) {
-      throw new Error("URL is not valid");
-    }
-  } catch (error) {
-    return error;
-  }
+  //* No point in checking if URL exists, because the base Azure URL will always return 404
+  // try {
+  //   const response = await (await fetch(url)).status;
+  //   if (response === 404) {
+  //     throw new Error("URL is not found");
+  //   }
+  //   if (!isValid) {
+  //     throw new Error("URL is not valid");
+  //   }
+  // } catch (error) {
+  //   return error;
+  // }
 }
