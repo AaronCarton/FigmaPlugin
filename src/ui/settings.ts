@@ -2,6 +2,7 @@ import EventHub from "../services/events/events";
 
 // input elements
 const events = EventHub();
+const $form: HTMLFormElement | null = document.querySelector(".c-plugin__form");
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
@@ -64,6 +65,7 @@ const disableFieldsWhenNecessary = () => {
 };
 
 const initAnnotationToggleEvents = () => {
+  $form?.addEventListener("submit", (e) => e.preventDefault());
   $button?.addEventListener("click", checkConnection);
   $annotationToggle?.addEventListener("click", toggleAnnotations);
   $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
