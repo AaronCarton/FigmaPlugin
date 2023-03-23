@@ -43,5 +43,6 @@
 .c-usage__alinea-list {
   padding-left: var(--propertize__spacing-xl);
   margin: 0;
+  padding-bottom: 10px;
   color: var(--propertize-black);
 }
