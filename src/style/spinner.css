@@ -1,8 +1,4 @@
-.no-pointer {
-  pointer-events: none;
-  filter: blur(1px);
-}
-.c-plugin__loader {
+.c-spinner {
   filter: blur(0px);
   z-index: 99;
   margin-left: calc(50% - 48px);
@@ -15,18 +11,18 @@
   position: absolute;
   animation: rotate 1s linear infinite;
 }
-.c-plugin__loader::before,
-.c-plugin__loader::after {
+.c-spinner::before,
+.c-spinner::after {
   content: "";
   box-sizing: border-box;
   position: absolute;
   inset: 0px;
   border-radius: 50%;
-  border: 5px solid #b1b1b1;
+  border: 5px solid var(--propertize-accent-color);
   animation: prixClipFix 2s linear infinite;
 }
-.c-plugin__loader::after {
-  border-color: #ff3d00;
+.c-spinner::after {
+  border-color: var(--propertize-accent-red);
   animation: prixClipFix 2s linear infinite, rotate 0.5s linear infinite reverse;
   inset: 6px;
 }

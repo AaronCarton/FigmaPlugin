@@ -8,3 +8,7 @@
 .hidden{
     display: none;
 }
+.no-pointer {
+    pointer-events: none;
+    filter: blur(1px);
+  }
