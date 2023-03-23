@@ -24,7 +24,7 @@ figma.ui.onmessage = (event) => {
         figma.ui.resize(345, 235);
         break;
       case "usage":
-        figma.ui.resize(345, 586);
+        figma.ui.resize(345, 590);
         break;
       default:
         break;
