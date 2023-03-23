@@ -1,6 +1,6 @@
 /* The switch - the box around the slider */
 .a-annotation-toggle {
-    margin-left: 5px;
+    margin-left: var(--propertize-spacing--tiny);
     position: relative;
     display: inline-block;
     width: 24px;
@@ -26,7 +26,6 @@
     -webkit-transition: 0.4s;
     transition: 0.4s;
     border-radius: 34px;
-
   }
   
   .a-annotation-toggle__slider:before {
@@ -36,21 +35,21 @@
     width: 8px;
     left: 2px;
     bottom: 2px;
-    background-color: white;
+    background-color: var(--propertize-neutrals-white);
     -webkit-transition: 0.4s;
     transition: 0.4s;
     border-radius: 50%;
   }
   
-  input:checked + .a-annotation-toggle__slider {
+  .a-annotation-toggle__input:checked + .a-annotation-toggle__slider {
     background-color: var(--propertize-accent-blue);
   }
   
-  input:focus + .a-annotation-toggle__slider {
+   .a-annotation-toggle__input:focus + .a-annotation-toggle__slider {
     box-shadow: 0 0 1px  var(--propertize-accent-blue);
   }
   
-  input:checked + .a-annotation-toggle__slider:before {
+   .a-annotation-toggle__input:checked + .a-annotation-toggle__slider:before {
     -webkit-transform: translateX(12px);
     -ms-transform: translateX(12px);
     transform: translateX(12px);
