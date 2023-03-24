@@ -1,62 +1,150 @@
-import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
+import { ODSObject, ODSResponse } from "../../interfaces/ods/interface.ODSresponse";
+import Annotation from "../../interfaces/interface.annotation";
 import Project from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
-import { ODSresponse, ODSobject } from "../../interfaces/ods/interface.ODSresponse";
-import convertODSchild from "../../utils/convertODSchild";
 
-let BASE_URL: string;
-let CLIENT_APIKEY: string;
-let SOURCE_APIKEY: string;
+interface ApiOptions {
+  baseURL: string;
+  clientKey: string;
+  sourceKey: string;
+}
 
-interface RequestOptions<K> {
+interface RequestOptions {
   method: "GET" | "PUT" | "POST" | "DELETE";
   apiKey: string;
   body?: object;
   metadata?: boolean;
-  parent?: K;
+  parent?: string;
 }
 
-export default () => {
+export default class ApiClient {
+  public static BASE_URL: string;
+  public static CLIENT_APIKEY: string;
+  public static SOURCE_APIKEY: string;
+
   /**
    * Configure API client
    * @param {string} baseURL - Base URL of the ODS API
    * @param {string} clientKey - Client API key
    * @param {string} sourceKey - Source API key
    */
-  const initializeClient = async (baseURL: string, clientKey: string, sourceKey: string) => {
-    BASE_URL = baseURL;
-    CLIENT_APIKEY = clientKey;
-    SOURCE_APIKEY = sourceKey;
-  };
+  public static initialize({ baseURL, clientKey, sourceKey }: ApiOptions) {
+    this.checkInitialized({ baseURL, clientKey, sourceKey });
+
+    this.BASE_URL = baseURL;
+    this.CLIENT_APIKEY = clientKey;
+    this.SOURCE_APIKEY = sourceKey;
+
+    return new ApiClient();
+  }
+
+  private static checkInitialized({ baseURL, clientKey, sourceKey }: ApiOptions) {
+    if (ApiClient.BASE_URL) {
+      throw new Error("ApiClient has already been initialized");
+    }
+    if (!baseURL) {
+      throw new Error("baseURL is required");
+    }
+    if (!clientKey) {
+      throw new Error("clientKey is required");
+    }
+    if (!sourceKey) {
+      throw new Error("sourceKey is required");
+    }
+  }
+
+  ////////* API CALLS *////////
+
+  /**
+   * Search for projects
+   * @param {string} projectKey - Key of the project to search for
+   * @returns {Promise<Project[]>} - Promise that resolves to an array of projects
+   */
+  public async getProject(projectKey: string): Promise<Project[]> {
+    return this.searchItem<Project>("project", `projectKey.eq${projectKey}`).then((res) =>
+      res.results.map((res) => new Project(res.item, this)),
+    );
+  }
+
+  /**
+   * Search for annotations
+   * @param {string} projectKey - Key of the project to search for
+   * @param {boolean} showDeleted - Whether to show deleted annotations
+   * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
+   */
+  async getAnnotations(projectKey: string, showDeleted = false): Promise<Annotation[]> {
+    return this.searchItem<Annotation>(
+      "annotation",
+      `projectKey.eq.${projectKey}` + (showDeleted ? "" : "/deleted.eq.false"),
+    ).then((res) => res.results.map((res) => new Annotation(res.item, this)));
+  }
+
+  ////////* HELPER FUNCTIONS *////////
+
+  /**
+   * Generic function to search for items in the ODS API
+   * @template Type Type of the item to search for (e.g. Annotation)
+   * @template ParentType Optional type of the parent object (e.g. Project)
+   * @template ParentKey Optional key under which the parent will be found (e.g. "project")
+   * @param {string} itemType index of item to search for (e.g. "annotation")
+   * @param {string} filter filter to apply to the search (e.g. projectKey.eq.123)
+   * @param {string} parent optional parent (e.g. "project")
+   */
+  public async searchItem<
+    Type extends ODSObject<Type>,
+    ParentType = undefined,
+    ParentKey extends string = "",
+  >(
+    itemType: string,
+    filter: string,
+    parent?: ParentKey,
+  ): Promise<ODSResponse<Type, ParentType, ParentKey>> {
+    const res = await this.fetchData(`/api/search/${itemType}`, {
+      method: "POST",
+      apiKey: ApiClient.CLIENT_APIKEY,
+      body: {
+        filter: filter,
+      },
+      parent: parent,
+      metadata: true,
+    });
+
+    return res.json();
+  }
+
+  /**
+   * Generic function to upsert items in the ODS API
+   * @template Type Type of the item to upsert (e.g. Annotation)
+   * @param {string} itemType index of item (e.g. "annotation")
+   * @param {string} itemKey key of the item
+   * @param {Type} body the item to upsert
+   */
+  public async upsertItem<Type extends ODSObject<Type>>(
+    itemType: string,
+    itemKey: string,
+    body: Type,
+  ) {
+    const res = await this.fetchData(`/api/items/${itemType}/null/${itemKey}`, {
+      method: "PUT",
+      apiKey: ApiClient.SOURCE_APIKEY,
+      body: body,
+      metadata: true,
+    });
+    return res.text(); // Update response are empty bodies
+  }
 
   /**
    * Generic function to make API calls
-   * @template T - Optional type of returned data. If not provided, a string will be returned.
-   * @template U - Optional type of parent data. If not provided, no parent will be returned.
-   * @template K - Optional key under which parent data will be found.
    * @param {string} url - API endpoint
    * @param {RequestOptions} options - Request options
-   * @returns {Promise<T extends string ? string : ODSresponse<T>>} - Response data, either as string or ODSresponse<T>
-   * */
-  async function getData<T = string, U = undefined, K extends string = "">(
-    url: string,
-    options: RequestOptions<K>,
-  ): Promise<T extends ODSobject ? ODSresponse<T, U, K> : string> {
-    // check if API client is initialized
-    if (!BASE_URL) {
-      throw new Error("BASE_URL not set");
-    }
-    if (!CLIENT_APIKEY) {
-      throw new Error("CLIENT_APIKEY not set");
-    }
-    if (!SOURCE_APIKEY) {
-      throw new Error("SOURCE_APIKEY not set");
-    }
-
-    // create request
+   * @returns {Promise<Response>} - Response object from fetch
+   */
+  private async fetchData(url: string, options: RequestOptions): Promise<Response> {
     const { method, body, apiKey, metadata } = options;
+
+    // Create request
     console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey);
-    const res = await fetch(BASE_URL + url, {
+    const res = await fetch(ApiClient.BASE_URL + url, {
       method: method,
       body: JSON.stringify(body),
       headers: {
@@ -68,7 +156,7 @@ export default () => {
     });
     console.debug(`[API] Response: ${method} ${url}`, res);
 
-    // error handling
+    // Error handling
     if (!res.ok) {
       switch (res.status) {
         case 404:
@@ -81,101 +169,7 @@ export default () => {
           throw new APIError(res, "Something went wrong, please try again later");
       }
     }
-    return res.headers.get("content-type")?.includes("application/json") ? res.json() : res.text();
+
+    return res;
   }
-
-  ////////* API calls *////////
-
-  /**
-   * Search projects by project key
-   * @param {string} projectKey - Key of the project to search for
-   * */
-  const searchProjects = async (projectKey: string): Promise<ODSresponse<Project>> => {
-    const res = await getData<Project>("/api/search/project", {
-      method: "POST",
-      apiKey: CLIENT_APIKEY,
-      body: {
-        filter: `projectKey.eq.${projectKey}`,
-      },
-    });
-    return res;
-  };
-
-  /**
-   *  Search annotations by project key
-   *  @param {string} projectKey - Key of the project to search annotations for
-   *  @param {boolean} showDeleted - Whether to show deleted annotations as well, defaults to false
-   */
-  const searchAnnotations = async (
-    projectKey: string,
-    showDeleted = false,
-  ): Promise<ODSresponse<Annotation>> => {
-    // example of how to search for annotations by project key, with Project as parent
-    const res = await getData<Annotation, Project, "project">("/api/search/annotation", {
-      method: "POST",
-      apiKey: CLIENT_APIKEY,
-      parent: "project",
-      body: {
-        filter: `projectKey.eq.${projectKey}` + (showDeleted ? "" : "/deleted.eq.false"),
-      },
-    });
-    return res;
-  };
-
-  /**
-   * Update or create an annotation
-   * @param {Annotation} annotation - Annotation to update or create
-   * */
-  const upsertAnnotation = async (annotation: Annotation) => {
-    await getData(`/api/items/annotation/null/${annotation.itemKey}`, {
-      method: "PUT",
-      apiKey: SOURCE_APIKEY,
-      body: annotation,
-    });
-  };
-
-  /**
-   * Update or create a project
-   * @param {Project} project - Project to update or create
-   * */
-  const upsertProject = async (project: Project) => {
-    await getData(`/api/items/project/null/${project.itemKey}`, {
-      method: "PUT",
-      apiKey: SOURCE_APIKEY,
-      body: project,
-    });
-  };
-
-  const deleteAnnotation = async (annotation: Annotation) => {
-    // set deleted flag to true
-    annotation.deleted = true;
-    await getData(`/api/items/annotation/null/${annotation.itemKey}`, {
-      method: "PUT",
-      apiKey: SOURCE_APIKEY,
-      body: convertODSchild<IAnnotation>(annotation), // convert to IAnnotation to remove unwanted fields (e.g. itemKey, partition)
-    });
-  };
-
-  const restoreAnnotation = async (annotation: Annotation) => {
-    annotation.deleted = false;
-    await getData(`/api/items/annotation/null/${annotation.itemKey}`, {
-      method: "PUT",
-      apiKey: SOURCE_APIKEY,
-      body: convertODSchild<IAnnotation>(annotation),
-    });
-  };
-
-  return {
-    initializeClient,
-    searchAnnotations,
-    upsertAnnotation,
-    deleteAnnotation,
-    restoreAnnotation,
-
-    searchProjects,
-    upsertProject,
-
-    CLIENT_APIKEY,
-    SOURCE_APIKEY,
-  };
-};
+}

@@ -1,13 +1,15 @@
-import Annotation from "./interfaces/interface.annotation";
 import ApiClient from "./services/api/client";
-const api = ApiClient();
 
-api.initializeClient("http://localhost:1139", "123", "123");
-api.searchAnnotations("75059577", true).then((res) => {
-  const annotations = res.results.map((r) => r.item);
-  const someAnnotation = annotations.find((a) => a.attribute === "passwordField") as Annotation;
+const api = ApiClient.initialize("http://localhost:1139", "123", "123");
+api.getAnnotations("75059577", true).then(async (annotations) => {
+  console.log(annotations);
 
-  api.deleteAnnotation(someAnnotation).then((res) => {
-    console.log(res);
+  const someAnnotation = annotations.find((a) => a.attribute === "registerLink");
+  console.log("someAnnotation", someAnnotation);
+
+  // try to delete the annotation
+  someAnnotation?.archive().then(() => {
+    // try to restore the annotation
+    someAnnotation?.restore();
   });
 });
