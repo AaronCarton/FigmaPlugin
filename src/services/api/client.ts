@@ -79,6 +79,12 @@ export default class ApiClient {
     ).then((res) => res.results.map((res) => new Annotation(res.item, this)));
   }
 
+  /**
+   * Create a new annotation
+   * @param {string} itemKey - Key under which the annotation will be stored
+   * @param {IAnnotation} annotation - Annotation to create (should not contain ODS metadata)
+   * @returns {Promise<Project>} - Promise that resolves to the created annotation
+   */
   public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
     // Create annotation
     return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(() => {
@@ -89,6 +95,12 @@ export default class ApiClient {
     });
   }
 
+  /**
+   * Create a new project
+   * @param {string} itemKey - Key under which the project will be stored
+   * @param {IProject} project - Project to create (should not contain ODS metadata)
+   * @returns {Promise<Project>} - Promise that resolves to the created project
+   */
   public async createProject(itemKey: string, project: IProject): Promise<Project> {
     // Create project
     return await this.upsertItem("project", itemKey, project as Project).then(() => {
@@ -103,12 +115,12 @@ export default class ApiClient {
 
   /**
    * Generic function to search for items in the ODS API
-   * @template Type Type of the item to search for (e.g. Annotation)
-   * @template ParentType Optional type of the parent object (e.g. Project)
-   * @template ParentKey Optional key under which the parent will be found (e.g. "project")
-   * @param {string} itemType index of item to search for (e.g. "annotation")
-   * @param {string} filter filter to apply to the search (e.g. projectKey.eq.123)
-   * @param {string} parent optional parent (e.g. "project")
+   * @template Type - Type of the item to search for (e.g. Annotation)
+   * @template ParentType - Optional type of the parent object (e.g. Project)
+   * @template ParentKey - Optional key under which the parent will be found (e.g. "project")
+   * @param {string} itemType - Index of item to search for (e.g. "annotation")
+   * @param {string} filter - Filter to apply to the search (e.g. projectKey.eq.123)
+   * @param {string} parent - Optional parent (e.g. "project")
    */
   public async searchItem<
     Type extends ODSObject<Type>,
@@ -134,10 +146,10 @@ export default class ApiClient {
 
   /**
    * Generic function to upsert items in the ODS API
-   * @template Type Type of the item to upsert (e.g. Annotation)
-   * @param {string} itemType index of item (e.g. "annotation")
-   * @param {string} itemKey key of the item
-   * @param {Type} body the item to upsert
+   * @template Type - Type of the item to upsert (e.g. Annotation)
+   * @param {string} itemType - Index of item (e.g. "annotation")
+   * @param {string} itemKey - Key of the item
+   * @param {Type} body - Item to upsert
    */
   public async upsertItem<Type extends ODSObject<Type>>(
     itemType: string,

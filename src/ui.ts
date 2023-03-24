@@ -1,4 +1,3 @@
-import Annotation from "./interfaces/interface.annotation";
 import ApiClient from "./services/api/client";
 
 const api = ApiClient.initialize("http://localhost:1139", "123", "123");

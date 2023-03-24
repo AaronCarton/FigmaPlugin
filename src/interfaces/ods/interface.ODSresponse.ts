@@ -1,10 +1,11 @@
 import ApiClient from "../../services/api/client";
 
 /**
- *  ODSresponse is a generic interface for the response from the ODS API.
+ * ODSresponse is a generic interface for the response from the ODS API.
  * @param T is the type of the item in the response (e.g. Annotation)
  * @param U is the type of an optional parent object in the response (e.g. Project)
  * @param K is the key under which the parent will be found (e.g. "project")
+ * @example ODSResponse<Annotation, Project, "project"> // Annotation with Project as parent, which will be found under "project" key in results
  */
 export interface ODSResponse<T extends ODSObject<T>, U = undefined, K extends string = ""> {
   results: Array<
@@ -25,6 +26,9 @@ export interface ODSResponse<T extends ODSObject<T>, U = undefined, K extends st
  * It also includes some helper functions, such as saving and archiving.
  *
  * IT IS NOT MEANT TO BE INSTANTIATED DIRECTLY.
+ *
+ * @param T - Child class that extends ODSObject (e.g. Annotation)
+ * @example class Annotation extends ODSObject<Annotation> { ... }
  */
 export abstract class ODSObject<T extends ODSObject<T>> {
   protected API: ApiClient;
