@@ -1,6 +1,6 @@
 import { ODSObject, ODSResponse } from "../../interfaces/ods/interface.ODSresponse";
-import Annotation from "../../interfaces/interface.annotation";
-import Project from "../../interfaces/interface.project";
+import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
+import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
 
 interface ApiOptions {
@@ -72,11 +72,31 @@ export default class ApiClient {
    * @param {boolean} showDeleted - Whether to show deleted annotations
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
-  async getAnnotations(projectKey: string, showDeleted = false): Promise<Annotation[]> {
+  public async getAnnotations(projectKey: string, showDeleted = false): Promise<Annotation[]> {
     return this.searchItem<Annotation>(
       "annotation",
       `projectKey.eq.${projectKey}` + (showDeleted ? "" : "/deleted.eq.false"),
     ).then((res) => res.results.map((res) => new Annotation(res.item, this)));
+  }
+
+  public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
+    // Create annotation
+    return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(() => {
+      // Get annotation (needs to be done to get ODS metadata)
+      return this.searchItem<Annotation>("annotation", `itemKey.eq.${itemKey}`).then((res) => {
+        return new Annotation(res.results[0].item, this);
+      });
+    });
+  }
+
+  public async createProject(itemKey: string, project: IProject): Promise<Project> {
+    // Create project
+    return await this.upsertItem("project", itemKey, project as Project).then(() => {
+      // Get project (needs to be done to get ODS metadata)
+      return this.searchItem<Project>("project", `itemKey.eq.${itemKey}`).then((res) => {
+        return new Project(res.results[0].item, this);
+      });
+    });
   }
 
   ////////* HELPER FUNCTIONS *////////

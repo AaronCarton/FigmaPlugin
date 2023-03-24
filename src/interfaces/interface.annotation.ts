@@ -1,8 +1,20 @@
 import ApiClient from "../services/api/client";
 import { ODSObject } from "./ods/interface.ODSresponse";
 
-export default class Annotation extends ODSObject<Annotation> {
+export interface IAnnotation {
+  projectKey: string;
+  nodeId: string;
+  dataSource: string;
+  entity: string;
+  attribute: string;
+  dataType: string;
+  value: string;
+  deleted: boolean;
+}
+
+export default class Annotation extends ODSObject<Annotation> implements IAnnotation {
   public projectKey: string;
+  public nodeId: string;
   public dataSource: string;
   public entity: string;
   public attribute: string;
@@ -13,6 +25,7 @@ export default class Annotation extends ODSObject<Annotation> {
     super(api, annotation);
 
     this.projectKey = annotation.projectKey;
+    this.nodeId = annotation.nodeId;
     this.dataSource = annotation.dataSource;
     this.entity = annotation.entity;
     this.attribute = annotation.attribute;

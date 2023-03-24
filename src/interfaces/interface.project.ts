@@ -1,7 +1,12 @@
 import ApiClient from "../services/api/client";
 import { ODSObject } from "./ods/interface.ODSresponse";
 
-export default class Project extends ODSObject<Project> {
+export interface IProject {
+  lastUpdated: string;
+  customerId: string;
+}
+
+export default class Project extends ODSObject<Project> implements IProject {
   public lastUpdated: string;
   public customerId: string;
 
