@@ -15,6 +15,7 @@ interface RequestOptions {
   body?: object;
   metadata?: boolean;
   parent?: string;
+  includeArchived?: boolean;
 }
 
 export default class ApiClient {
@@ -58,24 +59,30 @@ export default class ApiClient {
   /**
    * Search for projects
    * @param {string} projectKey - Key of the project to search for
+   * @param {boolean} includeArchived - Whether to return the project even if it is archived
    * @returns {Promise<Project[]>} - Promise that resolves to an array of projects
    */
-  public async getProject(projectKey: string): Promise<Project[]> {
-    return this.searchItem<Project>("project", `projectKey.eq${projectKey}`).then((res) =>
-      res.results.map((res) => new Project(res.item, this)),
-    );
+  public async getProject(projectKey: string, includeArchived = false): Promise<Project[]> {
+    return this.searchItem<Project>(
+      "project",
+      `projectKey.eq${projectKey}`,
+      undefined,
+      includeArchived,
+    ).then((res) => res.results.map((res) => new Project(res.item, this)));
   }
 
   /**
    * Search for annotations
    * @param {string} projectKey - Key of the project to search for
-   * @param {boolean} showDeleted - Whether to show deleted annotations
+   * @param {boolean} includeArchived - Whether to include archived annotations in results
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
-  public async getAnnotations(projectKey: string, showDeleted = false): Promise<Annotation[]> {
+  public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
     return this.searchItem<Annotation>(
       "annotation",
-      `projectKey.eq.${projectKey}` + (showDeleted ? "" : "/deleted.eq.false"),
+      `projectKey.eq.${projectKey}`,
+      undefined,
+      includeArchived,
     ).then((res) => res.results.map((res) => new Annotation(res.item, this)));
   }
 
@@ -130,6 +137,7 @@ export default class ApiClient {
     itemType: string,
     filter: string,
     parent?: ParentKey,
+    includeArchived?: boolean,
   ): Promise<ODSResponse<Type, ParentType, ParentKey>> {
     const res = await this.fetchData(`/api/search/${itemType}`, {
       method: "POST",
@@ -139,6 +147,7 @@ export default class ApiClient {
       },
       parent: parent,
       metadata: true,
+      includeArchived: includeArchived,
     });
 
     return res.json();
@@ -183,6 +192,7 @@ export default class ApiClient {
         "Content-Type": "application/json",
         "x-api-key": apiKey,
         "x-include-metadata": metadata ? "true" : "false",
+        "x-include-archived": options.includeArchived ? "true" : "false",
         "x-expand": options.parent || "",
       },
     });
