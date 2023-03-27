@@ -5,21 +5,16 @@ export default () => {
 
   async function initializeClient(baseURL: string, clientKey: string, sourceKey: string) {
     checkIfProjectExist(baseURL, "75059577");
-    console.log("voor log basurl etc");
-    console.log(baseURL, clientKey, sourceKey);
     await api.initializeClient(baseURL, clientKey, sourceKey);
     getProjectData("75059577");
     getAnnotationData("75059577", true);
-    console.log("na initialize client");
   }
 
   // Function to check is the project already exists or not.
   // If project does not exist yet, a new project will be made with a projectKey, if it already exists the data will be returned.
   async function checkIfProjectExist(baseURL: string, projectKey: string) {
     // URL check to see if url is valid or not.
-    console.log("in checkproject voor validateurl");
     validateUrl(baseURL);
-    console.log("in checkproject na validateurl");
 
     // Check if project exists
     if (projectKey === null || projectKey === undefined) {
