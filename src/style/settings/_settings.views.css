@@ -3,12 +3,12 @@
 }
 
 .is-selected {
-  color: var(--propertize-text-primary);
-  fill: var(--propertize-text-primary);
+  color: var(--propertize__color--primary);
+  fill: var(--propertize__color--primary);
 }
 
 .is-active {
   display: block;
-  color: var(--propertize-text-primary);
-  fill: var(--propertize-text-primary);
+  color: var(--propertize__color--primary);
+  fill: var(--propertize__color--primary);
 }

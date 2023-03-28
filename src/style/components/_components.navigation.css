@@ -4,26 +4,26 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 var(--propertize__spacing-xl);
-  border-bottom: 1px solid var(--propertize-accent-color);
+  padding: 0 var(--propertize__spacing--large);
+  border-bottom: 1px solid var(--propertize__color--accent);
 }
 
 .c-nav__left {
   display: flex;
   align-items: center;
-  gap: var(--propertize__spacing-xl);
+  gap: var(--propertize__spacing--large);
 }
 
 .c-nav__left-item {
   cursor: pointer;
-  color: var(--propertize-text-secondary);
+  color: var(--propertize__color--secondary);
 }
 
 .c-nav__left-item.is-active .a-settings-icon {
-  fill: var(--propertize-text-primary);
+  fill: var(--propertize__color--primary);
 }
 
 .c-nav__right-item {
   cursor: pointer;
-  color: var(--propertize-text-secondary);
+  color: var(--propertize__color--secondary);
 }

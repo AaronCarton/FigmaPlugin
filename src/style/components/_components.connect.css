@@ -7,18 +7,18 @@
   align-items: center;
   justify-content: space-between;
   height: 32px;
-  margin-bottom: var(--propertize__spacing-sm);
+  margin-bottom: var(--propertize__spacing--tiny);
 }
 
 .c-connect__input {
   display: flex;
   align-items: center;
-  gap: var(--propertize__spacing-lg);
+  gap: var(--propertize__spacing);
 }
 
 .c-connect__input-title {
   width: 70px;
-  color: var(--propertize-text-secondary);
+  color: var(--propertize__color--secondary);
 }
 
 .c-connect__cta {
@@ -26,11 +26,11 @@
   height: 32px;
   width: 32px;
   border: none;
-  background-color: var(--propertize-white);
+  background-color: var(--propertize__color--white);
   cursor: pointer;
 }
 
-.c-icon-check {
+.c-icon_check_class {
   background-image: var(--icon-check);
   height: 32px;
   width: 32px;
@@ -53,17 +53,17 @@
   -moz-appearance: none;
   appearance: none;
   background: var(--icon-arrow) 96% center no-repeat;
-  padding-inline: var(--propertize__spacing-md);
+  padding-inline: var(--propertize__spacing--small);
   writing-mode: horizontal-tb;
-  color: var(--propertize-text-secondary);
+  color: var(--propertize__color--secondary);
 }
 
 .c-connect__input-selector:hover,
 .c-connect__input-selector:focus {
-  border: 1px solid var(--propertize-accent-color);
+  border: 1px solid var(--propertize__color--accent);
   width: 190px;
   outline: none;
-  color: var(--propertize-text-primary);
+  color: var(--propertize__color--primary);
 }
 
 .c-connect__input-text {
@@ -74,10 +74,10 @@
   display: flex;
   justify-content: start;
   align-items: center;
-  color: var(--propertize-text-secondary);
+  color: var(--propertize__color--secondary);
   width: 188px;
   height: 31px;
-  border: 1px solid var(--propertize-accent-color);
+  border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);
 }
 
@@ -87,14 +87,14 @@
   align-items: center;
   width: 230px;
   height: 31px;
-  border: 1px solid var(--propertize-accent-color);
+  border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);
 }
 
 .c-connect__input-field {
   font-size: var(--propertize__font-size--tiny);
   border: none;
-  padding: 0 var(--propertize__spacing-md);
+  padding: 0 var(--propertize__spacing--small);
   width: 100%;
 }
 
@@ -111,5 +111,5 @@
 }
 
 .c-disconnected__text {
-  margin: var(--propertize__spacing-lg) 0;
+  margin: var(--propertize__spacing) 0;
 }

@@ -5,44 +5,44 @@
 .c-usage__title {
   font-size: var(--propertize__font-size--small);
   font-weight: var(--propertize__font-weight--semibold);
-  padding-top: var(--propertize__spacing-lg);
-  padding-bottom: var(--propertize__spacing-sm);
+  padding-top: var(--propertize__spacing);
+  padding-bottom: var(--propertize__spacing--tiny);
   margin: 0;
-  color: var(--propertize-black);
+  color: var(--propertize__color--black);
 }
 
 .c-usage__alinea {
   padding-top: 10px;
   margin: 0;
-  color: var(--propertize-black);
+  color: var(--propertize__color--black);
 }
 
-.c-usage__alinea-title {
+.c-usage__subtitle {
   font-size: var(--propertize__font-size--tiny);
-  padding-bottom: var(--propertize__spacing-lg);
+  padding-bottom: var(--propertize__spacing);
   margin: 0;
-  color: var(--propertize-black);
+  color: var(--propertize__color--black);
 }
 
 .c-usage__alinea-paraph {
   padding-top: 10px;
   padding-bottom: 10px;
   margin: 0;
-  color: var(--propertize-black);
+  color: var(--propertize__color--black);
 }
 
-.c-usage__alinea-paraph-top {
+.c-usage__alinea-paraph--top {
   padding: 0;
   margin: 0;
 }
 
-.c-usage__alinea-paraph-bottom {
+.c-usage__alinea-paraph--bottom {
   padding-bottom: 0px;
 }
 
 .c-usage__alinea-list {
-  padding-left: var(--propertize__spacing-xl);
+  padding-left: var(--propertize__spacing--large);
   margin: 0;
   padding-bottom: 10px;
-  color: var(--propertize-black);
+  color: var(--propertize__color--black);
 }

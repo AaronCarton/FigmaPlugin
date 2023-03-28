@@ -1,6 +1,6 @@
 const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
 
-const iconCheck = "c-icon-check";
+const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 
 const toggleFields = (button: HTMLElement) => {
