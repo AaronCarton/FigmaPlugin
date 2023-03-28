@@ -10,13 +10,13 @@
   margin-bottom: var(--propertize__spacing--tiny);
 }
 
-.c-connect__input {
+.c-connect__field {
   display: flex;
   align-items: center;
   gap: var(--propertize__spacing);
 }
 
-.c-connect__input-title {
+.c-connect__field--title {
   width: 70px;
   color: var(--propertize__color--secondary);
 }
@@ -40,7 +40,7 @@
   margin-bottom: 0;
 }
 
-.c-connect__input-selector {
+.c-connect__field--select {
   display: none;
   align-items: center;
   width: 120px;
@@ -58,19 +58,19 @@
   color: var(--propertize__color--secondary);
 }
 
-.c-connect__input-selector:hover,
-.c-connect__input-selector:focus {
+.c-connect__field--select:hover,
+.c-connect__field--select:focus {
   border: 1px solid var(--propertize__color--accent);
   width: 190px;
   outline: none;
   color: var(--propertize__color--primary);
 }
 
-.c-connect__input-text {
+.c-connect__field--text {
   display: none;
 }
 
-.c-connect__input-text-field {
+.c-connect__field--border {
   display: flex;
   justify-content: start;
   align-items: center;
@@ -81,7 +81,7 @@
   border-radius: var(--propertize__border-radius);
 }
 
-.c-connect__input-sample {
+.c-connect__field--sample {
   display: flex;
   justify-content: start;
   align-items: center;
@@ -91,14 +91,14 @@
   border-radius: var(--propertize__border-radius);
 }
 
-.c-connect__input-field {
+.c-connect__field--input {
   font-size: var(--propertize__font-size--tiny);
   border: none;
   padding: 0 var(--propertize__spacing--small);
   width: 100%;
 }
 
-.c-connect__input-field:focus {
+.c-connect__field--input:focus {
   outline: none;
 }
 
