@@ -13,7 +13,6 @@
   "ignorePatterns": ["esbuild.js", "eswatch.js"],
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "prettier/prettier": ["error"],
-    "@typescript-eslint/no-non-null-assertion": "off"
+    "prettier/prettier": ["error"]
   }
 }
