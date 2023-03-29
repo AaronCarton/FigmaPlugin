@@ -10,7 +10,7 @@ const isActive = "is-active";
 const connectionState = true;
 
 // still testing connection purposes
-const checkConnection = () => {
+function checkConnection() {
   if (connectionPanel !== null && noConnectionPanel !== null) {
     if (connectionState) {
       connectionPanel.classList.add(isActive);
@@ -24,7 +24,7 @@ const checkConnection = () => {
       "*",
     );
   }
-};
+}
 
 tabs.forEach((trigger) =>
   trigger.addEventListener("click", function () {
