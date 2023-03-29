@@ -8,6 +8,11 @@ import ApiClient from "../../services/api/client";
  * @example ODSResponse<Annotation, Project, "project"> // Annotation with Project as parent, which will be found under "project" key in results
  */
 export interface ODSResponse<T extends ODSObject<T>, U = undefined, K extends string = ""> {
+  filter: string;
+  page: number;
+  pageSize: number;
+  totalPageCount: number;
+  totalItemCount: number;
   results: Array<
     {
       item: T;
