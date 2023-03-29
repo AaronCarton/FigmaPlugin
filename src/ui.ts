@@ -1,6 +1,12 @@
 import ApiClient from "./services/api/client";
 
-const api = ApiClient.initialize("http://localhost:1139", "123", "123");
+const config = {
+  baseURL: "http://localhost:1139",
+  clientKey: "123",
+  sourceKey: "123",
+};
+
+const api = ApiClient.initialize(config);
 api.getAnnotations("75059577", true).then(async (annotations) => {
   console.log(annotations);
 
@@ -23,7 +29,6 @@ api
     attribute: "test",
     dataType: "test",
     value: "test",
-    deleted: true,
   })
   .then((annotation) => {
     console.log(annotation);
