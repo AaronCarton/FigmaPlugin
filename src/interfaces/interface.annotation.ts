@@ -9,7 +9,6 @@ export interface IAnnotation {
   attribute: string;
   dataType: string;
   value: string;
-  deleted: boolean;
 }
 
 export default class Annotation extends ODSObject<Annotation> implements IAnnotation {

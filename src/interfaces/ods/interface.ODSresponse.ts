@@ -37,7 +37,7 @@ export abstract class ODSObject<T extends ODSObject<T>> {
   public partition: string;
   public itemKey: string;
   public localized: [];
-  public deleted: boolean;
+  public archived: string | null;
 
   constructor(api: ApiClient, obj: T) {
     this.API = api;
@@ -46,7 +46,7 @@ export abstract class ODSObject<T extends ODSObject<T>> {
     this.partition = obj.partition;
     this.itemKey = obj.itemKey;
     this.localized = obj.localized;
-    this.deleted = obj.deleted;
+    this.archived = obj.archived;
   }
 
   /**
@@ -55,7 +55,7 @@ export abstract class ODSObject<T extends ODSObject<T>> {
    * sets the deleted property to true and calls save()
    */
   public async archive() {
-    this.deleted = true;
+    this.archived = new Date().toISOString(); // save the current date as ISO string
     this.save();
   }
 
@@ -65,7 +65,7 @@ export abstract class ODSObject<T extends ODSObject<T>> {
    * sets the deleted property to false and calls save()
    */
   public async restore() {
-    this.deleted = false;
+    this.archived = null; // remove archived property
     this.save();
   }
 
