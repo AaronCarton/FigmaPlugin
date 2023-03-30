@@ -1,4 +1,4 @@
-import EventHub from "../services/events/events";
+import EventHub from "../services/events/events_temp";
 
 // input elements
 const events = EventHub();
