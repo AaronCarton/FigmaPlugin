@@ -65,7 +65,7 @@ export default class ApiClient {
   public async getProject(projectKey: string, includeArchived = false): Promise<Project[]> {
     return this.searchItem<Project>(
       "project",
-      `projectKey.eq${projectKey}`,
+      `itemKey.eq.${projectKey}`,
       undefined,
       includeArchived,
     ).then((res) => res.results.map((res) => new Project(res.item, this)));

@@ -7,16 +7,18 @@ const config = {
 };
 
 const api = ApiClient.initialize(config);
-api.getAnnotations("75059577", true).then(async (annotations) => {
-  console.log(annotations);
+api.getProject("75059577").then((project) => {
+  api.getAnnotations(project[0].itemKey, true).then(async (annotations) => {
+    console.log(annotations);
 
-  const someAnnotation = annotations.find((a) => a.attribute === "registerLink");
-  console.log("someAnnotation", someAnnotation);
+    const someAnnotation = annotations.find((a) => a.itemKey === "75059577");
+    console.log("someAnnotation", someAnnotation);
 
-  // try to delete the annotation
-  someAnnotation?.archive().then(() => {
-    // try to restore the annotation
-    someAnnotation?.restore();
+    // try to delete the annotation
+    someAnnotation?.archive().then(() => {
+      // try to restore the annotation
+      someAnnotation?.restore();
+    });
   });
 });
 
