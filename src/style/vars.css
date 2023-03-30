@@ -1,17 +1,11 @@
 :root {
-  --propertize-accent-color: #e6e6e6;
-  --propertize-text-primary: #333;
-  --propertize-text-secondary: #909090;
-  --propertize-accent-blue: #18a0fb;
-  --propertize-accent-red: #C42828;
-  
   --propertize__color--white: #fff;
-  --propertize__color--black: #000; 
+  --propertize__color--black: #000;
   --propertize__color--primary: #333;
   --propertize__color--secondary: #909090;
   --propertize__color--accent: #e6e6e6;
   --propertize__color--blue: #18a0fb;
-  --propertize__color--red: #C42828;
+  --propertize__color--red: #c42828;
 
   --propertize__border-radius: 3px;
 

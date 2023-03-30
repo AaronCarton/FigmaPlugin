@@ -2,4 +2,5 @@
 @import "./_components.content.css";
 @import "./_components.navigation.css";
 @import "./_components.settings.css";
+@import "./_components.spinner.css";
 @import "./_components.usage.css";

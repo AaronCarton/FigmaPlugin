@@ -5,16 +5,10 @@
 @import "./style/utilities/utilities.css";
 @import "./style/settings/settings.css";
 
-@import "./style/elements/_elements.generic.css";
-@import "./style/settings/_settings.fonts.css";
-@import "./style/atoms/_atoms.navigation-tabs.css";
-@import "./style/settings.css";
-@import "./style/spinner.css";
-.hidden{
-    display: none;
+.hidden {
+  display: none;
 }
 .no-pointer {
-    pointer-events: none;
-    filter: blur(1px);
-  }
-
+  pointer-events: none;
+  filter: blur(1px);
+}
