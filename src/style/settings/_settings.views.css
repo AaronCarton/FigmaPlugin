@@ -12,3 +12,7 @@
   color: var(--propertize__color--primary);
   fill: var(--propertize__color--primary);
 }
+
+.hidden {
+  display: none;
+}
