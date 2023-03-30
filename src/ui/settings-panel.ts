@@ -32,12 +32,9 @@ function disableFieldsWhenNecessary() {
     //replace makes sure people can not connect with empty strings (for example pressing spacebar)
     if ($baseURL.value.replace(/\s/g, "") !== "") {
       $clientKey.disabled = false;
-    } else {
-      $clientKey.disabled = true;
-    }
-    if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
       $sourceKey.disabled = false;
     } else {
+      $clientKey.disabled = true;
       $sourceKey.disabled = true;
     }
     if (
