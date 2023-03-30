@@ -21,7 +21,7 @@ figma.ui.onmessage = (event) => {
         console.log(connectionState);
         break;
       case "settings":
-        figma.ui.resize(345, 235);
+        figma.ui.resize(345, 355);
         break;
       case "usage":
         figma.ui.resize(345, 590);

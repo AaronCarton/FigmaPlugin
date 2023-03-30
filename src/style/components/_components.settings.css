@@ -1,3 +1,59 @@
 .c-settings {
   display: none;
 }
+
+.c-settings__form {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--propertize__font-size--tiny);
+  line-height: 16px;
+}
+
+.c-settings__row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--propertize__spacing--large);
+}
+
+.c-settings__row--horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.c-settings__row--horizontal:last-of-type {
+  justify-content: space-between;
+}
+
+.c-settings__btnConnect {
+  padding: 8px 12px;
+  background-color: var(--propertize__color--blue);
+  color: var(--propertize__color--white);
+  border: none;
+  border-radius: 10px;
+}
+
+input {
+  padding: 8px 0;
+  border: 1px solid var(--propertize__color--accent);
+  border-radius: 2px;
+}
+
+input:focus-visible {
+  outline-color: var(--propertize__color--blue);
+}
+
+#settings_dbLink {
+  padding-left: var(--propertize__spacing--huge);
+  background-image: var(--icon-connect);
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+#settings_clientKey,
+#settings_sourceKey {
+  padding-left: var(--propertize__spacing--huge);
+  background-image: var(--icon-key);
+  background-repeat: no-repeat;
+  background-position: left;
+}

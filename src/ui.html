@@ -1,6 +1,3 @@
-<head>
-  <link rel="stylesheet" href="./style.css" />
-</head>
 <body>
   <nav class="c-nav">
     <section class="c-nav__left">
@@ -34,24 +31,33 @@
     </section>
   </nav>
   <div class="c-content">
+    <span hidden class="c-spinner"></span>
     <!-- #region CONNECT PANEL  -->
     <section class="c-connect js-panel-item is-active" id="connect">
-      <div class="js-connection c-connect__container">
+      <div class="js-connection c-connect__container is-active">
         <div class="c-connect__item">
           <div class="c-connect__field">
             <span class="c-connect__field--title">Data source</span>
             <select
               name="data-source-select"
               id="data-source-select"
-              class="c-connect__field--select is-active"
+              class="c-connect__field--select js-data-source is-active"
+              required
             >
               <option value="" selected disabled hidden>Choose source</option>
-              <option value="">Dummy data</option>
-              <option value="">Dummy data</option>
+              <option value="Source 1">Source 1</option>
+              <option value="Source 2">Source 2</option>
+              <option value="Source 3">Source 3</option>
+              <option value="Source 4">Source 4</option>
             </select>
             <div class="c-connect__field--text" id="data-source-text">
               <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" />
+                <input
+                  type="text"
+                  class="c-connect__field--input"
+                  id="data-source-field"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -63,15 +69,18 @@
             <select
               name="entity-select"
               id="entity-select"
-              class="c-connect__field--select is-active"
+              class="c-connect__field--select js-entity is-active"
+              required
             >
               <option value="" selected disabled hidden>Choose entity</option>
-              <option value="">Dummy data</option>
-              <option value="">Dummy data</option>
+              <option value="Entity 1">Entity 1</option>
+              <option value="Entity 2">Entity 2</option>
+              <option value="Entity 3">Entity 3</option>
+              <option value="Entity 4">Entity 4</option>
             </select>
             <div class="c-connect__field--text" id="entity-text">
               <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" />
+                <input type="text" class="c-connect__field--input" id="entity-field" />
               </div>
             </div>
           </div>
@@ -83,15 +92,18 @@
             <select
               name="attribute-select"
               id="attribute-select"
-              class="c-connect__field--select is-active"
+              class="c-connect__field--select js-attribute is-active"
+              required
             >
               <option value="" selected disabled hidden>Choose attribute</option>
-              <option value="">Dummy data</option>
-              <option value="">Dummy data</option>
+              <option value="Attribute 1">Attribute 1</option>
+              <option value="Attribute 2">Attribute 2</option>
+              <option value="Attribute 3">Attribute 3</option>
+              <option value="Attribute 4">Attribute 4</option>
             </select>
             <div class="c-connect__field--text" id="attribute-text">
               <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" />
+                <input type="text" class="c-connect__field--input" id="attribute-field" />
               </div>
             </div>
           </div>
@@ -103,15 +115,18 @@
             <select
               name="data-type-select"
               id="data-type-select"
-              class="c-connect__field--select is-active"
+              class="c-connect__field--select js-data-type is-active"
+              required
             >
               <option value="" selected disabled hidden>Choose type</option>
-              <option value="">Dummy data</option>
-              <option value="">Dummy data</option>
+              <option value="Type 1">Type 1</option>
+              <option value="Type 2">Type 2</option>
+              <option value="Type 3">Type 3</option>
+              <option value="Type 4">Type 4</option>
             </select>
             <div class="c-connect__field--text" id="data-type-text">
               <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" />
+                <input type="text" class="c-connect__field--input" id="data-type-field" />
               </div>
             </div>
           </div>
@@ -121,12 +136,12 @@
           <div class="c-connect__field">
             <span class="c-connect__field--title">Sample value</span>
             <div class="c-connect__field--sample">
-              <input type="text" class="c-connect__field--input" />
+              <input type="text" class="c-connect__field--input js-sample-value" required />
             </div>
           </div>
         </div>
       </div>
-      <div class="js-disconnected c-disconnected is-active">
+      <div class="js-disconnected c-disconnected">
         <p class="c-disconnected__text">
           <span class="u-txt-bold">No connection</span> to database,
           <span class="u-txt-bold">go to the settings tab</span> to add the connection link and API
@@ -136,7 +151,35 @@
     </section>
     <!-- #endregion -->
     <!-- #region SETTINGS PANEL  -->
-    <section class="c-settings js-panel-item" id="settings">Settings</section>
+    <section class="c-settings js-panel-item" id="settings">
+      <form class="c-settings__form">
+        <div class="c-settings__row">
+          <label class="c-settings__settingsLabel" for="settings_dbLink"
+            >Connect to database, enter link:</label
+          >
+          <input class="c-settings__input" id="settings_dbLink" type="text" />
+        </div>
+        <div class="c-settings__row">
+          <label class="c-settings__settingsLabel" for="settings_clientKey">API client key:</label>
+          <input class="c-settings__input" id="settings_clientKey" type="text" />
+        </div>
+        <div class="c-settings__row">
+          <label class="c-settings__settingsLabel" for="settings_sourceKey">API source key:</label>
+          <input class="c-settings__input" id="settings_sourceKey" type="text" />
+        </div>
+        <div class="c-settings__row--horizontal">
+          <p>Show annotations</p>
+          <label class="a-annotation-toggle">
+            <input class="a-annotation-toggle__input" id="annotationToggle" type="checkbox" />
+            <span class="a-annotation-toggle__slider"></span>
+          </label>
+        </div>
+        <div class="c-settings__row--horizontal">
+          <p>Last update: <span id="settings_lastUpdate">14/07/2023</span></p>
+          <a class="c-settings__btnConnect">Connect</a>
+        </div>
+      </form>
+    </section>
     <!-- #endregion -->
     <!-- #region HOW TO USE PANEL  -->
     <section class="c-usage js-panel-item" id="usage">
