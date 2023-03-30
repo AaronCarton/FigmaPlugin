@@ -3,3 +3,15 @@
 @import "./style/settings/_settings.fonts.css";
 @import "./style/atoms/_atoms.navigation-tabs.css";
 @import "./style/components/_components.navigation-tabs.css";
+@import "./style/settings.css";
+@import "./style/spinner.css";
+.c-plugin{
+    position: relative;
+}
+.hidden{
+    display: none;
+}
+.no-pointer {
+    pointer-events: none;
+    filter: blur(1px);
+  }

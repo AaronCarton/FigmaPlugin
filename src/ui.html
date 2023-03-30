@@ -1,6 +1,3 @@
-<head>
-  <link rel="stylesheet" href="./style.css" />
-</head>
 <body>
   <nav class="c-nav">
     <section class="c-nav__left">
@@ -34,8 +31,201 @@
     </section>
   </nav>
   <div class="c-content">
-    <section class="c-connect js-panel-item is-active" id="connect">Connect</section>
-    <section class="c-settings js-panel-item" id="settings">Settings</section>
-    <section class="c-usage js-panel-item" id="usage">How to use</section>
+    <span hidden class="c-spinner"></span>
+    <!-- #region CONNECT PANEL  -->
+    <section class="c-connect js-panel-item is-active" id="connect">
+      <div class="js-connection c-connect__container is-active">
+        <div class="c-connect__item">
+          <div class="c-connect__field">
+            <span class="c-connect__field--title">Data source</span>
+            <select
+              name="data-source-select"
+              id="data-source-select"
+              class="c-connect__field--select js-data-source is-active"
+              required
+            >
+              <option value="" selected disabled hidden>Choose source</option>
+              <option value="Source 1">Source 1</option>
+              <option value="Source 2">Source 2</option>
+              <option value="Source 3">Source 3</option>
+              <option value="Source 4">Source 4</option>
+            </select>
+            <div class="c-connect__field--text" id="data-source-text">
+              <div class="c-connect__field--border">
+                <input
+                  type="text"
+                  class="c-connect__field--input"
+                  id="data-source-field"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+          <button class="c-icon js-btn" data-target="data-source"></button>
+        </div>
+        <div class="c-connect__item">
+          <div class="c-connect__field">
+            <span class="c-connect__field--title">Entity</span>
+            <select
+              name="entity-select"
+              id="entity-select"
+              class="c-connect__field--select js-entity is-active"
+              required
+            >
+              <option value="" selected disabled hidden>Choose entity</option>
+              <option value="Entity 1">Entity 1</option>
+              <option value="Entity 2">Entity 2</option>
+              <option value="Entity 3">Entity 3</option>
+              <option value="Entity 4">Entity 4</option>
+            </select>
+            <div class="c-connect__field--text" id="entity-text">
+              <div class="c-connect__field--border">
+                <input type="text" class="c-connect__field--input" id="entity-field" />
+              </div>
+            </div>
+          </div>
+          <button class="c-icon js-btn" data-target="entity"></button>
+        </div>
+        <div class="c-connect__item">
+          <div class="c-connect__field">
+            <span class="c-connect__field--title">Attribute</span>
+            <select
+              name="attribute-select"
+              id="attribute-select"
+              class="c-connect__field--select js-attribute is-active"
+              required
+            >
+              <option value="" selected disabled hidden>Choose attribute</option>
+              <option value="Attribute 1">Attribute 1</option>
+              <option value="Attribute 2">Attribute 2</option>
+              <option value="Attribute 3">Attribute 3</option>
+              <option value="Attribute 4">Attribute 4</option>
+            </select>
+            <div class="c-connect__field--text" id="attribute-text">
+              <div class="c-connect__field--border">
+                <input type="text" class="c-connect__field--input" id="attribute-field" />
+              </div>
+            </div>
+          </div>
+          <button class="c-icon js-btn" data-target="attribute"></button>
+        </div>
+        <div class="c-connect__item">
+          <div class="c-connect__field">
+            <span class="c-connect__field--title">Data type</span>
+            <select
+              name="data-type-select"
+              id="data-type-select"
+              class="c-connect__field--select js-data-type is-active"
+              required
+            >
+              <option value="" selected disabled hidden>Choose type</option>
+              <option value="Type 1">Type 1</option>
+              <option value="Type 2">Type 2</option>
+              <option value="Type 3">Type 3</option>
+              <option value="Type 4">Type 4</option>
+            </select>
+            <div class="c-connect__field--text" id="data-type-text">
+              <div class="c-connect__field--border">
+                <input type="text" class="c-connect__field--input" id="data-type-field" />
+              </div>
+            </div>
+          </div>
+          <button class="c-icon js-btn" data-target="data-type"></button>
+        </div>
+        <div class="c-connect__item c-connect__attribute">
+          <div class="c-connect__field">
+            <span class="c-connect__field--title">Sample value</span>
+            <div class="c-connect__field--sample">
+              <input type="text" class="c-connect__field--input js-sample-value" required />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="js-disconnected c-disconnected">
+        <p class="c-disconnected__text">
+          <span class="u-txt-bold">No connection</span> to database,
+          <span class="u-txt-bold">go to the settings tab</span> to add the connection link and API
+          key.
+        </p>
+      </div>
+    </section>
+    <!-- #endregion -->
+    <!-- #region SETTINGS PANEL  -->
+    <section class="c-settings js-panel-item" id="settings">
+      <form class="c-plugin__form">
+        <div class="c-plugin__row">
+          <label class="c-plugin__settingsLabel" for="settings_dbLink"
+            >Connect to database, enter link:</label
+          >
+          <input class="c-plugin__input" id="settings_dbLink" type="text" />
+        </div>
+        <div class="c-plugin__row">
+          <label class="c-plugin__settingsLabel" for="settings_clientKey">API client key:</label>
+          <input class="c-plugin__input" id="settings_clientKey" type="text" />
+        </div>
+        <div class="c-plugin__row">
+          <label class="c-plugin__settingsLabel" for="settings_sourceKey">API source key:</label>
+          <input class="c-plugin__input" id="settings_sourceKey" type="text" />
+        </div>
+        <div class="c-plugin__row--horizontal">
+          <p>Show annotations</p>
+          <label class="switch">
+            <input id="annotationToggle" type="checkbox" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="c-plugin__row--horizontal">
+          <p>Last update: <span id="settings_lastUpdate">14/07/2023</span></p>
+          <a class="c-plugin__btnConnect">Connect</a>
+        </div>
+      </form>
+    </section>
+    <!-- #endregion -->
+    <!-- #region HOW TO USE PANEL  -->
+    <section class="c-usage js-panel-item" id="usage">
+      <h2 class="c-usage__title">
+        Welcome to the Propertize plugin by <br />
+        Delaware
+      </h2>
+      <div class="c-usage__alinea">
+        <h3 class="c-usage__subtitle">What does the plugin?</h3>
+        <p class="c-usage__alinea-paraph c-usage__alinea-paraph--top">
+          This plugin transforms your design into json, css variables, png's or svg's that you can
+          use in your own code.
+        </p>
+      </div>
+      <div class="c-usage__alinea">
+        <h3 class="c-usage__subtitle">How to use the plugin?</h3>
+        <p class="c-usage__alinea-paraph c-usage__alinea-paraph--top">
+          You have two options to export your file.
+        </p>
+        <ul class="c-usage__alinea-list">
+          <li>Export your entire page</li>
+          <li>Export a selection (can exist out multiple frames)</li>
+        </ul>
+        <p class="c-usage__alinea-paraph">
+          If you choose to export a specific selection, you will have to choose how you want the
+          design tokens to get exported. As a json file, css file, png's or svg's.
+        </p>
+        <p class="c-usage__alinea-paraph">
+          If you choose to export your entire page, you will automaticly get a json file, css-file,
+          png's and svg's.
+        </p>
+        <p class="c-usage__alinea-paraph">
+          Next up you will get to choose what colortype you would like your files in. the options
+          are rgb, hex, hsl or all three. After the colors you can choose wich units would like, px
+          or rem.
+        </p>
+        <p class="c-usage__alinea-paraph">
+          After you made your choises, you can export your design tokens by clicken on the 'Export'
+          button. If you choose to export your entire page, this can take a couple of seconds.
+        </p>
+        <p class="c-usage__alinea-paraph c-usage__alinea-paraph--bottom">
+          You will get a pop-up to download a file or a zip, download it and you can use the files
+          in your code!
+        </p>
+      </div>
+    </section>
+    <!-- #endregion -->
   </div>
 </body>
