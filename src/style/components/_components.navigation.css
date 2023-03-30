@@ -1,0 +1,29 @@
+.c-nav {
+  font-weight: var(--propertize__font-weight--semibold);
+  height: 39px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--propertize__spacing--large);
+  border-bottom: 1px solid var(--propertize__color--accent);
+}
+
+.c-nav__left {
+  display: flex;
+  align-items: center;
+  gap: var(--propertize__spacing--large);
+}
+
+.c-nav__left-item {
+  cursor: pointer;
+  color: var(--propertize__color--secondary);
+}
+
+.c-nav__left-item.is-active .a-settings-icon {
+  fill: var(--propertize__color--primary);
+}
+
+.c-nav__right-item {
+  cursor: pointer;
+  color: var(--propertize__color--secondary);
+}
