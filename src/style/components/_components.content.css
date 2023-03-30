@@ -1,0 +1,4 @@
+.c-content {
+  padding: var(--propertize__spacing) var(--propertize__spacing--large)
+    var(--propertize__spacing--huge) var(--propertize__spacing--large);
+}

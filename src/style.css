@@ -1,4 +1,20 @@
-/*main css file, import all css in here*/
-@import "./style/navigation-tabs.css";
-@import "./style/settings.css";
 @import "./style/vars.css";
+@import "./style/components/components.css";
+@import "./style/elements/elements.css";
+@import "./style/atoms/atoms.css";
+@import "./style/utilities/utilities.css";
+@import "./style/settings/settings.css";
+
+@import "./style/elements/_elements.generic.css";
+@import "./style/settings/_settings.fonts.css";
+@import "./style/atoms/_atoms.navigation-tabs.css";
+@import "./style/settings.css";
+@import "./style/spinner.css";
+.hidden{
+    display: none;
+}
+.no-pointer {
+    pointer-events: none;
+    filter: blur(1px);
+  }
+

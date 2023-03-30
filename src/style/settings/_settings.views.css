@@ -1,0 +1,14 @@
+.c-usage {
+  display: none;
+}
+
+.is-selected {
+  color: var(--propertize__color--primary);
+  fill: var(--propertize__color--primary);
+}
+
+.is-active {
+  display: block;
+  color: var(--propertize__color--primary);
+  fill: var(--propertize__color--primary);
+}

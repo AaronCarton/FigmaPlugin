@@ -1,82 +1,58 @@
-import EventHub from "../services/events/events_temp";
-
-// input elements
-const events = EventHub();
-const $form: HTMLFormElement | null = document.querySelector(".c-plugin__form");
-const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
-const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
-const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
+//Input elements
+const $dbURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
+const $apiKey: HTMLInputElement | null = document.querySelector("#settings_apiKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
+//Spinner
+const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
+const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
-const checkConnection = async () => {
-  // making sure there are no spaces in the values, even if the user typed spaces
-  const baseURL: string | undefined = $baseURL?.value.replace(/\s/g, "").trim();
-  const clientKey: string | undefined = $clientKey?.value.replace(/\s/g, "").trim();
-  const sourceKey: string | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
+function checkConnection() {
+  $plugin?.classList.add("no-pointer");
+  $spinner?.removeAttribute("hidden");
+  // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
+  // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
+  fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
+    .then((response) => response.json())
+    .then(() => {
+      $plugin?.classList.remove("no-pointer");
+      $spinner?.setAttribute("hidden", "");
+    });
+  // add functionality for button??
+}
 
-  events.initializeClient(<string>baseURL, <string>clientKey, <string>sourceKey);
-};
-
-const toggleAnnotations = (e: Event) => {
+function toggleAnnotations(e: Event) {
   const state: boolean = (<HTMLInputElement>e.target).checked;
   if (state === true) {
     console.log("show annotations");
   } else {
     console.log("hide annotations");
   }
-};
+}
 
-const disableFields = () => {
-  console.log($baseURL?.value);
-  if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null) {
+function disableFields() {
+  if ($dbURL !== null && $apiKey !== null && $annotationToggle !== null && $button !== null) {
     $annotationToggle.disabled = true;
-    $clientKey.disabled = true;
-    $button.disabled = true;
-  }
-};
-
-const disableFieldsWhenNecessary = () => {
-  disableFields();
-  if (
-    $baseURL !== null &&
-    $clientKey !== null &&
-    $sourceKey !== null &&
-    $annotationToggle !== null &&
-    $button !== null
-  ) {
-    //replace makes sure people can not connect with empty strings (for example pressing spacebar)
-    if ($baseURL.value.replace(/\s/g, "") !== "") {
-      $clientKey.disabled = false;
-      $sourceKey.disabled = false;
+    if ($dbURL.value.replace(/\s/g, "") !== "") {
+      $apiKey.disabled = false;
     } else {
-      $clientKey.disabled = true;
-      $sourceKey.disabled = true;
+      $apiKey.disabled = true;
     }
-    if ($baseURL.value.replace(/\s/g, "") === "" || $clientKey.value.replace(/\s/g, "") === "") {
-      $annotationToggle.disabled = true;
-      $button.disabled = true;
+    if ($dbURL.value.replace(/\s/g, "") === "" || $apiKey.value.replace(/\s/g, "") === "") {
+      $button.removeEventListener("click", checkConnection);
     }
-    if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
+    if ($dbURL.value.replace(/\s/g, "") !== "" && $apiKey.value.replace(/\s/g, "") !== "") {
       $annotationToggle.disabled = false;
-      $button.disabled = false;
+      $button.addEventListener("click", checkConnection);
     }
   }
-};
+}
 
-const initAnnotationToggleEvents = () => {
-  $form?.addEventListener("submit", (e) => e.preventDefault());
-  $button?.addEventListener("click", checkConnection);
-  $annotationToggle?.addEventListener("click", toggleAnnotations);
-  $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
-  $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
-  $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
-};
-
-const init = () => {
+function init() {
   disableFields();
-  disableFieldsWhenNecessary();
-  initAnnotationToggleEvents();
-};
+  $annotationToggle?.addEventListener("click", toggleAnnotations);
+  $dbURL?.addEventListener("keyup", disableFields);
+  $apiKey?.addEventListener("keyup", disableFields);
+}
 
 init();
