@@ -33,4 +33,33 @@ export class EventHandler {
       console.error("Error: ", error);
     }
   }
+
+  /**
+   * Dispatches a custom event.
+   * @param {string} messageType
+   * @param {string} message
+   */
+
+  sendMessage(messageType: string, message: string) {
+    try {
+      document.dispatchEvent(
+        new CustomEvent(this.getEventName(messageType), {
+          bubbles: true,
+          detail: { message: message },
+        }),
+      );
+    } catch (error) {
+      const errorMessage = `Error sending message: ${error}`;
+      console.log(errorMessage);
+    }
+  }
+
+  // This function returns the name of an event which should be fired when a message of the given type is received.
+  // If the message type is null or undefined, then the event name is simply "message". Otherwise, it is "message-<messageType>".
+  getEventName(messageType: string) {
+    if (messageType === null || messageType === undefined) {
+      return "message";
+    }
+    return "message-" + messageType;
+  }
 }
