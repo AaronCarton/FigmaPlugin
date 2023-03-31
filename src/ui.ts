@@ -5,8 +5,8 @@ import Project from "./interfaces/interface.project";
 export default class Sample {
   api = ApiClient.initialize({
     baseURL: "http://localhost:1139",
-    clientKey: "123",
-    sourceKey: "123",
+    clientKey: process.env.CLIENT_KEY as string,
+    sourceKey: process.env.SOURCE_KEY as string,
   });
 
   annotation = {
@@ -45,3 +45,4 @@ export default class Sample {
     return response;
   }
 }
+const test = new Sample();

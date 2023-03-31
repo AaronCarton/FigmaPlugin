@@ -1,9 +1,23 @@
 import ApiClient from "../src/services/api/client";
+import { config } from "dotenv";
 
+config();
 const apiClient = ApiClient.initialize({
   baseURL: "http://localhost:1139",
-  clientKey: "123",
-  sourceKey: "1234",
+  clientKey: process.env.CLIENT_KEY as string,
+  sourceKey: process.env.SOURCE_KEY as string,
+});
+
+describe("Tests validation keys", () => {
+  beforeAll(async () => {
+    config();
+  });
+  test("Is client key set?", () => {
+    expect(process.env.CLIENT_KEY).toBeDefined();
+  });
+  test("Is source key set?", () => {
+    expect(process.env.SOURCE_KEY).toBeDefined();
+  });
 });
 
 describe("Tests for API client", () => {
@@ -31,15 +45,6 @@ describe("Tests for API client", () => {
     apiClient.createProject("266", project).catch(() => {});
   });
 
-  afterAll(async () => {
-    // Clean up any test data
-  });
-  //   test("Client key is set", () => {
-  //      expect(process.env.CLIENT_KEY).toBeDefined();
-  //   });
-  //   test("Source key is set", () => {
-  //     expect(process.env.SOURCE_KEY).toBeDefined();
-  //   });
   test("Get annotations by projectKey", async () => {
     const response = await apiClient.getAnnotations("195");
     jest.setTimeout(10000);
@@ -52,3 +57,5 @@ describe("Tests for API client", () => {
     expect(response[0]).not.toBeNull();
   });
 });
+
+// tests: archive = false on project/annotations then try to get it back, same with archive = true
