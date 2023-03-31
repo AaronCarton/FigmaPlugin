@@ -72,18 +72,18 @@ describe("Tests for API client", () => {
   });
 
   test("Get archived project when IncludeArchived = false", async () => {
-    jest.setTimeout(10000);
+    await new Promise((r) => setTimeout(r, 5000));
     await apiClient.getProject("74", false).then(async (res) => {
-      expect(res).toEqual(0);
+      expect(res.length).toEqual(0);
     });
   });
   test("Get archived project when IncludeArchived = true", async () => {
     jest.setTimeout(10000);
-    await apiClient.getProject("74", false).then(async (res) => {
-      expect(res).not.toEqual(0);
+    await apiClient.getProject("74", true).then(async (res) => {
+      expect(res.length).not.toEqual(0);
       expect(res[0].itemKey).toEqual("74");
     });
   });
 });
 
-// tests: archive = false on project/annotations then try to get it back, same with archive = true
+// TODO: Add tests for the following: archive annotations, get archived when false and when true
