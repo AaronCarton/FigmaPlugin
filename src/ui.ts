@@ -1,33 +1,47 @@
 import ApiClient from "./services/api/client";
+import Annotation from "./interfaces/interface.annotation";
+import Project from "./interfaces/interface.project";
 
-const api = ApiClient.initialize({
-  baseURL: "http://localhost:1139",
-  clientKey: "123",
-  sourceKey: "123",
-});
-api.getAnnotations("75059577", true).then(async (annotations) => {
-  console.log(annotations);
-
-  const someAnnotation = annotations.find((a) => a.attribute === "registerLink");
-  console.log("someAnnotation", someAnnotation);
-
-  // try to delete the annotation
-  someAnnotation?.archive().then(() => {
-    // try to restore the annotation
-    someAnnotation?.restore();
+export default class Sample {
+  api = ApiClient.initialize({
+    baseURL: "http://localhost:1139",
+    clientKey: "123",
+    sourceKey: "123",
   });
-});
 
-api
-  .createAnnotation("123", {
-    projectKey: "1",
-    nodeId: "1",
-    dataSource: "test",
-    entity: "test",
-    attribute: "test",
-    dataType: "test",
-    value: "test",
-  })
-  .then((annotation) => {
-    console.log(annotation);
-  });
+  annotation = {
+    projectKey: "195",
+    nodeId: "f249d3d2",
+    dataSource: "someSource",
+    entity: "someEntity",
+    attribute: "title",
+    dataType: "string",
+    value: "Some neat title",
+  };
+
+  project = {
+    lastUpdated: new Date().toISOString(),
+    customerId: "1234",
+  };
+
+  async createAnnotation(projectKey: string, annotation: Annotation) {
+    const response = await this.api.createAnnotation(projectKey, annotation);
+    console.log(response);
+    return response;
+  }
+  async createProject(projectKey: string, project: Project) {
+    const response = await this.api.createProject(projectKey, project);
+    console.log(response);
+    return response;
+  }
+  async getProject(projectKey: string) {
+    const response = await this.api.getProject(projectKey);
+    console.log(response);
+    return response;
+  }
+  async getAnnotations(projectKey: string) {
+    const response = await this.api.getAnnotations(projectKey);
+    console.log(response);
+    return response;
+  }
+}
