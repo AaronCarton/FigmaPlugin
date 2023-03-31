@@ -63,25 +63,25 @@ describe("Tests for API client", () => {
     });
   });
 
-  test("Can archived project", async () => {
+  test("Can archive project", async () => {
     jest.setTimeout(30000);
     await apiClient.getProject("74").then(async (res) => {
-      res[0].archive();
-      expect(res[0].archived).not.toBeNull();
+      res?.archive();
+      expect(res?.archived).not.toBeNull();
     });
   });
 
-  test("Get archived project when IncludeArchived = false", async () => {
-    await new Promise((r) => setTimeout(r, 5000));
+  test("Cannot get archived when IncludeArchived = false", async () => {
+    await new Promise((r) => setTimeout(r, 5000)); // Wait for archived project to be indexed first
     await apiClient.getProject("74", false).then(async (res) => {
-      expect(res.length).toEqual(0);
+      expect(res).toBeNull();
     });
   });
-  test("Get archived project when IncludeArchived = true", async () => {
+  test("Can get archived project when IncludeArchived = true", async () => {
     jest.setTimeout(10000);
     await apiClient.getProject("74", true).then(async (res) => {
-      expect(res.length).not.toEqual(0);
-      expect(res[0].itemKey).toEqual("74");
+      expect(res).not.toBeNull();
+      expect(res?.itemKey).toEqual("74");
     });
   });
 });
