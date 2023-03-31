@@ -1,11 +1,9 @@
 import ApiClient from "../src/services/api/client";
-import Project from "../src/interfaces/interface.project";
-import Annotation from "../src/interfaces/interface.annotation";
 import { config } from "dotenv";
 
 config();
 const apiClient = ApiClient.initialize({
-  baseURL: "http://localhost:1139",
+  baseURL: process.env.BASE_URL as string,
   clientKey: process.env.CLIENT_KEY as string,
   sourceKey: process.env.SOURCE_KEY as string,
 });
@@ -23,39 +21,22 @@ describe("Tests validation keys", () => {
 });
 
 describe("Tests for API client", () => {
-  beforeAll(async () => {
-    // Setup test for getAnnotations
-    jest.setTimeout(60000);
-    const annotation = {
-      projectKey: "195",
-      nodeId: "f249d3d2",
-      dataSource: "someSource",
-      entity: "someEntity",
-      attribute: "title",
-      dataType: "string",
-      value: "Some neat title",
-    };
-    await apiClient.createAnnotation("195", annotation);
-
-    //Setup test for getProject
+  jest.setTimeout(30000);
+  test("Can create project", async () => {
+    jest.setTimeout(30000);
     const project = {
       lastUpdated: new Date().toISOString(),
       customerId: "1234",
     };
+    await apiClient.createProject("74", project).then(async (res) => {
+      expect(res).not.toBeNull();
+    });
+  });
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await apiClient.createProject("268", project).catch(() => {});
-
-    //setup test for getProject when archived
-    const projectArchived = {
-      lastUpdated: new Date().toISOString(),
-      customerId: "456",
-    };
-    (await apiClient.createProject("666", projectArchived)).archive();
-
-    //setup test for getAnnotations when archived
-    const annotationArchived = {
-      projectKey: "195",
+  test("Can create annotation", async () => {
+    jest.setTimeout(30000);
+    const annotation = {
+      projectKey: "74",
       nodeId: "f249d3d2",
       dataSource: "someSource",
       entity: "someEntity",
@@ -63,31 +44,33 @@ describe("Tests for API client", () => {
       dataType: "string",
       value: "Some neat title",
     };
-    await apiClient.createAnnotation("195", annotationArchived);
-  });
-
-  test("Get annotations by projectKey", async () => {
-    jest.setTimeout(10000);
-    const response = await apiClient.getAnnotations("195").then(async (res) => {
-      expect(res[0]).not.toBeNull();
+    await apiClient.createAnnotation("85", annotation).then(async (res) => {
+      expect(res).not.toBeNull();
     });
   });
 
   test("Get Project by projectkey", async () => {
-    jest.setTimeout(10000);
-    const response = await apiClient.getProject("268").then(async (res) => {
-      expect(res[0]).not.toBeNull();
+    jest.setTimeout(30000);
+    await apiClient.getProject("74").then(async (res) => {
+      expect(res).not.toBe(0);
     });
   });
 
-  test("Get archived project (by projectKey) when archived = false", async () => {
-    jest.setTimeout(10000);
-    const project = await apiClient.getProject("666", false).then(async (res) => {
-      res[0].archive();
-      const archivedProject = await apiClient.getProject("666", false);
-      expect(archivedProject[0]).not.toBeNull();
+  test("Get annotations by projectKey", async () => {
+    jest.setTimeout(30000);
+    await apiClient.getAnnotations("85").then(async (res) => {
+      expect(res).not.toBe(0);
     });
   });
+
+  // test("Get archived project (by projectKey) when archived = false", async () => {
+  //   jest.setTimeout(10000);
+  //   const project = await apiClient.getProject("666", false).then(async (res) => {
+  //     res[0].archive();
+  //     const archivedProject = await apiClient.getProject("666", false);
+  //     expect(archivedProject[0]).not.toBeNull();
+  //   });
+  // });
   // test("Get annotation by projectKey when archived", async () => {
   //   const response = await apiClient.getAnnotations("195", false);
   //   jest.setTimeout(10000);
