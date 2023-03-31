@@ -1,13 +1,9 @@
 const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
 
 const dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
-const dataSrcText: HTMLInputElement | null = document.querySelector(".js-data-source-text");
 const entity: HTMLInputElement | null = document.querySelector(".js-entity");
-const entityText: HTMLInputElement | null = document.querySelector(".js-entity-text");
 const attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
-const attributeText: HTMLInputElement | null = document.querySelector(".js-attribute-text");
 const dataType: HTMLInputElement | null = document.querySelector(".js-data-type");
-const dataTypeText: HTMLInputElement | null = document.querySelector(".js-data-type-text");
 const sampleValue: HTMLInputElement | null = document.querySelector(".js-sample-value");
 
 const iconCheck = "c-icon_check_class";
@@ -62,14 +58,17 @@ function buttonTrigger(trigger: HTMLElement) {
 function checkFields(
   selectElement: HTMLInputElement,
   changeElement1: HTMLInputElement,
-  changeElement2: HTMLInputElement,
   disabledId: string,
 ) {
   selectElement.addEventListener("change", () => {
-    if (selectElement.value.trim().length !== 0) {
-      changeElement1.disabled = false;
-      changeElement2.disabled = false;
-      document.getElementById(`${disabledId}-text`)?.classList.remove("disabled");
+    const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
+    const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
+    if (textField !== null && textArea !== null) {
+      if (selectElement.value.trim().length !== 0) {
+        changeElement1.disabled = false;
+        textField.disabled = false;
+        textArea.classList.remove("disabled");
+      }
     }
   });
 }
@@ -77,13 +76,9 @@ function checkFields(
 if (
   buttons !== null &&
   dataSrc !== null &&
-  dataSrcText !== null &&
   entity !== null &&
-  entityText !== null &&
   attribute !== null &&
-  attributeText !== null &&
   dataType !== null &&
-  dataTypeText !== null &&
   sampleValue !== null
 ) {
   buttons.forEach((trigger) => {
@@ -92,9 +87,9 @@ if (
     });
   });
 
-  checkFields(dataSrc, entity, entityText, "entity");
-  checkFields(entity, attribute, attributeText, "attribute");
-  checkFields(attribute, dataType, dataTypeText, "data-type");
+  checkFields(dataSrc, entity, "entity");
+  checkFields(entity, attribute, "attribute");
+  checkFields(attribute, dataType, "data-type");
 
   sampleValue.addEventListener("keyup", (event: KeyboardEvent) => {
     if (
@@ -110,11 +105,11 @@ if (
           pluginMessage: {
             type: "createText",
             values: [
-              dataSrc.value,
-              entity.value,
-              attribute.value,
-              dataType.value,
-              sampleValue.value,
+              dataSrc.value.trim(),
+              entity.value.trim(),
+              attribute.value.trim(),
+              dataType.value.trim(),
+              sampleValue.value.trim(),
             ],
           },
         },
