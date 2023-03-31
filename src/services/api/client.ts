@@ -94,12 +94,22 @@ export default class ApiClient {
    */
   public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
     // Create annotation
-    return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(() => {
-      // Get annotation (needs to be done to get ODS metadata)
-      return this.searchItem<Annotation>("annotation", `itemKey.eq.${itemKey}`).then((res) => {
-        return new Annotation(res.results[0].item, this);
-      });
-    });
+    return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(
+      () =>
+        // Get annotation from ODS after creating it (needs to be done to get ODS metadata)
+        new Promise((resolve) =>
+          // 5s delay to allow ODS to index the project first
+          setTimeout(
+            () =>
+              resolve(
+                this.searchItem<Annotation>("annotation", `itemKey.eq.${itemKey}`).then(
+                  (res) => new Annotation(res.results[0]?.item, this),
+                ),
+              ),
+            5000,
+          ),
+        ),
+    );
   }
 
   /**
@@ -110,12 +120,22 @@ export default class ApiClient {
    */
   public async createProject(itemKey: string, project: IProject): Promise<Project> {
     // Create project
-    return await this.upsertItem("project", itemKey, project as Project).then(() => {
-      // Get project (needs to be done to get ODS metadata)
-      return this.searchItem<Project>("project", `itemKey.eq.${itemKey}`).then((res) => {
-        return new Project(res.results[0].item, this);
-      });
-    });
+    return await this.upsertItem("project", itemKey, project as Project).then(
+      () =>
+        // Get project from ODS after creating it (needs to be done to get ODS metadata)
+        new Promise((resolve) => {
+          // 5s delay to allow ODS to index the project first
+          setTimeout(
+            () =>
+              resolve(
+                this.searchItem<Project>("project", `itemKey.eq.${itemKey}`).then(
+                  (res) => res.results[0]?.item,
+                ),
+              ),
+            5000,
+          );
+        }),
+    );
   }
 
   ////////* HELPER FUNCTIONS *////////
