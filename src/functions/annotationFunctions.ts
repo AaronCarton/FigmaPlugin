@@ -134,13 +134,14 @@ function drawConnector(side: string, annotation: SceneNode, destination: SceneNo
     const line = figma.createVector();
     line.strokeCap = "ARROW_LINES";
     line.strokes = [{ type: "SOLID", color: { r: 13 / 255, g: 153 / 255, b: 1 } }];
+    line.strokeWeight = 2;
     annotationElements.annotationLayer.appendChild(line);
     annotationElements.annotationLayer.clipsContent = false;
     //M = starting point
     //L = end point
     line.vectorPaths = [
       {
-        windingRule: "NONE",
+        windingRule: "EVENODD",
         data: `M ${side === "left" ? annotation.x + annotation.width : annotation.x} ${
           annotation.y + annotation.height / 2
         } L ${
