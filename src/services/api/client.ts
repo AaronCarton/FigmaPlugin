@@ -205,6 +205,8 @@ export default class ApiClient {
           throw new APIError(res, "API URL not found, please check your URL");
         case 401:
           throw new APIError(res, "Unauthorized, please check your API key");
+        case 400:
+          throw new APIError(res, "Bad request, is the item structure correct?");
         case 500:
           throw new APIError(res, "Internal Server Error");
         default:
