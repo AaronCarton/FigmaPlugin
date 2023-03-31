@@ -63,32 +63,27 @@ describe("Tests for API client", () => {
     });
   });
 
-  // test("Can archived project", async () => {
-  //   jest.setTimeout(30000);
-  //   const project = {
-  //     lastUpdated: new Date().toISOString(),
-  //     customerId: "896",
-  //   };
-  //   await apiClient.createProject("74", project).then(async (res) => {
-  //     res.archive();
-  //     expect(res.archived).not.toEqual("null");
-  //   });
-  // });
-
-  test("Get archived project (by projectKey) when archived = false", async () => {
-    jest.setTimeout(10000);
-    const project = await apiClient.getProject("74", false).then(async (res) => {
+  test("Can archived project", async () => {
+    jest.setTimeout(30000);
+    await apiClient.getProject("74").then(async (res) => {
       res[0].archive();
-      const archivedProject = await apiClient.getProject("74", false);
-      expect(archivedProject).toEqual(0);
+      expect(res[0].archived).not.toBeNull();
     });
   });
-  // test("Get annotation by projectKey when archived", async () => {
-  //   const response = await apiClient.getAnnotations("195", false);
-  //   jest.setTimeout(10000);
-  //   response[0].archive();
-  //   expect(response[0]).toBeNull();
-  // });
+
+  test("Get archived project when IncludeArchived = false", async () => {
+    jest.setTimeout(10000);
+    await apiClient.getProject("74", false).then(async (res) => {
+      expect(res).toEqual(0);
+    });
+  });
+  test("Get archived project when IncludeArchived = true", async () => {
+    jest.setTimeout(10000);
+    await apiClient.getProject("74", false).then(async (res) => {
+      expect(res).not.toEqual(0);
+      expect(res[0].itemKey).toEqual("74");
+    });
+  });
 });
 
 // tests: archive = false on project/annotations then try to get it back, same with archive = true
