@@ -1,24 +1,20 @@
 import ApiClient from "./services/api/client";
 
-const config = {
+const api = ApiClient.initialize({
   baseURL: "http://localhost:1139",
   clientKey: "123",
   sourceKey: "123",
-};
+});
+api.getAnnotations("75059577", true).then(async (annotations) => {
+  console.log(annotations);
 
-const api = ApiClient.initialize(config);
-api.getProject("75059577").then((project) => {
-  api.getAnnotations(project[0].itemKey, true).then(async (annotations) => {
-    console.log(annotations);
+  const someAnnotation = annotations.find((a) => a.attribute === "registerLink");
+  console.log("someAnnotation", someAnnotation);
 
-    const someAnnotation = annotations.find((a) => a.itemKey === "75059577");
-    console.log("someAnnotation", someAnnotation);
-
-    // try to delete the annotation
-    someAnnotation?.archive().then(() => {
-      // try to restore the annotation
-      someAnnotation?.restore();
-    });
+  // try to delete the annotation
+  someAnnotation?.archive().then(() => {
+    // try to restore the annotation
+    someAnnotation?.restore();
   });
 });
 
