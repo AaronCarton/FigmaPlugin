@@ -129,7 +129,7 @@ export default class ApiClient {
             () =>
               resolve(
                 this.searchItem<Project>("project", `itemKey.eq.${itemKey}`).then(
-                  (res) => res.results[0]?.item,
+                  (res) => new Project(res.results[0]?.item, this),
                 ),
               ),
             5000,
