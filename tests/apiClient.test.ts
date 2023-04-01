@@ -38,29 +38,29 @@ describe("Tests for API client: projects", () => {
     jest.setTimeout(30000);
     await apiClient.getProject("74").then(async (res) => {
       expect(res).not.toEqual(0);
-      expect(res[0].itemKey).toEqual("74"); // Check if the project key is correct
+      expect(res?.itemKey).toEqual("74"); // Check if the project key is correct
     });
   });
 
   test("Can archived project", async () => {
     jest.setTimeout(30000);
     await apiClient.getProject("74").then(async (res) => {
-      res[0].archive();
-      expect(res[0].archived).not.toBeNull(); // Check if the archive field of the project isn't null
+      res?.archive();
+      expect(res?.archived).not.toBeNull(); // Check if the archive field of the project isn't null
     });
   });
 
-  test("Get archived project when IncludeArchived = false", async () => {
-    await new Promise((r) => setTimeout(r, 5000)); // Wait for the project to be archived
+  test("Cannot get archived project when IncludeArchived = false", async () => {
+    await new Promise((r) => setTimeout(r, 5000)); // Wait for archived project to be indexed first
     await apiClient.getProject("74", false).then(async (res) => {
-      expect(res.length).toEqual(0);
+      expect(res).toBeNull();
     });
   });
-  test("Get archived project when IncludeArchived = true", async () => {
+  test("Can get archived project when IncludeArchived = true", async () => {
     jest.setTimeout(10000);
     await apiClient.getProject("74", true).then(async (res) => {
-      expect(res.length).not.toEqual(0);
-      expect(res[0].itemKey).toEqual("74"); // Check if the project key is correct
+      expect(res).not.toBeNull();
+      expect(res?.itemKey).toEqual("74"); // Check if the project key is correct
     });
   });
 });
@@ -100,7 +100,7 @@ describe("Tests for API client: annotations", () => {
   });
 
   test("Cannot get archived when IncludeArchived = false", async () => {
-    await new Promise((r) => setTimeout(r, 5000)); // Wait for archived project to be indexed first
+    await new Promise((r) => setTimeout(r, 5000)); // Wait for archived annotation to be indexed first
     await apiClient.getProject("74", false).then(async (res) => {
       expect(res).toBeNull();
     });
