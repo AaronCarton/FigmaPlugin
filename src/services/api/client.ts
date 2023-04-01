@@ -62,13 +62,13 @@ export default class ApiClient {
    * @param {boolean} includeArchived - Whether to return the project even if it is archived
    * @returns {Promise<Project[]>} - Promise that resolves to an array of projects
    */
-  public async getProject(projectKey: string, includeArchived = false): Promise<Project[]> {
+  public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
     return this.searchItem<Project>(
       "project",
       `itemKey.eq.${projectKey}`,
       undefined,
       includeArchived,
-    ).then((res) => res.results.map((res) => new Project(res.item, this)));
+    ).then((res) => (res.results.length > 0 ? new Project(res.results[0]?.item, this) : null));
   }
 
   /**
