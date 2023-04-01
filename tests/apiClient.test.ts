@@ -20,7 +20,7 @@ describe("Tests validation keys", () => {
   });
 });
 
-describe("Tests for API client", () => {
+describe("Tests for API client: projects", () => {
   jest.setTimeout(30000);
   test("Can create project", async () => {
     jest.setTimeout(30000);
@@ -30,9 +30,42 @@ describe("Tests for API client", () => {
     };
     await apiClient.createProject("74", project).then(async (res) => {
       expect(res).not.toBeNull();
+      expect(res.itemKey).toEqual("74"); // Check if the project key is correct
     });
   });
 
+  test("Get Project by projectkey", async () => {
+    jest.setTimeout(30000);
+    await apiClient.getProject("74").then(async (res) => {
+      expect(res).not.toEqual(0);
+      expect(res[0].itemKey).toEqual("74"); // Check if the project key is correct
+    });
+  });
+
+  test("Can archived project", async () => {
+    jest.setTimeout(30000);
+    await apiClient.getProject("74").then(async (res) => {
+      res[0].archive();
+      expect(res[0].archived).not.toBeNull(); // Check if the archive field of the project isn't null
+    });
+  });
+
+  test("Get archived project when IncludeArchived = false", async () => {
+    await new Promise((r) => setTimeout(r, 5000)); // Wait for the project to be archived
+    await apiClient.getProject("74", false).then(async (res) => {
+      expect(res.length).toEqual(0);
+    });
+  });
+  test("Get archived project when IncludeArchived = true", async () => {
+    jest.setTimeout(10000);
+    await apiClient.getProject("74", true).then(async (res) => {
+      expect(res.length).not.toEqual(0);
+      expect(res[0].itemKey).toEqual("74"); // Check if the project key is correct
+    });
+  });
+});
+
+describe("Tests for API client: annotations", () => {
   test("Can create annotation", async () => {
     jest.setTimeout(30000);
     const annotation = {
@@ -46,13 +79,7 @@ describe("Tests for API client", () => {
     };
     await apiClient.createAnnotation("85", annotation).then(async (res) => {
       expect(res).not.toBeNull();
-    });
-  });
-
-  test("Get Project by projectkey", async () => {
-    jest.setTimeout(30000);
-    await apiClient.getProject("74").then(async (res) => {
-      expect(res).not.toEqual(0);
+      expect(res.itemKey).toEqual("85"); // Check if the annotation key is correct
     });
   });
 
@@ -60,30 +87,31 @@ describe("Tests for API client", () => {
     jest.setTimeout(30000);
     await apiClient.getAnnotations("85").then(async (res) => {
       expect(res).not.toEqual(0);
+      expect(res[0].itemKey).toEqual("85"); // Check if the annotation key is correct
     });
   });
 
-  test("Can archived project", async () => {
+  test("Can archived annotation", async () => {
     jest.setTimeout(30000);
-    await apiClient.getProject("74").then(async (res) => {
+    await apiClient.getAnnotations("85").then(async (res) => {
       res[0].archive();
-      expect(res[0].archived).not.toBeNull();
+      expect(res[0].archived).not.toBeNull(); // Check if the archive field of the annotation isn't null
     });
   });
 
-  test("Get archived project when IncludeArchived = false", async () => {
-    await new Promise((r) => setTimeout(r, 5000));
-    await apiClient.getProject("74", false).then(async (res) => {
+  test("Get archived annotation when IncludeArchived = false", async () => {
+    await new Promise((r) => setTimeout(r, 5000)); // Wait for the annotation to be archived
+    await apiClient.getAnnotations("85", false).then(async (res) => {
       expect(res.length).toEqual(0);
     });
   });
-  test("Get archived project when IncludeArchived = true", async () => {
+  test("Get archived annotation when IncludeArchived = true", async () => {
     jest.setTimeout(10000);
-    await apiClient.getProject("74", true).then(async (res) => {
+    await apiClient.getAnnotations("85", true).then(async (res) => {
       expect(res.length).not.toEqual(0);
-      expect(res[0].itemKey).toEqual("74");
+      expect(res[0].itemKey).toEqual("85"); // Check if the annotation key is correct
     });
   });
 });
 
-// TODO: Add tests for the following: archive annotations, get archived when false and when true
+// TODO:check itemkey = project? in annotation, some tests are not working
