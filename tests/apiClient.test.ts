@@ -118,5 +118,3 @@ describe("Tests for API client: annotations", () => {
     });
   });
 });
-
-// TODO:check itemkey = project? in annotation, some tests are not working

@@ -12,14 +12,14 @@ describe("Tests for event handler", () => {
     expect(eventName).toEqual("message-this is a testmessage");
   });
 });
-describe("makeEvent", () => {
+describe("makeEvent function", () => {
   beforeEach(() => {
-    jest.spyOn(document, "addEventListener");
+    jest.spyOn(document, "addEventListener"); // Mock the addEventListener function
   });
 
   test("should add an event listener to the document", () => {
     const eventType = "click";
-    const callback = jest.fn();
+    const callback = jest.fn(); // Mock the callback function
     const eventHandler = new EventHandler();
     eventHandler.makeEvent(eventType, callback);
 
@@ -33,7 +33,7 @@ describe("sendMessage function", () => {
   });
 
   test("should dispatch a custom event with the correct message type and detail", () => {
-    const mockDispatchEvent = jest.spyOn(document, "dispatchEvent");
+    const mockDispatchEvent = jest.spyOn(document, "dispatchEvent"); // Mock the dispatchEvent function
 
     const messageType = "success";
     const message = "The operation was successful.";
