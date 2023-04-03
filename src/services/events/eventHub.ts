@@ -1,4 +1,5 @@
 import { EventHandler } from "./eventHandler";
+import ApiClient from "../api/client";
 
 // Class with all the events
 export class EventHub {
@@ -6,7 +7,9 @@ export class EventHub {
 
   // Event that initializes with the database
   init(baseURL: string, clientKey: string, sourceKey: string) {
-    return null;
+    this.eventHandler.makeEvent("click", (event: any) => {
+      ApiClient.initialize({ baseURL, clientKey, sourceKey });
+    });
   }
 
   // Event to create a new datasource, entity, attribute, or datatype

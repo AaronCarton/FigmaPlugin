@@ -1,10 +1,10 @@
 // Class to handle all events
 export class EventHandler {
-  private event: Event;
+  // private event: Event;
 
-  constructor(event: Event) {
-    this.event = event;
-  }
+  // constructor(event: Event) {
+  //   this.event = event;
+  // }
 
   /**
    * Returns the event.
@@ -35,6 +35,7 @@ export class EventHandler {
   }
 
   /**
+   * May not be necessary.
    * Dispatches a custom event.
    * @param {string} messageType
    * @param {string} message
