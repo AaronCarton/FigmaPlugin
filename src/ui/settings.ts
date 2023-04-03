@@ -7,20 +7,21 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 //Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
+// Event Hub
+import { EventHub } from "../services/events/eventHub";
+const eventHub = new EventHub();
 
 function checkConnectionSpinnerExample() {
   $plugin?.classList.add("no-pointer");
   $spinner?.removeAttribute("hidden");
-  // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
-  // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
   fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
     .then((response) => response.json())
     .then(() => {
       $plugin?.classList.remove("no-pointer");
       $spinner?.setAttribute("hidden", "");
     });
-  // add functionality for button??
 }
+
 function toggleAnnotations(e: Event) {
   const state: boolean = (<HTMLInputElement>e.target).checked;
   if (state === true) {
@@ -29,6 +30,7 @@ function toggleAnnotations(e: Event) {
     console.log("hide annotations");
   }
 }
+
 function disableFieldsWhenNecessary() {
   if (
     $baseURL !== null &&
@@ -56,6 +58,14 @@ function initAnnotationToggleEvents() {
   $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
   $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
   $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
+
+  const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
+  const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
+  const sourceKey: string | null | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
+  $button?.addEventListener("click", () => {
+    eventHub.init(baseURL, clientKey, sourceKey);
+    checkConnectionSpinnerExample();
+  });
 }
 
 function initSettings() {

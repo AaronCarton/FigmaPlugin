@@ -7,8 +7,8 @@ export class EventHub {
   eventHandler = new EventHandler();
   api = new ApiClient();
 
-  // Event that initializes with the database
-  init(baseURL: string, clientKey: string, sourceKey: string) {
+  // Event to initialize the API
+  init(baseURL: string | undefined, clientKey: string | undefined, sourceKey: string | undefined) {
     this.eventHandler.makeEvent("click", () => {
       ApiClient.initialize({ baseURL, clientKey, sourceKey });
     });

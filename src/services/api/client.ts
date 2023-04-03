@@ -4,9 +4,9 @@ import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
 
 interface ApiOptions {
-  baseURL: string;
-  clientKey: string;
-  sourceKey: string;
+  baseURL: string | undefined;
+  clientKey: string | undefined;
+  sourceKey: string | undefined;
 }
 
 interface RequestOptions {

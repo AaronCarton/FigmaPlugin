@@ -1,19 +1,21 @@
 // Class to handle all events
 export class EventHandler {
-  // private event: Event;
-
-  // constructor(event: Event) {
-  //   this.event = event;
-  // }
-
   /**
    * Returns the event.
    * @param eventType - The type of event to listen for.
    * @param callback - The callback function to call when the event is triggered.
    */
-
-  makeEvent(eventType: string, callback: EventListener) {
+  makeEvent(eventType: string, callback: () => void): void {
     try {
+      // If the event type is not a string, throw an error
+      if (typeof eventType !== "string") {
+        throw new TypeError("The event type must be a string");
+      }
+      // If the callback is not a function, throw an error
+      if (typeof callback !== "function") {
+        throw new TypeError("The callback must be a function");
+      }
+      // Add the event listener
       document.addEventListener(eventType, callback);
     } catch (error) {
       console.error("Error: ", error);
