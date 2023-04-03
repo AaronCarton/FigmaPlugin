@@ -19,6 +19,9 @@ describe("Tests validation keys", () => {
   test("Is source key set?", () => {
     expect(process.env.SOURCE_KEY).toBeDefined();
   });
+  test("Is base url set?", () => {
+    expect(process.env.BASE_URL).toBeDefined();
+  });
 });
 
 describe("Tests for API client: projects", () => {
