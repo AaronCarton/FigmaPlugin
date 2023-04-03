@@ -26,18 +26,26 @@ describe("makeEvent", () => {
     expect(document.addEventListener).toHaveBeenCalledTimes(1);
     expect(document.addEventListener).toHaveBeenCalledWith(eventType, callback);
   });
+});
+describe("sendMessage function", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  // test("should handle errors when adding an event listener", () => {
-  //   const eventType = "invalidEvent";
-  //   const callback = jest.fn();
-  //   console.error = jest.fn();
-  //   const eventHandler = new EventHandler();
-  //   eventHandler.makeEvent(eventType, callback);
+  test("should dispatch a custom event with the correct message type and detail", () => {
+    const mockDispatchEvent = jest.spyOn(document, "dispatchEvent");
 
-  //   expect(document.addEventListener).toHaveBeenCalledTimes(1);
-  //   expect(document.addEventListener).toHaveBeenCalledWith(eventType, callback);
+    const messageType = "success";
+    const message = "The operation was successful.";
+    const eventHandler = new EventHandler();
+    eventHandler.sendMessage(messageType, message);
 
-  //   expect(console.error).toHaveBeenCalledTimes(1);
-  //   expect(console.error).toHaveBeenCalledWith(expect.any(Error));
-  // });
+    expect(mockDispatchEvent).toHaveBeenCalledTimes(1);
+    expect(mockDispatchEvent).toHaveBeenCalledWith(
+      new CustomEvent("message-success", {
+        bubbles: true,
+        detail: { message: message },
+      }),
+    );
+  });
 });
