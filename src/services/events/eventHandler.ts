@@ -54,12 +54,14 @@ export class EventHandler {
     }
   }
 
-  // This function returns the name of an event which should be fired when a message of the given type is received.
-  // If the message type is null or undefined, then the event name is simply "message". Otherwise, it is "message-<messageType>".
+  // Function to get the name of the event to emit
   getEventName(messageType: string) {
+    // if the type is null or undefined, return "message"
     if (messageType === null || messageType === undefined) {
       return "message";
     }
+
+    // otherwise return "message-" followed by the type
     return "message-" + messageType;
   }
 }
