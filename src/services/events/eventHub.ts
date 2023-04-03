@@ -15,14 +15,16 @@ export class EventHub {
   }
 
   // Event to create a new datasource, entity, attribute, or datatype
-  create(type: string, data: any, itemKey: string) {
+  createChild(type: string, data: any, itemKey: string) {
     this.eventHandler.makeEvent("click", () => {
       this.api.upsertItem(type, itemKey, data);
     });
   }
 
   // Event to update the annotation
-  updateAnnotation(annotation: Annotation) {
-    this.eventHandler.makeEvent("click", () => {});
+  updateAnnotation(itemKey: string, annotation: Annotation) {
+    this.eventHandler.makeEvent("click", () => {
+      this.api.createAnnotation(itemKey, annotation);
+    });
   }
 }
