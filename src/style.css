@@ -10,11 +10,10 @@
 @import "./style/atoms/_atoms.navigation-tabs.css";
 @import "./style/settings.css";
 @import "./style/spinner.css";
-.hidden{
-    display: none;
+.hidden {
+  display: none;
 }
 .no-pointer {
-    pointer-events: none;
-    filter: blur(1px);
-  }
-
+  pointer-events: none;
+  filter: blur(1px);
+}
