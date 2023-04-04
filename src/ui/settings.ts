@@ -59,10 +59,7 @@ function init() {
   const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
   const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
   const sourceKey: string | null | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
-  $button?.addEventListener("click", () => {
-    checkConnectionSpinnerExample();
-    eventHub.init(baseURL, clientKey, sourceKey);
-  });
+  $button?.dispatchEvent(eventHub.init(baseURL, clientKey, sourceKey));
 }
 
 function initAnnotationToggleEvents() {
@@ -75,7 +72,6 @@ function initAnnotationToggleEvents() {
 function initSettings() {
   disableFieldsWhenNecessary();
   initAnnotationToggleEvents();
-  init();
 }
 
 initSettings();
