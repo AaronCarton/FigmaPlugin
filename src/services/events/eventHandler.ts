@@ -5,7 +5,7 @@ export class EventHandler {
    * @param eventType - The type of event to listen for.
    * @param callback - The callback function to call when the event is triggered.
    */
-  makeEvent(eventType: string, callback: () => void): void {
+  makeEvent(eventType: string, callback: () => Event) {
     try {
       // If the event type is not a string, throw an error
       if (typeof eventType !== "string") {
@@ -17,6 +17,7 @@ export class EventHandler {
       }
       // Add the event listener
       document.addEventListener(eventType, callback);
+      console.log("Event added: ", eventType);
     } catch (error) {
       console.error("Error: ", error);
     }
