@@ -11,7 +11,7 @@ interface ApiOptions {
 
 interface RequestOptions {
   method: "GET" | "PUT" | "POST" | "DELETE";
-  apiKey: string;
+  apiKey: string | undefined;
   body?: object;
   metadata?: boolean;
   parent?: string;
@@ -19,9 +19,9 @@ interface RequestOptions {
 }
 
 export default class ApiClient {
-  public static BASE_URL: string;
-  public static CLIENT_APIKEY: string;
-  public static SOURCE_APIKEY: string;
+  public static BASE_URL: string | undefined;
+  public static CLIENT_APIKEY: string | undefined;
+  public static SOURCE_APIKEY: string | undefined;
 
   /**
    * Configure API client
@@ -214,7 +214,7 @@ export default class ApiClient {
         "x-include-metadata": metadata ? "true" : "false",
         "x-include-archived": options.includeArchived ? "true" : "false",
         "x-expand": options.parent || "",
-      },
+      } as HeadersInit,
     });
     console.debug(`[API] Response: ${method} ${url}`, res);
 

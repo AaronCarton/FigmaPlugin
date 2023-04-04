@@ -11,6 +11,7 @@ export class EventHub {
   init(baseURL: string | undefined, clientKey: string | undefined, sourceKey: string | undefined) {
     this.eventHandler.makeEvent("click", () => {
       ApiClient.initialize({ baseURL, clientKey, sourceKey });
+      this.getProjectData("75059577");
     });
   }
 
@@ -26,5 +27,13 @@ export class EventHub {
     this.eventHandler.makeEvent("click", () => {
       this.api.createAnnotation(itemKey, annotation);
     });
+  }
+
+  getProjectData(projectKey: string) {
+    const data = this.api.getProject(projectKey);
+    console.log("before data"); // DELETE THIS - temporary
+    console.log(data); // DELETE THIS - temporary
+    console.log("after data"); // DELETE THIS - temporary
+    return data;
   }
 }

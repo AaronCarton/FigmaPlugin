@@ -20,6 +20,10 @@ function checkConnectionSpinnerExample() {
       $plugin?.classList.remove("no-pointer");
       $spinner?.setAttribute("hidden", "");
     });
+
+  $button?.addEventListener("click", () => {
+    eventHub.init($baseURL?.value, $clientKey?.value, $sourceKey?.value);
+  });
 }
 
 function toggleAnnotations(e: Event) {
@@ -58,18 +62,11 @@ function initAnnotationToggleEvents() {
   $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
   $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
   $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
-
-  const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
-  const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
-  const sourceKey: string | null | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
-  $button?.addEventListener("click", () => {
-    eventHub.init(baseURL, clientKey, sourceKey);
-    checkConnectionSpinnerExample();
-  });
 }
 
 function initSettings() {
   disableFieldsWhenNecessary();
+  checkConnectionSpinnerExample();
   initAnnotationToggleEvents();
 }
 
