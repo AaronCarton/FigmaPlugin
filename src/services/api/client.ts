@@ -214,7 +214,7 @@ export default class ApiClient {
         "x-include-metadata": metadata ? "true" : "false",
         "x-include-archived": options.includeArchived ? "true" : "false",
         "x-expand": options.parent || "",
-      },
+      } as HeadersInit,
     });
     console.debug(`[API] Response: ${method} ${url}`, res);
 

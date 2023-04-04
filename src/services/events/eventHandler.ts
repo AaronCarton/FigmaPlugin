@@ -6,14 +6,9 @@ export class EventHandler {
    * @param callback - The callback function to call when the event is triggered.
    */
   makeEvent(eventType: string, callback: () => void): Event {
-    // Create a new event
     const event = new Event(eventType);
-
-    // Add the event listener
     event.target?.addEventListener(eventType, callback);
-
-    console.log("Event added: ", event);
-
+    console.log("Event added: ", event); // For testing - can be deleted after.
     return event;
   }
 
@@ -23,7 +18,7 @@ export class EventHandler {
    * @param callback - The callback function to remove.
    */
 
-  removeEvent(eventType: string, callback: EventListener) {
+  removeEvent(eventType: string, callback: () => void) {
     try {
       document.removeEventListener(eventType, callback);
     } catch (error) {

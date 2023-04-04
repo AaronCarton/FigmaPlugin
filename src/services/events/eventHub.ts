@@ -16,7 +16,8 @@ export class EventHub {
     const event = this.eventHandler.makeEvent("click", () => {
       ApiClient.initialize({ baseURL, clientKey, sourceKey });
     });
-    console.log("Initialized API");
+    console.log("Initialized API"); // for testing - can be deleted after.
+    this.getProjectData("75059577");
     return event;
   }
 
@@ -32,5 +33,11 @@ export class EventHub {
     this.eventHandler.makeEvent("click", () => {
       this.api.createAnnotation(itemKey, annotation);
     });
+  }
+
+  getProjectData(projectKey: string) {
+    const data = this.api.getProject(projectKey);
+    console.log(data); // DELETE THIS - temporary
+    return data;
   }
 }
