@@ -8,11 +8,16 @@ export class EventHub {
   api = new ApiClient();
 
   // Event to initialize the API
-  init(baseURL: string | undefined, clientKey: string | undefined, sourceKey: string | undefined) {
-    this.eventHandler.makeEvent("click", () => {
+  init(
+    baseURL: string | undefined,
+    clientKey: string | undefined,
+    sourceKey: string | undefined,
+  ): Event {
+    const event = this.eventHandler.makeEvent("click", () => {
       ApiClient.initialize({ baseURL, clientKey, sourceKey });
     });
     console.log("Initialized API");
+    return event;
   }
 
   // Event to create a new datasource, entity, attribute, or datatype
