@@ -12,7 +12,6 @@ export class EventHub {
     this.eventHandler.makeEvent("click", () => {
       ApiClient.initialize({ baseURL, clientKey, sourceKey });
     });
-    console.log("Initialized API");
   }
 
   // Event to create a new datasource, entity, attribute, or datatype

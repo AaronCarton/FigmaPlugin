@@ -4,13 +4,12 @@ const $clientKey: HTMLInputElement | null = document.querySelector("#settings_cl
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
-
 //Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
-
-// Event hub
+// Event Hub
 import { EventHub } from "../services/events/eventHub";
+const eventHub = new EventHub();
 
 function checkConnectionSpinnerExample() {
   $plugin?.classList.add("no-pointer");
@@ -54,19 +53,19 @@ function disableFieldsWhenNecessary() {
   }
 }
 
-function init() {
-  const eventHub = new EventHub();
-  const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
-  const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
-  const sourceKey: string | null | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
-  $button?.dispatchEvent(eventHub.init(baseURL, clientKey, sourceKey));
-}
-
 function initAnnotationToggleEvents() {
   $annotationToggle?.addEventListener("click", toggleAnnotations);
   $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
   $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
   $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
+
+  const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
+  const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
+  const sourceKey: string | null | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
+  $button?.addEventListener("click", () => {
+    eventHub.init(baseURL, clientKey, sourceKey);
+    checkConnectionSpinnerExample();
+  });
 }
 
 function initSettings() {
