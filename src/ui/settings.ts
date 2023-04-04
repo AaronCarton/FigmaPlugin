@@ -60,7 +60,7 @@ function init() {
   const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
   const sourceKey: string | null | undefined = $sourceKey?.value.replace(/\s/g, "").trim();
   $button?.addEventListener("click", () => {
-    // checkConnectionSpinnerExample();
+    checkConnectionSpinnerExample();
     eventHub.init(baseURL, clientKey, sourceKey);
   });
 }
