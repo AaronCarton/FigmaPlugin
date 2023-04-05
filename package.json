@@ -9,7 +9,8 @@
     "lint": "eslint . --ext .ts",
     "test": "jest",
     "test:jsdom": "jest --env=jsdom",
-    "test:event": "jest tests/eventHandler.test.ts --env=jsdom"
+    "test:event": "jest tests/eventHandler.test.ts --env=jsdom",
+    "test:api": "jest tests/apiClient.test.ts" 
 
   },
   "author": "",

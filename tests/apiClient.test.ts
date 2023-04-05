@@ -1,7 +1,7 @@
 import ApiClient from "../src/services/api/client";
 import { config } from "dotenv";
 
-config();
+config(); // Load environment variables from .env file
 const apiClient = ApiClient.initialize({
   baseURL: process.env.BASE_URL as string,
   clientKey: process.env.CLIENT_KEY as string,
@@ -55,11 +55,17 @@ describe("Tests for API client: projects", () => {
   });
 
   test("Cannot get archived project when IncludeArchived = false", async () => {
-    await new Promise((r) => setTimeout(r, 5000)); // Wait for archived project to be indexed first
-    await apiClient.getProject("100", false).then(async (res) => {
-      expect(res).toBeNull();
+    const project = await apiClient.getProject("100", false).then(async (res) => {
+      waitUntil(() => res === null) // Wait for archived annotation to be indexed first
+        .then(() => {
+          expect(res).toBeNull();
+        })
+        .catch((err) => {
+          throw err;
+        });
     });
   });
+
   test("Can get archived project when IncludeArchived = true", async () => {
     jest.setTimeout(10000);
     await apiClient.getProject("100", true).then(async (res) => {
@@ -105,9 +111,14 @@ describe("Tests for API client: annotations", () => {
 
   test("Cannot get archived annotation when IncludeArchived = false", async () => {
     jest.setTimeout(30000);
-    await new Promise((r) => setTimeout(r, 5000)); // Wait for archived annotation to be indexed first
     await apiClient.getAnnotations("100", false).then(async (res) => {
-      expect(res.length).toEqual(0);
+      waitUntil(() => res === null) // Wait for archived annotation to be indexed first
+        .then(() => {
+          expect(res.length).toEqual(0);
+        })
+        .catch((err) => {
+          throw err;
+        });
     });
   });
   test("Can get archived annotation when IncludeArchived = true", async () => {
@@ -118,3 +129,33 @@ describe("Tests for API client: annotations", () => {
     });
   });
 });
+
+function waitUntil(condition: () => boolean): Promise<void> {
+  const start = Date.now();
+
+  return new Promise<void>((resolve, reject) => {
+    const intervalId = setInterval(() => {
+      if (condition()) {
+        clearInterval(intervalId);
+        resolve();
+      } else if (Date.now() - start > 500) {
+        if (condition()) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      } else if (Date.now() - start > 1500) {
+        if (condition()) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      } else if (Date.now() - start > 3000) {
+        if (condition()) {
+          clearInterval(intervalId);
+          resolve();
+        }
+        clearInterval(intervalId);
+        reject(new Error(`Timeout waiting for condition to be true after 3000ms`));
+      }
+    }, 100);
+  });
+}
