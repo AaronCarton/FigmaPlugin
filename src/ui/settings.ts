@@ -7,9 +7,6 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 //Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
-// Event Hub
-import { EventHub } from "../services/events/eventHub";
-const eventHub = new EventHub();
 
 function checkConnectionSpinnerExample() {
   $plugin?.classList.add("no-pointer");
@@ -20,10 +17,6 @@ function checkConnectionSpinnerExample() {
       $plugin?.classList.remove("no-pointer");
       $spinner?.setAttribute("hidden", "");
     });
-
-  $button?.addEventListener("click", () => {
-    eventHub.init($baseURL?.value, $clientKey?.value, $sourceKey?.value, "75059577");
-  });
 }
 
 function toggleAnnotations(e: Event) {
