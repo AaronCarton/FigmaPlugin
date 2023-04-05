@@ -131,31 +131,19 @@ describe("Tests for API client: annotations", () => {
 });
 
 function waitUntil(condition: () => boolean): Promise<void> {
-  const start = Date.now();
-
-  return new Promise<void>((resolve, reject) => {
-    const intervalId = setInterval(() => {
+  return new Promise((resolve, reject) => {
+    let count = 0;
+    function check() {
       if (condition()) {
-        clearInterval(intervalId);
         resolve();
-      } else if (Date.now() - start > 500) {
-        if (condition()) {
-          clearInterval(intervalId);
-          resolve();
+      } else {
+        count++;
+        if (count > 3) {
+          reject(new Error("Timeout"));
+        } else {
+          setTimeout(check, 500);
         }
-      } else if (Date.now() - start > 1500) {
-        if (condition()) {
-          clearInterval(intervalId);
-          resolve();
-        }
-      } else if (Date.now() - start > 3000) {
-        if (condition()) {
-          clearInterval(intervalId);
-          resolve();
-        }
-        clearInterval(intervalId);
-        reject(new Error(`Timeout waiting for condition to be true after 3000ms`));
       }
-    }, 100);
+    }
   });
 }
