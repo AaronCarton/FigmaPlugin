@@ -8,10 +8,23 @@ export class EventHub {
   api = new ApiClient();
 
   // Event to initialize the API
-  init(baseURL: string | undefined, clientKey: string | undefined, sourceKey: string | undefined) {
+  init(
+    baseURL: string | undefined,
+    clientKey: string | undefined,
+    sourceKey: string | undefined,
+    projectKey: string,
+  ) {
     this.eventHandler.makeEvent("click", () => {
       ApiClient.initialize({ baseURL, clientKey, sourceKey });
-      this.getProjectData("75059577");
+      console.log(
+        "Initialized baseurl: ",
+        baseURL,
+        " clientKey: ",
+        clientKey,
+        " sourceKey: ",
+        sourceKey,
+      ); // DELETE THIS - temporary
+      this.getProjectData(projectKey);
     });
   }
 

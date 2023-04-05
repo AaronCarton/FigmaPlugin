@@ -35,6 +35,7 @@ export default class ApiClient {
     this.BASE_URL = baseURL;
     this.CLIENT_APIKEY = clientKey;
     this.SOURCE_APIKEY = sourceKey;
+    console.log(baseURL, clientKey, sourceKey); // DELETE THIS - temporary
 
     return new ApiClient();
   }
@@ -70,8 +71,8 @@ export default class ApiClient {
       undefined,
       includeArchived,
     ).then((res) => {
-      if (res.results.length === 0) return null;
-      return new Project(res.results[0].item, this);
+      // returns project object if there is a result
+      return res.results.length > 0 ? new Project(res.results[0]?.item, this) : null;
     });
   }
 
@@ -208,16 +209,20 @@ export default class ApiClient {
     console.log("fetchData called with url", url);
     const { method, body, apiKey, metadata } = options;
 
-    const headers: Record<string, string> = {
+    const headers = {
       "Content-Type": "application/json",
       "x-api-key": apiKey || "",
       "x-include-metadata": metadata ? "true" : "false",
       "x-include-archived": options.includeArchived ? "true" : "false",
       "x-expand": options.parent || "",
+      // "Access-Control-Allow-Origin": "*",
     };
+
+    console.log("headers", headers);
 
     // Create request
     console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey);
+    console.log(ApiClient.BASE_URL + url);
     const res = await fetch(ApiClient.BASE_URL + url, {
       method: method,
       body: JSON.stringify(body),

@@ -22,7 +22,7 @@ function checkConnectionSpinnerExample() {
     });
 
   $button?.addEventListener("click", () => {
-    eventHub.init($baseURL?.value, $clientKey?.value, $sourceKey?.value);
+    eventHub.init($baseURL?.value, $clientKey?.value, $sourceKey?.value, "75059577");
   });
 }
 
