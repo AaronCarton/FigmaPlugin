@@ -2,6 +2,9 @@ import { EventHandler } from "./eventHandler";
 import ApiClient from "../api/client";
 import Annotation from "../../interfaces/interface.annotation";
 
+// CHANGE CLASS
+// No initialization for the API, just the name of events that make an event in the event handler
+
 // Class with all the events
 export class EventHub {
   eventHandler = new EventHandler();
@@ -42,8 +45,9 @@ export class EventHub {
     });
   }
 
-  getProjectData(projectKey: string) {
-    const data = this.api.getProject(projectKey);
+  async getProjectData(projectKey: string) {
+    // CHANGE THIS FOR PROMISE
+    const data = await this.api.getProject(projectKey);
     console.log("before data"); // DELETE THIS - temporary
     console.log(data); // DELETE THIS - temporary
     console.log("after data"); // DELETE THIS - temporary

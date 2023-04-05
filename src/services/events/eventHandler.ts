@@ -37,7 +37,6 @@ export class EventHandler {
   }
 
   /**
-   * May not be necessary.
    * Dispatches a custom event.
    * @param {string} messageType
    * @param {string} message
