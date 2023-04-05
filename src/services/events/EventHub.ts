@@ -1,8 +1,19 @@
 // No initialization for the API, just the name of events that make an event in the event handler
+
+import ApiClient from "../api/client";
+
 // Class with all the events
 export class EventHub {
   // Events
-  connect = this.makeEvent("click", () => this.makeCustomEvent("connect", "connect"));
+  connect(callback: () => any) {
+    this.makeEvent("btn_connect_click", callback);
+  }
+  // Adding these events later
+  // updateAnnotation
+  // UpdateDataSource
+  // updateEntity
+  // updateAttribute
+  // updateDataType
 
   /**
    * @description It creates an event listener
@@ -11,7 +22,7 @@ export class EventHub {
    * @returns {void}
    */
 
-  makeEvent(eventType: string, callback: () => void): void {
+  makeEvent(eventType: string, callback: EventListener): void {
     try {
       if (typeof eventType !== "string") throw new TypeError("The event type must be a string");
       if (typeof callback !== "function") throw new TypeError("The callback must be a function");
@@ -63,7 +74,6 @@ export class EventHub {
    */
   getEventName(messageType: string): string {
     if (messageType === null || messageType === undefined) return "message";
-
     return "message-" + messageType;
   }
 }

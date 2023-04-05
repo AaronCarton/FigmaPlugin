@@ -35,9 +35,6 @@ export default class ApiClient {
     this.BASE_URL = baseURL;
     this.CLIENT_APIKEY = clientKey;
     this.SOURCE_APIKEY = sourceKey;
-    console.log(baseURL, clientKey, sourceKey); // DELETE THIS - temporary
-
-    return new ApiClient();
   }
 
   private static checkInitialized({ baseURL, clientKey, sourceKey }: ApiOptions) {
@@ -64,7 +61,6 @@ export default class ApiClient {
    * @returns {Promise<Project[]>} - Promise that resolves to an array of projects
    */
   public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
-    console.log("getProject called with projectKey", projectKey); // DELETE THIS - temporary
     return this.searchItem<Project>(
       "project",
       `itemKey.eq.${projectKey}`,
@@ -222,7 +218,6 @@ export default class ApiClient {
 
     // Create request
     console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey);
-    console.log(ApiClient.BASE_URL + url);
     const res = await fetch(ApiClient.BASE_URL + url, {
       method: method,
       body: JSON.stringify(body),
