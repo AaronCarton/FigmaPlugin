@@ -8,20 +8,12 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
-import ApiClient from "../services/api/client";
 // Event Hub
 import { EventHub } from "../services/events/EventHub";
-const eventHub = new EventHub();
+import ApiClient from "../services/api/client";
 
-function checkConnectionSpinnerExample() {
-  $plugin?.classList.add("no-pointer");
-  $spinner?.removeAttribute("hidden");
-  fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
-    .then((response) => response.json())
-    .then(() => {
-      $plugin?.classList.remove("no-pointer");
-      $spinner?.setAttribute("hidden", "");
-    });
+function connect() {
+  const eventHub = new EventHub();
 
   const ApiOptions = {
     baseURL: $baseURL?.value,
@@ -34,6 +26,17 @@ function checkConnectionSpinnerExample() {
       ApiClient.initialize(ApiOptions);
     }),
   );
+}
+
+function checkConnectionSpinnerExample() {
+  $plugin?.classList.add("no-pointer");
+  $spinner?.removeAttribute("hidden");
+  fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
+    .then((response) => response.json())
+    .then(() => {
+      $plugin?.classList.remove("no-pointer");
+      $spinner?.setAttribute("hidden", "");
+    });
 }
 
 function toggleAnnotations(e: Event) {
