@@ -1,3 +1,6 @@
+import { EventHub } from "../services/events/EventHub";
+import ApiClient from "../services/api/client";
+
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
@@ -8,21 +11,21 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
-// Event Hub
-import { EventHub } from "../services/events/EventHub";
-import ApiClient from "../services/api/client";
+// EventHub
+const eventHub = new EventHub();
+
+function eventMaker() {
+  eventHub.makeEvent(eventHub.btn_connect_event, () =>
+    ApiClient.initialize({
+      baseURL: $baseURL?.value,
+      clientKey: $clientKey?.value,
+      sourceKey: $sourceKey?.value,
+    }),
+  );
+}
 
 function connect() {
-  const eventHub = new EventHub();
-
   $button?.addEventListener("click", () => {
-    eventHub.makeEvent(eventHub.btn_connect_event, () =>
-      ApiClient.initialize({
-        baseURL: $baseURL?.value,
-        clientKey: $clientKey?.value,
-        sourceKey: $sourceKey?.value,
-      }),
-    );
     eventHub.sendCustomEvent(eventHub.btn_connect_event, "connect button clicked");
   });
 }
@@ -80,6 +83,7 @@ function initSettings() {
   disableFieldsWhenNecessary();
   checkConnectionSpinnerExample();
   initAnnotationToggleEvents();
+  eventMaker();
   connect();
 }
 
