@@ -35,6 +35,12 @@ export default class ApiClient {
     this.BASE_URL = baseURL;
     this.CLIENT_APIKEY = clientKey;
     this.SOURCE_APIKEY = sourceKey;
+
+    console.log("ApiClient initialized with the following options:", {
+      baseURL,
+      clientKey,
+      sourceKey,
+    });
   }
 
   private static checkInitialized({ baseURL, clientKey, sourceKey }: ApiOptions) {
@@ -42,13 +48,13 @@ export default class ApiClient {
       throw new Error("ApiClient has already been initialized");
     }
     if (!baseURL) {
-      throw new Error("baseURL is required");
+      throw new Error("baseURL is required, baseURL is: " + baseURL);
     }
     if (!clientKey) {
-      throw new Error("clientKey is required");
+      throw new Error("clientKey is required, clientKey is: " + clientKey);
     }
     if (!sourceKey) {
-      throw new Error("sourceKey is required");
+      throw new Error("sourceKey is required, sourceKey is: " + sourceKey);
     }
   }
 

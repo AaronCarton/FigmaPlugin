@@ -15,17 +15,16 @@ import ApiClient from "../services/api/client";
 function connect() {
   const eventHub = new EventHub();
 
-  const ApiOptions = {
-    baseURL: $baseURL?.value,
-    clientKey: $clientKey?.value,
-    sourceKey: $sourceKey?.value,
-  };
-
-  $button?.addEventListener("click", () =>
-    eventHub.connect(() => {
-      ApiClient.initialize(ApiOptions);
-    }),
-  );
+  $button?.addEventListener("click", () => {
+    eventHub.makeEvent(eventHub.btn_connect_event, () =>
+      ApiClient.initialize({
+        baseURL: $baseURL?.value,
+        clientKey: $clientKey?.value,
+        sourceKey: $sourceKey?.value,
+      }),
+    );
+    eventHub.sendCustomEvent(eventHub.btn_connect_event, "connect button clicked");
+  });
 }
 
 function checkConnectionSpinnerExample() {
@@ -81,6 +80,7 @@ function initSettings() {
   disableFieldsWhenNecessary();
   checkConnectionSpinnerExample();
   initAnnotationToggleEvents();
+  connect();
 }
 
 initSettings();

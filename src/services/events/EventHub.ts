@@ -1,7 +1,7 @@
 // Class with all the events
 export class EventHub {
   // Events
-  connect;
+  btn_connect_event = "btn_connect_event";
   // Adding these events later
   // updateAnnotation
   // UpdateDataSource
@@ -21,6 +21,7 @@ export class EventHub {
       if (typeof callback !== "function") throw new TypeError("The callback must be a function");
 
       document.addEventListener(this.getEventName(eventType), callback);
+      console.log("EventHub: Event created: ", this.getEventName(eventType)); // temporary - remove later
     } catch (error) {
       console.error("Error: ", error);
     }
@@ -41,7 +42,7 @@ export class EventHub {
   }
 
   /**
-   * @description It makes a custom event
+   * @description It sends a custom event
    * @param {string} messageType - The type of message to send
    * @param {string} message - The message to send
    * @returns {void}
@@ -54,6 +55,7 @@ export class EventHub {
           detail: { message: message },
         }),
       );
+      console.log("EventHub: Event sent: ", this.getEventName(messageType)); // temporary - remove later
     } catch (error) {
       const errorMessage = `Error sending message: ${error}`;
       console.log(errorMessage);
