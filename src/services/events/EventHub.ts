@@ -1,13 +1,7 @@
-// No initialization for the API, just the name of events that make an event in the event handler
-
-import ApiClient from "../api/client";
-
 // Class with all the events
 export class EventHub {
   // Events
-  connect(callback: () => any) {
-    this.makeEvent("btn_connect_click", callback);
-  }
+  connect;
   // Adding these events later
   // updateAnnotation
   // UpdateDataSource
@@ -24,10 +18,9 @@ export class EventHub {
 
   makeEvent(eventType: string, callback: EventListener): void {
     try {
-      if (typeof eventType !== "string") throw new TypeError("The event type must be a string");
       if (typeof callback !== "function") throw new TypeError("The callback must be a function");
 
-      document.addEventListener(eventType, callback);
+      document.addEventListener(this.getEventName(eventType), callback);
     } catch (error) {
       console.error("Error: ", error);
     }
@@ -53,7 +46,7 @@ export class EventHub {
    * @param {string} message - The message to send
    * @returns {void}
    */
-  makeCustomEvent(messageType: string, message: string): void {
+  sendCustomEvent(messageType: string, message: string): void {
     try {
       document.dispatchEvent(
         new CustomEvent(this.getEventName(messageType), {
@@ -74,6 +67,6 @@ export class EventHub {
    */
   getEventName(messageType: string): string {
     if (messageType === null || messageType === undefined) return "message";
-    return "message-" + messageType;
+    return "Propertize:message-" + messageType;
   }
 }
