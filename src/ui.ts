@@ -1,7 +1,6 @@
 import "./ui/navigation-tabs.ts";
 import "./ui/settings";
 import "./ui/connect-panel";
-import ApiClient from "./services/api/client";
 
 // const config = {
 //   baseURL: "http://localhost:1139",

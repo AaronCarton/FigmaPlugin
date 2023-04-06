@@ -1,3 +1,6 @@
+import { EventHub } from "./services/events/EventHub";
+const eventHub = new EventHub();
+
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
   public static readonly connectionCheck: string = "connectionCheck";
@@ -39,3 +42,9 @@ figma.ui.onmessage = (event) => {
     }
   }
 };
+
+figma.on("close", () => {
+  console.log("EventHub: Before removing all events");
+  eventHub.removeAllEvents();
+  console.log("EventHub: After removing all events");
+});

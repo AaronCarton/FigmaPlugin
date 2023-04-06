@@ -2,6 +2,7 @@
 export class EventHub {
   // Events
   btn_connect_event = "btn_connect_event";
+  handlers: any;
   // Adding these events later
   // updateAnnotation
   // UpdateDataSource
@@ -19,11 +20,26 @@ export class EventHub {
   makeEvent(eventType: string, callback: EventListener): void {
     try {
       if (typeof callback !== "function") throw new TypeError("The callback must be a function");
-      document.addEventListener(this.getEventName(eventType), callback);
+      if (!this.handlers) this.handlers = {};
+      const key = this.getHandlersKey(this.getEventName(eventType));
+      this.handlers[key] = (e: { detail: { message: Event } }) => callback(e.detail.message);
+      document.addEventListener(this.getEventName(eventType), this.handlers[key]);
       console.log("EventHub: Event created: ", this.getEventName(eventType)); // temporary - remove later
     } catch (error) {
       console.error("Error: ", error);
     }
+  }
+
+  removeAllEvents(): void {
+    if (!this.handlers) return;
+    Object.keys(this.handlers).forEach((key) => {
+      try {
+        const messageType = key.split("----")[2];
+        document.removeEventListener(this.getEventName(messageType), this.handlers[key]);
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    });
   }
 
   /**
@@ -69,5 +85,9 @@ export class EventHub {
   getEventName(messageType: string): string {
     if (messageType === null || messageType === undefined) return "message";
     return "Propertize:message-" + messageType;
+  }
+
+  getHandlersKey(key: string): string {
+    return key;
   }
 }
