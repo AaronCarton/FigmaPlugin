@@ -132,13 +132,14 @@ describe("Tests for API client: annotations", () => {
 
 function waitUntil(condition: () => boolean): Promise<void> {
   return new Promise((resolve, reject) => {
-    let count = 0;
+    let count = 0; // Number of times the condition has been checked
     function check() {
       if (condition()) {
         resolve();
       } else {
         count++;
         if (count > 3) {
+          // checks 3 times, 1.5 seconds in total
           reject(new Error("Timeout"));
         } else {
           setTimeout(check, 500);
