@@ -19,7 +19,6 @@ export class EventHub {
   makeEvent(eventType: string, callback: EventListener): void {
     try {
       if (typeof callback !== "function") throw new TypeError("The callback must be a function");
-
       document.addEventListener(this.getEventName(eventType), callback);
       console.log("EventHub: Event created: ", this.getEventName(eventType)); // temporary - remove later
     } catch (error) {

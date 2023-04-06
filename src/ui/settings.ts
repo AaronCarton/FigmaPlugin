@@ -14,7 +14,7 @@ const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 // EventHub
 const eventHub = new EventHub();
 
-function eventMaker() {
+function initializeEvents() {
   eventHub.makeEvent(eventHub.btn_connect_event, () =>
     ApiClient.initialize({
       baseURL: $baseURL?.value,
@@ -83,7 +83,7 @@ function initSettings() {
   disableFieldsWhenNecessary();
   checkConnectionSpinnerExample();
   initAnnotationToggleEvents();
-  eventMaker();
+  initializeEvents();
   connect();
 }
 
