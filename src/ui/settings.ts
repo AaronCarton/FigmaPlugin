@@ -1,3 +1,5 @@
+//import { checkIfKeysAreSet, setAllKeys } from "./initialize";
+
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
@@ -67,10 +69,30 @@ function initAnnotationToggleEvents() {
   $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
   $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
 }
-
+// async function initialize() {
+//   console.log("initialize");
+//   if (checkIfKeysAreSet()) {
+//     //fill input fields with values
+//     if ($baseURL !== null && $clientKey !== null && $sourceKey !== null) {
+//       $baseURL.value.replace("", await figma.clientStorage.getAsync("baseURL"));
+//       $clientKey.value.replace("", await figma.clientStorage.getAsync("clientKey"));
+//       $sourceKey.value.replace("", await figma.clientStorage.getAsync("sourceKey"));
+//     }
+//   }
+// }
+// function connect() {
+//   if (!checkIfKeysAreSet()) {
+//     //setAllKeys($baseURL?.value, $clientKey?.value, $sourceKey?.value);
+//     console.log("key set");
+//   }
+// }
 function initSettings() {
   disableFieldsWhenNecessary();
   initAnnotationToggleEvents();
 }
 
 initSettings();
+// initialize();
+// $button?.addEventListener("click", connect);
+
+$baseURL?.setAttribute("value", "https://www.figma.com");
