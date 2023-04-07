@@ -44,35 +44,35 @@ async function retrieveFromStorage() {
   try {
     await figma.clientStorage.setAsync("baseURL", "sampleBaseURL");
     const baseURL = await figma.clientStorage.getAsync("baseURL");
-    figma.ui.postMessage({ type: "baseURL", payload: baseURL });
+    figma.ui.postMessage({ type: "baseURL", payload: "baseURL: " + baseURL });
   } catch (err) {
     console.log(err);
   }
 
-  try {
-    await figma.clientStorage.setAsync("clientKey", "sampleClientKey");
-    const clientKey = await figma.clientStorage.getAsync("clientKey");
-    figma.ui.postMessage({ type: "clientKey", payload: "baseURL: " + clientKey });
-  } catch (err) {
-    console.log(err);
-  }
+  // try {
+  //   await figma.clientStorage.setAsync("clientKey", "sampleClientKey");
+  //   const clientKey = await figma.clientStorage.getAsync("clientKey");
+  //   figma.ui.postMessage({ type: "clientKey", payload: clientKey });
+  // } catch (err) {
+  //   console.log(err);
+  // }
 
-  try {
-    await figma.clientStorage.setAsync("sourceKey", "sampleSourceKey");
-    const sourceKey = await figma.clientStorage.getAsync("sourceKey");
-    figma.ui.postMessage({ type: "sourceKey", payload: sourceKey });
-  } catch (err) {
-    console.log(err);
-  }
+  // try {
+  //   await figma.clientStorage.setAsync("sourceKey", "sampleSourceKey");
+  //   const sourceKey = await figma.clientStorage.getAsync("sourceKey");
+  //   figma.ui.postMessage({ type: "sourceKey", payload: sourceKey });
+  // } catch (err) {
+  //   console.log(err);
+  // }
 }
 retrieveFromStorage();
 // Listen for the 'message' event
 figma.ui.onmessage = (event) => {
   // Check if the event data is what you expect
-  if (event.type === "changeTab") {
-    // Handle the message
-    console.log("Received custom message:", event.tab);
-  }
-  console.log("Received custom event out ifstatement:", event.tab);
-  console.log("type:", event.type);
+  // if (event.type === "changeTab") {
+  //   // Handle the message
+  //   console.log("Received custom message:", event.tab);
+  // }
+  // console.log("Received custom event out ifstatement:", event.tab);
+  // console.log("type:", event.type);
 };

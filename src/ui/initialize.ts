@@ -2,46 +2,57 @@ const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLi
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
+const settingsTab: HTMLElement | null = document.querySelector(".a-settings-tab");
 
 //setters will be called when user successfully connects to the db
-function receiveBaseURLFromFigmaStorage() {
-  window.addEventListener("message", (event) => {
-    // Check if the event data is what you expect
-    if (event.data.pluginMessage.payload === "...") {
-      //TODO looking for "baseURL": with a substring
-      // Handle the event
-    }
-    console.log("Event from figma to UI:", event.data.pluginMessage.payload);
-    console.log("type from figma to UI:", event.type);
+export async function getBaseURLFromFigmaStorage(): Promise<string> {
+  return new Promise((resolve) => {
+    window.addEventListener("message", (event) => {
+      // Check if the event data is what you expect
+      const payload = event.data.pluginMessage.payload;
+      if (event.data.pluginMessage.payload.substring(0, 9) === "baseURL: ") {
+        // Handle the event
+        const url = payload.substring(9);
+        console.log("url in event", url);
+        resolve(url);
+      }
+    });
   });
 }
+
 export function checkIfKeysAreSet() {
-  if (isBaseUrlSet() && isClientKeySet() && isSourceKeySet()) {
-    return true;
-  } else {
-    return false;
-  }
+  //   if (isBaseUrlSet() && isClientKeySet() && isSourceKeySet()) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
 }
 //this function will be called when user clicks on connect and the keys are NOT  set
 export function setAllKeys(baseURLValue: string, clientKeyValue: string, sourceKeyValue: string) {
-  setBaseUrl(baseURLValue);
-  setClientKey(clientKeyValue);
-  setSourceKey(sourceKeyValue);
+  // setBaseUrl(baseURLValue);
+  // setClientKey(clientKeyValue);
+  // setSourceKey(sourceKeyValue);
 }
-function fillInputfields() {
+export function fillInputfields() {
   // if ($baseURL !== null && $clientKey !== null && $sourceKey !== null) {
-  //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //   $baseURL.value = localStorage.getItem("baseURL")!;
-  //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //   $clientKey.value = localStorage.getItem("clientKey")!;
-  //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //   $sourceKey.value = localStorage.getItem("sourceKey")!;
+  //   $baseURL.setAttribute("value", getBaseURLFromFigmaStorage());
   // }
 }
-function initialize() {
-  if (checkIfKeysAreSet()) {
-    fillInputfields();
+export function checkIfSettingsTabIsSelected(url: string) {
+  console.log("baseurl: " + $baseURL?.value);
+  if (settingsTab !== null) {
+    settingsTab.addEventListener("click", () => {
+      // do something when the settings tab is clicked
+      console.log("getter :" + getBaseURLFromFigmaStorage());
+      $baseURL?.setAttribute("value", url);
+      console.log("baseurl after click: " + $baseURL?.value);
+    });
   }
+}
+function initialize() {
+  // if (checkIfKeysAreSet()) {
+  //   fillInputfields();
+  // }
 }
 function connect() {
   // if ($baseURL !== null && $clientKey !== null && $sourceKey !== null) {
@@ -51,12 +62,13 @@ function connect() {
   //   }
   // }
 }
-initialize();
 if ($button !== null) {
   $button.addEventListener("click", connect);
 }
-
-// initialize();
+getBaseURLFromFigmaStorage().then((url) => {
+  console.log("url in then", url);
+  checkIfSettingsTabIsSelected(url);
+});
 
 // //scenario: if the keys aren't set do nothing, if they are set fill the input fields with the values
 // //when user clicks on connect (if keys are NOT set) -> set the keys
