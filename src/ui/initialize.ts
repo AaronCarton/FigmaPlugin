@@ -4,7 +4,6 @@ const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_so
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 const settingsTab: HTMLElement | null = document.querySelector(".a-settings-tab");
 
-//setters will be called when user successfully connects to the db
 export async function getBaseURLFromFigmaStorage(): Promise<string> {
   return new Promise((resolve) => {
     window.addEventListener("message", (event) => {
@@ -12,47 +11,80 @@ export async function getBaseURLFromFigmaStorage(): Promise<string> {
       const payload = event.data.pluginMessage.payload;
       if (event.data.pluginMessage.payload.substring(0, 9) === "baseURL: ") {
         // Handle the event
-        const url = payload.substring(9);
-        console.log("url in event", url);
-        resolve(url);
+        const baseURL = payload.substring(9);
+        console.log("baseURL in event", baseURL);
+        resolve(baseURL);
+      }
+    });
+  });
+}
+export async function getClientKeyFromFigmaStorage(): Promise<string> {
+  return new Promise((resolve) => {
+    window.addEventListener("message", (event) => {
+      // Check if the event data is what you expect
+      const payload = event.data.pluginMessage.payload;
+      if (event.data.pluginMessage.payload.substring(0, 11) === "clientKey: ") {
+        // Handle the event
+        const clientKey = payload.substring(11);
+        console.log("client in event", clientKey);
+        resolve(clientKey);
+      }
+    });
+  });
+}
+export async function getSourceKeyFromFigmaStorage(): Promise<string> {
+  return new Promise((resolve) => {
+    window.addEventListener("message", (event) => {
+      // Check if the event data is what you expect
+      const payload = event.data.pluginMessage.payload;
+      if (event.data.pluginMessage.payload.substring(0, 11) === "sourceKey: ") {
+        // Handle the event
+        const sourceKey = payload.substring(11);
+        console.log("sourceKey in event", sourceKey);
+        resolve(sourceKey);
       }
     });
   });
 }
 
-export function checkIfKeysAreSet() {
-  //   if (isBaseUrlSet() && isClientKeySet() && isSourceKeySet()) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-}
-//this function will be called when user clicks on connect and the keys are NOT  set
-export function setAllKeys(baseURLValue: string, clientKeyValue: string, sourceKeyValue: string) {
-  // setBaseUrl(baseURLValue);
-  // setClientKey(clientKeyValue);
-  // setSourceKey(sourceKeyValue);
-}
-export function fillInputfields() {
-  // if ($baseURL !== null && $clientKey !== null && $sourceKey !== null) {
-  //   $baseURL.setAttribute("value", getBaseURLFromFigmaStorage());
-  // }
-}
-export function checkIfSettingsTabIsSelected(url: string) {
-  console.log("baseurl: " + $baseURL?.value);
+export function fillBaseUrlInInputfields(baseURL: string) {
   if (settingsTab !== null) {
     settingsTab.addEventListener("click", () => {
       // do something when the settings tab is clicked
-      console.log("getter :" + getBaseURLFromFigmaStorage());
-      $baseURL?.setAttribute("value", url);
-      console.log("baseurl after click: " + $baseURL?.value);
+      $baseURL?.setAttribute("value", baseURL);
+    });
+  }
+}
+export function fillClientKeyInInputfields(clientKey: string) {
+  if (settingsTab !== null) {
+    settingsTab.addEventListener("click", () => {
+      // do something when the settings tab is clicked
+      $clientKey?.setAttribute("value", clientKey);
+    });
+  }
+}
+
+export function fillSourceKeyInInputfields(sourceKey: string) {
+  if (settingsTab !== null) {
+    settingsTab.addEventListener("click", () => {
+      // do something when the settings tab is clicked
+      $sourceKey?.setAttribute("value", sourceKey);
     });
   }
 }
 function initialize() {
-  // if (checkIfKeysAreSet()) {
-  //   fillInputfields();
-  // }
+  getBaseURLFromFigmaStorage().then((url) => {
+    console.log("url in then", url);
+    fillBaseUrlInInputfields(url);
+  });
+  getClientKeyFromFigmaStorage().then((clientkey) => {
+    console.log("clientkey in then", clientkey);
+    fillClientKeyInInputfields(clientkey);
+  });
+  getSourceKeyFromFigmaStorage().then((sourceKey) => {
+    console.log("sourceKey in then", sourceKey);
+    fillSourceKeyInInputfields(sourceKey);
+  });
 }
 function connect() {
   // if ($baseURL !== null && $clientKey !== null && $sourceKey !== null) {
@@ -65,11 +97,8 @@ function connect() {
 if ($button !== null) {
   $button.addEventListener("click", connect);
 }
-getBaseURLFromFigmaStorage().then((url) => {
-  console.log("url in then", url);
-  checkIfSettingsTabIsSelected(url);
-});
 
+initialize();
 // //scenario: if the keys aren't set do nothing, if they are set fill the input fields with the values
 // //when user clicks on connect (if keys are NOT set) -> set the keys
 
