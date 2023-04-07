@@ -18,7 +18,7 @@ export async function getBaseURLFromFigmaStorage(): Promise<string> {
     });
   });
 }
-export async function getClientKeyFromFigmaStorage(): Promise<string> {
+async function getClientKeyFromFigmaStorage(): Promise<string> {
   return new Promise((resolve) => {
     window.addEventListener("message", (event) => {
       // Check if the event data is what you expect
@@ -32,7 +32,7 @@ export async function getClientKeyFromFigmaStorage(): Promise<string> {
     });
   });
 }
-export async function getSourceKeyFromFigmaStorage(): Promise<string> {
+async function getSourceKeyFromFigmaStorage(): Promise<string> {
   return new Promise((resolve) => {
     window.addEventListener("message", (event) => {
       // Check if the event data is what you expect
@@ -47,7 +47,7 @@ export async function getSourceKeyFromFigmaStorage(): Promise<string> {
   });
 }
 
-export function fillBaseUrlInInputfields(baseURL: string) {
+function fillBaseUrlInInputfields(baseURL: string) {
   if (settingsTab !== null) {
     settingsTab.addEventListener("click", () => {
       // do something when the settings tab is clicked
@@ -55,7 +55,7 @@ export function fillBaseUrlInInputfields(baseURL: string) {
     });
   }
 }
-export function fillClientKeyInInputfields(clientKey: string) {
+function fillClientKeyInInputfields(clientKey: string) {
   if (settingsTab !== null) {
     settingsTab.addEventListener("click", () => {
       // do something when the settings tab is clicked
@@ -64,7 +64,7 @@ export function fillClientKeyInInputfields(clientKey: string) {
   }
 }
 
-export function fillSourceKeyInInputfields(sourceKey: string) {
+function fillSourceKeyInInputfields(sourceKey: string) {
   if (settingsTab !== null) {
     settingsTab.addEventListener("click", () => {
       // do something when the settings tab is clicked
@@ -74,33 +74,38 @@ export function fillSourceKeyInInputfields(sourceKey: string) {
 }
 function initialize() {
   getBaseURLFromFigmaStorage().then((url) => {
-    console.log("url in then", url);
     fillBaseUrlInInputfields(url);
   });
   getClientKeyFromFigmaStorage().then((clientkey) => {
-    console.log("clientkey in then", clientkey);
     fillClientKeyInInputfields(clientkey);
   });
   getSourceKeyFromFigmaStorage().then((sourceKey) => {
-    console.log("sourceKey in then", sourceKey);
     fillSourceKeyInInputfields(sourceKey);
   });
+  if ($button !== null) {
+    $button.addEventListener("click", connect);
+  }
 }
 function connect() {
-  // if ($baseURL !== null && $clientKey !== null && $sourceKey !== null) {
-  //   if (!checkIfKeysAreSet()) {
-  //     setAllKeys($baseURL.value, $clientKey.value, $sourceKey.value);
-  //     console.log(localStorage.getItem("baseURL"));
-  //   }
-  // }
-}
-if ($button !== null) {
-  $button.addEventListener("click", connect);
+  const baseURL = $baseURL?.value;
+  const clientKey = $clientKey?.value;
+  const sourceKey = $sourceKey?.value;
+  console.log("baseURL", baseURL);
+  console.log("clientKey", clientKey);
+  console.log("sourceKey", sourceKey);
+  // Still needs a way to check if the entered keys are actually conntected to the right db
+
+  parent.postMessage(
+    {
+      pluginMessage: {
+        type: "setKeys",
+        baseURL: baseURL,
+        clientKey: clientKey,
+        sourceKey: sourceKey,
+      },
+    },
+    "*",
+  );
 }
 
 initialize();
-// //scenario: if the keys aren't set do nothing, if they are set fill the input fields with the values
-// //when user clicks on connect (if keys are NOT set) -> set the keys
-
-// // need 2 functions: First, at startup check if keys are set, if they are set fill the input fields with the values
-// // Second, when user clicks on connect (if keys are NOT set) -> set the keys

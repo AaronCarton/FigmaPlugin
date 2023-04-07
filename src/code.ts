@@ -53,7 +53,6 @@ async function areKeysSet(): Promise<boolean> {
 async function retrieveBaseURLFromStorage() {
   //Getting baseURL from storage
   try {
-    await figma.clientStorage.setAsync("baseURL", "sampleBaseURL");
     if (figma.clientStorage.getAsync("baseURL") != null) {
       const baseURL = await figma.clientStorage.getAsync("baseURL");
       figma.ui.postMessage({ type: "baseURL", payload: "baseURL: " + baseURL });
@@ -66,7 +65,6 @@ async function retrieveBaseURLFromStorage() {
 async function retrieveClientKeyFromStorage() {
   //Getting clientKey from storage
   try {
-    await figma.clientStorage.setAsync("clientKey", "sampleClientKey");
     if (figma.clientStorage.getAsync("clientKey") != null) {
       const clientKey = await figma.clientStorage.getAsync("clientKey");
       figma.ui.postMessage({ type: "clientKey", payload: "clientKey: " + clientKey });
@@ -79,7 +77,6 @@ async function retrieveClientKeyFromStorage() {
 async function retrieveSourceKeyFromStorage() {
   //Getting sourceKey from storage
   try {
-    await figma.clientStorage.setAsync("sourceKey", "sampleSourceKey");
     if (figma.clientStorage.getAsync("sourceKey") != null) {
       const sourceKey = await figma.clientStorage.getAsync("sourceKey");
       figma.ui.postMessage({ type: "sourceKey", payload: "sourceKey: " + sourceKey });
@@ -88,23 +85,49 @@ async function retrieveSourceKeyFromStorage() {
     console.log(err);
   }
 }
+async function deleteKeys() {
+  figma.clientStorage.deleteAsync("baseURL");
+  figma.clientStorage.deleteAsync("clientKey");
+  figma.clientStorage.deleteAsync("sourceKey");
+  console.log("Keys deleted");
+}
 async function retrieveFromStorage() {
   retrieveBaseURLFromStorage();
   retrieveClientKeyFromStorage();
   retrieveSourceKeyFromStorage();
 }
+async function setBaseUrl(baseURL: string) {
+  try {
+    await figma.clientStorage.setAsync("baseURL", baseURL);
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function setClientKey(clientKey: string) {
+  try {
+    await figma.clientStorage.setAsync("clientKey", clientKey);
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function setSourceKey(sourceKey: string) {
+  try {
+    await figma.clientStorage.setAsync("sourceKey", sourceKey);
+  } catch (err) {
+    console.log(err);
+  }
+}
 retrieveFromStorage();
-// Listen for the 'message' event
+// deleteKeys();
+
+// Listen for the 'setKeys' event
+//This will receive the keys from the UI and set the keys in the storage
 figma.ui.onmessage = (event) => {
   // Check if the event data is what you expect
-  // if (event.type === "changeTab") {
-  //   // Handle the message
-  //   console.log("Received custom message:", event.tab);
-  // }
-  // console.log("Received custom event out ifstatement:", event.tab);
-  // console.log("type:", event.type);
+  if (event.type === "setKeys") {
+    // Handle the message
+    setBaseUrl(event.baseURL);
+    setClientKey(event.clientKey);
+    setSourceKey(event.sourceKey);
+  }
 };
-
-//TODO: When clicking on the connect btn -> trigger connect() this will send an event(with values from input) to figma and checking if the keys are set,
-// if not, set the keys wit the values from the input
-// if yes, do nothing
