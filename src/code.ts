@@ -38,6 +38,18 @@ figma.ui.onmessage = (event) => {
     }
   }
 };
+async function areKeysSet(): Promise<boolean> {
+  //Check if keys are set
+  let areKeysSet = false;
+  if (
+    figma.clientStorage.getAsync("baseURL") != null &&
+    figma.clientStorage.getAsync("clientKey") != null &&
+    figma.clientStorage.getAsync("sourceKey") != null
+  ) {
+    areKeysSet = true;
+  }
+  return areKeysSet;
+}
 async function retrieveBaseURLFromStorage() {
   //Getting baseURL from storage
   try {
@@ -77,12 +89,8 @@ async function retrieveSourceKeyFromStorage() {
   }
 }
 async function retrieveFromStorage() {
-  // todo: instead of samplevalue, receive the value from UI (input field)
-  //Will test first if i can fill the input fields with the values from the storage
   retrieveBaseURLFromStorage();
-
   retrieveClientKeyFromStorage();
-
   retrieveSourceKeyFromStorage();
 }
 retrieveFromStorage();
@@ -96,3 +104,7 @@ figma.ui.onmessage = (event) => {
   // console.log("Received custom event out ifstatement:", event.tab);
   // console.log("type:", event.type);
 };
+
+//TODO: When clicking on the connect btn -> trigger connect() this will send an event(with values from input) to figma and checking if the keys are set,
+// if not, set the keys wit the values from the input
+// if yes, do nothing
