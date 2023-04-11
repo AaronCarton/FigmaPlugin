@@ -91,10 +91,12 @@ async function deleteKeys() {
   figma.clientStorage.deleteAsync("sourceKey");
   console.log("Keys deleted");
 }
-async function retrieveFromStorage() {
-  retrieveBaseURLFromStorage();
-  retrieveClientKeyFromStorage();
-  retrieveSourceKeyFromStorage();
+async function retrieveDataFromStorage() {
+  if (await areKeysSet()) {
+    retrieveBaseURLFromStorage();
+    retrieveClientKeyFromStorage();
+    retrieveSourceKeyFromStorage();
+  }
 }
 async function setBaseUrl(baseURL: string) {
   try {
@@ -117,8 +119,8 @@ async function setSourceKey(sourceKey: string) {
     console.log(err);
   }
 }
-retrieveFromStorage();
-// deleteKeys();
+retrieveDataFromStorage();
+//deleteKeys(); //For testing purposes
 
 // Listen for the 'setKeys' event
 //This will receive the keys from the UI and set the keys in the storage

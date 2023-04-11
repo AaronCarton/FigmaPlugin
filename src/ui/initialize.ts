@@ -72,20 +72,7 @@ function fillSourceKeyInInputfields(sourceKey: string) {
     });
   }
 }
-function initialize() {
-  getBaseURLFromFigmaStorage().then((url) => {
-    fillBaseUrlInInputfields(url);
-  });
-  getClientKeyFromFigmaStorage().then((clientkey) => {
-    fillClientKeyInInputfields(clientkey);
-  });
-  getSourceKeyFromFigmaStorage().then((sourceKey) => {
-    fillSourceKeyInInputfields(sourceKey);
-  });
-  if ($button !== null) {
-    $button.addEventListener("click", connect);
-  }
-}
+
 function connect() {
   const baseURL = $baseURL?.value;
   const clientKey = $clientKey?.value;
@@ -106,6 +93,21 @@ function connect() {
     },
     "*",
   );
+}
+
+function initialize() {
+  getBaseURLFromFigmaStorage().then((url) => {
+    fillBaseUrlInInputfields(url);
+  });
+  getClientKeyFromFigmaStorage().then((clientkey) => {
+    fillClientKeyInInputfields(clientkey);
+  });
+  getSourceKeyFromFigmaStorage().then((sourceKey) => {
+    fillSourceKeyInInputfields(sourceKey);
+  });
+  if ($button !== null) {
+    $button.addEventListener("click", connect);
+  }
 }
 
 initialize();
