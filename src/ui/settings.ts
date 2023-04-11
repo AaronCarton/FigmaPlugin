@@ -13,21 +13,46 @@ const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 // EventHub
 const eventHub = new EventHub();
+const api = new ApiClient();
 
 function initializeEvents() {
-  eventHub.makeEvent(eventHub.btn_connect_event, () =>
+  eventHub.makeEvent(eventHub.btn_connect_event, () => {
     ApiClient.initialize({
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
-    }),
-  );
+    });
+  });
+  eventHub.makeEvent(eventHub.api_initialized, () => {
+    console.log("before getProject"); // temporary - remove later
+    api.getProject("19123591", true).then((project) => {
+      console.log("GET PROJECT"); // temporary - remove later
+      console.log(project?.itemKey); // temporary - remove later
+      if (!project || project === null) {
+        throw new Error("Project does not exist");
+      }
+      api.getAnnotations(project.itemKey, true).then(async (annotations) => {
+        console.log("voor annotations"); // temporary - remove later
+        const annotation = annotations.find((a) => a.itemKey === "19123591");
+        console.log("na annotations: ", annotation); // temporary - remove later
+
+        await annotation?.archive().then(() => {
+          annotation?.restore();
+        });
+      });
+    });
+  });
 }
 
 function connect() {
   $button?.addEventListener("click", () => {
     eventHub.sendCustomEvent(eventHub.btn_connect_event, "connect button clicked");
+    getData();
   });
+}
+
+function getData() {
+  eventHub.sendCustomEvent(eventHub.api_initialized, "api initialized");
 }
 
 function checkConnectionSpinnerExample() {

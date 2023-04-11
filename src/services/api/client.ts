@@ -66,6 +66,7 @@ export default class ApiClient {
    * @param {boolean} includeArchived - Whether to return the project even if it is archived
    * @returns {Promise<Project[]>} - Promise that resolves to an array of projects
    */
+
   public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
     return this.searchItem<Project>(
       "project",
@@ -208,7 +209,7 @@ export default class ApiClient {
    * @returns {Promise<Response>} - Response object from fetch
    */
   private async fetchData(url: string, options: RequestOptions): Promise<Response> {
-    console.log("fetchData called with url", url);
+    console.log("fetchData called with url", url); // temporary - remove later
     const { method, body, apiKey, metadata } = options;
 
     const headers = {
@@ -217,22 +218,22 @@ export default class ApiClient {
       "x-include-metadata": metadata ? "true" : "false",
       "x-include-archived": options.includeArchived ? "true" : "false",
       "x-expand": options.parent || "",
-      // "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": "*",
     };
 
-    console.log("headers", headers);
+    console.log("headers", headers); // temporary - remove later
 
     // Create request
-    console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey);
+    console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey); // temporary - remove later
     const res = await fetch(ApiClient.BASE_URL + url, {
       method: method,
       body: JSON.stringify(body),
       headers: headers,
     }).catch((err) => {
-      console.error("[API] Fetch Error", err);
-      throw new Error("Failed to fetch data from the API", err);
+      console.error("[API] Fetch Error", err); // temporary - remove later
+      throw err;
     });
-    console.debug(`[API] Response: ${method} ${url}`, res);
+    console.debug(`[API] Response: ${method} ${url}`, res); // temporary - remove later
 
     // Error handling
     if (!res.ok) {

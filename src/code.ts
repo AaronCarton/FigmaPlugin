@@ -44,7 +44,5 @@ figma.ui.onmessage = (event) => {
 };
 
 figma.on("close", () => {
-  console.log("EventHub: Before removing all events");
   eventHub.removeAllEvents();
-  console.log("EventHub: After removing all events");
 });
