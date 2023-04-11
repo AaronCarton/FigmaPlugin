@@ -24,17 +24,12 @@ function initializeEvents() {
     });
   });
   eventHub.makeEvent(eventHub.api_initialized, () => {
-    console.log("before getProject"); // temporary - remove later
-    api.getProject("19123591", true).then((project) => {
-      console.log("GET PROJECT"); // temporary - remove later
-      console.log(project?.itemKey); // temporary - remove later
+    api.getProject("19123591").then((project) => {
       if (!project || project === null) {
         throw new Error("Project does not exist");
       }
       api.getAnnotations(project.itemKey, true).then(async (annotations) => {
-        console.log("voor annotations"); // temporary - remove later
         const annotation = annotations.find((a) => a.itemKey === "19123591");
-        console.log("na annotations: ", annotation); // temporary - remove later
 
         await annotation?.archive().then(() => {
           annotation?.restore();
@@ -45,7 +40,8 @@ function initializeEvents() {
 }
 
 function connect() {
-  $button?.addEventListener("click", () => {
+  $button?.addEventListener("click", (e: Event) => {
+    e.preventDefault();
     eventHub.sendCustomEvent(eventHub.btn_connect_event, "connect button clicked");
     getData();
   });

@@ -209,7 +209,6 @@ export default class ApiClient {
    * @returns {Promise<Response>} - Response object from fetch
    */
   private async fetchData(url: string, options: RequestOptions): Promise<Response> {
-    console.log("fetchData called with url", url); // temporary - remove later
     const { method, body, apiKey, metadata } = options;
 
     const headers = {
@@ -218,10 +217,8 @@ export default class ApiClient {
       "x-include-metadata": metadata ? "true" : "false",
       "x-include-archived": options.includeArchived ? "true" : "false",
       "x-expand": options.parent || "",
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-*": "*",
     };
-
-    console.log("headers", headers); // temporary - remove later
 
     // Create request
     console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey); // temporary - remove later
