@@ -4,17 +4,11 @@ export class EventHub {
   // Events settings tab
   btn_connect_event = "btn_connect_event";
   api_initialized = "api_initialized";
-  update_annotation = "update_annotation";
-  update_data_source = "update_data_source";
-  update_entity = "update_entity";
-  update_attribute = "update_attribute";
-  update_data_type = "update_data_type";
-  // Adding these events later
-  // updateAnnotation
-  // UpdateDataSource
-  // updateEntity
-  // updateAttribute
-  // updateDataType
+  update_annotation = "update_annotation"; // TODO - in progress
+  update_data_source = "update_data_source"; // TODO - add this event
+  update_entity = "update_entity"; // TODO - add this event
+  update_attribute = "update_attribute"; // TODO - add this event
+  update_data_type = "update_data_type"; // TODO - add this event
 
   /**
    * @description It creates an event listener
