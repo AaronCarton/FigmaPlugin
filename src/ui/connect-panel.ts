@@ -7,11 +7,11 @@ const $iconCheck = "c-icon_check_class";
 const $isActiveField = "is-active";
 
 // input elements
-const $inputDataSource: HTMLInputElement | null = document.querySelector("data-source-field");
-const $inputEntity: HTMLInputElement | null = document.querySelector("entity-field");
-const $inputAttribute: HTMLInputElement | null = document.querySelector("attribute-field");
-const $inputDatatype: HTMLInputElement | null = document.querySelector("data-type-field");
-const $inputValue: HTMLInputElement | null = document.querySelector("js-sample-value");
+const $inputDataSource: HTMLInputElement | null = document.querySelector("#data-source-field");
+const $inputEntity: HTMLInputElement | null = document.querySelector("#entity-field");
+const $inputAttribute: HTMLInputElement | null = document.querySelector("#attribute-field");
+const $inputDatatype: HTMLInputElement | null = document.querySelector("#data-type-field");
+const $inputValue: HTMLInputElement | null = document.querySelector("#js-sample-value");
 
 const eventHub = new EventHub();
 const api = new ApiClient();
@@ -27,7 +27,15 @@ function initializeEvents() {
       dataType: $inputDatatype?.value,
       value: $inputValue?.value,
     } as any;
-    api.upsertItem("annotation", "19123591", body);
+    console.log(
+      $inputDataSource?.value,
+      $inputEntity?.value,
+      $inputAttribute?.value,
+      $inputDatatype?.value,
+      $inputValue?.value,
+    );
+    api.upsertItem("annotation", "3414883772", body);
+    console.log(body);
   });
 }
 

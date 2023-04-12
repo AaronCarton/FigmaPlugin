@@ -29,7 +29,7 @@ function initializeEvents() {
         throw new Error("Project does not exist");
       }
       api.getAnnotations(project.itemKey, true).then(async (annotations) => {
-        const annotation = annotations.find((a) => a.itemKey === "19123591");
+        const annotation = annotations.find((a) => a.itemKey === "3414883772");
 
         await annotation?.archive().then(() => {
           annotation?.restore();
@@ -109,3 +109,5 @@ function initSettings() {
 }
 
 initSettings();
+
+
