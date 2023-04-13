@@ -77,9 +77,7 @@ function connect() {
   const baseURL = $baseURL?.value;
   const clientKey = $clientKey?.value;
   const sourceKey = $sourceKey?.value;
-  console.log("baseURL", baseURL);
-  console.log("clientKey", clientKey);
-  console.log("sourceKey", sourceKey);
+
   // Still needs a way to check if the entered keys are actually conntected to the right db
 
   parent.postMessage(
