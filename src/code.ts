@@ -41,13 +41,29 @@ figma.ui.onmessage = (event) => {
 async function areKeysSet(): Promise<boolean> {
   //Check if keys are set
   let areKeysSet = false;
-  if (
-    figma.clientStorage.getAsync("baseURL") != null &&
-    figma.clientStorage.getAsync("clientKey") != null &&
-    figma.clientStorage.getAsync("sourceKey") != null
-  ) {
+  let isBaseUrlNull = true;
+  let isClientKeyNull = true;
+  let isSourceKeyNull = true;
+  await figma.clientStorage.getAsync("baseURL").then((baseURL) => {
+    if (baseURL != null) {
+      isBaseUrlNull = false;
+    }
+  });
+  await figma.clientStorage.getAsync("clientKey").then((clientKey) => {
+    if (clientKey != null) {
+      isClientKeyNull = false;
+    }
+  });
+  await figma.clientStorage.getAsync("sourceKey").then((sourceKey) => {
+    if (sourceKey != null) {
+      isSourceKeyNull = false;
+    }
+  });
+
+  if (!isBaseUrlNull && !isClientKeyNull && !isSourceKeyNull) {
     areKeysSet = true;
   }
+
   return areKeysSet;
 }
 async function retrieveBaseURLFromStorage() {
@@ -92,11 +108,13 @@ async function deleteKeys() {
   console.log("Keys deleted");
 }
 async function retrieveDataFromStorage() {
-  if (await areKeysSet()) {
-    retrieveBaseURLFromStorage();
-    retrieveClientKeyFromStorage();
-    retrieveSourceKeyFromStorage();
-  }
+  await areKeysSet().then((value) => {
+    if (value) {
+      retrieveBaseURLFromStorage();
+      retrieveClientKeyFromStorage();
+      retrieveSourceKeyFromStorage();
+    }
+  });
 }
 async function setBaseUrl(baseURL: string) {
   try {
@@ -120,7 +138,7 @@ async function setSourceKey(sourceKey: string) {
   }
 }
 retrieveDataFromStorage();
-//deleteKeys(); //For testing purposes
+// deleteKeys(); //For testing purposes
 
 // Listen for the 'setKeys' event
 //This will receive the keys from the UI and set the keys in the storage
