@@ -7,10 +7,10 @@ const $iconCheck = "c-icon_check_class";
 const $isActiveField = "is-active";
 
 // input elements
-const $inputDataSource: HTMLInputElement | null = document.querySelector("#data-source-field");
-const $inputEntity: HTMLInputElement | null = document.querySelector("#entity-field");
-const $inputAttribute: HTMLInputElement | null = document.querySelector("#attribute-field");
-const $inputDatatype: HTMLInputElement | null = document.querySelector("#data-type-field");
+const $inputDataSource: HTMLInputElement | null = document.querySelector("#data-source-select");
+const $inputEntity: HTMLInputElement | null = document.querySelector("#entity-select");
+const $inputAttribute: HTMLInputElement | null = document.querySelector("#attribute-select");
+const $inputDatatype: HTMLInputElement | null = document.querySelector("#data-type-select");
 const $inputValue: HTMLInputElement | null = document.querySelector("#js-sample-value");
 
 const eventHub = new EventHub();
