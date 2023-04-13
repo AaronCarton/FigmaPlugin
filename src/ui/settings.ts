@@ -5,6 +5,7 @@ import ApiClient from "../services/api/client";
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
+const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 //Spinner
@@ -23,8 +24,8 @@ function initializeEvents() {
       sourceKey: $sourceKey?.value,
     });
   });
-  eventHub.makeEvent(eventHub.api_initialized, () => {
-    api.getProject("19123591").then((project) => {
+  eventHub.makeEvent(eventHub.api_initialized, () =>
+    api.getProject($projectKey?.value).then((project) => {
       if (!project || project === null) {
         throw new Error("Project does not exist");
       }
@@ -35,8 +36,8 @@ function initializeEvents() {
           annotation?.restore();
         });
       });
-    });
-  });
+    }),
+  );
 }
 
 function connect() {

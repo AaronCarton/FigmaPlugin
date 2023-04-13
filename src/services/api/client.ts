@@ -67,7 +67,10 @@ export default class ApiClient {
    * @returns {Promise<Project[]>} - Promise that resolves to an array of projects
    */
 
-  public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
+  public async getProject(
+    projectKey: string | undefined,
+    includeArchived = false,
+  ): Promise<Project | null> {
     return this.searchItem<Project>(
       "project",
       `itemKey.eq.${projectKey}`,

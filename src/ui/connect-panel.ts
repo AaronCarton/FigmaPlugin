@@ -12,6 +12,7 @@ const $inputEntity: HTMLInputElement | null = document.querySelector("#entity-se
 const $inputAttribute: HTMLInputElement | null = document.querySelector("#attribute-select");
 const $inputDatatype: HTMLInputElement | null = document.querySelector("#data-type-select");
 const $inputValue: HTMLInputElement | null = document.querySelector("#js-sample-value");
+const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey");
 
 // input elements
 const dataSrc: HTMLInputElement = document.querySelector(".js-data-source")!;
@@ -30,7 +31,7 @@ let exist = false;
 function initializeEvents() {
   eventHub.makeEvent(eventHub.update_annotation, () => {
     const body = {
-      projectKey: "19123591", // TODO: get projectKey from the current project.
+      projectKey: $projectKey?.value,
       nodeId: "cec66bdf",
       dataSource: $inputDataSource?.value,
       entity: $inputEntity?.value,
