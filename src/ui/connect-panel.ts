@@ -39,13 +39,6 @@ function initializeEvents() {
       dataType: $inputDatatype?.value,
       value: $inputValue?.value,
     } as any;
-    console.log(
-      $inputDataSource?.value,
-      $inputEntity?.value,
-      $inputAttribute?.value,
-      $inputDatatype?.value,
-      $inputValue?.value,
-    );
     api.upsertItem("annotation", "3414883772", body);
     console.log(body);
   });

@@ -4,8 +4,8 @@ export class EventHub {
   // Events settings tab
   btn_connect_event = "btn_connect_event";
   api_initialized = "api_initialized";
-  update_annotation = "update_annotation"; // TODO - in progress
-
+  update_annotation = "update_annotation";
+  // TODO: make a constante klasse, and make sure that only these event types can be used to create and send out events and also delete
   /**
    * @description It creates an event listener
    * @param {string} eventType - The type of event to listen for
@@ -13,29 +13,25 @@ export class EventHub {
    * @returns {void}
    */
 
-  makeEvent(eventType: string, callback: EventListener): void {
-    try {
-      if (typeof callback !== "function") throw new TypeError("The callback must be a function");
-      if (!this.handlers) this.handlers = {};
-      const key = this.getHandlersKey(this.getEventName(eventType));
-      this.handlers[key] = (e: { detail: { message: Event } }) => callback(e.detail.message);
-      document.addEventListener(this.getEventName(eventType), this.handlers[key]);
-      console.log("EventHub: Event created: ", this.getEventName(eventType)); // temporary - remove later
-    } catch (error) {
-      console.error("Error: ", error);
-    }
+  makeEvent(eventName: string, callback: EventListener): void {
+    if (eventName && eventName.trim() === "") throw new Error("The event name cannot be empty");
+    if (typeof callback !== "function") throw new TypeError("The callback must be a function");
+    if (!this.handlers) this.handlers = {};
+
+    const prefixedEventName = this.prefixEventName(eventName);
+
+    this.handlers[prefixedEventName] = (e: { detail: { message: Event } }) =>
+      callback(e.detail.message);
+    document.addEventListener(prefixedEventName, this.handlers[prefixedEventName]);
   }
 
   removeAllEvents(): void {
     if (!this.handlers) return;
-    Object.keys(this.handlers).forEach((key) => {
-      try {
-        const messageType = key.split("----")[2];
-        document.removeEventListener(this.getEventName(messageType), this.handlers[key]);
-      } catch (error) {
-        console.log("Error: ", error);
-      }
-    });
+
+    Object.keys(this.handlers).forEach(
+      (prefixedEventName) =>
+        document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]), // TODO: CHANGE ESLINT
+    );
   }
 
   /**
@@ -44,12 +40,8 @@ export class EventHub {
    * @param {function} callback - The function that is called when the event is triggered
    * @returns {void}
    */
-  removeEvent(eventType: string, callback: EventListener): void {
-    try {
-      document.removeEventListener(eventType, callback);
-    } catch (error) {
-      console.error("Error: ", error);
-    }
+  removeEvent(eventName: string, callback: EventListener): void {
+    document.removeEventListener(this.prefixEventName(eventName), callback);
   }
 
   /**
@@ -58,19 +50,13 @@ export class EventHub {
    * @param {string} message - The message to send
    * @returns {void}
    */
-  sendCustomEvent(messageType: string, message: string): void {
-    try {
-      document.dispatchEvent(
-        new CustomEvent(this.getEventName(messageType), {
-          bubbles: true,
-          detail: { message: message },
-        }),
-      );
-      console.log("EventHub: Event sent: ", this.getEventName(messageType)); // temporary - remove later
-    } catch (error) {
-      const errorMessage = `Error sending message: ${error}`;
-      console.log(errorMessage);
-    }
+  sendCustomEvent(eventName: string, message: string): void {
+    document.dispatchEvent(
+      new CustomEvent(this.prefixEventName(eventName), {
+        bubbles: true,
+        detail: { message: message },
+      }),
+    );
   }
 
   /**
@@ -78,12 +64,8 @@ export class EventHub {
    * @param {string} messageType - The type of message to send
    * @returns {string} - The event name
    */
-  getEventName(messageType: string): string {
+  prefixEventName(messageType: string): string {
     if (messageType === null || messageType === undefined) return "message";
-    return "Propertize:message-" + messageType;
-  }
-
-  getHandlersKey(key: string): string {
-    return key;
+    return "Propertize_message_" + messageType;
   }
 }

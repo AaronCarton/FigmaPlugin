@@ -1,3 +1,5 @@
+// TODO: Change class names to self made pz_classname
+
 import { EventHub } from "../services/events/EventHub";
 import ApiClient from "../services/api/client";
 
@@ -16,13 +18,13 @@ const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 const eventHub = new EventHub();
 const api = new ApiClient();
 
-function initializeEvents() {
+function initializeEventHubEvents() {
   eventHub.makeEvent(eventHub.btn_connect_event, () => {
     ApiClient.initialize({
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
-    });
+    }); // TODO: when api client is initialized in ui.ts change this to
   });
   eventHub.makeEvent(eventHub.api_initialized, () =>
     api.getProject($projectKey?.value).then((project) => {
@@ -44,7 +46,7 @@ function connect() {
   $button?.addEventListener("click", (e: Event) => {
     e.preventDefault();
     eventHub.sendCustomEvent(eventHub.btn_connect_event, "connect button clicked");
-    getData();
+    getData(); // TODO: remove this
   });
 }
 
@@ -64,6 +66,7 @@ function checkConnectionSpinnerExample() {
 }
 
 function toggleAnnotations(e: Event) {
+  // TODO: make this an event in eventhub
   const state: boolean = (<HTMLInputElement>e.target).checked;
   if (state === true) {
     console.log("show annotations");
@@ -105,8 +108,9 @@ function initSettings() {
   disableFieldsWhenNecessary();
   checkConnectionSpinnerExample();
   initAnnotationToggleEvents();
-  initializeEvents();
+  initializeEventHubEvents();
   connect();
+  // TODO: add initialize for every event (like connect)
 }
 
 initSettings();
