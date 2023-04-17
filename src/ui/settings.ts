@@ -115,5 +115,3 @@ function initSettings() {
 }
 
 initSettings();
-
-

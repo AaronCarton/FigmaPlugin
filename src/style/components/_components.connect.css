@@ -102,6 +102,10 @@
   outline: none;
 }
 
+.c-connect__field--input:disabled {
+  background: none;
+}
+
 .c-connect__container {
   display: none;
 }

@@ -18,26 +18,8 @@ export class EventHub {
 
     this.handlers[prefixedEventName] = (e: { detail: { message: Event } }) =>
       callback(e.detail.message);
+    console.log("EventHub: makeEvent: ", prefixedEventName, this.handlers[prefixedEventName]); // TODO: remove
     document.addEventListener(prefixedEventName, this.handlers[prefixedEventName]);
-  }
-
-  removeAllEvents(): void {
-    if (!this.handlers) return;
-
-    Object.keys(this.handlers).forEach(
-      (prefixedEventName) =>
-        document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]), // TODO: change ESLint rule that this is allowed on one line
-    );
-  }
-
-  /**
-   * @description It removes an event listener
-   * @param {string} eventName - The type of event to remove
-   * @param {function} callback - The function that is called when the event is triggered
-   * @returns {void}
-   */
-  removeEvent(eventName: string, callback: EventListener): void {
-    document.removeEventListener(this.prefixEventName(eventName), callback);
   }
 
   /**
@@ -52,6 +34,31 @@ export class EventHub {
         bubbles: true,
         detail: { message: message },
       }),
+    );
+    console.log("EventHub: sendCustomEvent: ", eventName, message); // TODO: remove
+  }
+
+  /**
+   * @description It removes an event listener
+   * @param {string} eventName - The type of event to remove
+   * @param {function} callback - The function that is called when the event is triggered
+   * @returns {void}
+   */
+  removeEvent(eventName: string, callback: EventListener): void {
+    document.removeEventListener(this.prefixEventName(eventName), callback);
+    console.log("EventHub: removeEvent: ", eventName, callback); // TODO: remove
+  }
+
+  /**
+   * @description Removes all event listeners from the document.
+   * @returns {void}
+   */
+  removeAllEvents(): void {
+    if (!this.handlers) return;
+    console.log("EventHub: removeAllEvents: ", this.handlers); // TODO: remove
+    Object.keys(this.handlers).forEach(
+      (prefixedEventName) =>
+        document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]), // TODO: change ESLint rule that this is allowed on one line
     );
   }
 
