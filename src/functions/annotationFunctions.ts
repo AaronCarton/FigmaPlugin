@@ -246,6 +246,10 @@ function createLayer() {
   annotationElements.annotationLayer.locked = true;
 }
 
+export function changeLayerVisibility(state: boolean) {
+  annotationElements.annotationLayer.visible = state;
+}
+
 export function initAnnotations(inputValues: string[]) {
   createLayer();
   makeFramesArray();

@@ -1,5 +1,5 @@
 import { messageTitle } from "./classes/messageTitles";
-import { initAnnotations } from "./functions/annotationFunctions";
+import { changeLayerVisibility, initAnnotations } from "./functions/annotationFunctions";
 import { annotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 
@@ -42,8 +42,12 @@ figma.ui.onmessage = (event) => {
   }
 
   if (eventType == messageTitle.createText) {
-    // createAnnotation(event.values);
     initAnnotations(event.values);
+  }
+
+  if (eventType == messageTitle.changeVisibility) {
+    changeLayerVisibility(event.value);
+    // console.log(event.value);
   }
 };
 

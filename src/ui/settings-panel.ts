@@ -16,8 +16,26 @@ function toggleAnnotations(e: Event) {
   const state: boolean = (<HTMLInputElement>e.target).checked;
   if (state === true) {
     console.log("show annotations");
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "changeVisibility",
+          value: state,
+        },
+      },
+      "*",
+    );
   } else {
     console.log("hide annotations");
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "changeVisibility",
+          value: state,
+        },
+      },
+      "*",
+    );
   }
 }
 
