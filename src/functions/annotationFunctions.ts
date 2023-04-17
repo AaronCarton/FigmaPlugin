@@ -82,6 +82,7 @@ function determineParentFrame(elem: SceneNode) {
 }
 
 function makeFramesArray() {
+  console.log("making frame array");
   const selection = <Array<SceneNode>>annotationElements.currentpage.selection;
   if (selection.length > 0) {
     sortNodesAccordingToYCoords(selection);
@@ -103,9 +104,27 @@ function makeFramesArray() {
           sourceNodesRight: [],
         };
         if (frameside === "left") {
-          newFramesItem.sourceNodesLeft.push(currentElement);
+          console.log("current element ", currentElement);
+          const indexOfElement: number = newFramesItem.sourceNodesLeft.findIndex(
+            (x) => x.id === currentElement.id,
+          );
+          console.log("found index: ", indexOfElement);
+          if (indexOfElement === -1) {
+            newFramesItem.sourceNodesLeft.push(currentElement);
+          } else {
+            newFramesItem.sourceNodesLeft[indexOfElement] == currentElement;
+          }
         } else {
-          newFramesItem.sourceNodesRight.push(currentElement);
+          console.log("current element ", currentElement);
+          const indexOfElement: number = newFramesItem.sourceNodesRight.findIndex(
+            (x) => x.id === currentElement.id,
+          );
+          console.log("found index: ", indexOfElement);
+          if (indexOfElement === -1) {
+            newFramesItem.sourceNodesRight.push(currentElement);
+          } else {
+            newFramesItem.sourceNodesRight[indexOfElement] == currentElement;
+          }
         }
         annotationElements.parentFrames.push(newFramesItem);
       } else {
@@ -116,9 +135,25 @@ function makeFramesArray() {
         if (parentframe !== undefined) {
           //determine left or right of parent frame, add to according array of the object
           if (frameside === "left") {
-            parentframe.sourceNodesLeft.push(currentElement);
+            const indexOfElement: number = parentframe.sourceNodesLeft.findIndex(
+              (x) => x.id === currentElement.id,
+            );
+            console.log("found index: ", indexOfElement);
+            if (indexOfElement === -1) {
+              parentframe.sourceNodesLeft.push(currentElement);
+            } else {
+              parentframe.sourceNodesLeft[indexOfElement] == currentElement;
+            }
           } else {
-            parentframe.sourceNodesRight.push(currentElement);
+            const indexOfElement: number = parentframe.sourceNodesRight.findIndex(
+              (x) => x.id === currentElement.id,
+            );
+            console.log("found index: ", indexOfElement);
+            if (indexOfElement === -1) {
+              parentframe.sourceNodesRight.push(currentElement);
+            } else {
+              parentframe.sourceNodesRight[indexOfElement] == currentElement;
+            }
           }
         }
       }
