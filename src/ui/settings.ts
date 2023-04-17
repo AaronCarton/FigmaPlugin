@@ -1,3 +1,4 @@
+import { FigmaLocalStorage } from "./figmaLocalStorage";
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
@@ -7,6 +8,9 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 //Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
+//Settings tab
+const settingsTab: HTMLElement | null = document.querySelector(".a-settings-tab");
+const figmaLocalStorage = new FigmaLocalStorage();
 
 function checkConnectionSpinnerExample() {
   $plugin?.classList.add("no-pointer");
@@ -61,15 +65,71 @@ function disableFieldsWhenNecessary() {
   }
 }
 
+function fillBaseUrlInInputfields(baseURL: string) {
+  if (settingsTab !== null) {
+    settingsTab.addEventListener("click", () => {
+      // do something when the settings tab is clicked
+      $baseURL?.setAttribute("value", baseURL);
+    });
+  }
+}
+function fillClientKeyInInputfields(clientKey: string) {
+  if (settingsTab !== null) {
+    settingsTab.addEventListener("click", () => {
+      // do something when the settings tab is clicked
+      $clientKey?.setAttribute("value", clientKey);
+    });
+  }
+}
+
+function fillSourceKeyInInputfields(sourceKey: string) {
+  if (settingsTab !== null) {
+    settingsTab.addEventListener("click", () => {
+      // do something when the settings tab is clicked
+      $sourceKey?.setAttribute("value", sourceKey);
+    });
+  }
+}
+function connect() {
+  const baseURL = $baseURL?.value;
+  const clientKey = $clientKey?.value;
+  const sourceKey = $sourceKey?.value;
+
+  // Still needs a way to check if the entered keys are actually conntected to the right db
+  figmaLocalStorage.sendKeysToLocalStorage(baseURL, clientKey, sourceKey);
+}
+
 function initAnnotationToggleEvents() {
   $annotationToggle?.addEventListener("click", toggleAnnotations);
   $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
   $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
   $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
 }
+function loadKeysFromLocalStorage() {
+  figmaLocalStorage.getBaseURLFromFigmaStorage().then((baseURL) => {
+    if (baseURL !== null) {
+      fillBaseUrlInInputfields(baseURL);
+    }
+  });
+
+  figmaLocalStorage.getClientKeyFromFigmaStorage().then((clientKey) => {
+    if (clientKey !== null) {
+      fillClientKeyInInputfields(clientKey);
+    }
+  });
+  figmaLocalStorage.getSourceKeyFromFigmaStorage().then((sourceKey) => {
+    if (sourceKey !== null) {
+      fillSourceKeyInInputfields(sourceKey);
+    }
+  });
+  if ($button !== null) {
+    $button.addEventListener("click", connect);
+  }
+}
 function initSettings() {
   disableFieldsWhenNecessary();
   initAnnotationToggleEvents();
+  loadKeysFromLocalStorage();
 }
 
 initSettings();

@@ -71,7 +71,7 @@ async function retrieveBaseURLFromStorage() {
   try {
     if (figma.clientStorage.getAsync("baseURL") != null) {
       const baseURL = await figma.clientStorage.getAsync("baseURL");
-      figma.ui.postMessage({ type: "baseURL", payload: "baseURL: " + baseURL });
+      figma.ui.postMessage({ payload: { url: baseURL, type: "baseURL" } });
     }
   } catch (err) {
     console.log(err);
@@ -83,7 +83,7 @@ async function retrieveClientKeyFromStorage() {
   try {
     if (figma.clientStorage.getAsync("clientKey") != null) {
       const clientKey = await figma.clientStorage.getAsync("clientKey");
-      figma.ui.postMessage({ type: "clientKey", payload: "clientKey: " + clientKey });
+      figma.ui.postMessage({ payload: { url: clientKey, type: "clientKey" } });
     }
   } catch (err) {
     console.log(err);
@@ -95,7 +95,7 @@ async function retrieveSourceKeyFromStorage() {
   try {
     if (figma.clientStorage.getAsync("sourceKey") != null) {
       const sourceKey = await figma.clientStorage.getAsync("sourceKey");
-      figma.ui.postMessage({ type: "sourceKey", payload: "sourceKey: " + sourceKey });
+      figma.ui.postMessage({ payload: { url: sourceKey, type: "sourceKey" } });
     }
   } catch (err) {
     console.log(err);
