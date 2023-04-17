@@ -1,14 +1,10 @@
 // Class with all the events
 export class EventHub {
   handlers: any;
-  // Events settings tab
-  btn_connect_event = "btn_connect_event";
-  api_initialized = "api_initialized";
-  update_annotation = "update_annotation";
-  // TODO: make a constante klasse, and make sure that only these event types can be used to create and send out events and also delete
+
   /**
    * @description It creates an event listener
-   * @param {string} eventType - The type of event to listen for
+   * @param {string} eventName - The type of event to listen for
    * @param {function} callback - The function that is called when the event is triggered
    * @returns {void}
    */
@@ -30,13 +26,13 @@ export class EventHub {
 
     Object.keys(this.handlers).forEach(
       (prefixedEventName) =>
-        document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]), // TODO: CHANGE ESLINT
+        document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]), // TODO: change ESLint rule that this is allowed on one line
     );
   }
 
   /**
    * @description It removes an event listener
-   * @param {string} eventType - The type of event to remove
+   * @param {string} eventName - The type of event to remove
    * @param {function} callback - The function that is called when the event is triggered
    * @returns {void}
    */

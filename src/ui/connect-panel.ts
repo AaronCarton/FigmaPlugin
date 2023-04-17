@@ -1,5 +1,6 @@
 import ApiClient from "../services/api/client";
 import { EventHub } from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 
 const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
 
@@ -29,7 +30,7 @@ let counter = 0;
 let exist = false;
 
 function initializeEvents() {
-  eventHub.makeEvent(eventHub.update_annotation, () => {
+  eventHub.makeEvent(Events.UPDATE_ANNOTATION, () => {
     const body = {
       projectKey: $projectKey?.value,
       nodeId: "cec66bdf",
@@ -109,7 +110,7 @@ function toggleFields(button: HTMLElement) {
 buttons.forEach((trigger) => {
   trigger.addEventListener("click", () => {
     buttonTrigger(trigger);
-    eventHub.sendCustomEvent(eventHub.update_annotation, "update_annotation");
+    eventHub.sendCustomEvent(Events.UPDATE_ANNOTATION, "update_annotation");
   });
 });
 

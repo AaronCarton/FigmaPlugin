@@ -2,6 +2,7 @@
 
 import { EventHub } from "../services/events/EventHub";
 import ApiClient from "../services/api/client";
+import { Events } from "../services/events/Events";
 
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
@@ -19,14 +20,14 @@ const eventHub = new EventHub();
 const api = new ApiClient();
 
 function initializeEventHubEvents() {
-  eventHub.makeEvent(eventHub.btn_connect_event, () => {
+  eventHub.makeEvent(Events.BTN_CONNECT_EVENT, () => {
     ApiClient.initialize({
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
-    }); // TODO: when api client is initialized in ui.ts change this to
+    }); // TODO: when api client is initialized in ui.ts change this
   });
-  eventHub.makeEvent(eventHub.api_initialized, () =>
+  eventHub.makeEvent(Events.DATA_INITIALIZED, () =>
     api.getProject($projectKey?.value).then((project) => {
       if (!project || project === null) {
         throw new Error("Project does not exist");
@@ -45,13 +46,13 @@ function initializeEventHubEvents() {
 function connect() {
   $button?.addEventListener("click", (e: Event) => {
     e.preventDefault();
-    eventHub.sendCustomEvent(eventHub.btn_connect_event, "connect button clicked");
+    eventHub.sendCustomEvent(Events.BTN_CONNECT_EVENT, "connect button clicked");
     getData(); // TODO: remove this
   });
 }
 
 function getData() {
-  eventHub.sendCustomEvent(eventHub.api_initialized, "api initialized");
+  eventHub.sendCustomEvent(Events.DATA_INITIALIZED, "data initialized");
 }
 
 function checkConnectionSpinnerExample() {
@@ -114,3 +115,5 @@ function initSettings() {
 }
 
 initSettings();
+
+
