@@ -19,6 +19,7 @@ interface RequestOptions {
 }
 
 export default class ApiClient {
+  private static instance: ApiClient;
   public static BASE_URL: string;
   public static CLIENT_APIKEY: string;
   public static SOURCE_APIKEY: string;
@@ -30,13 +31,26 @@ export default class ApiClient {
    * @param {string} sourceKey - Source API key
    */
   public static initialize({ baseURL, clientKey, sourceKey }: ApiOptions) {
-    this.checkInitialized({ baseURL, clientKey, sourceKey });
+    // Return existing instance if already initialized
+    if (ApiClient.instance) return ApiClient.instance;
 
+    // Create new instance, store it, and return it
+    this.checkInitialized({ baseURL, clientKey, sourceKey });
     this.BASE_URL = baseURL;
     this.CLIENT_APIKEY = clientKey;
     this.SOURCE_APIKEY = sourceKey;
+    ApiClient.instance = new ApiClient();
 
-    return new ApiClient();
+    return ApiClient.instance;
+  }
+
+  /**
+   * Get the API client instance
+   * @throws If the API client has not been initialized
+   */
+  public static getInstance() {
+    if (!ApiClient.instance) throw new Error("ApiClient has not been initialized");
+    return ApiClient.instance;
   }
 
   private static checkInitialized({ baseURL, clientKey, sourceKey }: ApiOptions) {
@@ -54,7 +68,7 @@ export default class ApiClient {
     }
   }
 
-  ////////* API CALLS *////////
+  ////////* API CALLS */ ///////
 
   /**
    * Search for projects
