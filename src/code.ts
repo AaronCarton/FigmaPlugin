@@ -47,7 +47,6 @@ figma.ui.onmessage = (event) => {
 
   if (eventType == messageTitle.changeVisibility) {
     changeLayerVisibility(event.value);
-    // console.log(event.value);
   }
 };
 
