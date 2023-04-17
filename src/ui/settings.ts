@@ -10,6 +10,7 @@ const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader")
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 //Settings tab
 const settingsTab: HTMLElement | null = document.querySelector(".a-settings-tab");
+//Initialize local storage
 const figmaLocalStorage = new FigmaLocalStorage();
 
 function checkConnectionSpinnerExample() {
