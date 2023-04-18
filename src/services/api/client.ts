@@ -126,10 +126,7 @@ export default class ApiClient {
 
   ////////* HELPER FUNCTIONS *////////
 
-  public async getById<Type extends ODSObject<Type>>(
-    itemType: string,
-    id: string,
-  ): Promise<Type | null> {
+  public async getById<T extends ODSObject<T>>(itemType: string, id: string): Promise<T | null> {
     const res = await this.fetchData(`/api/items/${itemType}/null/${id}`, {
       method: "GET",
       apiKey: ApiClient.CLIENT_APIKEY,
@@ -146,9 +143,9 @@ export default class ApiClient {
       itemType: m.type,
       locale: m.locale,
       partition: m.partition,
-    };
+    } as T;
 
-    return obj as Type;
+    return obj.archived ? null : obj;
   }
 
   /**
