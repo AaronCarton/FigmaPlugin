@@ -1,6 +1,5 @@
 export class FigmaLocalStorage {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
   public async getBaseURLFromFigmaStorage(): Promise<string> {
     return new Promise((resolve) => {
       window.addEventListener("message", (event) => {
