@@ -121,6 +121,7 @@ describe("Tests for API client: annotations", () => {
         });
     });
   });
+
   test("Can get archived annotation when IncludeArchived = true", async () => {
     jest.setTimeout(10000);
     await apiClient.getAnnotations("100", true).then(async (res) => {
