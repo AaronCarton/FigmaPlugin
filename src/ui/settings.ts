@@ -36,6 +36,7 @@ function toggleAnnotations(e: Event) {
 }
 
 function disableFieldsWhenNecessary() {
+  console.log($baseURL?.value.replace(/\s/g, ""));
   if (
     $baseURL !== null &&
     $clientKey !== null &&
@@ -46,12 +47,9 @@ function disableFieldsWhenNecessary() {
     //replace makes sure people can not connect with empty strings (for example pressing spacebar)
     if ($baseURL.value.replace(/\s/g, "") !== "") {
       $clientKey.disabled = false;
-    } else {
-      $clientKey.disabled = true;
-    }
-    if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
       $sourceKey.disabled = false;
     } else {
+      $clientKey.disabled = true;
       $sourceKey.disabled = true;
     }
     if (
@@ -60,12 +58,17 @@ function disableFieldsWhenNecessary() {
       $clientKey.value.replace(/\s/g, "") !== ""
     ) {
       $annotationToggle.disabled = false;
-      $button.addEventListener("click", checkConnectionSpinnerExample);
+      $button.addEventListener("click", checkConnection);
+    } else {
+      $annotationToggle.disabled = true;
+      $button.removeEventListener("click", checkConnection);
     }
-  } else {
-    $annotationToggle.disabled = true;
-    $button.removeEventListener("click", checkConnectionSpinnerExample);
   }
+}
+async function checkConnection() {
+  //making sure there are no spaces in the values, even if the user typed spaces
+  const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
+  const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
 }
 
 function fillBaseUrlInInputfields(baseURL: string) {
@@ -134,9 +137,9 @@ function loadKeysFromLocalStorage() {
 }
 
 function initSettings() {
-  disableFieldsWhenNecessary();
-  initAnnotationToggleEvents();
   loadKeysFromLocalStorage();
+  initAnnotationToggleEvents();
+  disableFieldsWhenNecessary();
 }
 
 initSettings();
