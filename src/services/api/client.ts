@@ -137,8 +137,16 @@ export default class ApiClient {
 
     if (res.status === 404) return null;
     const data = await res.json(); // Parse response as JSON
-    const obj = { ...data, ...data._system }; // Merge ODS metadata with item data
-    delete obj._system; // Remove ODS metadata key
+    const m = { ...data._system };
+    delete data._system; // Remove ODS metadata key
+    // Merge ODS metadata with item data
+    const obj = {
+      ...data,
+      itemKey: m.key,
+      itemType: m.type,
+      locale: m.locale,
+      partition: m.partition,
+    };
 
     return obj as Type;
   }
