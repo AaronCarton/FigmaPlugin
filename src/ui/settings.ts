@@ -25,6 +25,7 @@ function checkConnectionSpinnerExample() {
       $spinner?.setAttribute("hidden", "");
     });
 }
+
 function toggleAnnotations(e: Event) {
   const state: boolean = (<HTMLInputElement>e.target).checked;
   if (state === true) {
@@ -33,6 +34,7 @@ function toggleAnnotations(e: Event) {
     console.log("hide annotations");
   }
 }
+
 function disableFieldsWhenNecessary() {
   if (
     $baseURL !== null &&
@@ -74,6 +76,7 @@ function fillBaseUrlInInputfields(baseURL: string) {
     });
   }
 }
+
 function fillClientKeyInInputfields(clientKey: string) {
   if (settingsTab !== null) {
     settingsTab.addEventListener("click", () => {
@@ -91,6 +94,7 @@ function fillSourceKeyInInputfields(sourceKey: string) {
     });
   }
 }
+
 function connect() {
   const baseURL = $baseURL?.value;
   const clientKey = $clientKey?.value;
@@ -106,6 +110,7 @@ function initAnnotationToggleEvents() {
   $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
   $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
 }
+
 function loadKeysFromLocalStorage() {
   figmaLocalStorage.getBaseURLFromFigmaStorage().then((baseURL) => {
     if (baseURL !== null) {
@@ -127,6 +132,7 @@ function loadKeysFromLocalStorage() {
     $button.addEventListener("click", connect);
   }
 }
+
 function initSettings() {
   disableFieldsWhenNecessary();
   initAnnotationToggleEvents();

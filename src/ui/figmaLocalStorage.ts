@@ -13,6 +13,7 @@ export class FigmaLocalStorage {
       });
     });
   }
+
   public async getClientKeyFromFigmaStorage(): Promise<string> {
     return new Promise((resolve) => {
       window.addEventListener("message", (event) => {
@@ -25,6 +26,7 @@ export class FigmaLocalStorage {
       });
     });
   }
+
   public async getSourceKeyFromFigmaStorage(): Promise<string> {
     return new Promise((resolve) => {
       window.addEventListener("message", (event) => {

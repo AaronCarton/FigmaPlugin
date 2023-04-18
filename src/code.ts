@@ -38,6 +38,7 @@ figma.ui.onmessage = (event) => {
     }
   }
 };
+
 async function areKeysSet(): Promise<boolean> {
   //Check if keys are set
   let areKeysSet = false;
@@ -66,6 +67,7 @@ async function areKeysSet(): Promise<boolean> {
 
   return areKeysSet;
 }
+
 async function retrieveBaseURLFromStorage() {
   //Getting baseURL from storage
   try {
@@ -101,12 +103,14 @@ async function retrieveSourceKeyFromStorage() {
     console.log(err);
   }
 }
+
 async function deleteKeys() {
   figma.clientStorage.deleteAsync("baseURL");
   figma.clientStorage.deleteAsync("clientKey");
   figma.clientStorage.deleteAsync("sourceKey");
   console.log("Keys deleted");
 }
+
 async function retrieveDataFromStorage() {
   await areKeysSet().then((value) => {
     if (value) {
@@ -116,6 +120,7 @@ async function retrieveDataFromStorage() {
     }
   });
 }
+
 async function setBaseUrl(baseURL: string) {
   try {
     await figma.clientStorage.setAsync("baseURL", baseURL);
@@ -123,6 +128,7 @@ async function setBaseUrl(baseURL: string) {
     console.log(err);
   }
 }
+
 async function setClientKey(clientKey: string) {
   try {
     await figma.clientStorage.setAsync("clientKey", clientKey);
@@ -130,6 +136,7 @@ async function setClientKey(clientKey: string) {
     console.log(err);
   }
 }
+
 async function setSourceKey(sourceKey: string) {
   try {
     await figma.clientStorage.setAsync("sourceKey", sourceKey);
@@ -137,6 +144,7 @@ async function setSourceKey(sourceKey: string) {
     console.log(err);
   }
 }
+
 retrieveDataFromStorage();
 // deleteKeys(); //For testing purposes
 
