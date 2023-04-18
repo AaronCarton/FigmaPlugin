@@ -1,14 +1,9 @@
-// TODO: Change class names to self made pz_classname
-
 import { EventHub } from "../services/events/EventHub";
-import ApiClient from "../services/api/client";
-import { Events } from "../services/events/Events";
 
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
-const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 //Spinner
@@ -17,42 +12,21 @@ const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 // EventHub
 const eventHub = new EventHub();
-const api = new ApiClient();
 
 function initializeEventHubEvents() {
-  eventHub.makeEvent(Events.BTN_CONNECT_EVENT, () => {
-    ApiClient.initialize({
-      baseURL: $baseURL?.value,
-      clientKey: $clientKey?.value,
-      sourceKey: $sourceKey?.value,
-    }); // TODO: when api client is initialized in ui.ts change this
-  });
-  eventHub.makeEvent(Events.DATA_INITIALIZED, () =>
-    api.getProject($projectKey?.value).then((project) => {
-      if (!project || project === null) {
-        throw new Error("Project does not exist");
-      }
-      api.getAnnotations(project.itemKey, true).then(async (annotations) => {
-        const annotation = annotations.find((a) => a.itemKey === "3414883772");
-
-        await annotation?.archive().then(() => {
-          annotation?.restore();
-        });
-      });
-    }),
-  );
-}
-
-function connect() {
-  $button?.addEventListener("click", (e: Event) => {
-    e.preventDefault();
-    eventHub.sendCustomEvent(Events.BTN_CONNECT_EVENT, "connect button clicked");
-    getData(); // TODO: remove this
-  });
-}
-
-function getData() {
-  eventHub.sendCustomEvent(Events.DATA_INITIALIZED, "data initialized");
+  // eventHub.makeEvent(Events.DATA_INITIALIZED, () =>
+  //   api.getProject($projectKey?.value).then((project) => {
+  //     if (!project || project === null) {
+  //       throw new Error("Project does not exist");
+  //     }
+  //     api.getAnnotations(project.itemKey, true).then(async (annotations) => {
+  //       const annotation = annotations.find((a) => a.itemKey === "3414883772");
+  //       await annotation?.archive().then(() => {
+  //         annotation?.restore();
+  //       });
+  //     });
+  //   }),
+  // );
 }
 
 function checkConnectionSpinnerExample() {
@@ -67,7 +41,6 @@ function checkConnectionSpinnerExample() {
 }
 
 function toggleAnnotations(e: Event) {
-  // TODO: make this an event in eventhub
   const state: boolean = (<HTMLInputElement>e.target).checked;
   if (state === true) {
     console.log("show annotations");
@@ -110,8 +83,7 @@ function initSettings() {
   checkConnectionSpinnerExample();
   initAnnotationToggleEvents();
   initializeEventHubEvents();
-  connect();
-  // TODO: add initialize for every event (like connect)
+  // TODO: add initialize for every event
 }
 
 initSettings();

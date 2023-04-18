@@ -35,7 +35,7 @@ export class EventHub {
         detail: { message: message },
       }),
     );
-    console.log("EventHub: sendCustomEvent: ", eventName, message); // TODO: remove
+    console.log("EventHub: sendCustomEvent: ", this.prefixEventName(eventName), message); // TODO: remove
   }
 
   /**
@@ -56,15 +56,14 @@ export class EventHub {
   removeAllEvents(): void {
     if (!this.handlers) return;
     console.log("EventHub: removeAllEvents: ", this.handlers); // TODO: remove
-    Object.keys(this.handlers).forEach(
-      (prefixedEventName) =>
-        document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]), // TODO: change ESLint rule that this is allowed on one line
+    Object.keys(this.handlers).forEach((prefixedEventName) =>
+      document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]),
     );
   }
 
   /**
    * @description It gets the event name
-   * @param {string} messageType - The type of message to send
+   * @param {string} messageType - The type of message to sends
    * @returns {string} - The event name
    */
   prefixEventName(messageType: string): string {
