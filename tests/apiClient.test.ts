@@ -25,9 +25,7 @@ describe("Tests validation keys", () => {
 });
 
 describe("Tests for API client: projects", () => {
-  jest.setTimeout(30000);
   test("Can create project", async () => {
-    jest.setTimeout(30000);
     const project = {
       lastUpdated: new Date().toISOString(),
       customerId: "1234",
@@ -39,7 +37,6 @@ describe("Tests for API client: projects", () => {
   });
 
   test("Get Project by projectkey", async () => {
-    jest.setTimeout(30000);
     await apiClient.getProject("100").then(async (res) => {
       expect(res).not.toEqual(0);
       expect(res?.itemKey).toEqual("100"); // Check if the project key is correct
@@ -47,7 +44,6 @@ describe("Tests for API client: projects", () => {
   });
 
   test("Can archive project", async () => {
-    jest.setTimeout(30000);
     await apiClient.getProject("100").then(async (res) => {
       res?.archive();
       expect(res?.archived).not.toBeNull(); // Check if the archive field of the project isn't null
@@ -67,7 +63,6 @@ describe("Tests for API client: projects", () => {
   });
 
   test("Can get archived project when IncludeArchived = true", async () => {
-    jest.setTimeout(10000);
     await apiClient.getProject("100", true).then(async (res) => {
       expect(res).not.toBeNull();
       expect(res?.itemKey).toEqual("100"); // Check if the project key is correct
@@ -77,7 +72,6 @@ describe("Tests for API client: projects", () => {
 
 describe("Tests for API client: annotations", () => {
   test("Can create annotation", async () => {
-    jest.setTimeout(30000);
     const annotation = {
       projectKey: "100",
       nodeId: "f249d3d2",
@@ -94,7 +88,6 @@ describe("Tests for API client: annotations", () => {
   });
 
   test("Get annotations by projectKey", async () => {
-    jest.setTimeout(30000);
     await apiClient.getAnnotations("100").then(async (res) => {
       expect(res).not.toEqual(0);
       expect(res[0].itemKey).toEqual("100"); // Check if the annotation key is correct
@@ -102,7 +95,6 @@ describe("Tests for API client: annotations", () => {
   });
 
   test("Can archive annotation", async () => {
-    jest.setTimeout(30000);
     await apiClient.getAnnotations("100").then(async (res) => {
       res[0].archive();
       expect(res[0].archived).not.toBeNull();
@@ -110,7 +102,6 @@ describe("Tests for API client: annotations", () => {
   });
 
   test("Cannot get archived annotation when IncludeArchived = false", async () => {
-    jest.setTimeout(30000);
     await apiClient.getAnnotations("100", false).then(async (res) => {
       waitUntil(() => res === null) // Wait for archived annotation to be indexed first
         .then(() => {
@@ -123,7 +114,6 @@ describe("Tests for API client: annotations", () => {
   });
 
   test("Can get archived annotation when IncludeArchived = true", async () => {
-    jest.setTimeout(10000);
     await apiClient.getAnnotations("100", true).then(async (res) => {
       expect(res).not.toBeNull();
       expect(res[0].itemKey).toEqual("100");
