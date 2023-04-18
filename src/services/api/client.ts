@@ -75,8 +75,8 @@ export default class ApiClient {
    * @param {string} projectKey - Key of the project to search for
    * @returns {Promise<Project>} - Promise that resolves to a project
    */
-  public async getProject(projectKey: string): Promise<Project | null> {
-    return this.getById<Project>("project", projectKey).then((res) =>
+  public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
+    return this.getById<Project>("project", projectKey, includeArchived).then((res) =>
       res ? new Project(res, this) : null,
     );
   }
@@ -126,7 +126,18 @@ export default class ApiClient {
 
   ////////* HELPER FUNCTIONS *////////
 
-  public async getById<T extends ODSObject<T>>(itemType: string, id: string): Promise<T | null> {
+  /**
+   * Generic function that fetches item by ID (skips Elasticsearch indexing)
+   * @template Type - Type of the item to search for (e.g. Project)
+   * @param {string} itemType - Type of the item to search for (e.g. project)
+   * @param {string} id - ID of the item to search for
+   * @param {boolean} includeArchived - Whether to include archived items in results
+   */
+  public async getById<T extends ODSObject<T>>(
+    itemType: string,
+    id: string,
+    includeArchived = false,
+  ): Promise<T | null> {
     const res = await this.fetchData(`/api/items/${itemType}/null/${id}`, {
       method: "GET",
       apiKey: ApiClient.CLIENT_APIKEY,
@@ -145,7 +156,7 @@ export default class ApiClient {
       partition: m.partition,
     } as T;
 
-    return obj.archived ? null : obj;
+    return obj.archived && !includeArchived ? null : obj;
   }
 
   /**
