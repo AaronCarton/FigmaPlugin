@@ -51,7 +51,7 @@ describe("Tests for API client: projects", () => {
   });
 
   test("Cannot get archived project when IncludeArchived = false", async () => {
-    const project = await apiClient.getProject("100", false).then(async (res) => {
+    await apiClient.getProject("100", false).then(async (res) => {
       waitUntil(() => res === null) // Wait for archived annotation to be indexed first
         .then(() => {
           expect(res).toBeNull();
@@ -124,6 +124,7 @@ describe("Tests for API client: annotations", () => {
 function waitUntil(condition: () => boolean): Promise<void> {
   return new Promise((resolve, reject) => {
     let count = 0; // Number of times the condition has been checked
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function check() {
       if (condition()) {
         resolve();
