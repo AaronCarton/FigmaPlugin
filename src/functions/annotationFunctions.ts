@@ -1,6 +1,6 @@
 import { frame } from "../interfaces/frame";
 import { annotationElements } from "../classes/annotationElements";
-
+const linkAnnotationToSourceNodes = [];
 function createAnnotation(inputValues: string[]) {
   const page = figma.currentPage;
   const frame = figma.createFrame();
@@ -174,6 +174,15 @@ function drawConnector(side: string, annotation: SceneNode, destination: SceneNo
     annotationElements.annotationLayer.clipsContent = false;
     //M = starting point
     //L = end point
+    console.log(
+      `M ${side === "left" ? annotation.x + annotation.width : annotation.x} ${
+        annotation.y + annotation.height / 2
+      } L ${
+        side === "left"
+          ? destination.absoluteBoundingBox.x
+          : destination.absoluteBoundingBox.x + destination.absoluteBoundingBox.width
+      } ${destination.absoluteBoundingBox.y + destination.absoluteBoundingBox.height / 2}`,
+    );
     line.vectorPaths = [
       {
         windingRule: "EVENODD",
@@ -229,7 +238,13 @@ function drawAnnotations(
       lastAddedAnnotationY = annotation.y;
     }
     annotationElements.annotationLayer.appendChild(annotation);
-    drawConnector(side, annotation, sourceNodes[i]);
+    const line = drawConnector(side, annotation, sourceNodes[i]);
+    //Added for being able to update when sourcenode changes.
+    linkAnnotationToSourceNodes.push({
+      annotation: annotation,
+      sourceNode: sourceNodes[i],
+      vector: line,
+    });
   }
 }
 
@@ -245,6 +260,53 @@ function createLayer() {
   //make layer lockable e.g. not dragged by accident
   annotationElements.annotationLayer.locked = true;
 }
+
+function handleAnnotationRedraws(event: DocumentChangeEvent) {
+  if (
+    annotationElements.parentFrames.length > 0 &&
+    annotationElements.annotationLayer.visible === true
+  ) {
+    //get data of changed nodes
+    const changedNodeData = event.documentChanges;
+    // console.log(changedNodeData);
+    // console.log("annotationElements: ", annotationElements.parentFrames);
+    const listOfChangedAnnotationSourceNodes = [];
+    for (let i = 0; i < changedNodeData.length; i++) {
+      const changedNode = changedNodeData[i];
+      //console.log("changedNode: ", changedNode);
+      //make searchable = if found in here => changedNode is a sourcenode of an annotation
+      const SearchMap = JSON.stringify(annotationElements.parentFrames);
+      const includesChangedNode = SearchMap.match(changedNode.id);
+      //console.log(includesChangedNode);
+      if (includesChangedNode) {
+        //gives weird error on property "node" => does not exist: it does.
+        listOfChangedAnnotationSourceNodes.push(changedNode.node);
+      }
+    }
+    console.log("changedNodes", listOfChangedAnnotationSourceNodes);
+
+    //when changed nodes are found: redraw them
+    listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
+      const parentFrame = determineParentFrame(changedNode);
+      const frameside = determineFrameSide(changedNode, <FrameNode>parentFrame);
+      /* linkAnnotationToSourceNodes.push({
+      annotation: annotation,
+      sourceNode: sourceNodes[i],
+      });*/
+      const linkedAnnotation = linkAnnotationToSourceNodes.find(
+        (item) => item.sourceNode.id === changedNode.id,
+      );
+      console.log("LINKED ANNO", linkedAnnotation);
+      figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector.id)?.remove();
+      linkedAnnotation.vector = drawConnector(
+        frameside,
+        <SceneNode>linkedAnnotation.annotation.absoluteBoundingBox,
+        <SceneNode>changedNode,
+      );
+    });
+  }
+}
+figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
 
 export function changeLayerVisibility(state: boolean) {
   annotationElements.annotationLayer.visible = state;
