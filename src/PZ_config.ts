@@ -19,7 +19,6 @@ function connect() {
   $button?.addEventListener("click", (e: Event) => {
     e.preventDefault();
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, "initialize data");
-    console.log("test"); // TODO: remove
   });
 }
 
