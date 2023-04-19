@@ -104,10 +104,8 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to the created annotation
    */
   public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
-    // Create annotation
-    return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(() =>
-      // Get annotation from ODS after creating it (needs to be done to get ODS metadata)
-      this.getById<Annotation>("annotation", itemKey).then((res) => new Annotation(res!, this)),
+    return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(
+      () => new Annotation({ ...annotation, itemKey, itemType: "annotation" } as Annotation, this),
     );
   }
 
@@ -118,10 +116,8 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to the created project
    */
   public async createProject(itemKey: string, project: IProject): Promise<Project> {
-    // Create project
-    return await this.upsertItem("project", itemKey, project as Project).then(() =>
-      // Get project from ODS after creating it (needs to be done to get ODS metadata)
-      this.getById<Project>("project", itemKey).then((res) => new Project(res!, this)),
+    return await this.upsertItem("project", itemKey, project as Project).then(
+      () => new Project({ ...project, itemKey, itemType: "project" } as Project, this),
     );
   }
 
