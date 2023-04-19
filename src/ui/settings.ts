@@ -15,22 +15,20 @@ const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 function initializeEventHubEvents() {
   const eventHub = EventHub.getInstance();
-  const apiClient = ApiClient.getInstance();
 
   eventHub.makeEvent(Events.DATA_INITIALIZED, () => {
-    eventHub.makeEvent(Events.DATA_INITIALIZED, () =>
-      apiClient.getProject($projectKey?.value || "").then((project) => {
-        if (!project || project === null) {
-          throw new Error("Project does not exist");
-        }
-        apiClient.getAnnotations(project.itemKey, true).then(async (annotations) => {
-          const annotation = annotations.find((a) => a.itemKey === "3414883772"); // TODO: when integrated with the plugin, this should change to the itemKey of the figme file
-          await annotation?.archive().then(() => {
-            annotation?.restore();
-          });
+    const apiClient = ApiClient.getInstance();
+    apiClient.getProject($projectKey?.value || "").then((project) => {
+      if (!project || project === null) {
+        throw new Error("Project does not exist");
+      }
+      apiClient.getAnnotations(project.itemKey, true).then(async (annotations) => {
+        const annotation = annotations.find((a) => a.itemKey === "3414883772"); // TODO: when integrated with the plugin, this should change to the itemKey of the figme file
+        await annotation?.archive().then(() => {
+          annotation?.restore();
         });
-      }),
-    );
+      });
+    });
   });
 }
 
