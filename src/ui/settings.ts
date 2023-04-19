@@ -1,9 +1,12 @@
+import { apiClient } from "../PZ_config";
 import { EventHub } from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
+const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 //Spinner
@@ -14,19 +17,22 @@ const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 const eventHub = new EventHub();
 
 function initializeEventHubEvents() {
-  // eventHub.makeEvent(Events.DATA_INITIALIZED, () =>
-  //   api.getProject($projectKey?.value).then((project) => {
-  //     if (!project || project === null) {
-  //       throw new Error("Project does not exist");
-  //     }
-  //     api.getAnnotations(project.itemKey, true).then(async (annotations) => {
-  //       const annotation = annotations.find((a) => a.itemKey === "3414883772");
-  //       await annotation?.archive().then(() => {
-  //         annotation?.restore();
-  //       });
-  //     });
-  //   }),
-  // );
+  eventHub.makeEvent(Events.DATA_INITIALIZED, () => {
+    console.log("data initialized"); // TODO: remove
+    eventHub.makeEvent(Events.DATA_INITIALIZED, () =>
+      apiClient.getProject($projectKey?.value).then((project) => {
+        if (!project || project === null) {
+          throw new Error("Project does not exist");
+        }
+        apiClient.getAnnotations(project.itemKey, true).then(async (annotations) => {
+          const annotation = annotations.find((a) => a.itemKey === "3414883772");
+          await annotation?.archive().then(() => {
+            annotation?.restore();
+          });
+        });
+      }),
+    );
+  });
 }
 
 function checkConnectionSpinnerExample() {

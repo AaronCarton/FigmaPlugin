@@ -9,6 +9,8 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 
 const eventHub = new EventHub();
 
+export const apiClient = new ApiClient();
+
 eventHub.makeEvent(Events.INITIALIZE_DATA, () => {
   ApiClient.initialize({
     baseURL: $baseURL?.value,
