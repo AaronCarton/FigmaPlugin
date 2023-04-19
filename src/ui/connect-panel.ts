@@ -1,5 +1,4 @@
-import ApiClient from "../services/api/client";
-import { EventHub } from "../services/events/EventHub";
+import { apiClient, eventHub } from "../PZ_config";
 import { Events } from "../services/events/Events";
 
 const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
@@ -21,9 +20,6 @@ const $projectKey: HTMLInputElement | null = document.querySelector("#settings_p
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 
-const eventHub = new EventHub();
-const api = new ApiClient();
-
 let counter = 0;
 let exist = false;
 
@@ -31,14 +27,14 @@ function initializeEvents() {
   eventHub.makeEvent(Events.UPDATE_ANNOTATION, () => {
     const body = {
       projectKey: $projectKey?.value,
-      nodeId: "cec66bdf",
+      nodeId: "cec66bdf", // TODO: when integrated with the plugin, this should change to the node id from the figma file
       dataSource: $inputDataSource?.value,
       entity: $inputEntity?.value,
       attribute: $inputAttribute?.value,
       dataType: $inputDatatype?.value,
       value: $inputValue?.value,
     } as any;
-    api.upsertItem("annotation", "3414883772", body);
+    apiClient.upsertItem("annotation", "3414883772", body); // TODO: when integrated with the plugin, this should change to the itemKey of the figme file
     console.log(body);
   });
 }

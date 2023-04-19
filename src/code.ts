@@ -1,5 +1,4 @@
-import { EventHub } from "./services/events/EventHub";
-const eventHub = new EventHub();
+import { eventHub } from "./PZ_config";
 
 class messageTitle {
   public static readonly changeTab: string = "changeTab";

@@ -1,6 +1,16 @@
-// Class with all the events
-export class EventHub {
+export default class EventHub {
+  private static instance: EventHub;
   handlers: any;
+
+  /**
+   * Get the instance of the EventHub
+   * @returns {EventHub} The instance of the EventHub
+   * @throws {Error} If the EventHub has not been initialized
+   */
+  public static getInstance(): EventHub {
+    if (!EventHub.instance) throw new Error("EventHub has not been initialized");
+    return EventHub.instance;
+  }
 
   /**
    * @description It creates an event listener
@@ -18,7 +28,6 @@ export class EventHub {
 
     this.handlers[prefixedEventName] = (e: { detail: { message: Event } }) =>
       callback(e.detail.message);
-    console.log("EventHub: makeEvent: ", prefixedEventName, this.handlers[prefixedEventName]); // TODO: remove
     document.addEventListener(prefixedEventName, this.handlers[prefixedEventName]);
   }
 
@@ -35,7 +44,6 @@ export class EventHub {
         detail: { message: message },
       }),
     );
-    console.log("EventHub: sendCustomEvent: ", this.prefixEventName(eventName), message); // TODO: remove
   }
 
   /**
@@ -46,7 +54,6 @@ export class EventHub {
    */
   removeEvent(eventName: string, callback: EventListener): void {
     document.removeEventListener(this.prefixEventName(eventName), callback);
-    console.log("EventHub: removeEvent: ", eventName, callback); // TODO: remove
   }
 
   /**
@@ -55,7 +62,6 @@ export class EventHub {
    */
   removeAllEvents(): void {
     if (!this.handlers) return;
-    console.log("EventHub: removeAllEvents: ", this.handlers); // TODO: remove
     Object.keys(this.handlers).forEach((prefixedEventName) =>
       document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]),
     );

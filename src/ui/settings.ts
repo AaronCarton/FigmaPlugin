@@ -1,5 +1,4 @@
-import { apiClient } from "../PZ_config";
-import { EventHub } from "../services/events/EventHub";
+import { apiClient, eventHub } from "../PZ_config";
 import { Events } from "../services/events/Events";
 
 //input elements
@@ -13,19 +12,15 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
-// EventHub
-const eventHub = new EventHub();
-
 function initializeEventHubEvents() {
   eventHub.makeEvent(Events.DATA_INITIALIZED, () => {
-    console.log("data initialized"); // TODO: remove
     eventHub.makeEvent(Events.DATA_INITIALIZED, () =>
       apiClient.getProject($projectKey?.value).then((project) => {
         if (!project || project === null) {
           throw new Error("Project does not exist");
         }
         apiClient.getAnnotations(project.itemKey, true).then(async (annotations) => {
-          const annotation = annotations.find((a) => a.itemKey === "3414883772");
+          const annotation = annotations.find((a) => a.itemKey === "3414883772"); // TODO: when integrated with the plugin, this should change to the itemKey of the figme file
           await annotation?.archive().then(() => {
             annotation?.restore();
           });
@@ -84,12 +79,12 @@ function initAnnotationToggleEvents() {
   $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
 }
 
+// Add initialize for every event here.
 function initSettings() {
   disableFieldsWhenNecessary();
   checkConnectionSpinnerExample();
   initAnnotationToggleEvents();
   initializeEventHubEvents();
-  // TODO: add initialize for every event
 }
 
 initSettings();
