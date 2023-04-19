@@ -73,6 +73,7 @@ export default class ApiClient {
   /**
    * Search for projects
    * @param {string} projectKey - Key of the project to search for
+   * @param {boolean} includeArchived - Whether to return an archived project if it exists
    * @returns {Promise<Project>} - Promise that resolves to a project
    */
   public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
@@ -210,7 +211,9 @@ export default class ApiClient {
       body: body,
       metadata: true,
     });
-    return res.text(); // Update response are empty bodies
+
+    // Update response are empty bodies, but it might still return a validation error.
+    return res.text();
   }
 
   /**
