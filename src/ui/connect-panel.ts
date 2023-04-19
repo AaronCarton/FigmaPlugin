@@ -10,8 +10,8 @@ function toggleFields(button: HTMLElement) {
   document.getElementById(`${selectedButton}-select`)?.classList.toggle(isActiveField);
 }
 
-buttons.forEach(function (trigger) {
-  trigger.addEventListener("click", function () {
+buttons.forEach((trigger) => {
+  trigger.addEventListener("click", () => {
     toggleFields(trigger);
   });
 });

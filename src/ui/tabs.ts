@@ -8,7 +8,7 @@ const usageView = document.querySelector(".js-usage-view");
 
 const settingsIcon = document.querySelector(".js-settings-icon");
 
-connect?.addEventListener("click", function () {
+connect?.addEventListener("click", () => {
   connect?.classList.add("selected");
   settings?.classList.remove("selected");
   usage?.classList.remove("selected");
@@ -18,7 +18,7 @@ connect?.addEventListener("click", function () {
   settingsIcon?.classList.remove("selected");
 });
 
-settings?.addEventListener("click", function () {
+settings?.addEventListener("click", () => {
   settings?.classList.add("selected");
   connect?.classList.remove("selected");
   usage?.classList.remove("selected");
@@ -28,7 +28,7 @@ settings?.addEventListener("click", function () {
   settingsIcon?.classList.add("selected");
 });
 
-usage?.addEventListener("click", function () {
+usage?.addEventListener("click", () => {
   usage?.classList.add("selected");
   connect?.classList.remove("selected");
   settings?.classList.remove("selected");
