@@ -13,7 +13,8 @@
   "ignorePatterns": ["esbuild.js", "eswatch.js"],
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "prettier/prettier": ["error"],
-    "func-style": ["error", "declaration", { "allowArrowFunctions": false }]
+    "func-style": ["error", "declaration", { "allowArrowFunctions": false }],
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "prettier/prettier": ["error"]
   }
 }

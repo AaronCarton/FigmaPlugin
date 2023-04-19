@@ -18,7 +18,7 @@ esbuild.build({
     bundle: true,
     minify: true,
     write: false,
-    target: ["chrome58", "firefox57", "safari11", "edge16"],
+    target: ["chrome58", "firefox57", "safari11", "edge18"],
   })
 
   //building and resolving all css
@@ -27,7 +27,7 @@ esbuild.build({
     bundle: true,
     minify: true,
     write: false,
-    target: ["chrome58", "firefox57", "safari11", "edge16"],
+    target: ["chrome58", "firefox57", "safari11", "edge18"],
   })
 
   //reading the html file where the css and ui code should be injected
