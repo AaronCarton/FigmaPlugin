@@ -89,15 +89,19 @@ describe("Tests for API client: annotations", () => {
 
   test("Get annotations by projectKey", async () => {
     await apiClient.getAnnotations("100").then(async (res) => {
-      expect(res).not.toEqual(0);
-      expect(res[0].itemKey).toEqual("100"); // Check if the annotation key is correct
+      waitUntil(() => res !== null).then(() => {
+        expect(res).not.toEqual(0);
+        expect(res[0].itemKey).toEqual("100"); // Check if the annotation key is correct
+      });
     });
   });
 
   test("Can archive annotation", async () => {
     await apiClient.getAnnotations("100").then(async (res) => {
-      res[0].archive();
-      expect(res[0].archived).not.toBeNull();
+      waitUntil(() => res[0].archived !== null).then(() => {
+        res[0].archive();
+        expect(res[0].archived).not.toBeNull();
+      });
     });
   });
 
