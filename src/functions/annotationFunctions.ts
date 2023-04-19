@@ -268,16 +268,12 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
   ) {
     //get data of changed nodes
     const changedNodeData = event.documentChanges;
-    // console.log(changedNodeData);
-    // console.log("annotationElements: ", annotationElements.parentFrames);
     const listOfChangedAnnotationSourceNodes = [];
     for (let i = 0; i < changedNodeData.length; i++) {
       const changedNode = changedNodeData[i];
-      //console.log("changedNode: ", changedNode);
       //make searchable = if found in here => changedNode is a sourcenode of an annotation
       const SearchMap = JSON.stringify(annotationElements.parentFrames);
       const includesChangedNode = SearchMap.match(changedNode.id);
-      //console.log(includesChangedNode);
       if (includesChangedNode) {
         //gives weird error on property "node" => does not exist: it does.
         listOfChangedAnnotationSourceNodes.push(changedNode.node);
@@ -289,14 +285,12 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
       const parentFrame = determineParentFrame(changedNode);
       const frameside = determineFrameSide(changedNode, <FrameNode>parentFrame);
-      /* linkAnnotationToSourceNodes.push({
-      annotation: annotation,
-      sourceNode: sourceNodes[i],
-      });*/
+      //find linkedAnnotation
       const linkedAnnotation = linkAnnotationToSourceNodes.find(
         (item) => item.sourceNode.id === changedNode.id,
       );
       console.log("LINKED ANNO", linkedAnnotation);
+      //find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation
       figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector.id)?.remove();
       linkedAnnotation.vector = drawConnector(
         frameside,
@@ -306,6 +300,7 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
     });
   }
 }
+
 figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
 
 export function changeLayerVisibility(state: boolean) {
