@@ -1,13 +1,10 @@
-<<<<<<<<< Temporary merge branch 1
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
-=========
 //Input elements
 const $dbURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $apiKey: HTMLInputElement | null = document.querySelector("#settings_apiKey");
->>>>>>>>> Temporary merge branch 2
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 //Spinner
