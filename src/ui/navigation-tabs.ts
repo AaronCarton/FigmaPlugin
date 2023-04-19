@@ -27,7 +27,7 @@ function checkConnectionPurpose() {
 }
 
 tabs.forEach((trigger) =>
-  trigger.addEventListener("click", function () {
+  trigger.addEventListener("click", () => {
     const selectedTab = trigger.getAttribute("data-target");
     tabs.forEach((item) => {
       item.classList.remove(isActive);

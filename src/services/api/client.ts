@@ -19,6 +19,7 @@ interface RequestOptions {
 }
 
 export default class ApiClient {
+  private static instance: ApiClient;
   public static BASE_URL: string;
   public static CLIENT_APIKEY: string;
   public static SOURCE_APIKEY: string;
@@ -30,13 +31,26 @@ export default class ApiClient {
    * @param {string} sourceKey - Source API key
    */
   public static initialize({ baseURL, clientKey, sourceKey }: ApiOptions) {
-    this.checkInitialized({ baseURL, clientKey, sourceKey });
+    // Return existing instance if already initialized
+    if (ApiClient.instance) return ApiClient.instance;
 
+    // Create new instance, store it, and return it
+    this.checkInitialized({ baseURL, clientKey, sourceKey });
     this.BASE_URL = baseURL;
     this.CLIENT_APIKEY = clientKey;
     this.SOURCE_APIKEY = sourceKey;
+    ApiClient.instance = new ApiClient();
 
-    return new ApiClient();
+    return ApiClient.instance;
+  }
+
+  /**
+   * Get the API client instance
+   * @throws If the API client has not been initialized
+   */
+  public static getInstance() {
+    if (!ApiClient.instance) throw new Error("ApiClient has not been initialized");
+    return ApiClient.instance;
   }
 
   private static checkInitialized({ baseURL, clientKey, sourceKey }: ApiOptions) {
@@ -54,21 +68,18 @@ export default class ApiClient {
     }
   }
 
-  ////////* API CALLS *////////
+  ////////* API CALLS */ ///////
 
   /**
    * Search for projects
    * @param {string} projectKey - Key of the project to search for
-   * @param {boolean} includeArchived - Whether to return the project even if it is archived
-   * @returns {Promise<Project[]>} - Promise that resolves to an array of projects
+   * @param {boolean} includeArchived - Whether to return an archived project if it exists
+   * @returns {Promise<Project>} - Promise that resolves to a project
    */
   public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
-    return this.searchItem<Project>(
-      "project",
-      `itemKey.eq.${projectKey}`,
-      undefined,
-      includeArchived,
-    ).then((res) => (res.results.length > 0 ? new Project(res.results[0]?.item, this) : null));
+    return this.getById<Project>("project", projectKey, includeArchived).then((res) =>
+      res ? new Project(res, this) : null,
+    );
   }
 
   /**
@@ -93,22 +104,8 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to the created annotation
    */
   public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
-    // Create annotation
     return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(
-      () =>
-        // Get annotation from ODS after creating it (needs to be done to get ODS metadata)
-        new Promise((resolve) =>
-          // 5s delay to allow ODS to index the project first
-          setTimeout(
-            () =>
-              resolve(
-                this.searchItem<Annotation>("annotation", `itemKey.eq.${itemKey}`).then(
-                  (res) => new Annotation(res.results[0]?.item, this),
-                ),
-              ),
-            5000,
-          ),
-        ),
+      () => new Annotation({ ...annotation, itemKey, itemType: "annotation" } as Annotation, this),
     );
   }
 
@@ -119,26 +116,45 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to the created project
    */
   public async createProject(itemKey: string, project: IProject): Promise<Project> {
-    // Create project
     return await this.upsertItem("project", itemKey, project as Project).then(
-      () =>
-        // Get project from ODS after creating it (needs to be done to get ODS metadata)
-        new Promise((resolve) => {
-          // 5s delay to allow ODS to index the project first
-          setTimeout(
-            () =>
-              resolve(
-                this.searchItem<Project>("project", `itemKey.eq.${itemKey}`).then(
-                  (res) => new Project(res.results[0]?.item, this),
-                ),
-              ),
-            5000,
-          );
-        }),
+      () => new Project({ ...project, itemKey, itemType: "project" } as Project, this),
     );
   }
 
   ////////* HELPER FUNCTIONS *////////
+
+  /**
+   * Generic function that fetches item by ID (skips Elasticsearch indexing)
+   * @template Type - Type of the item to search for (e.g. Project)
+   * @param {string} itemType - Type of the item to search for (e.g. project)
+   * @param {string} id - ID of the item to search for
+   * @param {boolean} includeArchived - Whether to include archived items in results
+   */
+  public async getById<T extends ODSObject<T>>(
+    itemType: string,
+    id: string,
+    includeArchived = false,
+  ): Promise<T | null> {
+    const res = await this.fetchData(`/api/items/${itemType}/null/${id}`, {
+      method: "GET",
+      apiKey: ApiClient.CLIENT_APIKEY,
+    });
+
+    if (res.status === 404) return null;
+    const data = await res.json(); // Parse response as JSON
+    const m = { ...data._system };
+    delete data._system; // Remove ODS metadata key
+    // Merge ODS metadata with item data
+    const obj = {
+      ...data,
+      itemKey: m.key,
+      itemType: m.type,
+      locale: m.locale,
+      partition: m.partition,
+    } as T;
+
+    return obj.archived && !includeArchived ? null : obj;
+  }
 
   /**
    * Generic function to search for items in the ODS API
@@ -191,7 +207,9 @@ export default class ApiClient {
       body: body,
       metadata: true,
     });
-    return res.text(); // Update response are empty bodies
+
+    // Update response are empty bodies, but it might still return a validation error.
+    return res.text();
   }
 
   /**
@@ -222,7 +240,7 @@ export default class ApiClient {
     if (!res.ok) {
       switch (res.status) {
         case 404:
-          throw new APIError(res, "API URL not found, please check your URL");
+          break; // Not found should not throw an error, just return null (see getById)
         case 401:
           throw new APIError(res, "Unauthorized, please check your API key");
         case 400:

@@ -1,6 +1,6 @@
 /* The switch - the box around the slider */
-.switch {
-    margin-left: 5px;
+.a-annotation-toggle {
+    margin-left: var(--propertize-spacing--tiny);
     position: relative;
     display: inline-block;
     width: 24px;
@@ -8,14 +8,14 @@
   }
   
   /* Hide default HTML checkbox */
-  .switch input {
+  .a-annotation-toggle input {
     opacity: 0;
     width: 0;
     height: 0;
   }
   
   /* The slider */
-  .slider {
+  .a-annotation-toggle__slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -25,39 +25,32 @@
     background-color: var(--propertize-accent-color);
     -webkit-transition: 0.4s;
     transition: 0.4s;
+    border-radius: 34px;
   }
   
-  .slider:before {
+  .a-annotation-toggle__slider:before {
     position: absolute;
     content: "";
     height: 8px;
     width: 8px;
     left: 2px;
     bottom: 2px;
-    background-color: white;
+    background-color: var(--propertize-neutrals-white);
     -webkit-transition: 0.4s;
     transition: 0.4s;
+    border-radius: 50%;
   }
   
-  input:checked + .slider {
+  .a-annotation-toggle__input:checked + .a-annotation-toggle__slider {
     background-color: var(--propertize-accent-blue);
   }
   
-  input:focus + .slider {
+   .a-annotation-toggle__input:focus + .a-annotation-toggle__slider {
     box-shadow: 0 0 1px  var(--propertize-accent-blue);
   }
   
-  input:checked + .slider:before {
+   .a-annotation-toggle__input:checked + .a-annotation-toggle__slider:before {
     -webkit-transform: translateX(12px);
     -ms-transform: translateX(12px);
     transform: translateX(12px);
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 34px;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
   }
