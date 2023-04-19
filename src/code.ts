@@ -1,4 +1,4 @@
-import { eventHub } from "./PZ_config";
+import EventHub from "./services/events/EventHub";
 
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
@@ -43,5 +43,5 @@ figma.ui.onmessage = (event) => {
 };
 
 figma.on("close", () => {
-  eventHub.removeAllEvents();
+  EventHub.getInstance().removeAllEvents();
 });

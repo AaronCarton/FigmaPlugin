@@ -8,7 +8,7 @@ export default class EventHub {
    * @throws {Error} If the EventHub has not been initialized
    */
   public static getInstance(): EventHub {
-    if (!EventHub.instance) throw new Error("EventHub has not been initialized");
+    if (!EventHub.instance) EventHub.instance = new EventHub();
     return EventHub.instance;
   }
 

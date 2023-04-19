@@ -1,4 +1,5 @@
-import { apiClient, eventHub } from "../PZ_config";
+import ApiClient from "../services/api/client";
+import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 
 //input elements
@@ -13,9 +14,12 @@ const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader")
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 function initializeEventHubEvents() {
+  const eventHub = EventHub.getInstance();
+  const apiClient = ApiClient.getInstance();
+
   eventHub.makeEvent(Events.DATA_INITIALIZED, () => {
     eventHub.makeEvent(Events.DATA_INITIALIZED, () =>
-      apiClient.getProject($projectKey?.value).then((project) => {
+      apiClient.getProject($projectKey?.value || "").then((project) => {
         if (!project || project === null) {
           throw new Error("Project does not exist");
         }
