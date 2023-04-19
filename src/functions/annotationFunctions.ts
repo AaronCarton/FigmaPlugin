@@ -1,6 +1,10 @@
 import { frame } from "../interfaces/frame";
 import { annotationElements } from "../classes/annotationElements";
-const linkAnnotationToSourceNodes = [];
+const linkAnnotationToSourceNodes: Array<{
+  annotation: FrameNode;
+  sourceNode: SceneNode;
+  vector: VectorNode | undefined;
+}> = [];
 function createAnnotation(inputValues: string[]) {
   const page = figma.currentPage;
   const frame = figma.createFrame();
@@ -276,6 +280,7 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       const includesChangedNode = SearchMap.match(changedNode.id);
       if (includesChangedNode) {
         //gives weird error on property "node" => does not exist: it does.
+        console.log("chagned", changedNode);
         listOfChangedAnnotationSourceNodes.push(changedNode.node);
       }
     }
@@ -291,17 +296,17 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       );
       console.log("LINKED ANNO", linkedAnnotation);
       //find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation
-      figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector.id)?.remove();
-      linkedAnnotation.vector = drawConnector(
-        frameside,
-        <SceneNode>linkedAnnotation.annotation.absoluteBoundingBox,
-        <SceneNode>changedNode,
-      );
+      if (linkedAnnotation) {
+        figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector?.id)?.remove();
+        linkedAnnotation.vector = drawConnector(
+          frameside,
+          <SceneNode>linkedAnnotation.annotation.absoluteBoundingBox,
+          <SceneNode>changedNode,
+        );
+      }
     });
   }
 }
-
-figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
 
 export function changeLayerVisibility(state: boolean) {
   annotationElements.annotationLayer.visible = state;
@@ -331,4 +336,7 @@ export function initAnnotations(inputValues: string[]) {
       }
     }
   }
+
+  //listen to updates after first initial drawing of the annotations
+  figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
 }

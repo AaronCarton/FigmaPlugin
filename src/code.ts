@@ -42,6 +42,7 @@ figma.ui.onmessage = (event) => {
   }
 
   if (eventType == messageTitle.createText) {
+    console.log("values", event.values);
     initAnnotations(event.values);
   }
 
