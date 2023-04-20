@@ -1,10 +1,10 @@
 import { frame } from "../interfaces/frame";
 import { annotationElements } from "../classes/annotationElements";
-const linkAnnotationToSourceNodes: Array<{
-  annotation: FrameNode;
-  sourceNode: SceneNode;
-  vector: VectorNode | undefined;
-}> = [];
+import { viewportManager } from "./viewportManager";
+import { annotationLinkItem } from "../interfaces/annotationLinkItem";
+
+export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
+
 function createAnnotation(inputValues: string[]) {
   const page = figma.currentPage;
   const frame = figma.createFrame();
@@ -280,7 +280,7 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       const includesChangedNode = SearchMap.match(changedNode.id);
       if (includesChangedNode) {
         //gives weird error on property "node" => does not exist: it does.
-        console.log("chagned", changedNode);
+        console.log("changed", changedNode);
         listOfChangedAnnotationSourceNodes.push(changedNode.node);
       }
     }
@@ -336,7 +336,8 @@ export function initAnnotations(inputValues: string[]) {
       }
     }
   }
-
+  viewportManager();
   //listen to updates after first initial drawing of the annotations
   figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
+  figma.on("documentchange", viewportManager);
 }
