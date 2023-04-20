@@ -39,3 +39,24 @@ figma.ui.onmessage = (event) => {
     }
   }
 };
+//Dispatch all components
+parent.postMessage(
+  {
+    pluginMessage: { type: "initializeSettings" },
+  },
+  "*",
+);
+
+parent.postMessage(
+  {
+    pluginMessage: { type: "initializeNavigationTabs" },
+  },
+  "*",
+);
+
+parent.postMessage(
+  {
+    pluginMessage: { type: "initializeTabs" },
+  },
+  "*",
+);

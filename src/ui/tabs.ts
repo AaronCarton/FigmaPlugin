@@ -8,32 +8,42 @@ const usageView = document.querySelector(".js-usage-view");
 
 const settingsIcon = document.querySelector(".js-settings-icon");
 
-connect?.addEventListener("click", () => {
-  connect?.classList.add("selected");
-  settings?.classList.remove("selected");
-  usage?.classList.remove("selected");
-  connectView?.classList.remove("close");
-  settingsView?.classList.add("close");
-  usageView?.classList.add("close");
-  settingsIcon?.classList.remove("selected");
-});
+export class Tabs {
+  constructor() {
+    window.addEventListener("initializeTabs", () => {
+      console.log("initializeTabs");
+      this.initTabs();
+    });
+  }
+  initTabs() {
+    connect?.addEventListener("click", () => {
+      connect?.classList.add("selected");
+      settings?.classList.remove("selected");
+      usage?.classList.remove("selected");
+      connectView?.classList.remove("close");
+      settingsView?.classList.add("close");
+      usageView?.classList.add("close");
+      settingsIcon?.classList.remove("selected");
+    });
 
-settings?.addEventListener("click", () => {
-  settings?.classList.add("selected");
-  connect?.classList.remove("selected");
-  usage?.classList.remove("selected");
-  settingsView?.classList.remove("close");
-  connectView?.classList.add("close");
-  usageView?.classList.add("close");
-  settingsIcon?.classList.add("selected");
-});
+    settings?.addEventListener("click", () => {
+      settings?.classList.add("selected");
+      connect?.classList.remove("selected");
+      usage?.classList.remove("selected");
+      settingsView?.classList.remove("close");
+      connectView?.classList.add("close");
+      usageView?.classList.add("close");
+      settingsIcon?.classList.add("selected");
+    });
 
-usage?.addEventListener("click", () => {
-  usage?.classList.add("selected");
-  connect?.classList.remove("selected");
-  settings?.classList.remove("selected");
-  usageView?.classList.remove("close");
-  connectView?.classList.add("close");
-  settingsView?.classList.add("close");
-  settingsIcon?.classList.remove("selected");
-});
+    usage?.addEventListener("click", () => {
+      usage?.classList.add("selected");
+      connect?.classList.remove("selected");
+      settings?.classList.remove("selected");
+      usageView?.classList.remove("close");
+      connectView?.classList.add("close");
+      settingsView?.classList.add("close");
+      settingsIcon?.classList.remove("selected");
+    });
+  }
+}
