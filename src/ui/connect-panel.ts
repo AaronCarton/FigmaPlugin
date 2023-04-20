@@ -104,13 +104,13 @@ if (
         {
           pluginMessage: {
             type: "createText",
-            values: [
-              dataSrc.value.trim(),
-              entity.value.trim(),
-              attribute.value.trim(),
-              dataType.value.trim(),
-              sampleValue.value.trim(),
-            ],
+            values: {
+              dataSrc: dataSrc.value.trim(),
+              entity: entity.value.trim(),
+              attribute: attribute.value.trim(),
+              dataType: dataType.value.trim(),
+              sampleValue: sampleValue.value.trim(),
+            },
           },
         },
         "*",

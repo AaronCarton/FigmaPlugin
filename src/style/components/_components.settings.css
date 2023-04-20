@@ -33,13 +33,13 @@
   border-radius: 10px;
 }
 
-input {
+.c-settings__input {
   padding: 8px 0;
   border: 1px solid var(--propertize__color--accent);
   border-radius: 2px;
 }
 
-input:focus-visible {
+.c-settings__input:focus-visible {
   outline-color: var(--propertize__color--blue);
 }
 

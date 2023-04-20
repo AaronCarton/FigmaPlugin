@@ -1,6 +1,6 @@
-import { messageTitle } from "./classes/messageTitles";
+import { MessageTitle } from "./classes/messageTitles";
 import { changeLayerVisibility, initAnnotations } from "./functions/annotationFunctions";
-import { annotationElements } from "./classes/annotationElements";
+import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 
 figma.showUI(__html__, { width: 345, height: 250 });
@@ -12,7 +12,7 @@ figma.ui.onmessage = (event) => {
 
   loadFonts();
 
-  if (eventType == messageTitle.changeTab) {
+  if (eventType == MessageTitle.changeTab) {
     switch (selectedTab) {
       case "connect":
         if (connectionState) {
@@ -33,7 +33,7 @@ figma.ui.onmessage = (event) => {
     }
   }
 
-  if (eventType == messageTitle.connectionCheck) {
+  if (eventType == MessageTitle.connectionCheck) {
     if (connectionState) {
       figma.ui.resize(345, 250);
     } else {
@@ -41,17 +41,17 @@ figma.ui.onmessage = (event) => {
     }
   }
 
-  if (eventType == messageTitle.createText) {
+  if (eventType == MessageTitle.createText) {
     initAnnotations(event.values);
   }
 
-  if (eventType == messageTitle.changeVisibility) {
+  if (eventType == MessageTitle.changeVisibility) {
     changeLayerVisibility(event.value);
   }
 };
 
 figma.on("close", async () => {
   console.log("closing");
-  annotationElements.annotationLayer.remove();
+  AnnotationElements.annotationLayer.remove();
   figma.closePlugin();
 });
