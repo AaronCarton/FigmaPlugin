@@ -131,9 +131,10 @@ function loadKeysFromLocalStorage() {
   //     fillBaseUrlInInputfields(baseURL);
   //   }
   // });
+
   if ($baseURL !== null) {
     // console.log("in settings", figmaLocalStorage.getBaseURLFromFigmaStorage());
-    fillBaseUrlInInputfields(figmaLocalStorage.getBaseURLFromFigmaStorage());
+    fillBaseUrlInInputfields(figmaLocalStorage.getBaseURLFromFigmaStorage() as string);
   }
 
   // figmaLocalStorage.getClientKeyFromFigmaStorage().then((clientKey) => {
@@ -152,10 +153,13 @@ function loadKeysFromLocalStorage() {
 }
 
 function initSettings() {
-  window.addEventListener("keyValuesRetrieved", (event: Event) => console.log(event));
-  loadKeysFromLocalStorage();
-  initAnnotationToggleEvents();
-  disableFieldsWhenNecessary();
+  window.addEventListener("loadSettings", (event: Event) => {
+    console.log("settings loaded", event.type);
+    loadKeysFromLocalStorage();
+    initAnnotationToggleEvents();
+    disableFieldsWhenNecessary();
+    console.log("end settings");
+  });
 
   // Todo: remove after test
   // settingsTab?.addEventListener("click", () =>

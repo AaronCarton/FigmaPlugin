@@ -62,7 +62,7 @@ figma.ui.onmessage = (event) => {
   // Catch event from initializeEvents()
   if (event.type === "ListingInUI") {
     const eventData = {
-      baseURL: getBaseURL(), // needs an async function
+      baseURL: "Sample baseURL", // needs an async function
       // clientKey: this.retrieveClientKeyFromStorage() as Promise<void>,
       // sourcekey: this.retrieveSourceKeyFromStorage() as Promise<void>,
     };

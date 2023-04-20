@@ -1,9 +1,9 @@
 export class FigmaLocalStorage {
   private baseURLValue: string | undefined;
 
-  getBaseURLFromFigmaStorage(): string {
-    const baseurl = "before event";
-    const payload = event;
+  getBaseURLFromFigmaStorage(): string | undefined {
+    // const baseurl = "before event";
+    // const payload = event;
 
     // if (payload.type === "baseURL") {
     //   // Handle the event
@@ -11,7 +11,8 @@ export class FigmaLocalStorage {
     //   baseurl = payload.url;
     // }
     // console.log("Outside event", baseurl);
-    return baseurl;
+    console.log("in getter", this.baseURLValue);
+    return this.baseURLValue;
   }
 
   async getClientKeyFromFigmaStorage(): Promise<string> {
@@ -58,14 +59,8 @@ export class FigmaLocalStorage {
     );
   }
   // -----------------------------------------------------------------------------------------------------
-  //Figma client storage
-  addListeners() {
-    window.addEventListener("message", (event) => {
-      console.log("Eventlisteners set");
-      // console.log("event", event.data.pluginMessage.payload);
-    });
-  }
-
+  //Figma
+  // -----------------------------------------------------------------------------------------------------
   async areKeysSet(): Promise<boolean> {
     //Check if keys are set
     let areKeysSet = false;
@@ -195,16 +190,15 @@ export class FigmaLocalStorage {
         "*",
       );
       // TODO: remove this
-      console.log("event sent");
+      // console.log("event sent");
     });
 
     window.addEventListener("message", (event) => {
       if (event.data.pluginMessage.type === "keyValuesRetrieved") {
-        //console.log("event baseurl", event.data.pluginMessage.baseURL);
-        //this.baseURLValue = event.data.pluginMessage.baseURL;
+        this.baseURLValue = event.data.pluginMessage.eventData.baseURL;
+        console.log("after its set " + this.baseURLValue);
+        dispatchEvent(new CustomEvent("loadSettings"));
       }
     });
-    console.log("in init basevalue " + this.baseURLValue);
   }
 }
-// detail: { baseURL: baseurl, clientKey: clientKey, sourceKey: sourcekey }
