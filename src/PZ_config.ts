@@ -5,7 +5,7 @@ import { Events } from "../src/services/events/Events";
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
-const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
+const $button: HTMLButtonElement | null = document.querySelector("#c-plugin__btnConnect");
 
 EventHub.getInstance().makeEvent(Events.INITIALIZE_DATA, () => {
   ApiClient.initialize({

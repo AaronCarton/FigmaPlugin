@@ -11,7 +11,7 @@ interface ApiOptions {
 
 interface RequestOptions {
   method: "GET" | "PUT" | "POST" | "DELETE";
-  apiKey: string | undefined;
+  apiKey: string;
   body?: object;
   metadata?: boolean;
   parent?: string;
