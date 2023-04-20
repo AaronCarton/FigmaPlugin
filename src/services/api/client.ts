@@ -58,13 +58,13 @@ export default class ApiClient {
       throw new Error("ApiClient has already been initialized");
     }
     if (!baseURL) {
-      throw new Error("baseURL is required, baseURL is: " + baseURL);
+      throw new Error("BaseURL is required.");
     }
     if (!clientKey) {
-      throw new Error("clientKey is required, clientKey is: " + clientKey);
+      throw new Error("ClientKey is required");
     }
     if (!sourceKey) {
-      throw new Error("sourceKey is required, sourceKey is: " + sourceKey);
+      throw new Error("SourceKey is required");
     }
   }
 
