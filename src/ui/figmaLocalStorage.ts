@@ -1,5 +1,7 @@
+import { initialize } from "../../node_modules/esbuild/lib/main";
+
 export class FigmaLocalStorage {
-  private baseURLValue: string | undefined;
+  baseURLValue = "niet aangepaste value";
 
   getBaseURLFromFigmaStorage(): string | undefined {
     // const baseurl = "before event";
@@ -193,12 +195,19 @@ export class FigmaLocalStorage {
       // console.log("event sent");
     });
 
-    window.addEventListener("message", (event) => {
-      if (event.data.pluginMessage.type === "keyValuesRetrieved") {
-        this.baseURLValue = event.data.pluginMessage.eventData.baseURL;
-        console.log("after its set " + this.baseURLValue);
-        dispatchEvent(new CustomEvent("loadSettings"));
-      }
+    // window.addEventListener("message", (event) => {
+    //   if (event.data.pluginMessage.type === "keyValuesRetrieved") {
+    //     this.baseURLValue = event.data.pluginMessage.eventData.baseURL;
+
+    //     console.log("after its set " + this.baseURLValue);
+    //     // window.dispatchEvent(new CustomEvent("loadSettings"));
+    //   }
+    // });
+    console.log("init figma local storage");
+    window.addEventListener("loadSettings", () => {
+      console.log("load settings event (figma local storeage)");
+
+      window.dispatchEvent(new CustomEvent("settingsLoaded"));
     });
   }
 }

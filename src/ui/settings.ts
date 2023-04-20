@@ -134,6 +134,7 @@ function loadKeysFromLocalStorage() {
 
   if ($baseURL !== null) {
     // console.log("in settings", figmaLocalStorage.getBaseURLFromFigmaStorage());
+    // eslint-disable-next-line no-debugger
     fillBaseUrlInInputfields(figmaLocalStorage.getBaseURLFromFigmaStorage() as string);
   }
 
@@ -153,13 +154,15 @@ function loadKeysFromLocalStorage() {
 }
 
 function initSettings() {
-  window.addEventListener("loadSettings", (event: Event) => {
-    console.log("settings loaded", event.type);
-    loadKeysFromLocalStorage();
-    initAnnotationToggleEvents();
-    disableFieldsWhenNecessary();
-    console.log("end settings");
-  });
+  // window.addEventListener("loadSettings", (event: Event) => {
+  //   console.log("settings loaded", event.type);
+  loadKeysFromLocalStorage();
+  initAnnotationToggleEvents();
+  disableFieldsWhenNecessary();
+  console.log("init settings");
+  window.addEventListener("settingsLoaded", () => console.log("settings loaded event"));
+  window.dispatchEvent(new CustomEvent("loadSettings"));
+  // });
 
   // Todo: remove after test
   // settingsTab?.addEventListener("click", () =>
