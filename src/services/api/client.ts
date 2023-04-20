@@ -231,7 +231,7 @@ export default class ApiClient {
     };
 
     // Create request
-    console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey); // temporary - remove later
+    console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey);
     const res = await fetch(ApiClient.BASE_URL + url, {
       method: method,
       body: JSON.stringify(body),
