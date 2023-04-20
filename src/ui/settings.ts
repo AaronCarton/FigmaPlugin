@@ -98,6 +98,17 @@ function fillSourceKeyInInputfields(sourceKey: string) {
   }
 }
 
+// function fillKeysInInputfields(baseURL: string, clientKey: string, sourceKey: string) {
+//   if (settingsTab !== null) {
+//     settingsTab.addEventListener("click", () => {
+//       // do something when the settings tab is clicked
+//       $baseURL?.setAttribute("value", baseURL);
+//       $clientKey?.setAttribute("value", clientKey);
+//       $sourceKey?.setAttribute("value", sourceKey);
+//     });
+//   }
+// }
+
 function connect() {
   const baseURL = $baseURL?.value;
   const clientKey = $clientKey?.value;
@@ -115,31 +126,41 @@ function initAnnotationToggleEvents() {
 }
 
 function loadKeysFromLocalStorage() {
-  figmaLocalStorage.getBaseURLFromFigmaStorage().then((baseURL) => {
-    if (baseURL !== null) {
-      fillBaseUrlInInputfields(baseURL);
-    }
-  });
+  // figmaLocalStorage.getBaseURLFromFigmaStorage().then((baseURL) => {
+  //   if (baseURL !== null) {
+  //     fillBaseUrlInInputfields(baseURL);
+  //   }
+  // });
+  if ($baseURL !== null) {
+    // console.log("in settings", figmaLocalStorage.getBaseURLFromFigmaStorage());
+    fillBaseUrlInInputfields(figmaLocalStorage.getBaseURLFromFigmaStorage());
+  }
 
-  figmaLocalStorage.getClientKeyFromFigmaStorage().then((clientKey) => {
-    if (clientKey !== null) {
-      fillClientKeyInInputfields(clientKey);
-    }
-  });
-  figmaLocalStorage.getSourceKeyFromFigmaStorage().then((sourceKey) => {
-    if (sourceKey !== null) {
-      fillSourceKeyInInputfields(sourceKey);
-    }
-  });
+  // figmaLocalStorage.getClientKeyFromFigmaStorage().then((clientKey) => {
+  //   if (clientKey !== null) {
+  //     fillClientKeyInInputfields(clientKey);
+  //   }
+  // });
+  // figmaLocalStorage.getSourceKeyFromFigmaStorage().then((sourceKey) => {
+  //   if (sourceKey !== null) {
+  //     fillSourceKeyInInputfields(sourceKey);
+  //   }
+  // });
   if ($button !== null) {
     $button.addEventListener("click", connect);
   }
 }
 
 function initSettings() {
+  window.addEventListener("keyValuesRetrieved", (event: Event) => console.log(event));
   loadKeysFromLocalStorage();
   initAnnotationToggleEvents();
   disableFieldsWhenNecessary();
+
+  // Todo: remove after test
+  // settingsTab?.addEventListener("click", () =>
+  //   // window.dispatchEvent(new CustomEvent("testMessage")),
+  // );
 }
 
 initSettings();

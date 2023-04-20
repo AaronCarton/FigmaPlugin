@@ -1,3 +1,5 @@
+import { FigmaLocalStorage } from "./ui/figmaLocalStorage";
+const figmaLocalStorage = new FigmaLocalStorage();
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
   public static readonly connectionCheck: string = "connectionCheck";
@@ -39,113 +41,12 @@ figma.ui.onmessage = (event) => {
   }
 };
 
-async function areKeysSet(): Promise<boolean> {
-  //Check if keys are set
-  let areKeysSet = false;
-  let isBaseUrlNull = true;
-  let isClientKeyNull = true;
-  let isSourceKeyNull = true;
-  await figma.clientStorage.getAsync("baseURL").then((baseURL) => {
-    if (baseURL != null) {
-      isBaseUrlNull = false;
-    }
-  });
-  await figma.clientStorage.getAsync("clientKey").then((clientKey) => {
-    if (clientKey != null) {
-      isClientKeyNull = false;
-    }
-  });
-  await figma.clientStorage.getAsync("sourceKey").then((sourceKey) => {
-    if (sourceKey != null) {
-      isSourceKeyNull = false;
-    }
-  });
-
-  if (!isBaseUrlNull && !isClientKeyNull && !isSourceKeyNull) {
-    areKeysSet = true;
-  }
-
-  return areKeysSet;
+async function getBaseURL(): Promise<string> {
+  console.log("in getBaseUrl", await figma.clientStorage.getAsync("baseURL"));
+  return await figma.clientStorage.getAsync("baseURL");
 }
 
-async function retrieveBaseURLFromStorage() {
-  //Getting baseURL from storage
-  try {
-    if (figma.clientStorage.getAsync("baseURL") != null) {
-      const baseURL = await figma.clientStorage.getAsync("baseURL");
-      figma.ui.postMessage({ payload: { url: baseURL, type: "baseURL" } });
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function retrieveClientKeyFromStorage() {
-  //Getting clientKey from storage
-  try {
-    if (figma.clientStorage.getAsync("clientKey") != null) {
-      const clientKey = await figma.clientStorage.getAsync("clientKey");
-      figma.ui.postMessage({ payload: { url: clientKey, type: "clientKey" } });
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function retrieveSourceKeyFromStorage() {
-  //Getting sourceKey from storage
-  try {
-    if (figma.clientStorage.getAsync("sourceKey") != null) {
-      const sourceKey = await figma.clientStorage.getAsync("sourceKey");
-      figma.ui.postMessage({ payload: { url: sourceKey, type: "sourceKey" } });
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function deleteKeys() {
-  figma.clientStorage.deleteAsync("baseURL");
-  figma.clientStorage.deleteAsync("clientKey");
-  figma.clientStorage.deleteAsync("sourceKey");
-  console.log("Keys deleted");
-}
-
-async function retrieveDataFromStorage() {
-  await areKeysSet().then((value) => {
-    if (value) {
-      retrieveBaseURLFromStorage();
-      retrieveClientKeyFromStorage();
-      retrieveSourceKeyFromStorage();
-    }
-  });
-}
-
-async function setBaseUrl(baseURL: string) {
-  try {
-    await figma.clientStorage.setAsync("baseURL", baseURL);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function setClientKey(clientKey: string) {
-  try {
-    await figma.clientStorage.setAsync("clientKey", clientKey);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function setSourceKey(sourceKey: string) {
-  try {
-    await figma.clientStorage.setAsync("sourceKey", sourceKey);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-retrieveDataFromStorage();
+figmaLocalStorage.retrieveBaseURLFromStorage();
 // deleteKeys(); //For testing purposes
 
 // Listen for the 'setKeys' event
@@ -154,8 +55,24 @@ figma.ui.onmessage = (event) => {
   // Check if the event data is what you expect
   if (event.type === "setKeys") {
     // Handle the message
-    setBaseUrl(event.baseURL);
-    setClientKey(event.clientKey);
-    setSourceKey(event.sourceKey);
+    figmaLocalStorage.setBaseUrl(event.baseURL);
+    figmaLocalStorage.setClientKey(event.clientKey);
+    figmaLocalStorage.setSourceKey(event.sourceKey);
+  }
+  // Catch event from initializeEvents()
+  if (event.type === "ListingInUI") {
+    const eventData = {
+      baseURL: getBaseURL(), // needs an async function
+      // clientKey: this.retrieveClientKeyFromStorage() as Promise<void>,
+      // sourcekey: this.retrieveSourceKeyFromStorage() as Promise<void>,
+    };
+    // const keyValuesRetrievedEvent = new CustomEvent("keyValuesRetrieved", {
+    //   detail: eventData,
+    // });
+
+    figma.ui.postMessage({ eventData, type: "keyValuesRetrieved" });
+    console.log("codets: " + eventData.baseURL); // Is still a Promise object...
+
+    // window.dispatchEvent(keyValuesRetrievedEvent); //window bestaat niet in code.ts
   }
 };
