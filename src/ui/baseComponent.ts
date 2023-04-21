@@ -8,8 +8,6 @@ export abstract class BaseComponent {
       }
     });
   }
-  setComponentType(componentType: string) {
-    this.componentType = componentType;
-  }
+
   abstract initializeComponent(): void;
 }
