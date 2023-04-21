@@ -39,24 +39,21 @@ figma.ui.onmessage = (event) => {
     }
   }
 };
-//Dispatch all components
-parent.postMessage(
-  {
-    pluginMessage: { type: "initializeSettings" },
-  },
-  "*",
-);
 
-parent.postMessage(
-  {
-    pluginMessage: { type: "initializeNavigationTabs" },
-  },
-  "*",
-);
+//Dispatch all components -> in figma postMessage
+console.log("code.ts");
+figma.ui.postMessage({
+  pluginMessage: { type: "initializeSettings" },
+});
 
-parent.postMessage(
-  {
-    pluginMessage: { type: "initializeTabs" },
-  },
-  "*",
-);
+figma.ui.postMessage({
+  pluginMessage: { type: "initializeNavigationTabs" },
+});
+
+figma.ui.postMessage({
+  pluginMessage: { type: "initializeTabs" },
+});
+
+figma.ui.postMessage({
+  pluginMessage: { type: "initializeConnectPanel" },
+});

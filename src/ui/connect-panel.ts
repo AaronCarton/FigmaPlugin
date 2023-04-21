@@ -3,16 +3,18 @@ const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 
-export class connectPanel {
+export class ConnectPanel {
   constructor() {
-    window.addEventListener("initializeConnectPanel", () => {
-      console.log("initializeConnectPanel");
-      // --------------------------//
-      buttons.forEach((trigger) => {
-        trigger.addEventListener("click", () => {
-          toggleFields(trigger);
+    window.addEventListener("message", (event) => {
+      if (event.data.pluginMessage.pluginMessage.type === "initializeConnectPanel") {
+        console.log("initializeConnectPanel");
+        // --------------------------//
+        buttons.forEach((trigger) => {
+          trigger.addEventListener("click", () => {
+            toggleFields(trigger);
+          });
         });
-      });
+      }
     });
   }
 }

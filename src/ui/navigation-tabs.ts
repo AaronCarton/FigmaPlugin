@@ -8,34 +8,40 @@ const isActive = "is-active";
 
 // still testing connection purposes
 const connectionState = true;
-export class navigationTabs {
+export class NavigationTabs {
   constructor() {
-    window.addEventListener("initializeNavigationTabs", () => {
-      console.log("initializeNavigationTabs");
-      // --------------------------//
-      checkConnectionPurpose();
+    window.addEventListener("message", (event) => {
+      if (event.data.pluginMessage.pluginMessage.type === "initializeNavigationTabs") {
+        console.log("initializeNavigationTabs");
+        // --------------------------//
+        checkConnectionPurpose();
 
-      tabs.forEach((trigger) =>
-        trigger.addEventListener("click", () => {
-          const selectedTab = trigger.getAttribute("data-target");
-          tabs.forEach((item) => {
-            item.classList.remove(isActive);
-          });
-          panelItems.forEach((item) => {
-            item.classList.remove(isActive);
-          });
-          trigger.classList.add(isActive);
-          if (selectedTab !== null) {
-            document.getElementById(selectedTab)?.classList.add(isActive);
-            parent.postMessage(
-              {
-                pluginMessage: { type: "changeTab", tab: selectedTab, connection: connectionState },
-              },
-              "*",
-            );
-          }
-        }),
-      );
+        tabs.forEach((trigger) =>
+          trigger.addEventListener("click", () => {
+            const selectedTab = trigger.getAttribute("data-target");
+            tabs.forEach((item) => {
+              item.classList.remove(isActive);
+            });
+            panelItems.forEach((item) => {
+              item.classList.remove(isActive);
+            });
+            trigger.classList.add(isActive);
+            if (selectedTab !== null) {
+              document.getElementById(selectedTab)?.classList.add(isActive);
+              parent.postMessage(
+                {
+                  pluginMessage: {
+                    type: "changeTab",
+                    tab: selectedTab,
+                    connection: connectionState,
+                  },
+                },
+                "*",
+              );
+            }
+          }),
+        );
+      }
     });
   }
 }

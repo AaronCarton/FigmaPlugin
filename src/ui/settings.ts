@@ -10,9 +10,11 @@ const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 export class Settings {
   constructor() {
-    window.addEventListener("initializeSettings", () => {
-      console.log("initializeSettings");
-      this.initSettings();
+    window.addEventListener("message", (event) => {
+      if (event.data.pluginMessage.pluginMessage.type === "initializeSettings") {
+        console.log("initializeSettings");
+        this.initSettings();
+      }
     });
   }
 
