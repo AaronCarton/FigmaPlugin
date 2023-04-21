@@ -12,41 +12,46 @@ figma.ui.onmessage = (event) => {
 
   loadFonts();
 
-  if (eventType == MessageTitle.changeTab) {
-    switch (selectedTab) {
-      case "connect":
-        if (connectionState) {
-          figma.ui.resize(345, 250);
-        } else {
-          figma.ui.resize(345, 124);
-        }
-        console.log(connectionState);
-        break;
-      case "settings":
-        figma.ui.resize(345, 355);
-        break;
-      case "usage":
-        figma.ui.resize(345, 590);
-        break;
-      default:
-        break;
-    }
-  }
+  switch (eventType) {
+    case MessageTitle.changeTab:
+      switch (selectedTab) {
+        case "connect":
+          if (connectionState) {
+            figma.ui.resize(345, 250);
+          } else {
+            figma.ui.resize(345, 124);
+          }
+          console.log(connectionState);
+          break;
+        case "settings":
+          figma.ui.resize(345, 355);
+          break;
+        case "usage":
+          figma.ui.resize(345, 590);
+          break;
+        default:
+          break;
+      }
+      break;
 
-  if (eventType == MessageTitle.connectionCheck) {
-    if (connectionState) {
-      figma.ui.resize(345, 250);
-    } else {
-      figma.ui.resize(345, 124);
-    }
-  }
+    case MessageTitle.connectionCheck:
+      if (connectionState) {
+        figma.ui.resize(345, 250);
+      } else {
+        figma.ui.resize(345, 124);
+      }
+      break;
 
-  if (eventType == MessageTitle.createText) {
-    initAnnotations(event.values);
-  }
+    case MessageTitle.createText:
+      initAnnotations(event.values);
+      break;
 
-  if (eventType == MessageTitle.changeVisibility) {
-    changeLayerVisibility(event.value);
+    case MessageTitle.changeVisibility:
+      changeLayerVisibility(event.value);
+      break;
+
+    default:
+      break;
   }
 };
 

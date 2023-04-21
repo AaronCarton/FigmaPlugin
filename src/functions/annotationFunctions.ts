@@ -2,6 +2,7 @@ import { frame } from "../interfaces/frame";
 import { AnnotationElements } from "../classes/annotationElements";
 import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotations";
+import { createFigmaError } from "./createError";
 
 function createAnnotation(inputValues: AnnotationInput) {
   const page = figma.currentPage;
@@ -164,7 +165,7 @@ function makeFramesArray() {
     }
     console.log(AnnotationElements.parentFrames);
   } else {
-    console.log("Select something.");
+    createFigmaError("Select something to create an annotation.", 5000, true);
   }
 }
 
@@ -251,7 +252,9 @@ function createLayer() {
 }
 
 export function changeLayerVisibility(state: boolean) {
-  AnnotationElements.annotationLayer.visible = state;
+  if (AnnotationElements.annotationLayer) {
+    AnnotationElements.annotationLayer.visible = state;
+  }
 }
 
 export function initAnnotations(inputValues: AnnotationInput) {
