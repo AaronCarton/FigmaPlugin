@@ -1,3 +1,5 @@
+import { Settings } from "./ui/settings";
+
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
   public static readonly connectionCheck: string = "connectionCheck";
@@ -40,16 +42,14 @@ figma.ui.onmessage = (event) => {
   }
 };
 
-//Dispatch all components -> in figma postMessage
-console.log("code.ts");
-figma.ui.postMessage({
-  pluginMessage: { type: "initializeSettings" },
-});
+//Dispatch all components -> in figma use postMessage
+//Use the class names for inutializeComponent
+initializeComponent("Settings");
+initializeComponent("NavigationTabs");
+initializeComponent("ConnectPanel");
 
-figma.ui.postMessage({
-  pluginMessage: { type: "initializeNavigationTabs" },
-});
-
-figma.ui.postMessage({
-  pluginMessage: { type: "initializeConnectPanel" },
-});
+function initializeComponent(componentName: string): void {
+  figma.ui.postMessage({
+    pluginMessage: { type: `initialize${componentName}` },
+  });
+}

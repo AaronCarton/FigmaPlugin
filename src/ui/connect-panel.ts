@@ -1,20 +1,22 @@
+import { BaseComponent } from "./baseComponent";
+
 const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 
-export class ConnectPanel {
+export class ConnectPanel extends BaseComponent {
+  componentType = "ConnectPanel";
+
   constructor() {
-    window.addEventListener("message", (event) => {
-      if (event.data.pluginMessage.pluginMessage.type === "initializeConnectPanel") {
-        console.log("initializeConnectPanel");
-        // --------------------------//
-        buttons.forEach((trigger) => {
-          trigger.addEventListener("click", () => {
-            toggleFields(trigger);
-          });
-        });
-      }
+    super();
+  }
+
+  initializeComponent(): void {
+    buttons.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        toggleFields(trigger);
+      });
     });
   }
 }

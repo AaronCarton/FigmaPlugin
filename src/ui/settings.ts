@@ -1,3 +1,5 @@
+import { BaseComponent } from "./baseComponent";
+
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
@@ -8,14 +10,15 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
-export class Settings {
+export class Settings extends BaseComponent {
+  componentType = "Settings";
+
   constructor() {
-    window.addEventListener("message", (event) => {
-      if (event.data.pluginMessage.pluginMessage.type === "initializeSettings") {
-        console.log("initializeSettings");
-        this.initSettings();
-      }
-    });
+    super();
+  }
+
+  initializeComponent(): void {
+    this.initSettings();
   }
 
   checkConnectionSpinnerExample() {
