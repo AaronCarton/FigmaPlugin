@@ -51,9 +51,5 @@ figma.ui.postMessage({
 });
 
 figma.ui.postMessage({
-  pluginMessage: { type: "initializeTabs" },
-});
-
-figma.ui.postMessage({
   pluginMessage: { type: "initializeConnectPanel" },
 });
