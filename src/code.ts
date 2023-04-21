@@ -1,5 +1,3 @@
-import { Settings } from "./ui/settings";
-
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
   public static readonly connectionCheck: string = "connectionCheck";
