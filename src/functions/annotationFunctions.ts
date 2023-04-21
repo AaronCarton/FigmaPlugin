@@ -71,6 +71,9 @@ function sortNodesAccordingToYCoords(sourceNodes: Array<SceneNode>) {
     if (a.y < b.y) {
       return -1;
     }
+    if (a.y > b.y) {
+      return 1;
+    }
     return 0;
   });
   return sorted;
@@ -244,11 +247,13 @@ function drawAnnotations(
     annotationElements.annotationLayer.appendChild(annotation);
     const line = drawConnector(side, annotation, sourceNodes[i]);
     //Added for being able to update when sourcenode changes.
-    linkAnnotationToSourceNodes.push({
-      annotation: annotation,
-      sourceNode: sourceNodes[i],
-      vector: line,
-    });
+    if (line !== undefined) {
+      linkAnnotationToSourceNodes.push({
+        annotation: annotation,
+        sourceNode: sourceNodes[i],
+        vector: line,
+      });
+    }
   }
 }
 
@@ -298,11 +303,14 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       //find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation
       if (linkedAnnotation) {
         figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector?.id)?.remove();
-        linkedAnnotation.vector = drawConnector(
+        const vector = drawConnector(
           frameside,
           <SceneNode>linkedAnnotation.annotation.absoluteBoundingBox,
           <SceneNode>changedNode,
         );
+        if (vector !== undefined) {
+          linkedAnnotation.vector = vector;
+        }
       }
     });
   }
@@ -316,6 +324,8 @@ export function initAnnotations(inputValues: string[]) {
   createLayer();
   makeFramesArray();
   if (annotationElements.parentFrames !== null) {
+    //Reset links when annotations are redrawn (reason: annotation id's will be diff when redrawn).
+    linkAnnotationToSourceNodes.length = 0;
     for (let i = 0; i < annotationElements.parentFrames.length; i++) {
       const currentFrame = annotationElements.parentFrames[i];
       if (currentFrame.sourceNodesLeft.length > 0) {

@@ -32,6 +32,9 @@ function determineViewports() {
   if (linkAnnotationToSourceNodes) {
     console.log("link from vwprt mngr", linkAnnotationToSourceNodes);
     linkAnnotationToSourceNodes.forEach((element) => {
+      if (element.vector === undefined) {
+        return null;
+      }
       const foundAnnotation = figma.currentPage.findOne((x) => x.id === element.annotation.id);
       const foundVector = figma.currentPage.findOne((x) => x.id === element.vector.id);
       if (foundVector && foundAnnotation) {
@@ -67,6 +70,10 @@ function determineViewports() {
   });
   //console.log("custom vwprt obj: ", currentviewPort);
 }
+
 export function viewportManager() {
   determineViewports();
 }
+
+//On zoom event bestaat niet, meest frequente event is DocumentChange (A.k.a elke keer de current document wordt bewerkt)
+figma.on("documentchange", () => viewportManager);
