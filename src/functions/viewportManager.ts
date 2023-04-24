@@ -30,7 +30,6 @@ function isItemInViewport(item: annotationLinkItem, viewport: viewportObject) {
 
 function determineViewports() {
   if (linkAnnotationToSourceNodes) {
-    console.log("link from vwprt mngr", linkAnnotationToSourceNodes);
     linkAnnotationToSourceNodes.forEach((element) => {
       if (element.vector === undefined) {
         return null;
@@ -43,10 +42,9 @@ function determineViewports() {
       }
     });
   }
-  //coords left top, right top, right under, left under
+
+  //Coords left top, right top, right under, left under.
   const currentviewPortData = figma.viewport.bounds;
-  console.log("VIEWPORT", figma.viewport);
-  //console.log("currentvwprt: ", currentviewPortData);
   const currentviewPort: viewportObject = {
     topLeft: { x: currentviewPortData.x, y: currentviewPortData.y },
     topRight: { x: currentviewPortData.x + currentviewPortData.width, y: currentviewPortData.y },
@@ -56,10 +54,13 @@ function determineViewports() {
     },
     bottomLeft: { x: currentviewPortData.x, y: currentviewPortData.y + currentviewPortData.height },
   };
+
+  //Loop through annotations and check if they are in the viewport.
   const filtered = linkAnnotationToSourceNodes.filter((element) => {
     return isItemInViewport(element, currentviewPort);
   });
-  console.log("filtered annotations by viewport", filtered);
+
+  //Get items in figma corresponding to the sourcenodes that are in the viewport.
   filtered.forEach((element) => {
     const foundAnnotation = figma.currentPage.findOne((x) => x.id === element.annotation.id);
     const foundVector = figma.currentPage.findOne((x) => x.id === element.vector.id);
@@ -68,12 +69,11 @@ function determineViewports() {
       foundAnnotation.visible = true;
     }
   });
-  //console.log("custom vwprt obj: ", currentviewPort);
 }
 
 export function viewportManager() {
   determineViewports();
-}
 
-//On zoom event bestaat niet, meest frequente event is DocumentChange (A.k.a elke keer de current document wordt bewerkt)
-figma.on("documentchange", () => viewportManager);
+  //On:zoom event doesn't exist in figma plugin API, most frequent event we can get is on:documentChange.
+  figma.on("documentchange", () => viewportManager);
+}
