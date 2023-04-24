@@ -73,7 +73,8 @@ export default class EventHub {
    * @returns {string} - The prefixed event name: "Propertize_message_eventName"
    */
   prefixEventName(eventName: string): string {
-    if (eventName === null || eventName === undefined) return "Propertize_message_undefined";
+    if (eventName === null || eventName === undefined)
+      throw new Error("The event name is undefined");
     return "Propertize_message_" + eventName;
   }
 }
