@@ -1,12 +1,13 @@
-import "./ui/navigation-tabs.ts";
-import "./ui/connect-panel";
-import "./ui/figmaLocalStorage";
-
 // const figmaLocalStorage = new FigmaLocalStorage();
 // figmaLocalStorage.initializeEvents();
+import { NavigationTabs } from "./ui/navigation-tabs";
+import { Settings } from "./ui/settings";
+import { ConnectPanel } from "./ui/connect-panel";
 
-import "./ui/settings";
-// Sends a message to code.ts
+new Settings();
+new NavigationTabs();
+new ConnectPanel();
+
 parent.postMessage(
   {
     pluginMessage: { type: "messageToFigma", tab: "connect" },

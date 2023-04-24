@@ -76,3 +76,14 @@ figma.ui.onmessage = (event) => {
     // window.dispatchEvent(keyValuesRetrievedEvent); //window bestaat niet in code.ts
   }
 };
+//Dispatch all components -> in figma use postMessage
+//Use the class names for initializeComponent
+initializeComponent("Settings");
+initializeComponent("NavigationTabs");
+initializeComponent("ConnectPanel");
+
+function initializeComponent(componentName: string): void {
+  figma.ui.postMessage({
+    pluginMessage: { type: `initialize${componentName}` },
+  });
+}
