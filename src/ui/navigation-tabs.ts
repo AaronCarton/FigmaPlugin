@@ -18,19 +18,23 @@ export class NavigationTabs extends BaseComponent {
     super();
   }
 
-  initializeComponent(): void {
+  initComponent(): void {
     checkConnectionPurpose();
 
-    tabs.forEach((trigger) =>
-      trigger.addEventListener("click", () => {
-        const selectedTab = trigger.getAttribute("data-target");
+    this.navigateBetweenTabs();
+  }
+
+  private navigateBetweenTabs() {
+    tabs.forEach((tab) =>
+      tab.addEventListener("click", () => {
+        const selectedTab = tab.getAttribute("data-target");
         tabs.forEach((item) => {
           item.classList.remove(isActive);
         });
         panelItems.forEach((item) => {
           item.classList.remove(isActive);
         });
-        trigger.classList.add(isActive);
+        tab.classList.add(isActive);
         if (selectedTab !== null) {
           document.getElementById(selectedTab)?.classList.add(isActive);
           parent.postMessage(

@@ -12,10 +12,10 @@ export class ConnectPanel extends BaseComponent {
     super();
   }
 
-  initializeComponent(): void {
-    buttons.forEach((trigger) => {
-      trigger.addEventListener("click", () => {
-        toggleFields(trigger);
+  initComponent(): void {
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        toggleFields(button);
       });
     });
   }

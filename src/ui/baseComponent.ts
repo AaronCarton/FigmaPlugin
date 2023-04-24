@@ -4,10 +4,10 @@ export abstract class BaseComponent {
   constructor() {
     window.addEventListener("message", (event) => {
       if (event.data.pluginMessage.pluginMessage.type === "initialize" + this.componentType) {
-        this.initializeComponent();
+        this.initComponent();
       }
     });
   }
 
-  abstract initializeComponent(): void;
+  abstract initComponent(): void;
 }

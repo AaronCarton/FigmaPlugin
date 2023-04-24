@@ -17,8 +17,9 @@ export class Settings extends BaseComponent {
     super();
   }
 
-  initializeComponent(): void {
-    this.initSettings();
+  initComponent(): void {
+    this.disableFieldsWhenNecessary();
+    this.initAnnotationToggleEvents();
   }
 
   checkConnectionSpinnerExample() {
@@ -79,10 +80,5 @@ export class Settings extends BaseComponent {
     $baseURL?.addEventListener("keyup", this.disableFieldsWhenNecessary);
     $clientKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
     $sourceKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
-  }
-
-  initSettings() {
-    this.disableFieldsWhenNecessary();
-    this.initAnnotationToggleEvents();
   }
 }
