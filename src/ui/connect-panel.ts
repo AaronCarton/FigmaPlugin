@@ -1,8 +1,7 @@
 import ApiClient from "../services/api/client";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
-
-const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
+import { BaseComponent } from "./baseComponent";
 
 const dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
 const entity: HTMLInputElement | null = document.querySelector(".js-entity");
@@ -18,11 +17,30 @@ const $inputDatatype: HTMLInputElement | null = document.querySelector("#data-ty
 const $inputValue: HTMLInputElement | null = document.querySelector("#js-sample-value");
 const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey");
 
+let counter = 0;
+let exist = false;
+
+const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
+
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 
-let counter = 0;
-let exist = false;
+export class ConnectPanel extends BaseComponent {
+  componentType = "ConnectPanel";
+
+  constructor() {
+    super();
+    initializeEvents();
+  }
+
+  initComponent(): void {
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        toggleFields(button);
+      });
+    });
+  }
+}
 
 function initializeEvents() {
   EventHub.getInstance().makeEvent(Events.UPDATE_ANNOTATION, () => {
@@ -148,8 +166,9 @@ if (
   });
 }
 
-function initConnect() {
-  initializeEvents();
+function toggleFields(button: HTMLElement) {
+  const selectedButton = button.getAttribute("data-target");
+  button.classList.toggle(iconCheck);
+  document.getElementById(`${selectedButton}-text`)?.classList.toggle(isActiveField);
+  document.getElementById(`${selectedButton}-select`)?.classList.toggle(isActiveField);
 }
-
-initConnect();

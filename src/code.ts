@@ -42,6 +42,18 @@ figma.ui.onmessage = (event) => {
   }
 };
 
+// Dispatch all components -> in figma use postMessage
+// Use the class names for initializeComponent
+initializeComponent("Settings");
+initializeComponent("NavigationTabs");
+initializeComponent("ConnectPanel");
+
+function initializeComponent(componentName: string): void {
+  figma.ui.postMessage({
+    pluginMessage: { type: `initialize${componentName}` },
+  });
+}
+
 figma.on("close", () => {
   EventHub.getInstance().removeAllEvents();
 });
