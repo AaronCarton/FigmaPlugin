@@ -20,7 +20,6 @@ export class NavigationTabs extends BaseComponent {
 
   initComponent(): void {
     checkConnectionPurpose();
-
     this.navigateBetweenTabs();
   }
 
