@@ -54,11 +54,18 @@ function initializeEvents() {
 
 function buttonTrigger(trigger: HTMLElement) {
   const selectedAttribute = trigger.getAttribute("data-target");
-  const inputSelect: HTMLSelectElement | null = document.querySelector(`#${selectedAttribute}-select`);
+  const inputSelect: HTMLSelectElement | null = document.querySelector(
+    `#${selectedAttribute}-select`,
+  );
   const inputText: HTMLElement | null = document.querySelector(`#${selectedAttribute}-text`);
   const inputField: HTMLInputElement | null = document.querySelector(`#${selectedAttribute}-field`);
 
-  if (selectedAttribute !== null && inputSelect !== null && inputText !== null && inputField !== null) {
+  if (
+    selectedAttribute !== null &&
+    inputSelect !== null &&
+    inputText !== null &&
+    inputField !== null
+  ) {
     if (counter === 0) {
       counter++;
     } else {
@@ -90,7 +97,11 @@ function buttonTrigger(trigger: HTMLElement) {
   }
 }
 
-function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
+function checkFields(
+  selectElement: HTMLInputElement,
+  changeElement1: HTMLInputElement,
+  disabledId: string,
+) {
   selectElement.addEventListener("change", () => {
     const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
     const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
