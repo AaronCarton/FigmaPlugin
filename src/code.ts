@@ -41,7 +41,7 @@ figma.ui.onmessage = (event) => {
 };
 
 //Dispatch all components -> in figma use postMessage
-//Use the class names for inutializeComponent
+//Use the class names for initializeComponent
 initializeComponent("Settings");
 initializeComponent("NavigationTabs");
 initializeComponent("ConnectPanel");
