@@ -72,7 +72,7 @@ export default class ApiClient {
       baseURL,
       clientKey,
       sourceKey,
-    );
+    ); // TODO: Remove
   }
 
   ////////* API CALLS */ ///////
@@ -182,7 +182,7 @@ export default class ApiClient {
     parent?: ParentKey,
     includeArchived?: boolean,
   ): Promise<ODSResponse<Type, ParentType, ParentKey>> {
-    const res = await this.fetchData(`/api/search/${itemType}`, {
+    return await this.fetchData(`/api/search/${itemType}`, {
       method: "POST",
       apiKey: ApiClient.CLIENT_APIKEY,
       body: {
@@ -192,8 +192,6 @@ export default class ApiClient {
       metadata: true,
       includeArchived: includeArchived,
     }).then((res) => res.json());
-
-    return res;
   }
 
   /**

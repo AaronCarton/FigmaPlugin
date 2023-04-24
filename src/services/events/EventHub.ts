@@ -5,7 +5,7 @@ export default class EventHub {
   /**
    * Get the instance of the EventHub
    * @returns {EventHub} The instance of the EventHub
-   * @throws {Error} If the EventHub has not been initialized
+   * @throws {Error} If the instance is not initialized
    */
   public static getInstance(): EventHub {
     if (!EventHub.instance) EventHub.instance = new EventHub();
@@ -13,8 +13,8 @@ export default class EventHub {
   }
 
   /**
-   * @description It creates an event listener
-   * @param {string} eventName - The type of event to listen for
+   * @description It creates an event with an eventName and a callback function
+   * @param {string} eventName - The name of the event that will be listened to
    * @param {function} callback - The function that is called when the event is triggered
    * @returns {void}
    */
@@ -32,9 +32,9 @@ export default class EventHub {
   }
 
   /**
-   * @description It sends a custom event
-   * @param {string} messageType - The type of message to send
-   * @param {string} message - The message to send
+   * @description It sends a custom event with the eventName and a message
+   * @param {string} eventName - The name of the event that will be listened to
+   * @param {string} message - The message that will be sent with the event
    * @returns {void}
    */
   sendCustomEvent(eventName: string, message: string): void {
@@ -47,8 +47,8 @@ export default class EventHub {
   }
 
   /**
-   * @description It removes an event listener
-   * @param {string} eventName - The type of event to remove
+   * @description It removes an event with an eventName and a callback function
+   * @param {string} eventName - The name of the event that will be listened to
    * @param {function} callback - The function that is called when the event is triggered
    * @returns {void}
    */
@@ -57,7 +57,7 @@ export default class EventHub {
   }
 
   /**
-   * @description Removes all event listeners from the document.
+   * @description Removes all events from the document.
    * @returns {void}
    */
   removeAllEvents(): void {
@@ -68,12 +68,12 @@ export default class EventHub {
   }
 
   /**
-   * @description It gets the event name
-   * @param {string} messageType - The type of message to sends
-   * @returns {string} - The event name
+   * @description It prefixes the event name with the string "Propertize_message_"
+   * @param {string} eventName - The name of the event that will be listened to
+   * @returns {string} - The prefixed event name: "Propertize_message_eventName"
    */
-  prefixEventName(messageType: string): string {
-    if (messageType === null || messageType === undefined) return "message";
-    return "Propertize_message_" + messageType;
+  prefixEventName(eventName: string): string {
+    if (eventName === null || eventName === undefined) return "Propertize_message_undefined";
+    return "Propertize_message_" + eventName;
   }
 }
