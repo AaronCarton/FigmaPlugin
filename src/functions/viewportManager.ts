@@ -1,14 +1,9 @@
-//look for the area occupied by the user
-//make everything in that viewport visible
-//annotation layer will change based on the user => 2 users will make 2 "viewports" in the annotation layer => how to handle so that when one is viewing the other doesn't hide his annotations
-//use linkAnnotationToSourceNodes from annotationfunctions?
+//to investigate: 2 users will make 2 "viewports" in the annotation layer => how to handle so that when one is viewing the other doesn't hide his annotations
 import { viewportObject } from "../interfaces/viewportObject";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { linkAnnotationToSourceNodes } from "./annotationFunctions";
 
 function isBetween(x: number, min: number, max: number) {
-  console.log("ISBETWEEN: ", min, " | ", x, " | ", max);
-  console.log(Math.abs(x) >= Math.abs(min) && Math.abs(x) <= Math.abs(max));
   return Math.abs(x) >= Math.abs(min) && Math.abs(x) <= Math.abs(max);
 }
 
