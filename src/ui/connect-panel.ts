@@ -47,8 +47,8 @@ function initializeEvents() {
       dataType: $inputDatatype?.value,
       value: $inputValue?.value,
     } as any;
-    ApiClient.getInstance().upsertItem("annotation", "3414883772", body); // TODO: when integrated with the plugin, this should change to the itemKey of the figme file
-    console.log(body);
+    ApiClient.getInstance().upsertItem("annotation", "3414883772", body); // TODO: when integrated with the plugin, this should change to the itemKey of the figma file
+    console.log(body); // TODO: remove this
   });
 }
 

@@ -1,6 +1,8 @@
 export abstract class BaseComponent {
   abstract componentType: string;
 
+  abstract initComponent(): void;
+
   constructor() {
     window.addEventListener("message", (event) => {
       if (event.data.pluginMessage.pluginMessage.type === "initialize" + this.componentType) {
@@ -8,6 +10,4 @@ export abstract class BaseComponent {
       }
     });
   }
-
-  abstract initComponent(): void;
 }
