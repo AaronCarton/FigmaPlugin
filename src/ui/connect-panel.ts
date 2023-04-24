@@ -3,6 +3,7 @@ import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
+const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
 const dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
 const entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
@@ -20,8 +21,6 @@ const $projectKey: HTMLInputElement | null = document.querySelector("#settings_p
 let counter = 0;
 let exist = false;
 
-const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
-
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 
@@ -30,7 +29,6 @@ export class ConnectPanel extends BaseComponent {
 
   constructor() {
     super();
-    initializeEvents();
   }
 
   initComponent(): void {
@@ -39,6 +37,7 @@ export class ConnectPanel extends BaseComponent {
         toggleFields(button);
       });
     });
+    initializeEvents();
   }
 }
 
@@ -127,9 +126,9 @@ if (
   dataType !== null &&
   sampleValue !== null
 ) {
-  buttons.forEach((trigger) => {
-    trigger.addEventListener("click", () => {
-      buttonTrigger(trigger);
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      buttonTrigger(button);
       EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, "update_annotation");
     });
   });
