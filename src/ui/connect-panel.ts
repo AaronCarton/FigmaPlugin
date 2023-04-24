@@ -32,11 +32,6 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    buttons.forEach((button) => {
-      button.addEventListener("click", () => {
-        toggleFields(button);
-      });
-    });
     initializeEvents();
   }
 }
@@ -58,17 +53,12 @@ function initializeEvents() {
 }
 
 function buttonTrigger(trigger: HTMLElement) {
-  const selectedButton = trigger.getAttribute("data-target");
-  const inputSelect: HTMLSelectElement | null = document.querySelector(`#${selectedButton}-select`);
-  const inputText: HTMLElement | null = document.querySelector(`#${selectedButton}-text`);
-  const inputField: HTMLInputElement | null = document.querySelector(`#${selectedButton}-field`);
+  const selectedAttribute = trigger.getAttribute("data-target");
+  const inputSelect: HTMLSelectElement | null = document.querySelector(`#${selectedAttribute}-select`);
+  const inputText: HTMLElement | null = document.querySelector(`#${selectedAttribute}-text`);
+  const inputField: HTMLInputElement | null = document.querySelector(`#${selectedAttribute}-field`);
 
-  if (
-    selectedButton !== null &&
-    inputSelect !== null &&
-    inputText !== null &&
-    inputField !== null
-  ) {
+  if (selectedAttribute !== null && inputSelect !== null && inputText !== null && inputField !== null) {
     if (counter === 0) {
       counter++;
     } else {
@@ -100,11 +90,7 @@ function buttonTrigger(trigger: HTMLElement) {
   }
 }
 
-function checkFields(
-  selectElement: HTMLInputElement,
-  changeElement1: HTMLInputElement,
-  disabledId: string,
-) {
+function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
   selectElement.addEventListener("change", () => {
     const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
     const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
@@ -128,6 +114,7 @@ if (
 ) {
   buttons.forEach((button) => {
     button.addEventListener("click", () => {
+      console.log("Button clicked");
       buttonTrigger(button);
       EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, "update_annotation");
     });
@@ -163,11 +150,4 @@ if (
       );
     }
   });
-}
-
-function toggleFields(button: HTMLElement) {
-  const selectedButton = button.getAttribute("data-target");
-  button.classList.toggle(iconCheck);
-  document.getElementById(`${selectedButton}-text`)?.classList.toggle(isActiveField);
-  document.getElementById(`${selectedButton}-select`)?.classList.toggle(isActiveField);
 }
