@@ -54,42 +54,17 @@ function initializeEvents() {
 
 function buttonTrigger(trigger: HTMLElement) {
   const selectedAttribute = trigger.getAttribute("data-target");
-  const inputSelect: HTMLSelectElement | null = document.querySelector(
-    `#${selectedAttribute}-select`,
-  );
-  const inputText: HTMLElement | null = document.querySelector(`#${selectedAttribute}-text`);
-  const inputField: HTMLInputElement | null = document.querySelector(`#${selectedAttribute}-field`);
+  const inputSelect = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-select`);
+  const inputText = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
+  const inputField = document.querySelector<HTMLInputElement>(`#${selectedAttribute}-field`);
 
-  if (
-    selectedAttribute !== null &&
-    inputSelect !== null &&
-    inputText !== null &&
-    inputField !== null
-  ) {
-    if (counter === 0) {
-      counter++;
-    } else {
-      const newOption = document.createElement("option");
-      const event = new Event("change");
-      newOption.value = inputField.value;
-      newOption.textContent = inputField.value;
-      for (let i = 0; i < inputSelect.options.length; i++) {
-        if (inputSelect.options[i].value === newOption.value) {
-          exist = true;
-          break;
-        }
-      }
-
-      if (exist) {
-        exist = false;
-      } else {
-        inputSelect.appendChild(newOption);
-      }
-
-      inputSelect.value = inputField.value;
-      inputSelect.dispatchEvent(event);
-      counter--;
+  if (selectedAttribute && inputSelect && inputText && inputField) {
+    const newOption = new Option(inputField.value, inputField.value);
+    if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
+      inputSelect.add(newOption);
     }
+    inputSelect.value = inputField.value;
+    inputSelect.dispatchEvent(new Event("change"));
 
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
