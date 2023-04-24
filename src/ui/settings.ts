@@ -1,3 +1,5 @@
+import { BaseComponent } from "./baseComponent";
+
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
@@ -8,69 +10,75 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
-function checkConnectionSpinnerExample() {
-  $plugin?.classList.add("no-pointer");
-  $spinner?.removeAttribute("hidden");
-  // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
-  // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
-  fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
-    .then((response) => response.json())
-    .then(() => {
-      $plugin?.classList.remove("no-pointer");
-      $spinner?.setAttribute("hidden", "");
-    });
-}
-function toggleAnnotations(e: Event) {
-  const state: boolean = (<HTMLInputElement>e.target).checked;
-  if (state === true) {
-    console.log("show annotations");
-  } else {
-    console.log("hide annotations");
+export class Settings extends BaseComponent {
+  componentType = "Settings";
+
+  constructor() {
+    super();
   }
-}
-function disableFieldsWhenNecessary() {
-  if (
-    $baseURL !== null &&
-    $clientKey !== null &&
-    $annotationToggle !== null &&
-    $button !== null &&
-    $sourceKey !== null
-  ) {
-    //replace makes sure people can not connect with empty strings (for example pressing spacebar)
-    if ($baseURL.value.replace(/\s/g, "") !== "") {
-      $clientKey.disabled = false;
+
+  initComponent(): void {
+    this.disableFieldsWhenNecessary();
+    this.initAnnotationToggleEvents();
+  }
+
+  checkConnectionSpinnerExample() {
+    $plugin?.classList.add("no-pointer");
+    $spinner?.removeAttribute("hidden");
+    // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
+    // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
+    fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
+      .then((response) => response.json())
+      .then(() => {
+        $plugin?.classList.remove("no-pointer");
+        $spinner?.setAttribute("hidden", "");
+      });
+  }
+  toggleAnnotations(e: Event) {
+    const state: boolean = (<HTMLInputElement>e.target).checked;
+    if (state === true) {
+      console.log("show annotations");
     } else {
-      $clientKey.disabled = true;
+      console.log("hide annotations");
     }
-    if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
-      $sourceKey.disabled = false;
-    } else {
-      $sourceKey.disabled = true;
-    }
+  }
+  disableFieldsWhenNecessary() {
     if (
-      $baseURL.value.replace(/\s/g, "") !== "" &&
-      $sourceKey.value.replace(/\s/g, "") !== "" &&
-      $clientKey.value.replace(/\s/g, "") !== ""
+      $baseURL !== null &&
+      $clientKey !== null &&
+      $annotationToggle !== null &&
+      $button !== null &&
+      $sourceKey !== null
     ) {
-      $annotationToggle.disabled = false;
-      $button.addEventListener("click", checkConnectionSpinnerExample);
+      //replace makes sure people can not connect with empty strings (for example pressing spacebar)
+      if ($baseURL.value.replace(/\s/g, "") !== "") {
+        $clientKey.disabled = false;
+      } else {
+        $clientKey.disabled = true;
+      }
+      if ($baseURL.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
+        $sourceKey.disabled = false;
+      } else {
+        $sourceKey.disabled = true;
+      }
+      if (
+        $baseURL.value.replace(/\s/g, "") !== "" &&
+        $sourceKey.value.replace(/\s/g, "") !== "" &&
+        $clientKey.value.replace(/\s/g, "") !== ""
+      ) {
+        $annotationToggle.disabled = false;
+        $button.addEventListener("click", this.checkConnectionSpinnerExample);
+      }
+    } else {
+      $annotationToggle.disabled = true;
+      $button.removeEventListener("click", this.checkConnectionSpinnerExample);
     }
-  } else {
-    $annotationToggle.disabled = true;
-    $button.removeEventListener("click", checkConnectionSpinnerExample);
+  }
+
+  initAnnotationToggleEvents() {
+    $annotationToggle?.addEventListener("click", this.toggleAnnotations);
+    $baseURL?.addEventListener("keyup", this.disableFieldsWhenNecessary);
+    $clientKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
+    $sourceKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
   }
 }
-
-function initAnnotationToggleEvents() {
-  $annotationToggle?.addEventListener("click", toggleAnnotations);
-  $baseURL?.addEventListener("keyup", disableFieldsWhenNecessary);
-  $clientKey?.addEventListener("keyup", disableFieldsWhenNecessary);
-  $sourceKey?.addEventListener("keyup", disableFieldsWhenNecessary);
-}
-
-function initSettings() {
-  disableFieldsWhenNecessary();
-  initAnnotationToggleEvents();
-}
-
-initSettings();
