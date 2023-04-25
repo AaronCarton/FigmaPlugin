@@ -1,10 +1,12 @@
 import { frame } from "../interfaces/frame";
 import { annotationElements } from "../classes/annotationElements";
+
 const linkAnnotationToSourceNodes: Array<{
   annotation: FrameNode;
   sourceNode: SceneNode;
   vector: VectorNode | undefined;
 }> = [];
+
 function createAnnotation(inputValues: string[]) {
   const page = figma.currentPage;
   const frame = figma.createFrame();
@@ -90,6 +92,7 @@ function makeFramesArray() {
   const selection = <Array<SceneNode>>annotationElements.currentpage.selection;
   if (selection.length > 0) {
     sortNodesAccordingToYCoords(selection);
+
     for (let i = 0; i < selection.length; i++) {
       //vars needed for each calculation
       const currentElement = selection[i];
@@ -107,23 +110,20 @@ function makeFramesArray() {
           sourceNodesLeft: [],
           sourceNodesRight: [],
         };
+
         if (frameside === "left") {
-          console.log("current element ", currentElement);
           const indexOfElement: number = newFramesItem.sourceNodesLeft.findIndex(
             (x) => x.id === currentElement.id,
           );
-          console.log("found index: ", indexOfElement);
           if (indexOfElement === -1) {
             newFramesItem.sourceNodesLeft.push(currentElement);
           } else {
             newFramesItem.sourceNodesLeft[indexOfElement] == currentElement;
           }
         } else {
-          console.log("current element ", currentElement);
           const indexOfElement: number = newFramesItem.sourceNodesRight.findIndex(
             (x) => x.id === currentElement.id,
           );
-          console.log("found index: ", indexOfElement);
           if (indexOfElement === -1) {
             newFramesItem.sourceNodesRight.push(currentElement);
           } else {
@@ -136,6 +136,7 @@ function makeFramesArray() {
         const parentframe = annotationElements.parentFrames.find(
           (x) => x.frame === determinedFrame,
         );
+
         if (parentframe !== undefined) {
           //determine left or right of parent frame, add to according array of the object
           if (frameside === "left") {
@@ -176,17 +177,9 @@ function drawConnector(side: string, annotation: SceneNode, destination: SceneNo
     line.strokeWeight = 2;
     annotationElements.annotationLayer.appendChild(line);
     annotationElements.annotationLayer.clipsContent = false;
+
     //M = starting point
     //L = end point
-    console.log(
-      `M ${side === "left" ? annotation.x + annotation.width : annotation.x} ${
-        annotation.y + annotation.height / 2
-      } L ${
-        side === "left"
-          ? destination.absoluteBoundingBox.x
-          : destination.absoluteBoundingBox.x + destination.absoluteBoundingBox.width
-      } ${destination.absoluteBoundingBox.y + destination.absoluteBoundingBox.height / 2}`,
-    );
     line.vectorPaths = [
       {
         windingRule: "EVENODD",
@@ -232,17 +225,21 @@ function drawAnnotations(
 ) {
   annotationElements.annotationLayer.x = 0;
   annotationElements.annotationLayer.y = 0;
+
   //looping over given annotations
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
     const annotation = createAnnotation(inputValues);
+
     if (sourceNodes[i].visible === true) {
       annotation.x = startPoint;
       annotation.y = determineOverlap(i, annotation, sourceNodes[i], lastAddedAnnotationY);
       lastAddedAnnotationY = annotation.y;
     }
+
     annotationElements.annotationLayer.appendChild(annotation);
     const line = drawConnector(side, annotation, sourceNodes[i]);
+
     //Added for being able to update when sourcenode changes.
     linkAnnotationToSourceNodes.push({
       annotation: annotation,
@@ -275,15 +272,17 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
     const listOfChangedAnnotationSourceNodes = [];
     for (let i = 0; i < changedNodeData.length; i++) {
       const changedNode = changedNodeData[i];
+
       //make searchable = if found in here => changedNode is a sourcenode of an annotation
       const SearchMap = JSON.stringify(annotationElements.parentFrames);
       const includesChangedNode = SearchMap.match(changedNode.id);
+
       if (includesChangedNode) {
         //gives weird error on property "node" => does not exist: it does.
-        console.log("chagned", changedNode);
         listOfChangedAnnotationSourceNodes.push(changedNode.node);
       }
     }
+
     console.log("changedNodes", listOfChangedAnnotationSourceNodes);
 
     //when changed nodes are found: redraw them
@@ -294,7 +293,7 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       const linkedAnnotation = linkAnnotationToSourceNodes.find(
         (item) => item.sourceNode.id === changedNode.id,
       );
-      console.log("LINKED ANNO", linkedAnnotation);
+
       //find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation
       if (linkedAnnotation) {
         figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector?.id)?.remove();
