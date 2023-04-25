@@ -2,14 +2,14 @@ import { MessageTitle } from "./classes/messageTitles";
 import { changeLayerVisibility, initAnnotations } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
+import { updateAnnotations } from "./functions/annotationFunctions";
 
 figma.showUI(__html__, { width: 345, height: 250 });
-
+let initState = true;
 figma.ui.onmessage = (event) => {
   const eventType = event.type;
   const selectedTab = event.tab;
   const connectionState = event.connection;
-
   loadFonts();
 
   switch (eventType) {
@@ -43,7 +43,13 @@ figma.ui.onmessage = (event) => {
       break;
 
     case MessageTitle.createText:
-      initAnnotations(event.payload.values);
+      console.log(initState);
+      if (initState === true) {
+        initState = false;
+        initAnnotations(event.payload.values);
+      } else {
+        updateAnnotations(figma.currentPage.selection, event.payload.values);
+      }
       break;
 
     case MessageTitle.changeVisibility:

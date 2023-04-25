@@ -247,6 +247,7 @@ function drawAnnotations(
         annotation: annotation,
         sourceNode: sourceNodes[i],
         vector: line,
+        data: inputValues,
       });
     }
   }
@@ -320,6 +321,7 @@ export function changeLayerVisibility(state: boolean) {
 }
 
 export function initAnnotations(inputValues: AnnotationInput) {
+  console.log("initing");
   createLayer();
   makeFramesArray();
 
@@ -344,7 +346,29 @@ export function initAnnotations(inputValues: AnnotationInput) {
       }
     }
   }
-
   //listen to updates after first initial drawing of the annotations
   figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
+}
+
+export function updateAnnotations(selection, inputValues: AnnotationInput) {
+  console.log(selection, "selection");
+  console.log(inputValues, "inputValues");
+  for (let i = 0; i < selection.length; i++) {
+    const currentItem = selection[i];
+    const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
+    if (found !== undefined) {
+      found.data = inputValues;
+      const Coords = found.annotation.absoluteBoundingBox;
+      figma.currentPage.findOne((x) => x.id === found.annotation.id)?.remove();
+      found.annotation = createAnnotation(inputValues);
+      AnnotationElements.annotationLayer.appendChild(found.annotation);
+      if (Coords !== null) {
+        found.annotation.x = Coords.x;
+        found.annotation.y = Coords.y;
+      }
+      console.log(linkAnnotationToSourceNodes);
+    } else {
+      console.log("not in array add func later");
+    }
+  }
 }
