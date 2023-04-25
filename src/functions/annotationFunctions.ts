@@ -1,11 +1,8 @@
 import { frame } from "../interfaces/frame";
 import { annotationElements } from "../classes/annotationElements";
+import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 
-const linkAnnotationToSourceNodes: Array<{
-  annotation: FrameNode;
-  sourceNode: SceneNode;
-  vector: VectorNode | undefined;
-}> = [];
+export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 
 function createAnnotation(inputValues: string[]) {
   const page = figma.currentPage;
@@ -241,11 +238,13 @@ function drawAnnotations(
     const line = drawConnector(side, annotation, sourceNodes[i]);
 
     //Added for being able to update when sourcenode changes.
-    linkAnnotationToSourceNodes.push({
-      annotation: annotation,
-      sourceNode: sourceNodes[i],
-      vector: line,
-    });
+    if (line !== undefined) {
+      linkAnnotationToSourceNodes.push({
+        annotation: annotation,
+        sourceNode: sourceNodes[i],
+        vector: line,
+      });
+    }
   }
 }
 
@@ -297,11 +296,14 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       //find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation
       if (linkedAnnotation) {
         figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector?.id)?.remove();
-        linkedAnnotation.vector = drawConnector(
+        const connector = drawConnector(
           frameside,
           <SceneNode>linkedAnnotation.annotation.absoluteBoundingBox,
           <SceneNode>changedNode,
         );
+        if (connector !== undefined) {
+          linkedAnnotation.vector = connector;
+        }
       }
     });
   }
