@@ -43,7 +43,7 @@ figma.ui.onmessage = (event) => {
       break;
 
     case MessageTitle.createText:
-      initAnnotations(event.values);
+      initAnnotations(event.payload.values);
       break;
 
     case MessageTitle.changeVisibility:
