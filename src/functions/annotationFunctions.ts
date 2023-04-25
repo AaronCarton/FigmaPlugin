@@ -250,6 +250,7 @@ function drawAnnotations(
         data: inputValues,
       });
     }
+    return annotation;
   }
 }
 
@@ -350,12 +351,14 @@ export function initAnnotations(inputValues: AnnotationInput) {
   figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
 }
 
-export function updateAnnotations(selection, inputValues: AnnotationInput) {
-  console.log(selection, "selection");
+export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
+  console.log(typeof selection, "selection");
   console.log(inputValues, "inputValues");
   for (let i = 0; i < selection.length; i++) {
-    const currentItem = selection[i];
-    const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
+    const currentItem: SceneNode = selection[i];
+    const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find(
+      (x) => x.sourceNode.id === currentItem.id,
+    );
     if (found !== undefined) {
       found.data = inputValues;
       const Coords = found.annotation.absoluteBoundingBox;
@@ -368,7 +371,30 @@ export function updateAnnotations(selection, inputValues: AnnotationInput) {
       }
       console.log(linkAnnotationToSourceNodes);
     } else {
-      console.log("not in array add func later");
+      //add check for overlap => now if new is added it adds to x/y of source and doesn't check for overlap
+      const parent = determineParentFrame(currentItem);
+      const foundParent = AnnotationElements.parentFrames.find((x) => x.frame.id === parent.id);
+      if (foundParent !== undefined) {
+        const side = determineFrameSide(currentItem, foundParent.frame);
+        const startPoint =
+          side === "left" ? foundParent.startpointLeft : foundParent.startpointRight;
+        const annotation = drawAnnotations(side, startPoint, [currentItem], inputValues);
+        if (annotation !== undefined) {
+          annotation.y =
+            side === "left"
+              ? foundParent.sourceNodesLeft[foundParent.sourceNodesLeft.length - 1]
+                  .absoluteBoundingBox.y +
+                annotation.height +
+                5
+              : foundParent.sourceNodesRight[foundParent.sourceNodesRight.length - 1]
+                  .absoluteBoundingBox.y +
+                annotation.height +
+                5;
+          AnnotationElements.annotationLayer.appendChild(annotation);
+        }
+      } else {
+        console.log;
+      }
     }
   }
 }
