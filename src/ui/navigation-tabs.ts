@@ -19,10 +19,7 @@ function checkConnectionPurpose() {
       connectionPanel.classList.remove(isActive);
       noConnectionPanel.classList.add(isActive);
     }
-    parent.postMessage(
-      { pluginMessage: { type: "connectionCheck", connection: connectionState } },
-      "*",
-    );
+    parent.postMessage({ pluginMessage: { type: "connectionCheck", connection: connectionState } }, "*");
   }
 }
 

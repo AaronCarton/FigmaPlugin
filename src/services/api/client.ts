@@ -89,12 +89,9 @@ export default class ApiClient {
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
-    return this.searchItem<Annotation>(
-      "annotation",
-      `projectKey.eq.${projectKey}`,
-      undefined,
-      includeArchived,
-    ).then((res) => res.results.map((res) => new Annotation(res.item, this)));
+    return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, includeArchived).then(
+      (res) => res.results.map((res) => new Annotation(res.item, this)),
+    );
   }
 
   /**
@@ -165,11 +162,7 @@ export default class ApiClient {
    * @param {string} filter - Filter to apply to the search (e.g. projectKey.eq.123)
    * @param {string} parent - Optional parent (e.g. "project")
    */
-  public async searchItem<
-    Type extends ODSObject<Type>,
-    ParentType = undefined,
-    ParentKey extends string = "",
-  >(
+  public async searchItem<Type extends ODSObject<Type>, ParentType = undefined, ParentKey extends string = "">(
     itemType: string,
     filter: string,
     parent?: ParentKey,
@@ -196,11 +189,7 @@ export default class ApiClient {
    * @param {string} itemKey - Key of the item
    * @param {Type} body - Item to upsert
    */
-  public async upsertItem<Type extends ODSObject<Type>>(
-    itemType: string,
-    itemKey: string,
-    body: Type,
-  ) {
+  public async upsertItem<Type extends ODSObject<Type>>(itemType: string, itemKey: string, body: Type) {
     const res = await this.fetchData(`/api/items/${itemType}/null/${itemKey}`, {
       method: "PUT",
       apiKey: ApiClient.SOURCE_APIKEY,
