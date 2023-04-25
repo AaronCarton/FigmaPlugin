@@ -267,8 +267,8 @@ function createLayer() {
 
 function handleAnnotationRedraws(event: DocumentChangeEvent) {
   if (
-    annotationElements.parentFrames.length > 0 &&
-    annotationElements.annotationLayer.visible === true
+    AnnotationElements.parentFrames.length > 0 &&
+    AnnotationElements.annotationLayer.visible === true
   ) {
     //get data of changed nodes
     const changedNodeData = event.documentChanges;
@@ -277,7 +277,7 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       const changedNode = changedNodeData[i];
 
       //make searchable = if found in here => changedNode is a sourcenode of an annotation
-      const SearchMap = JSON.stringify(annotationElements.parentFrames);
+      const SearchMap = JSON.stringify(AnnotationElements.parentFrames);
       const includesChangedNode = SearchMap.match(changedNode.id);
 
       if (includesChangedNode) {
