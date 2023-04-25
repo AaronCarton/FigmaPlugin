@@ -36,12 +36,12 @@ function initializeEventHubEvents() {
 
 function connect() {
   $button?.addEventListener("click", (e: Event) => {
+    ApiClient.initializeEvents();
     const message = `${$baseURL?.value}, ${$clientKey?.value}, ${$sourceKey?.value}`;
     console.log("message in settings.ts: " + message); // TODO: remove
     e.preventDefault();
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, message);
     console.log("event sent"); // TODO: remove
-    ApiClient.initializeEvents();
   });
 }
 
