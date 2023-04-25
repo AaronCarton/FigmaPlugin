@@ -1,4 +1,4 @@
-const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
+const $buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -10,7 +10,7 @@ function toggleFields(button: HTMLElement) {
   document.getElementById(`${selectedButton}-select`)?.classList.toggle(isActiveField);
 }
 
-buttons.forEach((trigger) => {
+$buttons.forEach((trigger) => {
   trigger.addEventListener("click", () => {
     toggleFields(trigger);
   });
