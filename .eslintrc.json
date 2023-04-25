@@ -16,6 +16,14 @@
     "func-style": ["error", "declaration", { "allowArrowFunctions": false }],
     "@typescript-eslint/no-non-null-assertion": "off",
     "prefer-arrow-callback": ["warn"],
-    "prettier/prettier": ["error"]
+    "prettier/prettier": ["error"],
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": ["variable"],
+        "format": ["camelCase", "UPPER_CASE"],
+        "leadingUnderscore": "allow"
+      }
+    ]
   }
 }
