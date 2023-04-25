@@ -1,20 +1,41 @@
-import { initialize } from "../../node_modules/esbuild/lib/main";
+import { IfigmaMessage } from "../interfaces/interface.figmaObject";
+import { BaseComponent } from "./baseComponent";
 
 export class FigmaLocalStorage {
-  baseURLValue = "niet aangepaste value";
+  componentType = "FigmaLocalStorage";
+  url = "not good";
+
+  initEventlistener(): void {
+    window.addEventListener("message", (event) => {
+      //event.data.pluginMessage.figmaMessage.type
+      const initEvent = event.data.pluginMessage;
+      if (initEvent.figmaMessage.type === "initialize" + this.componentType) {
+        this.initComponent();
+        console.log("initComponent", this.componentType);
+      }
+    });
+  }
+
+  initComponent(): void {
+    window.addEventListener("message", (event) => {
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: "sendDataToUI",
+          },
+        },
+        "*",
+      );
+      if (event.data.pluginMessage.figmaMessage.type === "baseURL") {
+        this.url = event.data.pluginMessage.figmaMessage.baseURL;
+        console.log("url is set", this.url);
+      }
+    });
+  }
 
   getBaseURLFromFigmaStorage(): string | undefined {
-    // const baseurl = "before event";
-    // const payload = event;
-
-    // if (payload.type === "baseURL") {
-    //   // Handle the event
-    //   console.log("in if", payload.url);
-    //   baseurl = payload.url;
-    // }
-    // console.log("Outside event", baseurl);
-    console.log("in getter", this.baseURLValue);
-    return this.baseURLValue;
+    console.log("in getter", this.url);
+    return this.url;
   }
 
   async getClientKeyFromFigmaStorage(): Promise<string> {
@@ -100,7 +121,13 @@ export class FigmaLocalStorage {
     try {
       if (figma.clientStorage.getAsync("baseURL") != null) {
         const baseURL = await figma.clientStorage.getAsync("baseURL");
-        figma.ui.postMessage({ payload: { url: baseURL, type: "baseURL" } });
+        const figmaMessage: IfigmaMessage = {
+          type: "baseURL",
+          baseURL: baseURL,
+        };
+        // figma.ui.postMessage({ payload: { url: baseURL, type: "baseURL" } });
+        // (figma.ui as any).dispatchEvent(new CustomEvent("baseURLRetrieved"));
+        figma.ui.postMessage({ figmaMessage: figmaMessage });
       }
     } catch (err) {
       console.log(err);
@@ -183,31 +210,28 @@ export class FigmaLocalStorage {
   }
 
   initializeEvents() {
-    window.addEventListener("load", (event: Event) => {
-      // this.retrieveDataFromStorage();
-      parent.postMessage(
-        {
-          pluginMessage: { type: "ListingInUI", payload: "payload" },
-        },
-        "*",
-      );
-      // TODO: remove this
-      // console.log("event sent");
-    });
-
-    // window.addEventListener("message", (event) => {
-    //   if (event.data.pluginMessage.type === "keyValuesRetrieved") {
-    //     this.baseURLValue = event.data.pluginMessage.eventData.baseURL;
-
-    //     console.log("after its set " + this.baseURLValue);
-    //     // window.dispatchEvent(new CustomEvent("loadSettings"));
-    //   }
+    // window.addEventListener("load", (event: Event) => {
+    //   // this.retrieveDataFromStorage();
+    //   parent.postMessage(
+    //     {
+    //       pluginMessage: { type: "ListingInUI", payload: "payload" },
+    //     },
+    //     "*",
+    //   );
+    //   // TODO: remove this
+    //   // console.log("event sent");
     // });
-    console.log("init figma local storage");
-    window.addEventListener("loadSettings", () => {
-      console.log("load settings event (figma local storeage)");
-
-      window.dispatchEvent(new CustomEvent("settingsLoaded"));
-    });
+    // // window.addEventListener("message", (event) => {
+    // //   if (event.data.pluginMessage.type === "keyValuesRetrieved") {
+    // //     this.baseURLValue = event.data.pluginMessage.eventData.baseURL;
+    // //     console.log("after its set " + this.baseURLValue);
+    // //     // window.dispatchEvent(new CustomEvent("loadSettings"));
+    // //   }
+    // // });
+    // console.log("init figma local storage");
+    // window.addEventListener("loadSettings", () => {
+    //   console.log("load settings event (figma local storeage)");
+    //   window.dispatchEvent(new CustomEvent("settingsLoaded"));
+    // });
   }
 }

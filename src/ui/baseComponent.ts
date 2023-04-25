@@ -3,8 +3,11 @@ export abstract class BaseComponent {
 
   constructor() {
     window.addEventListener("message", (event) => {
-      if (event.data.pluginMessage.pluginMessage.type === "initialize" + this.componentType) {
+      //event.data.pluginMessage.figmaMessage.type
+      const initEvent = event.data.pluginMessage;
+      if (initEvent.figmaMessage.type === "initialize" + this.componentType) {
         this.initComponent();
+        console.log("initComponent", this.componentType);
       }
     });
   }

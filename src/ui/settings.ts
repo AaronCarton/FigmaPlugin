@@ -25,6 +25,7 @@ export class Settings extends BaseComponent {
   initComponent(): void {
     this.disableFieldsWhenNecessary();
     this.initAnnotationToggleEvents();
+    this.loadKeysFromLocalStorage();
   }
 
   checkConnectionSpinnerExample() {
@@ -136,8 +137,6 @@ export class Settings extends BaseComponent {
 
   loadKeysFromLocalStorage() {
     if ($baseURL !== null) {
-      // console.log("in settings", figmaLocalStorage.getBaseURLFromFigmaStorage());
-      // eslint-disable-next-line no-debugger
       this.fillBaseUrlInInputfields(figmaLocalStorage.getBaseURLFromFigmaStorage() as string);
     }
 
@@ -155,21 +154,4 @@ export class Settings extends BaseComponent {
       $button.addEventListener("click", this.connect);
     }
   }
-
-  // initSettings() {
-  //   // window.addEventListener("loadSettings", (event: Event) => {
-  //   //   console.log("settings loaded", event.type);
-  //   loadKeysFromLocalStorage();
-  //   initAnnotationToggleEvents();
-  //   disableFieldsWhenNecessary();
-  //   console.log("init settings");
-  //   window.addEventListener("settingsLoaded", () => console.log("settings loaded event"));
-  //   window.dispatchEvent(new CustomEvent("loadSettings"));
-  //   // });
-
-  //   // Todo: remove after test
-  //   // settingsTab?.addEventListener("click", () =>
-  //   //   // window.dispatchEvent(new CustomEvent("testMessage")),
-  //   // );
-  // }
 }

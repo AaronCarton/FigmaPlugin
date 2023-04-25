@@ -3,9 +3,11 @@
 import { NavigationTabs } from "./ui/navigation-tabs";
 import { Settings } from "./ui/settings";
 import { ConnectPanel } from "./ui/connect-panel";
+import { FigmaLocalStorage } from "./ui/figmaLocalStorage";
 
-new Settings();
+new FigmaLocalStorage().initEventlistener();
 new NavigationTabs();
+new Settings();
 new ConnectPanel();
 
 parent.postMessage(

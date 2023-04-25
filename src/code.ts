@@ -1,4 +1,5 @@
 import { FigmaLocalStorage } from "./ui/figmaLocalStorage";
+import { IfigmaMessage } from "./interfaces/interface.figmaObject";
 const figmaLocalStorage = new FigmaLocalStorage();
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
@@ -6,6 +7,13 @@ class messageTitle {
 }
 
 figma.showUI(__html__, { width: 345, height: 250 });
+
+//Dispatch all components -> in figma use postMessage
+//Use the class names for initializeComponent
+initializeComponent("FigmaLocalStorage");
+initializeComponent("NavigationTabs");
+initializeComponent("Settings");
+initializeComponent("ConnectPanel");
 
 figma.ui.onmessage = (event) => {
   const eventType = event.type;
@@ -41,12 +49,6 @@ figma.ui.onmessage = (event) => {
   }
 };
 
-async function getBaseURL(): Promise<string> {
-  console.log("in getBaseUrl", await figma.clientStorage.getAsync("baseURL"));
-  return await figma.clientStorage.getAsync("baseURL");
-}
-
-figmaLocalStorage.retrieveBaseURLFromStorage();
 // deleteKeys(); //For testing purposes
 
 // Listen for the 'setKeys' event
@@ -59,31 +61,16 @@ figma.ui.onmessage = (event) => {
     figmaLocalStorage.setClientKey(event.clientKey);
     figmaLocalStorage.setSourceKey(event.sourceKey);
   }
-  // Catch event from initializeEvents()
-  if (event.type === "ListingInUI") {
-    const eventData = {
-      baseURL: "Sample baseURL", // needs an async function
-      // clientKey: this.retrieveClientKeyFromStorage() as Promise<void>,
-      // sourcekey: this.retrieveSourceKeyFromStorage() as Promise<void>,
-    };
-    // const keyValuesRetrievedEvent = new CustomEvent("keyValuesRetrieved", {
-    //   detail: eventData,
-    // });
-
-    figma.ui.postMessage({ eventData, type: "keyValuesRetrieved" });
-    console.log("codets: " + eventData.baseURL); // Is still a Promise object...
-
-    // window.dispatchEvent(keyValuesRetrievedEvent); //window bestaat niet in code.ts
+  if (event.type === "sendDataToUI") {
+    console.log("sendDataToUI");
+    figmaLocalStorage.retrieveBaseURLFromStorage();
   }
 };
-//Dispatch all components -> in figma use postMessage
-//Use the class names for initializeComponent
-initializeComponent("Settings");
-initializeComponent("NavigationTabs");
-initializeComponent("ConnectPanel");
 
 function initializeComponent(componentName: string): void {
-  figma.ui.postMessage({
-    pluginMessage: { type: `initialize${componentName}` },
-  });
+  const figmaMessage: IfigmaMessage = {
+    type: `initialize${componentName}`,
+  };
+
+  figma.ui.postMessage({ figmaMessage: figmaMessage });
 }
