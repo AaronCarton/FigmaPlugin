@@ -2,6 +2,8 @@ import { ODSObject, ODSResponse } from "../../interfaces/ods/interface.ODSrespon
 import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
+import EventHub from "../events/EventHub";
+import { Events } from "../events/Events";
 
 interface ApiOptions {
   baseURL: string;
@@ -23,6 +25,21 @@ export default class ApiClient {
   public static BASE_URL: string;
   public static CLIENT_APIKEY: string;
   public static SOURCE_APIKEY: string;
+
+  public static initializeEvents() {
+    const eventHub = EventHub.getInstance();
+    console.log(Events.INITIALIZE_DATA); // TODO: Remove
+
+    eventHub.makeEvent(Events.DATA_INITIALIZED, () => {
+      ApiClient.initialize({
+        baseURL: Events.INITIALIZE_DATA.detail.message.split(",")[0],
+        clientKey: Events.INITIALIZE_DATA.detail.message.split(",")[1],
+        sourceKey: Events.INITIALIZE_DATA.detail.message.split(",")[2],
+      });
+      console.log("ApiClient initialized"); // TODO: Remove
+      console.log(ApiClient.BASE_URL, ApiClient.CLIENT_APIKEY, ApiClient.SOURCE_APIKEY); // TODO: Remove
+    });
+  }
 
   /**
    * Configure API client

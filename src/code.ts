@@ -1,4 +1,6 @@
-import EventHub from "./services/events/EventHub";
+// import ApiClient from "./services/api/client";
+// import EventHub from "./services/events/EventHub";
+// import { Events } from "./services/events/Events";
 
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
@@ -42,6 +44,12 @@ figma.ui.onmessage = (event) => {
   }
 };
 
+// make new api client before init component
+// make sure it is in 1 function initializePropertizePlugin
+
+// var apiClientProperties = figmaLocalStorage.getApiClientProperties();
+// ApiClient.initialize(apiClientProperties);
+
 // Dispatch all components -> in figma use postMessage
 // Use the class names for initializeComponent
 initializeComponent("Settings");
@@ -54,6 +62,13 @@ function initializeComponent(componentName: string): void {
   });
 }
 
-figma.on("close", () => {
-  EventHub.getInstance().removeAllEvents();
-});
+// DOES NOT WORK, Figma can not read add or removeEventListener
+// figma.on("run", () => {
+//   EventHub.getInstance().makeEvent(Events.INITIALIZE_DATA, () => {
+//     console.log("INITIALIZE_DATA");
+//   });
+// });
+
+// figma.on("close", () => {
+//   EventHub.getInstance().removeAllEvents();
+// });

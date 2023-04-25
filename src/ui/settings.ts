@@ -18,6 +18,7 @@ function initializeEventHubEvents() {
   const eventHub = EventHub.getInstance();
 
   eventHub.makeEvent(Events.DATA_INITIALIZED, () => {
+    // TODO: api must do all this
     const apiClient = ApiClient.getInstance();
     apiClient.getProject($projectKey?.value || "").then((project) => {
       if (!project || project === null) {
@@ -33,6 +34,17 @@ function initializeEventHubEvents() {
   });
 }
 
+function connect() {
+  $button?.addEventListener("click", (e: Event) => {
+    const message = `${$baseURL?.value}, ${$clientKey?.value}, ${$sourceKey?.value}`;
+    console.log("message in settings.ts: " + message); // TODO: remove
+    e.preventDefault();
+    EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, message);
+    console.log("event sent"); // TODO: remove
+    ApiClient.initializeEvents();
+  });
+}
+
 export class Settings extends BaseComponent {
   componentType = "Settings";
 
@@ -43,6 +55,7 @@ export class Settings extends BaseComponent {
   initComponent(): void {
     this.disableFieldsWhenNecessary();
     this.initAnnotationToggleEvents();
+    connect();
     initializeEventHubEvents();
   }
 

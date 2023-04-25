@@ -1,4 +1,3 @@
-import "./PZ_config.ts";
 import { NavigationTabs } from "./ui/navigation-tabs";
 import { Settings } from "./ui/settings";
 import { ConnectPanel } from "./ui/connect-panel";

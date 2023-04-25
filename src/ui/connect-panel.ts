@@ -18,9 +18,6 @@ const $inputDatatype: HTMLInputElement | null = document.querySelector("#data-ty
 const $inputValue: HTMLInputElement | null = document.querySelector("#js-sample-value");
 const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey");
 
-let counter = 0;
-let exist = false;
-
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 
@@ -52,7 +49,7 @@ function initializeEvents() {
   });
 }
 
-function buttonTrigger(trigger: HTMLElement) {
+function handleIconClick(trigger: HTMLElement) {
   const selectedAttribute = trigger.getAttribute("data-target");
   const inputSelect = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-select`);
   const inputText = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
@@ -90,19 +87,10 @@ function checkFields(
   });
 }
 
-if (
-  buttons !== null &&
-  dataSrc !== null &&
-  entity !== null &&
-  attribute !== null &&
-  dataType !== null &&
-  sampleValue !== null
-) {
-  buttons.forEach((button) => {
-    button.addEventListener("click", () => {
-      console.log("Button clicked");
-      buttonTrigger(button);
-      EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, "update_annotation");
+if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
+  buttons.forEach((icon) => {
+    icon.addEventListener("click", () => {
+      handleIconClick(icon);
     });
   });
 
@@ -123,13 +111,13 @@ if (
         {
           pluginMessage: {
             type: "createText",
-            values: [
-              dataSrc.value.trim(),
-              entity.value.trim(),
-              attribute.value.trim(),
-              dataType.value.trim(),
-              sampleValue.value.trim(),
-            ],
+            values: {
+              dataSrc: dataSrc.value.trim(),
+              entity: entity.value.trim(),
+              attribute: attribute.value.trim(),
+              dataType: dataType.value.trim(),
+              sampleValue: sampleValue.value.trim(),
+            },
           },
         },
         "*",
