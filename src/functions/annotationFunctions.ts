@@ -237,7 +237,7 @@ function drawAnnotations(
     annotationElements.annotationLayer.appendChild(annotation);
     const line = drawConnector(side, annotation, sourceNodes[i]);
 
-    //Added for being able to update when sourcenode changes.
+    // Added for being able to update when sourcenode changes.
     if (line !== undefined) {
       linkAnnotationToSourceNodes.push({
         annotation: annotation,
