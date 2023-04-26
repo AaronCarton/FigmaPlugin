@@ -36,13 +36,13 @@ export class Settings extends BaseComponent {
   }
 
   initComponent(): void {
-    this.disableFieldsWhenNecessary();
-    this.initAnnotationToggleEvents();
-    connect();
     initializeEventHubEvents();
     EventHub.getInstance().makeEvent("listingInUI", () => {
       console.log("yey we are in the UI");
     });
+    this.disableFieldsWhenNecessary();
+    this.initAnnotationToggleEvents();
+    connect();
   }
 
   checkConnectionSpinnerExample() {

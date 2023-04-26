@@ -38,9 +38,12 @@ export default class EventHub {
       };
     } else {
       console.log("we are in the UI");
-      document.addEventListener("message", (event) => {
-        // this.handlers[prefixedEventName];
-        console.log("event.type", event.type);
+      document.addEventListener("message", (event: any) => {
+        console.log("event", event);
+        // if (event.data.pluginMessage.figmaMessage.type === eventType) {
+        //   // this.handlers[prefixedEventName];
+        //   console.log("event.type", event.type);
+        // }
       });
     }
   }
@@ -69,7 +72,7 @@ export default class EventHub {
         type: this.prefixEventName(eventType),
         message: { messageObject: message },
       };
-      figma.ui.postMessage({ figmaEvent: figmaEvent });
+      figma.ui.postMessage({ pluginMessage: figmaEvent });
       // How to catch
       //event.data.pluginMessage.figmaMessage.type
     }
