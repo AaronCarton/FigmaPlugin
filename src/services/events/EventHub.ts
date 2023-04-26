@@ -38,7 +38,10 @@ export default class EventHub {
       };
     } else {
       console.log("we are in the UI");
-      document.addEventListener(prefixedEventName, this.handlers[prefixedEventName]);
+      document.addEventListener("message", (event) => {
+        // this.handlers[prefixedEventName];
+        console.log("event.type", event.type);
+      });
     }
   }
 
