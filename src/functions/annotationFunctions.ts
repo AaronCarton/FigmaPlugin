@@ -236,27 +236,41 @@ function drawAnnotations(
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
-    const annotation = createAnnotation(inputValues);
+    console.log("drawing: ", sourceNodes[i]);
+    let found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
+    let annotation;
+    found === undefined
+      ? (annotation = createAnnotation(inputValues))
+      : (annotation = createAnnotation(found.data));
 
-    if (sourceNodes[i].visible === true) {
-      annotation.x = startPoint;
-      annotation.y = determineOverlap(i, annotation, sourceNodes[i], lastAddedAnnotationY);
-      lastAddedAnnotationY = annotation.y;
-    }
-
+    annotation.x = startPoint;
+    annotation.y = determineOverlap(i, annotation, sourceNodes[i], lastAddedAnnotationY);
+    lastAddedAnnotationY = annotation.y;
     AnnotationElements.annotationLayer.appendChild(annotation);
     const line = drawConnector(annotation, sourceNodes[i]);
 
     // Added for being able to update when sourcenode changes.
-    if (line !== undefined) {
-      linkAnnotationToSourceNodes.push({
-        annotation: annotation,
-        sourceNode: sourceNodes[i],
-        vector: line,
-        data: inputValues,
-      });
+    if (found === undefined) {
+      if (line !== undefined) {
+        linkAnnotationToSourceNodes.push({
+          annotation: annotation,
+          sourceNode: sourceNodes[i],
+          vector: line,
+          data: inputValues,
+        });
+      }
+    } else {
+      if (line !== undefined) {
+        found = {
+          annotation: annotation,
+          sourceNode: sourceNodes[i],
+          vector: line,
+          data: inputValues,
+        };
+      }
     }
-    return annotation;
+
+    console.log("Links after drawing: ", linkAnnotationToSourceNodes);
   }
 }
 
@@ -364,23 +378,21 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         found.annotation.x = Coords.x;
         found.annotation.y = Coords.y;
       }
-      console.log(linkAnnotationToSourceNodes);
     } else {
       // Item doesn't have an annotation yet.
-      //add check for overlap => now if new is added it adds to x/y of source and doesn't check for overlap
       const parent = determineParentFrame(currentItem);
       const foundParent = AnnotationElements.parentFrames.find((x) => x.frame.id === parent.id);
       if (foundParent !== undefined) {
-        // Parent frame of new item found in parentFrames Array.
+        // Parent frame of new item found in parentFrames array.
         const side = determineFrameSide(currentItem, foundParent.frame);
         const startPoint =
           side === "left" ? foundParent.startpointLeft : foundParent.startpointRight;
         const sourceNodes =
           side === "left" ? foundParent.sourceNodesLeft : foundParent.sourceNodesRight;
-        console.log("to be updated sourcenodes", sourceNodes);
+        // Push item to corresponding array.
         sourceNodes.push(currentItem);
-        console.log("updated sourceNodes", sourceNodes);
-        const annotation = drawAnnotations(startPoint, sourceNodes, inputValues);
+        // Redraw that updated array.
+        drawAnnotations(startPoint, sourceNodes, inputValues);
       } else {
         // Parent frame of new item is not yet added to parentFrames Array.
         console.log;
@@ -393,7 +405,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
             side === "left" ? newParentFrame.startpointLeft : newParentFrame.startpointRight;
           const sourceNodes =
             side === "left" ? newParentFrame.sourceNodesLeft : newParentFrame.sourceNodesRight;
-          sourceNodes.push(currentItem);
+          //sourceNodes.push(currentItem);
           drawAnnotations(startPoint, sourceNodes, inputValues);
         }
       }
