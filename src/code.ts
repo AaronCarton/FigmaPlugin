@@ -1,6 +1,6 @@
 // import ApiClient from "./services/api/client";
-// import EventHub from "./services/events/EventHub";
-// import { Events } from "./services/events/Events";
+import EventHub from "./services/events/EventHub";
+import { Events } from "./services/events/Events";
 
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
@@ -61,6 +61,17 @@ function initializeComponent(componentName: string): void {
     pluginMessage: { type: `initialize${componentName}` },
   });
 }
+
+// TESTING
+EventHub.getInstance().makeEvent("Test", () => {
+  console.log("Test");
+});
+
+// Add an event listener for the 'message' event
+// figma.ui.onmessage = (message) => {
+//   // Handle the message here
+//   console.log("Received message:", message);
+// };
 
 // DOES NOT WORK, Figma can not read add or removeEventListener
 // figma.on("run", () => {

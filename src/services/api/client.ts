@@ -30,10 +30,11 @@ export default class ApiClient {
     const eventHub = EventHub.getInstance();
 
     window.addEventListener(eventHub.prefixEventName(Events.INITIALIZE_DATA), (event) => {
+      const [baseURL, clientKey, sourceKey] = event.detail.message.split(",");
       ApiClient.initialize({
-        baseURL: event.detail.message.split(",")[0],
-        clientKey: event.detail.message.split(",")[1],
-        sourceKey: event.detail.message.split(",")[2],
+        baseURL,
+        clientKey,
+        sourceKey,
       });
       console.log(ApiClient.BASE_URL, ApiClient.CLIENT_APIKEY, ApiClient.SOURCE_APIKEY); // TODO: Remove
     });

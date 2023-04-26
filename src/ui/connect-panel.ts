@@ -92,6 +92,7 @@ if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
     icon.addEventListener("click", () => {
       handleIconClick(icon);
     });
+    EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, "Annotation updated");
   });
 
   checkFields(dataSrc, entity, "entity");

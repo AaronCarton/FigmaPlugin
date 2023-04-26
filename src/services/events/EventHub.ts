@@ -1,3 +1,5 @@
+import { IfigmaMessage } from "../../interfaces/interface.figmaMessage";
+
 export default class EventHub {
   private static instance: EventHub;
   handlers: any;
@@ -19,16 +21,56 @@ export default class EventHub {
    * @returns {void}
    */
 
-  makeEvent(eventName: string, callback: EventListener): void {
-    if (eventName && eventName.trim() === "") throw new Error("The event name cannot be empty");
+  // makeEvent(eventName: string, callback: EventListener): void {
+  //   if (eventName && eventName.trim() === "") throw new Error("The event name cannot be empty");
+  //   if (typeof callback !== "function") throw new TypeError("The callback must be a function");
+  //   if (!this.handlers) this.handlers = {};
+
+  //   const prefixedEventName = this.prefixEventName(eventName);
+
+  //   this.handlers[prefixedEventName] = (e: { detail: { message: Event } }) =>
+  //     callback(e.detail.message);
+  //   // message = messagetype
+  //   // document.addEventListener("message", (e: Event) => {
+  //   //   if (e.type === eventName) {
+  //   //     this.handlers[prefixedEventName];
+  //   //   }
+  //   // });
+  //   document.addEventListener(prefixedEventName, this.handlers[prefixedEventName]);
+  // }
+
+  makeEventInFigma(eventType: string, callback: EventListener): void {
+    if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
     if (typeof callback !== "function") throw new TypeError("The callback must be a function");
     if (!this.handlers) this.handlers = {};
 
-    const prefixedEventName = this.prefixEventName(eventName);
+    const prefixedEventName = this.prefixEventName(eventType);
+    figma.ui.onmessage = (event) => {
+      if (event.type === eventType) {
+        console.log("event.type", event.type);
+        this.handlers[prefixedEventName];
+      }
+    };
+  }
 
-    this.handlers[prefixedEventName] = (e: { detail: { message: Event } }) =>
-      callback(e.detail.message);
-    document.addEventListener(prefixedEventName, this.handlers[prefixedEventName]);
+  // TESTING makeEvent
+  makeEvent(eventType: string, callback: EventListener): void {
+    // if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
+    // if (typeof callback !== "function") throw new TypeError("The callback must be a function");
+    // if (!this.handlers) this.handlers = {};
+
+    // if ((document as any).addEventListener) {
+    //   console.log("addEventListener is a defined");
+    // } else {
+    //   console.log("addEventListener is undefined");
+
+    //   (document as any).addEventListener = function (type: string, handler: EventListener) {
+    // }
+
+    if (!document) console.log("document is undefined");
+    if (!window) console.log("window is undefined");
+    if (!document.addEventListener) console.log("document.addEventListener is undefined");
+    if (!window.addEventListener) console.log("window.addEventListener is undefined");
   }
 
   /**
@@ -44,6 +86,28 @@ export default class EventHub {
         detail: { message: message },
       }),
     );
+  }
+
+  sendEventFromFigma(eventType: string, message: string): void {
+    const figmaEvent: IfigmaMessage = {
+      type: eventType,
+      message: message,
+    };
+
+    figma.ui.postMessage({ figmaEvent: figmaEvent });
+    // How to catch
+    //event.data.pluginMessage.figmaMessage.type
+  }
+
+  sendCustomEventFromUi(eventType: string, message: string): void {
+    parent.postMessage({
+      pluginMessage: {
+        type: eventType,
+        message: message,
+      },
+    });
+    // How to catch
+    //event.type or event.message
   }
 
   /**
