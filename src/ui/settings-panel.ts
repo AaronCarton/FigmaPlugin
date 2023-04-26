@@ -20,7 +20,7 @@ function toggleAnnotations(e: Event) {
       {
         pluginMessage: {
           type: "changeVisibility",
-          value: state,
+          payload: { state: state },
         },
       },
       "*",
@@ -31,7 +31,7 @@ function toggleAnnotations(e: Event) {
       {
         pluginMessage: {
           type: "changeVisibility",
-          value: state,
+          payload: { state: state },
         },
       },
       "*",

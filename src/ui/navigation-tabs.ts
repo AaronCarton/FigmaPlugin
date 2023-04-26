@@ -20,7 +20,7 @@ function checkConnectionPurpose() {
       noConnectionPanel.classList.add(isActive);
     }
     parent.postMessage(
-      { pluginMessage: { type: "connectionCheck", connection: connectionState } },
+      { pluginMessage: { type: "connectionCheck", payload: { connection: connectionState } } },
       "*",
     );
   }
@@ -40,7 +40,10 @@ tabs.forEach((trigger) =>
       document.getElementById(selectedTab)?.classList.add(isActive);
       parent.postMessage(
         {
-          pluginMessage: { type: "changeTab", tab: selectedTab, connection: connectionState },
+          pluginMessage: {
+            type: "changeTab",
+            payload: { tab: selectedTab, connection: connectionState },
+          },
         },
         "*",
       );
