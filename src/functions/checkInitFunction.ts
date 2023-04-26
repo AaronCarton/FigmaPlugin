@@ -1,12 +1,13 @@
+import { AnnotationInput } from "../interfaces/annotations";
 import { initAnnotations, updateAnnotations } from "./annotationFunctions";
 
 let initState = true;
 
-export function checkInitState(payload: any) {
+export function checkInitState(values: AnnotationInput) {
   if (initState === true) {
     initState = false;
-    initAnnotations(payload.values);
+    initAnnotations(values);
   } else {
-    updateAnnotations(figma.currentPage.selection, payload.values);
+    updateAnnotations(figma.currentPage.selection, values);
   }
 }

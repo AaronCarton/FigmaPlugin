@@ -1,3 +1,7 @@
+import { MessageTitle } from "../classes/messageTitles";
+import { createFigmaError } from "../functions/createError";
+import { AnnotationInput } from "../interfaces/annotations";
+
 const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
 
 const dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
@@ -9,45 +13,19 @@ const sampleValue: HTMLInputElement | null = document.querySelector(".js-sample-
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 
-let counter = 0;
-let exist = false;
+function handleIconClick(trigger: HTMLElement) {
+  const selectedAttribute = trigger.getAttribute("data-target");
+  const inputSelect = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-select`);
+  const inputText = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
+  const inputField = document.querySelector<HTMLInputElement>(`#${selectedAttribute}-field`);
 
-function buttonTrigger(trigger: HTMLElement) {
-  const selectedButton = trigger.getAttribute("data-target");
-  const inputSelect: HTMLSelectElement | null = document.querySelector(`#${selectedButton}-select`);
-  const inputText: HTMLElement | null = document.querySelector(`#${selectedButton}-text`);
-  const inputField: HTMLInputElement | null = document.querySelector(`#${selectedButton}-field`);
-
-  if (
-    selectedButton !== null &&
-    inputSelect !== null &&
-    inputText !== null &&
-    inputField !== null
-  ) {
-    if (counter === 0) {
-      counter++;
-    } else {
-      const newOption = document.createElement("option");
-      const event = new Event("change");
-      newOption.value = inputField.value;
-      newOption.textContent = inputField.value;
-      for (let i = 0; i < inputSelect.options.length; i++) {
-        if (inputSelect.options[i].value === newOption.value) {
-          exist = true;
-          break;
-        }
-      }
-
-      if (exist) {
-        exist = false;
-      } else {
-        inputSelect.appendChild(newOption);
-      }
-
-      inputSelect.value = inputField.value;
-      inputSelect.dispatchEvent(event);
-      counter--;
+  if (selectedAttribute && inputSelect && inputText && inputField) {
+    const newOption = new Option(inputField.value, inputField.value);
+    if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
+      inputSelect.add(newOption);
     }
+    inputSelect.value = inputField.value;
+    inputSelect.dispatchEvent(new Event("change"));
 
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
@@ -63,7 +41,7 @@ function checkFields(
   selectElement.addEventListener("change", () => {
     const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
     const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
-    if (textField !== null && textArea !== null) {
+    if (textField && textArea) {
       if (selectElement.value.trim().length !== 0) {
         changeElement1.disabled = false;
         textField.disabled = false;
@@ -73,17 +51,63 @@ function checkFields(
   });
 }
 
-if (
-  buttons !== null &&
-  dataSrc !== null &&
-  entity !== null &&
-  attribute !== null &&
-  dataType !== null &&
-  sampleValue !== null
-) {
-  buttons.forEach((trigger) => {
-    trigger.addEventListener("click", () => {
-      buttonTrigger(trigger);
+function updateFields(message: AnnotationInput) {
+  if (dataSrc && entity && attribute && dataType && sampleValue) {
+    dataSrc.value = message.dataSrc;
+    entity.value = message.entity;
+    entity.disabled = false;
+    attribute.value = message.attribute;
+    attribute.disabled = false;
+    dataType.value = message.dataType;
+    dataType.disabled = false;
+    sampleValue.value = message.sampleValue;
+
+    changeFieldsOnInput("entity", false);
+    changeFieldsOnInput("attribute", false);
+    changeFieldsOnInput("data-type", false);
+  } else {
+    createFigmaError("Error updating fields.", 5000, true);
+  }
+}
+
+function clearFields() {
+  if (dataSrc && entity && attribute && dataType && sampleValue) {
+    dataSrc.value = "";
+    entity.value = "";
+    entity.disabled = true;
+    attribute.value = "";
+    attribute.disabled = true;
+    dataType.value = "";
+    dataType.disabled = true;
+    sampleValue.value = "";
+
+    changeFieldsOnInput("entity", true);
+    changeFieldsOnInput("attribute", true);
+    changeFieldsOnInput("data-type", true);
+  } else {
+    createFigmaError("Error clearing fields.", 5000, true);
+  }
+}
+
+function changeFieldsOnInput(fieldName: string, state: boolean) {
+  const textField = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
+  const textArea = document.querySelector<HTMLElement>(`#${fieldName}-text`);
+
+  if (textField && textArea) {
+    if (state === true) {
+      textField.disabled = true;
+      textArea.classList.add("disabled");
+    } else {
+      textField.disabled = false;
+      textArea.classList.remove("disabled");
+    }
+  }
+}
+
+if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
+  buttons.forEach((icon) => {
+    icon.addEventListener("click", () => {
+      handleIconClick(icon);
     });
   });
 
@@ -120,3 +144,21 @@ if (
     }
   });
 }
+
+window.addEventListener("message", (e) => {
+  const messageType = e.data.pluginMessage.type;
+  const payload = e.data.pluginMessage.payload;
+
+  switch (messageType) {
+    case MessageTitle.updateFields:
+      updateFields(payload.values);
+      break;
+
+    case MessageTitle.clearFields:
+      clearFields();
+      break;
+
+    default:
+      break;
+  }
+});

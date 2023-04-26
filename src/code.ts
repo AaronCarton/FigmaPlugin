@@ -1,8 +1,5 @@
 import { MessageTitle } from "./classes/messageTitles";
-import {
-  changeLayerVisibility,
-  linkAnnotationToSourceNodes,
-} from "./functions/annotationFunctions";
+import { changeLayerVisibility, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
@@ -26,7 +23,7 @@ figma.ui.onmessage = (event) => {
       break;
 
     case MessageTitle.createText:
-      checkInitState(payload);
+      checkInitState(payload.values);
       break;
 
     case MessageTitle.changeVisibility:
@@ -39,13 +36,7 @@ figma.ui.onmessage = (event) => {
 };
 
 figma.on("selectionchange", () => {
-  if (figma.currentPage.selection[0] !== undefined) {
-    linkAnnotationToSourceNodes.forEach((item) => {
-      if (item.sourceNode === figma.currentPage.selection[0]) {
-        console.log(item.data);
-      }
-    });
-  }
+  sendDataToFrontend();
 });
 
 figma.on("close", async () => {
