@@ -1,55 +1,32 @@
 import { MessageTitle } from "./classes/messageTitles";
-import { changeLayerVisibility, initAnnotations } from "./functions/annotationFunctions";
+import {
+  changeLayerVisibility,
+  linkAnnotationToSourceNodes,
+} from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
-import { updateAnnotations } from "./functions/annotationFunctions";
+import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
+import { checkInitState } from "./functions/checkInitFunction";
 
 figma.showUI(__html__, { width: 345, height: 250 });
-let initState = true;
+
 figma.ui.onmessage = (event) => {
   const eventType = event.type;
-  const selectedTab = event.tab;
-  const connectionState = event.connection;
+  const payload = event.payload;
+
   loadFonts();
 
   switch (eventType) {
     case MessageTitle.changeTab:
-      switch (selectedTab) {
-        case "connect":
-          if (connectionState) {
-            figma.ui.resize(345, 250);
-          } else {
-            figma.ui.resize(345, 124);
-          }
-          console.log(connectionState);
-          break;
-        case "settings":
-          figma.ui.resize(345, 355);
-          break;
-        case "usage":
-          figma.ui.resize(345, 590);
-          break;
-        default:
-          break;
-      }
+      resizeByTab(payload.tab, payload.connection);
       break;
 
     case MessageTitle.connectionCheck:
-      if (connectionState) {
-        figma.ui.resize(345, 250);
-      } else {
-        figma.ui.resize(345, 124);
-      }
+      resizeByConnection(payload.connection);
       break;
 
     case MessageTitle.createText:
-      console.log(initState);
-      if (initState === true) {
-        initState = false;
-        initAnnotations(event.payload.values);
-      } else {
-        updateAnnotations(figma.currentPage.selection, event.payload.values);
-      }
+      checkInitState(payload);
       break;
 
     case MessageTitle.changeVisibility:
@@ -60,6 +37,16 @@ figma.ui.onmessage = (event) => {
       break;
   }
 };
+
+figma.on("selectionchange", () => {
+  if (figma.currentPage.selection[0] !== undefined) {
+    linkAnnotationToSourceNodes.forEach((item) => {
+      if (item.sourceNode === figma.currentPage.selection[0]) {
+        console.log(item.data);
+      }
+    });
+  }
+});
 
 figma.on("close", async () => {
   console.log("closing");
