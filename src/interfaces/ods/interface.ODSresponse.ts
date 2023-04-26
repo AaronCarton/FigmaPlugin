@@ -61,7 +61,6 @@ export abstract class ODSObject<T extends ODSObject<T>> {
    */
   public async archive() {
     this.archived = new Date().toISOString(); // save the current date as ISO string
-    this.save();
   }
 
   /**
@@ -71,11 +70,11 @@ export abstract class ODSObject<T extends ODSObject<T>> {
    */
   public async restore() {
     this.archived = null; // remove archived property
-    this.save();
   }
 
   /**
    * Save the item
+   * @deprecated USE UPDATE_ANNOTATION EVENT INSTEAD
    */
   public async save() {
     await this.API.upsertItem(this.itemType, this.itemKey, this.stripODS());

@@ -28,6 +28,8 @@ export default class ApiClient {
 
   public static initializeEvents() {
     const eventHub = EventHub.getInstance();
+
+    // Initialize API client
     eventHub.makeEvent(Events.INITIALIZE_DATA, ({ projectKey, baseURL, clientKey, sourceKey }) => {
       const api = ApiClient.initialize({
         baseURL,
@@ -37,11 +39,17 @@ export default class ApiClient {
 
       api.getProject(projectKey).then((project) => {
         console.log(project);
-
         api.getAnnotations(project?.itemKey || "").then((annotations) => {
           console.log(annotations);
         });
       });
+
+      // Register update listener
+      eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
+        await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, obj.stripODS());
+      });
+
+      // TODO: add ARCHIVE and UNARCHIVE listeners
     });
   }
 
