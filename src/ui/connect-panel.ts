@@ -34,19 +34,19 @@ export class ConnectPanel extends BaseComponent {
 }
 
 function initializeEvents() {
-  EventHub.getInstance().makeEvent(Events.UPDATE_ANNOTATION, () => {
-    const body = {
-      projectKey: $projectKey?.value,
-      nodeId: "cec66bdf", // TODO: when integrated with the plugin, this should change to the node id from the figma file
-      dataSource: $inputDataSource?.value,
-      entity: $inputEntity?.value,
-      attribute: $inputAttribute?.value,
-      dataType: $inputDatatype?.value,
-      value: $inputValue?.value,
-    } as any;
-    ApiClient.getInstance().upsertItem("annotation", "3414883772", body); // TODO: when integrated with the plugin, this should change to the itemKey of the figma file
-    console.log(body); // TODO: remove this
-  });
+  // EventHub.getInstance().makeEvent(Events.UPDATE_ANNOTATION, () => {
+  //   const body = {
+  //     projectKey: $projectKey?.value,
+  //     nodeId: "cec66bdf", // TODO: when integrated with the plugin, this should change to the node id from the figma file
+  //     dataSource: $inputDataSource?.value,
+  //     entity: $inputEntity?.value,
+  //     attribute: $inputAttribute?.value,
+  //     dataType: $inputDatatype?.value,
+  //     value: $inputValue?.value,
+  //   } as any;
+  //   ApiClient.getInstance().upsertItem("annotation", "3414883772", body); // TODO: when integrated with the plugin, this should change to the itemKey of the figma file
+  //   console.log(body); // TODO: remove this
+  // });
 }
 
 function handleIconClick(trigger: HTMLElement) {
@@ -92,7 +92,6 @@ if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
     icon.addEventListener("click", () => {
       handleIconClick(icon);
     });
-    EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, "Annotation updated");
   });
 
   checkFields(dataSrc, entity, "entity");
