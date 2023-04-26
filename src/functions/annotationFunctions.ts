@@ -86,9 +86,8 @@ function determineParentFrame(elem: SceneNode) {
   return parentFrame;
 }
 
-function makeFramesArray() {
+function makeFramesArray(selection: Array<SceneNode>) {
   console.log("Making frame array...");
-  const selection = <Array<SceneNode>>AnnotationElements.currentpage.selection;
   if (selection.length > 0) {
     sortNodesAccordingToYCoords(selection);
 
@@ -172,28 +171,33 @@ function makeFramesArray() {
   }
 }
 
-function drawConnector(side: string, annotation: SceneNode, destination: SceneNode) {
-  if (destination.absoluteBoundingBox !== null) {
+function drawConnector(annotation: SceneNode, destination: SceneNode) {
+  console.log("line (anno, dest): ", annotation, destination);
+  if (destination.absoluteBoundingBox !== null && annotation.absoluteBoundingBox !== null) {
     const line = figma.createVector();
     line.strokeCap = "ARROW_LINES";
     line.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
     line.strokeWeight = 2;
     AnnotationElements.annotationLayer.appendChild(line);
     AnnotationElements.annotationLayer.clipsContent = false;
+
     // M = starting point.
     // L = end point.
     line.vectorPaths = [
       {
         windingRule: "EVENODD",
-        data: `M ${side === "left" ? annotation.x + annotation.width : annotation.x} ${
-          annotation.y + annotation.height / 2
-        } L ${
-          side === "left"
+        data: `M ${
+          annotation.x <= destination.absoluteBoundingBox.x
+            ? annotation.x + annotation.width
+            : annotation.x
+        } ${annotation.y + annotation.height / 2} L ${
+          annotation.x <= destination.absoluteBoundingBox.x
             ? destination.absoluteBoundingBox.x
             : destination.absoluteBoundingBox.x + destination.absoluteBoundingBox.width
         } ${destination.absoluteBoundingBox.y + destination.absoluteBoundingBox.height / 2}`,
       },
     ];
+
     return line;
   }
 }
@@ -239,7 +243,7 @@ function drawAnnotations(
     }
 
     AnnotationElements.annotationLayer.appendChild(annotation);
-    const line = drawConnector(side, annotation, sourceNodes[i]);
+    const line = drawConnector(annotation, sourceNodes[i]);
 
     // Added for being able to update when sourcenode changes.
     if (line !== undefined) {
@@ -303,7 +307,6 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       if (linkedAnnotation) {
         figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector?.id)?.remove();
         const connector = drawConnector(
-          frameside,
           <SceneNode>linkedAnnotation.annotation.absoluteBoundingBox,
           <SceneNode>changedNode,
         );
@@ -324,7 +327,9 @@ export function changeLayerVisibility(state: boolean) {
 export function initAnnotations(inputValues: AnnotationInput) {
   console.log("initing");
   createLayer();
-  makeFramesArray();
+  const selection = <Array<SceneNode>>figma.currentPage.selection;
+  console.log("selection: ", selection);
+  makeFramesArray(selection);
 
   if (AnnotationElements.parentFrames !== null) {
     for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
@@ -352,7 +357,7 @@ export function initAnnotations(inputValues: AnnotationInput) {
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
-  console.log(typeof selection, "selection");
+  console.log(selection, "selection");
   console.log(inputValues, "inputValues");
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
@@ -374,12 +379,13 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       //add check for overlap => now if new is added it adds to x/y of source and doesn't check for overlap
       const parent = determineParentFrame(currentItem);
       const foundParent = AnnotationElements.parentFrames.find((x) => x.frame.id === parent.id);
+      // Parent frame found in parentFrames Array.
       if (foundParent !== undefined) {
         const side = determineFrameSide(currentItem, foundParent.frame);
         const startPoint =
           side === "left" ? foundParent.startpointLeft : foundParent.startpointRight;
         const annotation = drawAnnotations(side, startPoint, [currentItem], inputValues);
-        if (annotation !== undefined) {
+        if (foundParent !== null && annotation !== undefined) {
           annotation.y =
             side === "left"
               ? foundParent.sourceNodesLeft[foundParent.sourceNodesLeft.length - 1]
@@ -393,6 +399,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
           AnnotationElements.annotationLayer.appendChild(annotation);
         }
       } else {
+        // Parent frame is not yet added to parentFrames Array.
         console.log;
       }
     }
