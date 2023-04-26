@@ -1,4 +1,3 @@
-// import ApiClient from "./services/api/client";
 import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
 
@@ -44,12 +43,6 @@ figma.ui.onmessage = (event) => {
   }
 };
 
-// make new api client before init component
-// make sure it is in 1 function initializePropertizePlugin
-
-// var apiClientProperties = figmaLocalStorage.getApiClientProperties();
-// ApiClient.initialize(apiClientProperties);
-
 // Dispatch all components -> in figma use postMessage
 // Use the class names for initializeComponent
 initializeComponent("Settings");
@@ -63,23 +56,7 @@ function initializeComponent(componentName: string): void {
 }
 
 // TESTING
-EventHub.getInstance().makeEvent("Test", () => {
-  console.log("Test");
-});
-
-// Add an event listener for the 'message' event
-// figma.ui.onmessage = (message) => {
-//   // Handle the message here
-//   console.log("Received message:", message);
-// };
-
-// DOES NOT WORK, Figma can not read add or removeEventListener
-// figma.on("run", () => {
-//   EventHub.getInstance().makeEvent(Events.INITIALIZE_DATA, () => {
-//     console.log("INITIALIZE_DATA");
-//   });
-// });
-
-// figma.on("close", () => {
-//   EventHub.getInstance().removeAllEvents();
-// });
+function boeitechtnie() {
+  EventHub.getInstance().sendCustomEvent("listeningToUI", "test");
+}
+setTimeout(boeitechtnie, 500);

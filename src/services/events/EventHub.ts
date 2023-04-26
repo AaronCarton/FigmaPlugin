@@ -4,6 +4,7 @@ export default class EventHub {
   private static instance: EventHub;
   handlers: any;
 
+  //TODO: check documentation
   /**
    * Get the instance of the EventHub
    * @returns {EventHub} The instance of the EventHub
@@ -20,57 +21,25 @@ export default class EventHub {
    * @param {function} callback - The function that is called when the event is triggered
    * @returns {void}
    */
-
-  // makeEvent(eventName: string, callback: EventListener): void {
-  //   if (eventName && eventName.trim() === "") throw new Error("The event name cannot be empty");
-  //   if (typeof callback !== "function") throw new TypeError("The callback must be a function");
-  //   if (!this.handlers) this.handlers = {};
-
-  //   const prefixedEventName = this.prefixEventName(eventName);
-
-  //   this.handlers[prefixedEventName] = (e: { detail: { message: Event } }) =>
-  //     callback(e.detail.message);
-  //   // message = messagetype
-  //   // document.addEventListener("message", (e: Event) => {
-  //   //   if (e.type === eventName) {
-  //   //     this.handlers[prefixedEventName];
-  //   //   }
-  //   // });
-  //   document.addEventListener(prefixedEventName, this.handlers[prefixedEventName]);
-  // }
-
-  makeEventInFigma(eventType: string, callback: EventListener): void {
+  makeEvent(eventType: string, callback: EventListener): void {
     if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
     if (typeof callback !== "function") throw new TypeError("The callback must be a function");
     if (!this.handlers) this.handlers = {};
 
     const prefixedEventName = this.prefixEventName(eventType);
-    figma.ui.onmessage = (event) => {
-      if (event.type === eventType) {
-        console.log("event.type", event.type);
-        this.handlers[prefixedEventName];
-      }
-    };
-  }
-
-  // TESTING makeEvent
-  makeEvent(eventType: string, callback: EventListener): void {
-    // if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
-    // if (typeof callback !== "function") throw new TypeError("The callback must be a function");
-    // if (!this.handlers) this.handlers = {};
-
-    // if ((document as any).addEventListener) {
-    //   console.log("addEventListener is a defined");
-    // } else {
-    //   console.log("addEventListener is undefined");
-
-    //   (document as any).addEventListener = function (type: string, handler: EventListener) {
-    // }
-
-    if (!document) console.log("document is undefined");
-    if (!window) console.log("window is undefined");
-    if (!document.addEventListener) console.log("document.addEventListener is undefined");
-    if (!window.addEventListener) console.log("window.addEventListener is undefined");
+    if (!this.hasAccessToUI()) {
+      console.log("we are in kut figma");
+      figma.ui.onmessage = (event) => {
+        if (event.type === eventType) {
+          console.log("event.type", event.type);
+          this.handlers[prefixedEventName];
+          callback(event.message);
+        }
+      };
+    } else {
+      console.log("we are in the UI");
+      document.addEventListener(prefixedEventName, this.handlers[prefixedEventName]);
+    }
   }
 
   /**
@@ -79,35 +48,32 @@ export default class EventHub {
    * @param {string} message - The message that will be sent with the event
    * @returns {void}
    */
-  sendCustomEvent(eventName: string, message: string): void {
-    document.dispatchEvent(
-      new CustomEvent(this.prefixEventName(eventName), {
-        bubbles: true,
-        detail: { message: message },
-      }),
-    );
+  sendCustomEvent(eventType: string, message: string): void {
+    if (this.hasAccessToUI()) {
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: this.prefixEventName(eventType),
+            message: message,
+          },
+        },
+        "*",
+      );
+      // How to catch
+      //event.type or event.message
+    } else {
+      const figmaEvent: IfigmaMessage = {
+        type: this.prefixEventName(eventType),
+        message: { messageObject: message },
+      };
+      figma.ui.postMessage({ figmaEvent: figmaEvent });
+      // How to catch
+      //event.data.pluginMessage.figmaMessage.type
+    }
   }
 
-  sendEventFromFigma(eventType: string, message: string): void {
-    const figmaEvent: IfigmaMessage = {
-      type: eventType,
-      message: message,
-    };
-
-    figma.ui.postMessage({ figmaEvent: figmaEvent });
-    // How to catch
-    //event.data.pluginMessage.figmaMessage.type
-  }
-
-  sendCustomEventFromUi(eventType: string, message: string): void {
-    parent.postMessage({
-      pluginMessage: {
-        type: eventType,
-        message: message,
-      },
-    });
-    // How to catch
-    //event.type or event.message
+  private hasAccessToUI() {
+    return window && document;
   }
 
   /**

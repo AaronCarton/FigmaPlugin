@@ -23,7 +23,7 @@ function connect() {
     ApiClient.initializeEvents();
     const message = `${$baseURL?.value}, ${$clientKey?.value}, ${$sourceKey?.value}`;
     e.preventDefault();
-    EventHub.getInstance().sendCustomEventFromUi("Test", "Test");
+    EventHub.getInstance().sendCustomEvent("Test", "TestMessage");
     // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, message);
   });
 }
@@ -40,6 +40,9 @@ export class Settings extends BaseComponent {
     this.initAnnotationToggleEvents();
     connect();
     initializeEventHubEvents();
+    EventHub.getInstance().makeEvent("listingInUI", () => {
+      console.log("yey we are in the UI");
+    });
   }
 
   checkConnectionSpinnerExample() {
