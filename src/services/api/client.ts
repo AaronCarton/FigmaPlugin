@@ -27,16 +27,26 @@ export default class ApiClient {
   public static SOURCE_APIKEY: string;
 
   public static initializeEvents() {
-    const eventHub = EventHub.getInstance();
+    console.log("init api events");
 
-    window.addEventListener(eventHub.prefixEventName(Events.INITIALIZE_DATA), (event) => {
-      const [baseURL, clientKey, sourceKey] = event.detail.message.split(",");
-      ApiClient.initialize({
+    const eventHub = EventHub.getInstance();
+    eventHub.makeEvent(Events.INITIALIZE_DATA, (event) => {
+      console.log("event received", event);
+
+      const [baseURL, clientKey, sourceKey] = ["123", "123", "123"];
+      const api = ApiClient.initialize({
         baseURL,
         clientKey,
         sourceKey,
       });
-      console.log(ApiClient.BASE_URL, ApiClient.CLIENT_APIKEY, ApiClient.SOURCE_APIKEY); // TODO: Remove
+
+      api.getProject("195").then((project) => {
+        console.log(project);
+
+        api.getAnnotations(project?.itemKey || "").then((annotations) => {
+          console.log(annotations);
+        });
+      });
     });
   }
 

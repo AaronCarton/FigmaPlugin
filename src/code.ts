@@ -59,4 +59,4 @@ function initializeComponent(componentName: string): void {
 function boeitechtnie() {
   EventHub.getInstance().sendCustomEvent("listeningToUI", "test");
 }
-setTimeout(boeitechtnie, 500);
+// setTimeout(boeitechtnie, 500);

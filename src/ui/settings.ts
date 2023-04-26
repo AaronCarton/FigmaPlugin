@@ -18,13 +18,15 @@ function initializeEventHubEvents() {
   const eventHub = EventHub.getInstance();
 }
 
+ApiClient.initializeEvents();
 function connect() {
   $button?.addEventListener("click", (e: Event) => {
-    ApiClient.initializeEvents();
     const message = `${$baseURL?.value}, ${$clientKey?.value}, ${$sourceKey?.value}`;
     e.preventDefault();
     EventHub.getInstance().sendCustomEvent("Test", "TestMessage");
-    // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, message);
+    console.log("about to send message");
+
+    EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, message);
   });
 }
 

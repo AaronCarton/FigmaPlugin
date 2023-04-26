@@ -38,7 +38,10 @@ export default class EventHub {
       };
     } else {
       console.log("we are in the UI");
+      console.log("making event", eventType);
       window.addEventListener("message", (event: any) => {
+        console.log("event", event);
+
         if (event.data.pluginMessage.pluginMessage.type === prefixedEventName) {
           this.handlers[prefixedEventName];
           callback(event.message);
@@ -55,6 +58,8 @@ export default class EventHub {
    */
   sendCustomEvent(eventType: string, message: string): void {
     if (this.hasAccessToUI()) {
+      console.log("sending event in UI to API");
+
       parent.postMessage(
         {
           pluginMessage: {
@@ -78,6 +83,9 @@ export default class EventHub {
   }
 
   private hasAccessToUI() {
+    console.debug("window", window);
+    console.debug("document", document);
+
     return window && document;
   }
 
