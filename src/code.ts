@@ -50,13 +50,5 @@ initializeComponent("NavigationTabs");
 initializeComponent("ConnectPanel");
 
 function initializeComponent(componentName: string): void {
-  figma.ui.postMessage({
-    pluginMessage: { type: `initialize${componentName}` },
-  });
+  figma.ui.postMessage({ type: `initialize${componentName}` });
 }
-
-// TESTING
-function boeitechtnie() {
-  EventHub.getInstance().sendCustomEvent("listeningToUI", "test");
-}
-// setTimeout(boeitechtnie, 500);

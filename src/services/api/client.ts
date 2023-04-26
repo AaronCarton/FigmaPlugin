@@ -27,20 +27,15 @@ export default class ApiClient {
   public static SOURCE_APIKEY: string;
 
   public static initializeEvents() {
-    console.log("init api events");
-
     const eventHub = EventHub.getInstance();
-    eventHub.makeEvent(Events.INITIALIZE_DATA, (event) => {
-      console.log("event received", event);
-
-      const [baseURL, clientKey, sourceKey] = ["123", "123", "123"];
+    eventHub.makeEvent(Events.INITIALIZE_DATA, ({ projectKey, baseURL, clientKey, sourceKey }) => {
       const api = ApiClient.initialize({
         baseURL,
         clientKey,
         sourceKey,
       });
 
-      api.getProject("195").then((project) => {
+      api.getProject(projectKey).then((project) => {
         console.log(project);
 
         api.getAnnotations(project?.itemKey || "").then((annotations) => {

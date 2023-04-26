@@ -21,12 +21,13 @@ function initializeEventHubEvents() {
 ApiClient.initializeEvents();
 function connect() {
   $button?.addEventListener("click", (e: Event) => {
-    const message = `${$baseURL?.value}, ${$clientKey?.value}, ${$sourceKey?.value}`;
     e.preventDefault();
-    EventHub.getInstance().sendCustomEvent("Test", "TestMessage");
-    console.log("about to send message");
-
-    EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, message);
+    EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
+      projectKey: $projectKey?.value,
+      baseURL: $baseURL?.value,
+      clientKey: $clientKey?.value,
+      sourceKey: $sourceKey?.value,
+    });
   });
 }
 
@@ -39,9 +40,6 @@ export class Settings extends BaseComponent {
 
   initComponent(): void {
     initializeEventHubEvents();
-    EventHub.getInstance().makeEvent("listeningToUI", () => {
-      console.log("yey we are in the UI");
-    });
     this.disableFieldsWhenNecessary();
     this.initAnnotationToggleEvents();
     connect();

@@ -1,14 +1,13 @@
 import { IfigmaMessage } from "../../interfaces/interface.figmaMessage";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */ //! Should be fixed later
 export default class EventHub {
   private static instance: EventHub;
-  handlers: any;
+  private handlers: { [eventName: string]: (event: any) => void } = {};
 
-  //TODO: check documentation
   /**
    * Get the instance of the EventHub
    * @returns {EventHub} The instance of the EventHub
-   * @throws {Error} If the instance is not initialized
    */
   public static getInstance(): EventHub {
     if (!EventHub.instance) EventHub.instance = new EventHub();
@@ -16,108 +15,105 @@ export default class EventHub {
   }
 
   /**
-   * @description It creates an event with an eventName and a callback function
-   * @param {string} eventName - The name of the event that will be listened to
+   * Creates an event registered under the event name
+   * @param {string} eventType - The type of the event that will be listened to
    * @param {function} callback - The function that is called when the event is triggered
-   * @returns {void}
    */
-  makeEvent(eventType: string, callback: EventListener): void {
+  makeEvent(eventType: string, callback: (message: any) => void): void {
     if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
     if (typeof callback !== "function") throw new TypeError("The callback must be a function");
-    if (!this.handlers) this.handlers = {};
-
     const prefixedEventName = this.prefixEventName(eventType);
-    if (!this.hasAccessToUI()) {
-      console.log("we are in kut figma");
-      figma.ui.onmessage = (event) => {
+
+    // Check is event is for Figma or browser
+    if (this.hasAccessToUI()) {
+      // Store callback in handlers under event name (for later removal)
+      this.handlers[prefixedEventName] = (event: any) => {
+        if (event.data.pluginMessage.type === prefixedEventName) {
+          callback(event.data.pluginMessage.message);
+        }
+      };
+      // Register event listener in browser
+      window.addEventListener("message", this.handlers[prefixedEventName]);
+      console.debug(
+        `[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`,
+        this.handlers[prefixedEventName],
+      );
+    } else {
+      // Store callback in handlers under event name (for later removal)
+      this.handlers[prefixedEventName] = (event: any) => {
         if (event.type === eventType) {
           console.log("event.type", event.type);
           this.handlers[prefixedEventName];
           callback(event.message);
         }
       };
-    } else {
-      console.log("we are in the UI");
-      console.log("making event", eventType);
-      window.addEventListener("message", (event: any) => {
-        console.log("event", event);
-
-        if (event.data.pluginMessage.pluginMessage.type === prefixedEventName) {
-          this.handlers[prefixedEventName];
-          callback(event.message);
-        }
-      });
+      // Register event listener in Figma
+      figma.ui.onmessage = this.handlers[prefixedEventName];
+      console.debug(
+        `[EVENT] Register ${prefixedEventName} in Figma (code.ts)`,
+        this.handlers[prefixedEventName],
+      );
     }
   }
 
   /**
-   * @description It sends a custom event with the eventName and a message
+   * It sends a custom event with the eventName and a message
    * @param {string} eventName - The name of the event that will be listened to
-   * @param {string} message - The message that will be sent with the event
-   * @returns {void}
+   * @param {any} message - Message that will be sent with the event, can be anything
    */
-  sendCustomEvent(eventType: string, message: string): void {
+  sendCustomEvent(eventType: string, message: any): void {
+    const prefixedEventName = this.prefixEventName(eventType);
+    // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
-      console.log("sending event in UI to API");
-
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: this.prefixEventName(eventType),
-            message: message,
-          },
+      const data = {
+        pluginMessage: {
+          type: prefixedEventName,
+          message: message,
         },
-        "*",
-      );
-      // How to catch
-      //event.type or event.message
+      };
+      // Send event to browser
+      window.postMessage(data, "*");
+      console.debug(`[EVENT] Emit ${prefixedEventName} to Browser (ui.ts)`, data);
     } else {
-      const figmaEvent: IfigmaMessage = {
-        type: this.prefixEventName(eventType),
+      const data: IfigmaMessage = {
+        type: prefixedEventName,
         message: { messageObject: message },
       };
-      figma.ui.postMessage({ pluginMessage: figmaEvent });
-      // How to catch
-      //event.data.pluginMessage.figmaMessage.type
+      // Send event to Figma
+      figma.ui.postMessage(data);
+      console.debug(`[EVENT] Emit ${prefixedEventName} to Figma (code.ts)`, data);
     }
   }
 
-  private hasAccessToUI() {
-    console.debug("window", window);
-    console.debug("document", document);
-
-    return window && document;
-  }
-
   /**
-   * @description It removes an event with an eventName and a callback function
-   * @param {string} eventName - The name of the event that will be listened to
-   * @param {function} callback - The function that is called when the event is triggered
-   * @returns {void}
+   * Removes event from the event listeners
+   * @param {string} eventType - Event type that will be removed
    */
-  removeEvent(eventName: string, callback: EventListener): void {
-    document.removeEventListener(this.prefixEventName(eventName), callback);
+  removeEvent(eventType: string): void {
+    const prefixedEventName = this.prefixEventName(eventType);
+    if (this.hasAccessToUI()) {
+      window.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]);
+    } else {
+      figma.ui.off(prefixedEventName, this.handlers[prefixedEventName]);
+    }
   }
 
   /**
-   * @description Removes all events from the document.
-   * @returns {void}
-   */
-  removeAllEvents(): void {
-    if (!this.handlers) return;
-    Object.keys(this.handlers).forEach((prefixedEventName) =>
-      document.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]),
-    );
-  }
-
-  /**
-   * @description It prefixes the event name with the string "Propertize_message_"
-   * @param {string} eventName - The name of the event that will be listened to
-   * @returns {string} - The prefixed event name: "Propertize_message_eventName"
+   * Prefixes the event name with the string "Propertize_message_"
+   * @param {string} eventName - Event name that will be prefixed
+   * @returns {string} - The prefixed event name. Eg."Propertize_message_eventName"
    */
   prefixEventName(eventName: string): any {
     if (eventName === null || eventName === undefined)
       throw new Error("The event name is undefined");
     return "Propertize_message_" + eventName;
+  }
+
+  /**
+   * Checks if the window and document objects are available, which means that the code is running from ui.ts, instead of code.ts
+   * @returns True if running in ui.ts and False if running in code.ts
+   */
+  private hasAccessToUI() {
+    return window && document;
   }
 }
