@@ -1,4 +1,4 @@
-import { ODSObject, ODSResponse } from "../../interfaces/ods/interface.ODSresponse";
+import { ODSObject, ODSResponse, stripODS } from "../../interfaces/ods/interface.ODSresponse";
 import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
@@ -46,7 +46,7 @@ export default class ApiClient {
 
       // Register update listener
       eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
-        await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, obj.stripODS());
+        await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
       });
 
       // TODO: add ARCHIVE and UNARCHIVE listeners

@@ -1,3 +1,4 @@
+import Annotation from "../interfaces/interface.annotation";
 import ApiClient from "../services/api/client";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
@@ -15,10 +16,9 @@ const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader")
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 function initializeEventHubEvents() {
-  const eventHub = EventHub.getInstance();
+  ApiClient.initializeEvents();
 }
 
-ApiClient.initializeEvents();
 function connect() {
   $button?.addEventListener("click", (e: Event) => {
     e.preventDefault();
@@ -28,6 +28,18 @@ function connect() {
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
     });
+
+    setTimeout(() => {
+      ApiClient.getInstance()
+        .getAnnotations("195")
+        .then((e: Annotation[]) => {
+          const a = e.find((a) => (a.attribute = "body"));
+          if (a) {
+            a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
+          }
+        });
+    }, 3000);
   });
 }
 
