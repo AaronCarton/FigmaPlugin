@@ -44,6 +44,11 @@ export default class ApiClient {
         });
       });
 
+      // Register create listener
+      eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
+        await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
+      });
+
       // Register update listener
       eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
         await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
