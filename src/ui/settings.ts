@@ -37,7 +37,7 @@ export class Settings extends BaseComponent {
 
   initComponent(): void {
     initializeEventHubEvents();
-    EventHub.getInstance().makeEvent("listingInUI", () => {
+    EventHub.getInstance().makeEvent("listeningToUI", () => {
       console.log("yey we are in the UI");
     });
     this.disableFieldsWhenNecessary();

@@ -38,12 +38,11 @@ export default class EventHub {
       };
     } else {
       console.log("we are in the UI");
-      document.addEventListener("message", (event: any) => {
-        console.log("event", event);
-        // if (event.data.pluginMessage.figmaMessage.type === eventType) {
-        //   // this.handlers[prefixedEventName];
-        //   console.log("event.type", event.type);
-        // }
+      window.addEventListener("message", (event: any) => {
+        if (event.data.pluginMessage.pluginMessage.type === prefixedEventName) {
+          this.handlers[prefixedEventName];
+          callback(event.message);
+        }
       });
     }
   }
