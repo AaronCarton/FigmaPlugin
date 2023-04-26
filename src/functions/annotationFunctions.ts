@@ -86,8 +86,9 @@ function determineParentFrame(elem: SceneNode) {
   return parentFrame;
 }
 
-function makeFramesArray(selection: Array<SceneNode>) {
+function makeFramesArray() {
   console.log("Making frame array...");
+  const selection = <Array<SceneNode>>figma.currentPage.selection;
   if (selection.length > 0) {
     sortNodesAccordingToYCoords(selection);
 
@@ -133,6 +134,7 @@ function makeFramesArray(selection: Array<SceneNode>) {
           }
         }
         AnnotationElements.parentFrames.push(newFramesItem);
+        return newFramesItem;
       } else {
         // If parentframe is already added to the array.
         const parentframe = AnnotationElements.parentFrames.find(
@@ -162,10 +164,10 @@ function makeFramesArray(selection: Array<SceneNode>) {
               parentframe.sourceNodesRight[indexOfElement] == currentElement;
             }
           }
+          return parentframe;
         }
       }
     }
-    console.log(AnnotationElements.parentFrames);
   } else {
     createFigmaError("Select something to create an annotation.", 5000, true);
   }
@@ -224,13 +226,13 @@ function determineOverlap(
 }
 
 function drawAnnotations(
-  side: string,
   startPoint: number,
   sourceNodes: Array<SceneNode>,
   inputValues: AnnotationInput,
 ) {
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
+  sortNodesAccordingToYCoords(sourceNodes);
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
@@ -296,8 +298,6 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
 
     //when changed nodes are found: redraw them
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
-      const parentFrame = determineParentFrame(changedNode);
-      const frameside = determineFrameSide(changedNode, <FrameNode>parentFrame);
       //find linkedAnnotation
       const linkedAnnotation = linkAnnotationToSourceNodes.find(
         (item) => item.sourceNode.id === changedNode.id,
@@ -327,28 +327,16 @@ export function changeLayerVisibility(state: boolean) {
 export function initAnnotations(inputValues: AnnotationInput) {
   console.log("initing");
   createLayer();
-  const selection = <Array<SceneNode>>figma.currentPage.selection;
-  console.log("selection: ", selection);
-  makeFramesArray(selection);
+  makeFramesArray();
 
   if (AnnotationElements.parentFrames !== null) {
     for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
       const currentFrame = AnnotationElements.parentFrames[i];
       if (currentFrame.sourceNodesLeft.length > 0) {
-        drawAnnotations(
-          "left",
-          currentFrame.startpointLeft,
-          currentFrame.sourceNodesLeft,
-          inputValues,
-        );
+        drawAnnotations(currentFrame.startpointLeft, currentFrame.sourceNodesLeft, inputValues);
       }
       if (currentFrame.sourceNodesRight.length > 0) {
-        drawAnnotations(
-          "right",
-          currentFrame.startpointRight,
-          currentFrame.sourceNodesRight,
-          inputValues,
-        );
+        drawAnnotations(currentFrame.startpointRight, currentFrame.sourceNodesRight, inputValues);
       }
     }
   }
@@ -364,7 +352,9 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find(
       (x) => x.sourceNode.id === currentItem.id,
     );
+
     if (found !== undefined) {
+      // Item already has an annotation.
       found.data = inputValues;
       const Coords = found.annotation.absoluteBoundingBox;
       figma.currentPage.findOne((x) => x.id === found.annotation.id)?.remove();
@@ -376,32 +366,53 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       }
       console.log(linkAnnotationToSourceNodes);
     } else {
+      // Item doesn't have an annotation yet.
       //add check for overlap => now if new is added it adds to x/y of source and doesn't check for overlap
       const parent = determineParentFrame(currentItem);
       const foundParent = AnnotationElements.parentFrames.find((x) => x.frame.id === parent.id);
-      // Parent frame found in parentFrames Array.
       if (foundParent !== undefined) {
+        // Parent frame of new item found in parentFrames Array.
         const side = determineFrameSide(currentItem, foundParent.frame);
         const startPoint =
           side === "left" ? foundParent.startpointLeft : foundParent.startpointRight;
-        const annotation = drawAnnotations(side, startPoint, [currentItem], inputValues);
-        if (foundParent !== null && annotation !== undefined) {
-          annotation.y =
-            side === "left"
-              ? foundParent.sourceNodesLeft[foundParent.sourceNodesLeft.length - 1]
-                  .absoluteBoundingBox.y +
-                annotation.height +
-                5
-              : foundParent.sourceNodesRight[foundParent.sourceNodesRight.length - 1]
-                  .absoluteBoundingBox.y +
-                annotation.height +
-                5;
-          AnnotationElements.annotationLayer.appendChild(annotation);
-        }
+        const sourceNodes =
+          side === "left" ? foundParent.sourceNodesLeft : foundParent.sourceNodesRight;
+        console.log("to be updated sourcenodes", sourceNodes);
+        sourceNodes.push(currentItem);
+        console.log("updated sourceNodes", sourceNodes);
+        const annotation = drawAnnotations(startPoint, sourceNodes, inputValues);
       } else {
-        // Parent frame is not yet added to parentFrames Array.
+        // Parent frame of new item is not yet added to parentFrames Array.
         console.log;
+        const newParentFrame = makeFramesArray();
+        console.log("after updated if parent not found: ", AnnotationElements.parentFrames);
+        if (newParentFrame !== undefined) {
+          // Determine side of the annotation
+          const side = determineFrameSide(currentItem, newParentFrame.frame);
+          const startPoint =
+            side === "left" ? newParentFrame.startpointLeft : newParentFrame.startpointRight;
+          const sourceNodes =
+            side === "left" ? newParentFrame.sourceNodesLeft : newParentFrame.sourceNodesRight;
+          sourceNodes.push(currentItem);
+          drawAnnotations(startPoint, sourceNodes, inputValues);
+        }
       }
     }
+  }
+}
+
+export function sendDataToFrontend() {
+  if (figma.currentPage.selection[0] !== undefined) {
+    linkAnnotationToSourceNodes.forEach((item) => {
+      if (item.sourceNode === figma.currentPage.selection[0]) {
+        console.log(item.data);
+        figma.ui.postMessage({
+          type: "updateFields",
+          payload: {
+            values: item.data,
+          },
+        });
+      }
+    });
   }
 }
