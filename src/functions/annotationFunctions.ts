@@ -5,6 +5,7 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { createFigmaError } from "./createError";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
+let layerState = true;
 
 function createAnnotation(inputValues: AnnotationInput) {
   const page = figma.currentPage;
@@ -168,8 +169,6 @@ function makeFramesArray() {
         }
       }
     }
-  } else {
-    createFigmaError("Select something to create an annotation.", 5000, true);
   }
 }
 
@@ -293,6 +292,7 @@ function createLayer() {
   AnnotationElements.annotationLayer.fills = [];
   // Make layer lockable e.g. not dragged by accident.
   AnnotationElements.annotationLayer.locked = true;
+  AnnotationElements.annotationLayer.visible = layerState;
 }
 
 function handleAnnotationRedraws(event: DocumentChangeEvent) {
@@ -343,6 +343,8 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
 export function changeLayerVisibility(state: boolean) {
   if (AnnotationElements.annotationLayer) {
     AnnotationElements.annotationLayer.visible = state;
+  } else {
+    layerState = state;
   }
 }
 
@@ -423,17 +425,26 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 }
 
 export function sendDataToFrontend() {
+  let found = false;
+  let i = 0;
+
   if (figma.currentPage.selection[0] !== undefined) {
-    linkAnnotationToSourceNodes.forEach((item) => {
-      if (item.sourceNode === figma.currentPage.selection[0]) {
-        console.log(item.data);
+    while (i < linkAnnotationToSourceNodes.length && !found) {
+      if (linkAnnotationToSourceNodes[i].sourceNode === figma.currentPage.selection[0]) {
+        found = true;
         figma.ui.postMessage({
           type: "updateFields",
           payload: {
-            values: item.data,
+            values: linkAnnotationToSourceNodes[i].data,
           },
         });
       }
-    });
+      i++;
+    }
+    if (found !== true) {
+      figma.ui.postMessage({ type: "clearFields" });
+    }
+  } else {
+    figma.ui.postMessage({ type: "clearFields" });
   }
 }
