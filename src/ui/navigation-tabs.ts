@@ -6,10 +6,10 @@ const noConnectionPanel: HTMLElement | null = document.querySelector(".js-discon
 
 const isActive = "is-active";
 
-// still testing connection purposes
+// Still testing connection purposes.
 const connectionState = true;
 
-// still testing connection purposes
+// Still testing connection purposes.
 function checkConnectionPurpose() {
   if (connectionPanel !== null && noConnectionPanel !== null) {
     if (connectionState) {
@@ -51,5 +51,5 @@ tabs.forEach((trigger) =>
   }),
 );
 
-// still testing connection purposes
+// Still testing connection purposes.
 checkConnectionPurpose();

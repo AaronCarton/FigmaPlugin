@@ -1,4 +1,3 @@
-//input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
@@ -6,7 +5,7 @@ const $annotationToggle: HTMLInputElement | null = document.querySelector("#anno
 const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
 
 async function checkConnection() {
-  //making sure there are no spaces in the values, even if the user typed spaces
+  // Making sure there are no spaces in the values, even if the user typed spaces.
   const baseURL: string | null | undefined = $baseURL?.value.replace(/\s/g, "").trim();
   const clientKey: string | null | undefined = $clientKey?.value.replace(/\s/g, "").trim();
   console.log(baseURL, clientKey);
@@ -15,7 +14,7 @@ async function checkConnection() {
 function toggleAnnotations(e: Event) {
   const state: boolean = (<HTMLInputElement>e.target).checked;
   if (state === true) {
-    console.log("show annotations");
+    console.log("Show annotations.");
     parent.postMessage(
       {
         pluginMessage: {
@@ -26,7 +25,7 @@ function toggleAnnotations(e: Event) {
       "*",
     );
   } else {
-    console.log("hide annotations");
+    console.log("Hide annotations.");
     parent.postMessage(
       {
         pluginMessage: {
@@ -47,7 +46,7 @@ function disableFieldsWhenNecessary() {
     $button !== null &&
     $sourceKey !== null
   ) {
-    //replace makes sure people can not connect with empty strings (for example pressing spacebar)
+    // Replace makes sure people can not connect with empty strings (for example pressing spacebar).
     if ($baseURL.value.replace(/\s/g, "") !== "") {
       $clientKey.disabled = false;
       $sourceKey.disabled = false;
