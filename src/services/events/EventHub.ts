@@ -1,9 +1,16 @@
+/* eslint-disable func-style */
+/* eslint-disable @typescript-eslint/no-explicit-any */ //! Should be fixed later
 import { IfigmaMessage } from "../../interfaces/interface.figmaMessage";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */ //! Should be fixed later
+interface Event {
+  type: string;
+  callback: EventListener;
+  originalCallback: (message: any) => void;
+}
+
 export default class EventHub {
   private static instance: EventHub;
-  private handlers: { [eventName: string]: (event: any) => void } = {};
+  private handlers: Event[] = [];
 
   /**
    * Get the instance of the EventHub
@@ -17,38 +24,64 @@ export default class EventHub {
   /**
    * Creates an event listener for the given event type and calls the callback function when the event is triggered
    * @param {string} eventType - The name of the event that will be listened to
-   * @param {function} callback - The function that will be called when the event is triggered
+   * @param {function} cb - The function that will be called when the event is triggered
    */
-  makeEvent(eventType: string, callback: (message: any) => void): void {
+  makeEvent(eventType: string, cb: (message: any) => void): void {
     if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
-    if (typeof callback !== "function") throw new TypeError("The callback must be a function");
+    if (typeof cb !== "function") throw new TypeError("The callback must be a function");
     const prefixedEventName = this.prefixEventName(eventType);
 
     // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
-      // Store callback in handlers under event name (for later removal)
-      this.handlers[prefixedEventName] = (event: any) => {
+      // Check if event listener already exists
+      const foundEvent = this.handlers.find((h) => h.type === prefixedEventName);
+      if (foundEvent && foundEvent.originalCallback.toString() === cb.toString()) {
+        return console.warn(
+          `[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`,
+        );
+      }
+
+      // Store callback in handlers (for later removal)
+      const callback = (event: any) => {
         if (event.data.pluginMessage.type === prefixedEventName) {
-          callback(event.data.pluginMessage.message);
+          cb(event.data.pluginMessage.message);
         }
       };
+      this.handlers.push({
+        type: prefixedEventName,
+        originalCallback: cb,
+        callback,
+      });
+
       // Register event listener in browser
-      window.addEventListener("message", this.handlers[prefixedEventName]);
+      window.addEventListener("message", callback);
       console.debug(
         `[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`,
         this.handlers[prefixedEventName],
       );
     } else {
-      // Store callback in handlers under event name (for later removal)
-      this.handlers[prefixedEventName] = (event: any) => {
+      // Check if event listener already exists
+      const foundEvent = this.handlers.find((h) => h.type === prefixedEventName);
+      if (foundEvent && foundEvent.originalCallback.toString() === cb.toString()) {
+        return console.warn(
+          `[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`,
+        );
+      }
+
+      // Store callback in handlers (for later removal)
+      const callback = (event: any) => {
         if (event.type === eventType) {
-          console.log("event.type", event.type);
-          this.handlers[prefixedEventName];
-          callback(event.message);
+          cb(event.message);
         }
       };
+      this.handlers.push({
+        type: prefixedEventName,
+        originalCallback: cb,
+        callback,
+      });
+
       // Register event listener in Figma
-      figma.ui.onmessage = this.handlers[prefixedEventName];
+      figma.ui.onmessage = callback;
       console.debug(
         `[EVENT] Register ${prefixedEventName} in Figma (code.ts)`,
         this.handlers[prefixedEventName],
@@ -91,10 +124,16 @@ export default class EventHub {
    */
   removeEvent(eventType: string): void {
     const prefixedEventName = this.prefixEventName(eventType);
+    // Try and find event listener in handlers
+    const event = this.handlers.find((h) => h.type === prefixedEventName)?.callback;
+    if (!event)
+      return console.warn(`[EVENT] Tried to remove unregistered ${prefixedEventName}, skipping`);
+
+    // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
-      window.removeEventListener("message", this.handlers[prefixedEventName]);
+      window.removeEventListener("message", event);
     } else {
-      figma.ui.off(prefixedEventName, this.handlers[prefixedEventName]);
+      figma.ui.off(prefixedEventName, event);
     }
   }
 

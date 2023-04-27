@@ -55,9 +55,6 @@ export default class ApiClient {
       eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
         await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
       });
-      eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
-        await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
-      });
 
       // Register update listener
       eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
