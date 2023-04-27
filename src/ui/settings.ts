@@ -15,34 +15,6 @@ const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btn
 const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
-function initializeEventHubEvents() {
-  ApiClient.initializeEvents();
-}
-
-function connect() {
-  $button?.addEventListener("click", (e: Event) => {
-    e.preventDefault();
-    EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-      projectKey: $projectKey?.value,
-      baseURL: $baseURL?.value,
-      clientKey: $clientKey?.value,
-      sourceKey: $sourceKey?.value,
-    });
-
-    // setTimeout(() => {
-    //   ApiClient.getInstance()
-    //     .getAnnotations("195")
-    //     .then((e: Annotation[]) => {
-    //       const a = e.find((a) => (a.attribute = "body"));
-    //       if (a) {
-    //         a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
-    //         EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
-    //       }
-    //     });
-    // }, 3000);
-  });
-}
-
 export class Settings extends BaseComponent {
   componentType = "Settings";
 
@@ -51,10 +23,49 @@ export class Settings extends BaseComponent {
   }
 
   initComponent(): void {
-    initializeEventHubEvents();
     this.disableFieldsWhenNecessary();
+    this.initializeEventHubEvents();
     this.initAnnotationToggleEvents();
-    connect();
+    $button?.addEventListener("click", (e: Event) => {
+      e.preventDefault();
+      this.connect();
+    });
+  }
+
+  initializeEventHubEvents() {
+    ApiClient.initializeEvents();
+    EventHub.getInstance().makeEvent(
+      Events.LOCAL_STORAGE_FETCHED,
+      ({ baseURL, clientKey, sourceKey }) => {
+        $baseURL?.setAttribute("value", baseURL);
+        $clientKey?.setAttribute("value", clientKey);
+        $sourceKey?.setAttribute("value", sourceKey);
+        this.disableFieldsWhenNecessary();
+
+        // TODO: emit event to initialize data right away, because we got the values from localStorage
+        // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
+        //   $projectKey: $projectKey?.value,
+        //   baseURL,
+        //   clientKey,
+        //   sourceKey,
+        // });
+      },
+    );
+    EventHub.getInstance().sendCustomEvent(Events.FETCH_LOCAL_STORAGE, {});
+  }
+
+  connect() {
+    EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
+      projectKey: $projectKey?.value,
+      baseURL: $baseURL?.value,
+      clientKey: $clientKey?.value,
+      sourceKey: $sourceKey?.value,
+    });
+    EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
+      baseURL: $baseURL?.value,
+      clientKey: $clientKey?.value,
+      sourceKey: $sourceKey?.value,
+    });
   }
 
   checkConnectionSpinnerExample() {
