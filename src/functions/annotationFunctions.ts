@@ -425,23 +425,19 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 }
 
 export function sendDataToFrontend() {
-  let found = false;
-  let i = 0;
-
   if (figma.currentPage.selection[0] !== undefined) {
-    while (i < linkAnnotationToSourceNodes.length && !found) {
-      if (linkAnnotationToSourceNodes[i].sourceNode === figma.currentPage.selection[0]) {
-        found = true;
-        figma.ui.postMessage({
-          type: "updateFields",
-          payload: {
-            values: linkAnnotationToSourceNodes[i].data,
-          },
-        });
-      }
-      i++;
+    const found = linkAnnotationToSourceNodes.find(
+      (x) => x.sourceNode.id === figma.currentPage.selection[0].id,
+    );
+    if (found !== undefined) {
+      figma.ui.postMessage({
+        type: "updateFields",
+        payload: {
+          values: found.data,
+        },
+      });
     }
-    if (found !== true) {
+    if (found === undefined) {
       figma.ui.postMessage({ type: "clearFields" });
     }
   } else {
