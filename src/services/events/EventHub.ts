@@ -105,6 +105,7 @@ export default class EventHub {
         },
       };
       // Send event to browser
+      parent.postMessage(data, "*");
       window.postMessage(data, "*");
       console.debug(`[EVENT] Emit ${prefixedEventName} to Browser (ui.ts)`, data);
     } else {

@@ -41,6 +41,30 @@ figma.ui.onmessage = (event) => {
       figma.ui.resize(345, 124);
     }
   }
+
+  if (event.type === EventHub.getInstance().prefixEventName(Events.FETCH_LOCAL_STORAGE)) {
+    figma.clientStorage.getAsync("baseURL").then((baseURL) => {
+      figma.clientStorage.getAsync("clientKey").then((clientKey) => {
+        figma.clientStorage.getAsync("sourceKey").then((sourceKey) => {
+          figma.ui.postMessage({
+            type: EventHub.getInstance().prefixEventName(Events.LOCAL_STORAGE_FETCHED),
+            message: {
+              baseURL,
+              clientKey,
+              sourceKey,
+            },
+          });
+        });
+      });
+    });
+  }
+
+  if (event.type === EventHub.getInstance().prefixEventName(Events.SET_LOCAL_STORAGE)) {
+    const { baseURL, clientKey, sourceKey } = event.message;
+    figma.clientStorage.setAsync("baseURL", baseURL);
+    figma.clientStorage.setAsync("clientKey", clientKey);
+    figma.clientStorage.setAsync("sourceKey", sourceKey);
+  }
 };
 
 // Dispatch all components -> in figma use postMessage
