@@ -1,10 +1,10 @@
-import { IfigmaMessage } from "../interfaces/interface.figmaObject";
-import { BaseComponent } from "./baseComponent";
+import { IfigmaMessage } from "../interfaces/interface.figmaMessage";
 
 export class FigmaLocalStorage {
   componentType = "FigmaLocalStorage";
   url = "not good";
 
+  //pseudo constructor -> can't be real constructor because it's also called in code.ts (figma)
   initEventlistener(): void {
     window.addEventListener("message", (event) => {
       //event.data.pluginMessage.figmaMessage.type
@@ -17,18 +17,18 @@ export class FigmaLocalStorage {
   }
 
   initComponent(): void {
-    window.addEventListener("message", (event) => {
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: "sendDataToUI",
-          },
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "sendDataToUI",
         },
-        "*",
-      );
+      },
+      "*",
+    );
+    window.addEventListener("message", (event) => {
       if (event.data.pluginMessage.figmaMessage.type === "baseURL") {
-        this.url = event.data.pluginMessage.figmaMessage.baseURL;
-        console.log("url is set", this.url);
+        this.url = event.data.pluginMessage.figmaMessage.message.baseURL;
+        console.log("after senddata url", this.url);
       }
     });
   }
@@ -123,7 +123,7 @@ export class FigmaLocalStorage {
         const baseURL = await figma.clientStorage.getAsync("baseURL");
         const figmaMessage: IfigmaMessage = {
           type: "baseURL",
-          baseURL: baseURL,
+          message: { baseURL: baseURL },
         };
         // figma.ui.postMessage({ payload: { url: baseURL, type: "baseURL" } });
         // (figma.ui as any).dispatchEvent(new CustomEvent("baseURLRetrieved"));

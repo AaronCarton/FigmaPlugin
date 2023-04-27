@@ -1,5 +1,5 @@
 import { FigmaLocalStorage } from "./ui/figmaLocalStorage";
-import { IfigmaMessage } from "./interfaces/interface.figmaObject";
+import { IfigmaMessage } from "./interfaces/interface.figmaMessage";
 const figmaLocalStorage = new FigmaLocalStorage();
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
@@ -62,7 +62,7 @@ figma.ui.onmessage = (event) => {
     figmaLocalStorage.setSourceKey(event.sourceKey);
   }
   if (event.type === "sendDataToUI") {
-    console.log("sendDataToUI");
+    console.log("sendDataToUI", event);
     figmaLocalStorage.retrieveBaseURLFromStorage();
   }
 };
@@ -70,6 +70,7 @@ figma.ui.onmessage = (event) => {
 function initializeComponent(componentName: string): void {
   const figmaMessage: IfigmaMessage = {
     type: `initialize${componentName}`,
+    message: {},
   };
 
   figma.ui.postMessage({ figmaMessage: figmaMessage });
