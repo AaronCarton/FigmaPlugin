@@ -8,7 +8,7 @@ const noConnectionPanel: HTMLElement | null = document.querySelector(".js-discon
 
 const isActive = "is-active";
 
-// Still testing connection purposes.
+// Still testing connection purposes
 const connectionState = true;
 
 export class NavigationTabs extends BaseComponent {
@@ -94,5 +94,5 @@ tabs.forEach((trigger) =>
   }),
 );
 
-// Still testing connection purposes.
+// Still testing connection purposes
 checkConnectionPurpose();
