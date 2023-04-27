@@ -37,9 +37,9 @@ export class Settings extends BaseComponent {
     EventHub.getInstance().makeEvent(
       Events.LOCAL_STORAGE_FETCHED,
       ({ baseURL, clientKey, sourceKey }) => {
-        $baseURL?.setAttribute("value", baseURL);
-        $clientKey?.setAttribute("value", clientKey);
-        $sourceKey?.setAttribute("value", sourceKey);
+        $baseURL?.setAttribute("value", baseURL || "");
+        $clientKey?.setAttribute("value", clientKey || "");
+        $sourceKey?.setAttribute("value", sourceKey || "");
         this.disableFieldsWhenNecessary();
 
         // TODO: emit event to initialize data right away, because we got the values from localStorage
