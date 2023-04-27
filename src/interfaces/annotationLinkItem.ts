@@ -1,4 +1,4 @@
-import { AnnotationInput } from "./annotations";
+import { AnnotationInput } from "./annotationInput";
 
 export interface annotationLinkItem {
   annotation: FrameNode;
