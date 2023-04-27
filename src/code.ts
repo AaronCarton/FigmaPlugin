@@ -43,6 +43,7 @@ figma.ui.onmessage = (event) => {
   }
 
   if (event.type === EventHub.getInstance().prefixEventName(Events.FETCH_LOCAL_STORAGE)) {
+    // TODO: try to find a way to use EventHub functions instead (without getting 'X is not a function' error)
     figma.clientStorage.getAsync("baseURL").then((baseURL) => {
       figma.clientStorage.getAsync("clientKey").then((clientKey) => {
         figma.clientStorage.getAsync("sourceKey").then((sourceKey) => {
