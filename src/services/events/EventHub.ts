@@ -34,8 +34,7 @@ export default class EventHub {
     // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
       // Check if event listener already exists
-      const foundEvent = this.handlers.find((h) => h.type === prefixedEventName);
-      if (foundEvent && foundEvent.originalCallback.toString() === cb.toString()) {
+      if (this.checkDuplicateEvent(eventType, cb)) {
         return console.warn(
           `[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`,
         );
@@ -61,8 +60,7 @@ export default class EventHub {
       );
     } else {
       // Check if event listener already exists
-      const foundEvent = this.handlers.find((h) => h.type === prefixedEventName);
-      if (foundEvent && foundEvent.originalCallback.toString() === cb.toString()) {
+      if (this.checkDuplicateEvent(eventType, cb)) {
         return console.warn(
           `[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`,
         );
@@ -149,6 +147,19 @@ export default class EventHub {
     return "Propertize_message_" + eventName;
   }
 
+  /**
+   * Checks if the event is already registered
+   * @param {string} eventType - Event type that will be checked
+   * @param {function} cb - Callback function that will be checked
+   * @returns {boolean} - True if the event is already registered, False if not
+   */
+  private checkDuplicateEvent(eventType: string, cb: (message: any) => void): boolean {
+    return this.handlers.some(
+      (event) =>
+        event.type === this.prefixEventName(eventType) &&
+        event.originalCallback.toString() === cb.toString(),
+    );
+  }
   /**
    * Checks if the window and document objects are available, which means that the code is running from ui.ts, instead of code.ts
    * @returns True if running in ui.ts and False if running in code.ts
