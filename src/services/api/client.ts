@@ -21,7 +21,7 @@ interface RequestOptions {
 }
 
 export default class ApiClient {
-  private static instance: ApiClient;
+  private static instance: ApiClient | undefined;
   public static BASE_URL: string;
   public static CLIENT_APIKEY: string;
   public static SOURCE_APIKEY: string;
@@ -31,6 +31,8 @@ export default class ApiClient {
 
     // Initialize API client
     eventHub.makeEvent(Events.INITIALIZE_DATA, ({ projectKey, baseURL, clientKey, sourceKey }) => {
+      ApiClient.resetClient(); // Reset client first if already initialized
+
       const api = ApiClient.initialize({
         baseURL,
         clientKey,
@@ -41,10 +43,18 @@ export default class ApiClient {
         console.log(project);
         api.getAnnotations(project?.itemKey || "").then((annotations) => {
           console.log(annotations);
+          const a = annotations.find((a) => (a.attribute = "body"));
+          if (a) {
+            a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
+          }
         });
       });
 
       // Register create listener
+      eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
+        await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
+      });
       eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
         await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
       });
@@ -53,7 +63,6 @@ export default class ApiClient {
       eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
         await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
       });
-
       // TODO: add ARCHIVE and UNARCHIVE listeners
     });
   }
@@ -76,6 +85,17 @@ export default class ApiClient {
     ApiClient.instance = new ApiClient();
 
     return ApiClient.instance;
+  }
+
+  public static resetClient() {
+    // Reset API instance
+    ApiClient.instance = undefined;
+    ApiClient.BASE_URL = "";
+    ApiClient.CLIENT_APIKEY = "";
+    ApiClient.SOURCE_APIKEY = "";
+    // Remove listeners
+    EventHub.getInstance().removeEvent(Events.CREATE_ANNOTATION);
+    EventHub.getInstance().removeEvent(Events.UPDATE_ANNOTATION);
   }
 
   /**

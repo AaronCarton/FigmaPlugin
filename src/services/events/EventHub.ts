@@ -92,7 +92,7 @@ export default class EventHub {
   removeEvent(eventType: string): void {
     const prefixedEventName = this.prefixEventName(eventType);
     if (this.hasAccessToUI()) {
-      window.removeEventListener(prefixedEventName, this.handlers[prefixedEventName]);
+      window.removeEventListener("message", this.handlers[prefixedEventName]);
     } else {
       figma.ui.off(prefixedEventName, this.handlers[prefixedEventName]);
     }

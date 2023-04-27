@@ -29,17 +29,17 @@ function connect() {
       sourceKey: $sourceKey?.value,
     });
 
-    setTimeout(() => {
-      ApiClient.getInstance()
-        .getAnnotations("195")
-        .then((e: Annotation[]) => {
-          const a = e.find((a) => (a.attribute = "body"));
-          if (a) {
-            a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
-            EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
-          }
-        });
-    }, 3000);
+    // setTimeout(() => {
+    //   ApiClient.getInstance()
+    //     .getAnnotations("195")
+    //     .then((e: Annotation[]) => {
+    //       const a = e.find((a) => (a.attribute = "body"));
+    //       if (a) {
+    //         a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
+    //         EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
+    //       }
+    //     });
+    // }, 3000);
   });
 }
 
