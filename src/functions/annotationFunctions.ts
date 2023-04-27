@@ -1,7 +1,7 @@
 import { frame } from "../interfaces/frame";
 import { AnnotationElements } from "../classes/annotationElements";
 import { PropertizeConstants } from "../classes/propertizeConstants";
-import { AnnotationInput } from "../interfaces/annotations";
+import { AnnotationInput } from "../interfaces/annotationInput";
 import { createFigmaError } from "./createError";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
@@ -230,15 +230,24 @@ function drawAnnotations(
   sourceNodes: Array<SceneNode>,
   inputValues: AnnotationInput,
 ) {
+  console.log("entered drawing method");
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
   sortNodesAccordingToYCoords(sourceNodes);
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
-    console.log("drawing: ", sourceNodes[i]);
-    let found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
+    const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
+
     let annotation;
+
+    // Remove old drawn vector an annotation of the sourcenode (only if the sourcenode already had an annotation).
+    if (found !== undefined) {
+      figma.currentPage.findOne((x) => x.id === found?.annotation.id)?.remove();
+      figma.currentPage.findOne((x) => x.id === found?.vector.id)?.remove();
+    }
+
+    // If links of the sourcenode already exist
     found === undefined
       ? (annotation = createAnnotation(inputValues))
       : (annotation = createAnnotation(found.data));
@@ -249,9 +258,10 @@ function drawAnnotations(
     AnnotationElements.annotationLayer.appendChild(annotation);
     const line = drawConnector(annotation, sourceNodes[i]);
 
-    // Added for being able to update when sourcenode changes.
+    // Updating the link of the drawn annotation and its elements
     if (found === undefined) {
       if (line !== undefined) {
+        // Creating a new link and pushing it to array.
         linkAnnotationToSourceNodes.push({
           annotation: annotation,
           sourceNode: sourceNodes[i],
@@ -260,17 +270,15 @@ function drawAnnotations(
         });
       }
     } else {
-      if (line !== undefined) {
-        found = {
+      if (line !== undefined)
+        // Updating existing link in the array.
+        linkAnnotationToSourceNodes[linkAnnotationToSourceNodes.indexOf(found)] = {
           annotation: annotation,
           sourceNode: sourceNodes[i],
           vector: line,
-          data: inputValues,
+          data: found.data,
         };
-      }
     }
-
-    console.log("Links after drawing: ", linkAnnotationToSourceNodes);
   }
 }
 
@@ -366,7 +374,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find(
       (x) => x.sourceNode.id === currentItem.id,
     );
-
     if (found !== undefined) {
       // Item already has an annotation.
       found.data = inputValues;
@@ -378,10 +385,12 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         found.annotation.x = Coords.x;
         found.annotation.y = Coords.y;
       }
+      linkAnnotationToSourceNodes[linkAnnotationToSourceNodes.indexOf(found)] = found;
     } else {
       // Item doesn't have an annotation yet.
       const parent = determineParentFrame(currentItem);
       const foundParent = AnnotationElements.parentFrames.find((x) => x.frame.id === parent.id);
+
       if (foundParent !== undefined) {
         // Parent frame of new item found in parentFrames array.
         const side = determineFrameSide(currentItem, foundParent.frame);
@@ -397,7 +406,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         // Parent frame of new item is not yet added to parentFrames Array.
         console.log;
         const newParentFrame = makeFramesArray();
-        console.log("after updated if parent not found: ", AnnotationElements.parentFrames);
         if (newParentFrame !== undefined) {
           // Determine side of the annotation
           const side = determineFrameSide(currentItem, newParentFrame.frame);
@@ -409,6 +417,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
           drawAnnotations(startPoint, sourceNodes, inputValues);
         }
       }
+      console.log(linkAnnotationToSourceNodes);
     }
   }
 }
