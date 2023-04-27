@@ -1,13 +1,13 @@
 export abstract class BaseComponent {
   abstract componentType: string;
 
+  abstract initComponent(): void;
+
   constructor() {
     window.addEventListener("message", (event) => {
-      if (event.data.pluginMessage.pluginMessage.type === "initialize" + this.componentType) {
+      if (event.data.pluginMessage.type === "initialize" + this.componentType) {
         this.initComponent();
       }
     });
   }
-
-  abstract initComponent(): void;
 }

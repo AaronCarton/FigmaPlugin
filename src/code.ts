@@ -1,3 +1,6 @@
+import EventHub from "./services/events/EventHub";
+import { Events } from "./services/events/Events";
+
 class messageTitle {
   public static readonly changeTab: string = "changeTab";
   public static readonly connectionCheck: string = "connectionCheck";
@@ -40,14 +43,12 @@ figma.ui.onmessage = (event) => {
   }
 };
 
-//Dispatch all components -> in figma use postMessage
-//Use the class names for initializeComponent
+// Dispatch all components -> in figma use postMessage
+// Use the class names for initializeComponent
 initializeComponent("Settings");
 initializeComponent("NavigationTabs");
 initializeComponent("ConnectPanel");
 
 function initializeComponent(componentName: string): void {
-  figma.ui.postMessage({
-    pluginMessage: { type: `initialize${componentName}` },
-  });
+  figma.ui.postMessage({ type: `initialize${componentName}` });
 }
