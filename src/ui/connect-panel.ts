@@ -1,9 +1,6 @@
 import { MessageTitle } from "../classes/messageTitles";
 import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
-import ApiClient from "../services/api/client";
-import EventHub from "../services/events/EventHub";
-import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
@@ -23,7 +20,9 @@ export class ConnectPanel extends BaseComponent {
     super();
   }
 
-  initComponent(): void {}
+  initComponent(): void {
+    console.log("ConnectPanel initialized.");
+  }
 }
 
 function handleIconClick(trigger: HTMLElement) {

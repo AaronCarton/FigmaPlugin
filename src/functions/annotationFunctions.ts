@@ -2,7 +2,6 @@ import { frame } from "../interfaces/frame";
 import { AnnotationElements } from "../classes/annotationElements";
 import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
-import { createFigmaError } from "./createError";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let layerState = true;
