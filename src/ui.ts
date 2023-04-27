@@ -1,3 +1,7 @@
-import "./ui/navigation-tabs";
-import "./ui/settings-panel";
-import "./ui/connect-panel";
+import { NavigationTabs } from "./ui/navigation-tabs";
+import { Settings } from "./ui/settings-panel";
+import { ConnectPanel } from "./ui/connect-panel";
+
+new Settings();
+new NavigationTabs();
+new ConnectPanel();

@@ -1,9 +1,12 @@
 import { MessageTitle } from "../classes/messageTitles";
 import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
+import ApiClient from "../services/api/client";
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
+import { BaseComponent } from "./baseComponent";
 
 const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
-
 const dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
 const entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
@@ -12,6 +15,16 @@ const sampleValue: HTMLInputElement | null = document.querySelector(".js-sample-
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
+
+export class ConnectPanel extends BaseComponent {
+  componentType = "ConnectPanel";
+
+  constructor() {
+    super();
+  }
+
+  initComponent(): void {}
+}
 
 function handleIconClick(trigger: HTMLElement) {
   const selectedAttribute = trigger.getAttribute("data-target");
