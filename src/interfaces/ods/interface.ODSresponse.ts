@@ -61,7 +61,6 @@ export abstract class ODSObject<T extends ODSObject<T>> {
    */
   public async archive() {
     this.archived = new Date().toISOString(); // save the current date as ISO string
-    this.save();
   }
 
   /**
@@ -71,32 +70,33 @@ export abstract class ODSObject<T extends ODSObject<T>> {
    */
   public async restore() {
     this.archived = null; // remove archived property
-    this.save();
   }
 
   /**
    * Save the item
+   * @deprecated USE UPDATE_ANNOTATION EVENT INSTEAD
    */
   public async save() {
-    await this.API.upsertItem(this.itemType, this.itemKey, this.stripODS());
+    await this.API.upsertItem(this.itemType, this.itemKey, stripODS(this));
   }
+}
 
-  /**
-   * stripODS() removes the ODSobject properties from the child object
-   * and returns a new object without them.
-   * This is necessary because the ODS API does not accept
-   * these additional properties when updating an object.
-   *
-   * @returns {T} a new object without the ODS properties
-   */
-  public stripODS(): T {
-    const x = { ...this } as Record<string, unknown>;
-    delete x.API;
-    delete x.itemKey;
-    delete x.itemType;
-    delete x.localized;
-    delete x.partition;
+/**
+ * stripODS() removes the ODSobject properties from the child object
+ * and returns a new object without them.
+ * This is necessary because the ODS API does not accept
+ * these additional properties when updating an object.
+ *
+ * @param obj - the object to strip
+ * @returns {T} a new object without the ODS properties
+ */
+export function stripODS<T extends ODSObject<T>>(obj: T): T {
+  const x = { ...obj } as Record<string, unknown>;
+  delete x.API;
+  delete x.itemKey;
+  delete x.itemType;
+  delete x.localized;
+  delete x.partition;
 
-    return x as T;
-  }
+  return x as T;
 }

@@ -1,10 +1,15 @@
 import { FigmaLocalStorage } from "./figmaLocalStorage";
+import Annotation from "../interfaces/interface.annotation";
+import ApiClient from "../services/api/client";
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
+const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey"); // TODO: remove this when integrated with the plugin
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
 //Spinner
@@ -15,6 +20,34 @@ const settingsTab: HTMLElement | null = document.querySelector(".a-settings-tab"
 //Initialize local storage
 const figmaLocalStorage = new FigmaLocalStorage();
 
+function initializeEventHubEvents() {
+  ApiClient.initializeEvents();
+}
+
+function connect() {
+  $button?.addEventListener("click", (e: Event) => {
+    e.preventDefault();
+    EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
+      projectKey: $projectKey?.value,
+      baseURL: $baseURL?.value,
+      clientKey: $clientKey?.value,
+      sourceKey: $sourceKey?.value,
+    });
+
+    // setTimeout(() => {
+    //   ApiClient.getInstance()
+    //     .getAnnotations("195")
+    //     .then((e: Annotation[]) => {
+    //       const a = e.find((a) => (a.attribute = "body"));
+    //       if (a) {
+    //         a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
+    //         EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
+    //       }
+    //     });
+    // }, 3000);
+  });
+}
+
 export class Settings extends BaseComponent {
   componentType = "Settings";
 
@@ -23,9 +56,11 @@ export class Settings extends BaseComponent {
   }
 
   initComponent(): void {
+    initializeEventHubEvents();
     this.disableFieldsWhenNecessary();
     this.initAnnotationToggleEvents();
     this.loadKeysFromLocalStorage();
+    connect();
   }
 
   checkConnectionSpinnerExample() {
