@@ -15,9 +15,9 @@ export default class EventHub {
   }
 
   /**
-   * Creates an event registered under the event name
-   * @param {string} eventType - The type of the event that will be listened to
-   * @param {function} callback - The function that is called when the event is triggered
+   * Creates an event listener for the given event type and calls the callback function when the event is triggered
+   * @param {string} eventType - The name of the event that will be listened to
+   * @param {function} callback - The function that will be called when the event is triggered
    */
   makeEvent(eventType: string, callback: (message: any) => void): void {
     if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
@@ -58,8 +58,8 @@ export default class EventHub {
 
   /**
    * It sends a custom event with the eventName and a message
-   * @param {string} eventName - The name of the event that will be listened to
-   * @param {any} message - Message that will be sent with the event, can be anything
+   * @param {string} eventType - The name of the event that will be sent
+   * @param {any} message - The message that will be sent with the event
    */
   sendCustomEvent(eventType: string, message: any): void {
     const prefixedEventName = this.prefixEventName(eventType);
