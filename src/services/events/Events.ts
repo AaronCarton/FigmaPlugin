@@ -7,4 +7,8 @@ export class Events {
 
   public static readonly UPDATE_ANNOTATION: any = "UPDATE_ANNOTATION";
   public static readonly TOGGLE_ANNOTATIONS: any = "TOGGLE_ANNOTATIONS";
+
+  public static readonly FETCH_LOCAL_STORAGE: any = "FETCH_LOCAL_STORAGE";
+  public static readonly LOCAL_STORAGE_FETCHED: any = "LOCAL_STORAGE_FETCHED";
+  public static readonly SET_LOCAL_STORAGE: any = "SET_LOCAL_STORAGE";
 }
