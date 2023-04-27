@@ -27,7 +27,7 @@ figma.ui.onmessage = (event) => {
       break;
 
     case MessageTitle.changeVisibility:
-      changeLayerVisibility(event.value);
+      changeLayerVisibility(payload.state);
       break;
 
     default:

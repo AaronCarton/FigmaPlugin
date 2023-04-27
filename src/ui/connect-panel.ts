@@ -1,6 +1,6 @@
 import { MessageTitle } from "../classes/messageTitles";
 import { createFigmaError } from "../functions/createError";
-import { AnnotationInput } from "../interfaces/annotations";
+import { AnnotationInput } from "../interfaces/annotationInput";
 
 const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
 

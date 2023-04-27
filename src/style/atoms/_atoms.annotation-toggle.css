@@ -51,3 +51,7 @@
   -ms-transform: translateX(12px);
   transform: translateX(12px);
 }
+
+.a-annotation-toggle__input:disabled + .a-annotation-toggle__slider {
+  opacity: 0.4;
+}
