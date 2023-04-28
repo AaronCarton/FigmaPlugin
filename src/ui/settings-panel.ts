@@ -11,9 +11,11 @@ const $clientKey: HTMLInputElement | null = document.querySelector("#settings_cl
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey"); // TODO: remove this when integrated with the plugin
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
-const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
+
+export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
+export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 //Spinner
-const $spinner: HTMLElement | null = document.querySelector(".c-settings__loader");
+const $spinner: HTMLElement | null = document.querySelector(".c-settings-update");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 export class Settings extends BaseComponent {
