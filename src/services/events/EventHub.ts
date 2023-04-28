@@ -119,21 +119,28 @@ export default class EventHub {
 
   /**
    * Removes event from the event listeners
+   *
+   * NOTE - if no callback is given it will remove all events with the given event type
    * @param {string} eventType - Event type that will be removed
+   * @param {function} cb - Callback function that will be removed (optional)
    */
-  removeEvent(eventType: string): void {
+  removeEvent(eventType: string, cb?: (message: any) => void): void {
     const prefixedEventName = this.prefixEventName(eventType);
-    // Try and find event listener in handlers
-    const event = this.handlers.find((h) => h.type === prefixedEventName)?.callback;
-    if (!event)
+    // Filter handlers on eventType, and if cb is given also on callback
+    const events = this.handlers.filter((e) => {
+      return e.type === prefixedEventName && (!cb || e.originalCallback === cb);
+    });
+    if (events.length === 0)
       return console.warn(`[EVENT] Tried to remove unregistered ${prefixedEventName}, skipping`);
 
     // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
-      window.removeEventListener("message", event);
+      events.forEach((event) => window.removeEventListener("message", event.callback));
     } else {
-      figma.ui.off(prefixedEventName, event);
+      events.forEach((event) => figma.ui.off(prefixedEventName, event.callback));
     }
+    // Remove event from handlers
+    this.handlers = this.handlers.filter((e) => !events.includes(e));
   }
 
   /**
