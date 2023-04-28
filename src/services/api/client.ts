@@ -43,17 +43,12 @@ export default class ApiClient {
       api.getProject(projectKey).then((project) => {
         console.log(project);
         api.getAnnotations(project?.itemKey || "").then((annotations) => {
-          console.log(annotations);
-          if ($button && $date) {
-            const now = new Date().toLocaleString("en-GB").replace(",", "");
-            $button.innerHTML = "Refresh";
-            $date.innerHTML = now;
-          }
           const a = annotations.find((a) => (a.attribute = "body"));
           if (a) {
             a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
             EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
           }
+          EventHub.getInstance().sendCustomEvent(Events.DATA_INITIALIZED, annotations);
         });
       });
 

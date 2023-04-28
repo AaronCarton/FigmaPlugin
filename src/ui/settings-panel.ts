@@ -38,6 +38,14 @@ export class Settings extends BaseComponent {
 
   initializeEventHubEvents() {
     ApiClient.initializeEvents();
+    EventHub.getInstance().makeEvent(Events.DATA_INITIALIZED, (data: Annotation[]) => {
+      console.log("DATA_INITIALIZED", data);
+      if ($button && $date) {
+        const now = new Date().toLocaleString("en-GB").replace(",", "");
+        $button.innerHTML = "Refresh";
+        $date.innerHTML = now;
+      }
+    });
     EventHub.getInstance().makeEvent(
       Events.LOCAL_STORAGE_FETCHED,
       ({ baseURL, clientKey, sourceKey }) => {
