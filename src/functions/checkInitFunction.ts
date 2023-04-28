@@ -2,7 +2,7 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { initAnnotations, updateAnnotations } from "./annotationFunctions";
 import { createFigmaError } from "./createError";
 
-let initState = true;
+let initState: boolean = true;
 
 export function checkInitState(values: AnnotationInput) {
   if (figma.currentPage.selection[0] !== undefined) {

@@ -5,7 +5,7 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
-let layerState = true;
+let layerState: boolean = true;
 
 function createAnnotation(inputValues: AnnotationInput) {
   const page = figma.currentPage;
