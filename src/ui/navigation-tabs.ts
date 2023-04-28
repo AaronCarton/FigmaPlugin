@@ -1,3 +1,4 @@
+import { MessageTitle } from "../classes/messageTitles";
 import { BaseComponent } from "./baseComponent";
 
 const tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
@@ -39,7 +40,7 @@ export class NavigationTabs extends BaseComponent {
           parent.postMessage(
             {
               pluginMessage: {
-                type: "changeTab",
+                type: MessageTitle.changeTab,
                 payload: {
                   tab: selectedTab,
                   connection: connectionState,
@@ -65,36 +66,41 @@ function checkConnectionPurpose() {
       noConnectionPanel.classList.add(isActive);
     }
     parent.postMessage(
-      { pluginMessage: { type: "connectionCheck", payload: { connection: connectionState } } },
+      {
+        pluginMessage: {
+          type: MessageTitle.connectionCheck,
+          payload: { connection: connectionState },
+        },
+      },
       "*",
     );
   }
 }
 
-tabs.forEach((trigger) =>
-  trigger.addEventListener("click", () => {
-    const selectedTab = trigger.getAttribute("data-target");
-    tabs.forEach((item) => {
-      item.classList.remove(isActive);
-    });
-    panelItems.forEach((item) => {
-      item.classList.remove(isActive);
-    });
-    trigger.classList.add(isActive);
-    if (selectedTab !== null) {
-      document.getElementById(selectedTab)?.classList.add(isActive);
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: "changeTab",
-            payload: { tab: selectedTab, connection: connectionState },
-          },
-        },
-        "*",
-      );
-    }
-  }),
-);
+// tabs.forEach((trigger) =>
+//   trigger.addEventListener("click", () => {
+//     const selectedTab = trigger.getAttribute("data-target");
+//     tabs.forEach((item) => {
+//       item.classList.remove(isActive);
+//     });
+//     panelItems.forEach((item) => {
+//       item.classList.remove(isActive);
+//     });
+//     trigger.classList.add(isActive);
+//     if (selectedTab !== null) {
+//       document.getElementById(selectedTab)?.classList.add(isActive);
+//       parent.postMessage(
+//         {
+//           pluginMessage: {
+//             type: MessageTitle.changeTab,
+//             payload: { tab: selectedTab, connection: connectionState },
+//           },
+//         },
+//         "*",
+//       );
+//     }
+//   }),
+// );
 
 // Still testing connection purposes
 checkConnectionPurpose();

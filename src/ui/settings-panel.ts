@@ -1,3 +1,4 @@
+import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
 import ApiClient from "../services/api/client";
 import EventHub from "../services/events/EventHub";
@@ -89,7 +90,7 @@ export class Settings extends BaseComponent {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "changeVisibility",
+            type: MessageTitle.changeVisibility,
             payload: { state: state },
           },
         },
@@ -100,7 +101,7 @@ export class Settings extends BaseComponent {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "changeVisibility",
+            type: MessageTitle.changeVisibility,
             payload: { state: state },
           },
         },

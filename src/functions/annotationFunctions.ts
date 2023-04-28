@@ -3,6 +3,7 @@ import { AnnotationElements } from "../classes/annotationElements";
 import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
+import { MessageTitle } from "../classes/messageTitles";
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let layerState = true;
 
@@ -21,19 +22,10 @@ function createAnnotation(inputValues: AnnotationInput) {
   frame.dashPattern = [10, 5];
   frame.cornerRadius = 10;
 
-  const textTitles = ["Data source", "Entity", "Attribute", "Data type", "Sample value"];
-  const textValues = [
-    inputValues.dataSrc,
-    inputValues.entity,
-    inputValues.attribute,
-    inputValues.dataType,
-    inputValues.sampleValue,
-  ];
-
-  textTitles.forEach((title, index) => {
+  Object.keys(inputValues).forEach((title, index) => {
     const titlesNode = figma.createText();
     titlesNode.name = title;
-    titlesNode.characters = title;
+    titlesNode.characters = PropertizeConstants[`${title}Label`];
     titlesNode.fontSize = 11;
     titlesNode.x = 15;
     titlesNode.y = 22 * index + 15;
@@ -42,7 +34,7 @@ function createAnnotation(inputValues: AnnotationInput) {
     frame.appendChild(titlesNode);
   });
 
-  textValues.forEach((title, index) => {
+  Object.values(inputValues).forEach((title, index) => {
     const valuesNode = figma.createText();
     valuesNode.name = title;
     valuesNode.characters = title;
@@ -237,7 +229,7 @@ function drawAnnotations(
   for (let i = 0; i < sourceNodes.length; i++) {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
 
-    let annotation;
+    let annotation: FrameNode;
 
     // Remove old drawn vector an annotation of the sourcenode (only if the sourcenode already had an annotation).
     if (found !== undefined) {
@@ -430,16 +422,16 @@ export function sendDataToFrontend() {
     );
     if (found !== undefined) {
       figma.ui.postMessage({
-        type: "updateFields",
+        type: MessageTitle.updateFields,
         payload: {
           values: found.data,
         },
       });
     }
     if (found === undefined) {
-      figma.ui.postMessage({ type: "clearFields" });
+      figma.ui.postMessage({ type: MessageTitle.clearFields });
     }
   } else {
-    figma.ui.postMessage({ type: "clearFields" });
+    figma.ui.postMessage({ type: MessageTitle.clearFields });
   }
 }

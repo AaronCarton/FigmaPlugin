@@ -139,7 +139,7 @@ if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "createText",
+            type: MessageTitle.createText,
             payload: {
               values: {
                 dataSrc: dataSrc.value.trim(),

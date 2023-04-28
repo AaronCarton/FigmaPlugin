@@ -1,13 +1,15 @@
+import { PropertizeConstants } from "../classes/propertizeConstants";
+
 export function resizeByTab(tab: string, connection: boolean) {
   console.log("Resize");
   switch (tab) {
-    case "connect":
+    case PropertizeConstants.connectTab:
       resizeByConnection(connection);
       break;
-    case "settings":
+    case PropertizeConstants.settingsTab:
       figma.ui.resize(345, 355);
       break;
-    case "usage":
+    case PropertizeConstants.usageTab:
       figma.ui.resize(345, 590);
       break;
     default:
