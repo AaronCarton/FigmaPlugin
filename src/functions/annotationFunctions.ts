@@ -56,9 +56,9 @@ function createAnnotation(inputValues: AnnotationInput) {
 
 function determineFrameSide(elem: SceneNode, parentFrame: FrameNode) {
   if (elem.absoluteTransform[0][2] < parentFrame.absoluteTransform[0][2] + parentFrame.width / 2) {
-    return "left";
+    return PropertizeConstants.sideLeft;
   } else {
-    return "right";
+    return PropertizeConstants.sideRight;
   }
 }
 
@@ -106,7 +106,7 @@ function makeFramesArray() {
           sourceNodesRight: [],
         };
 
-        if (frameside === "left") {
+        if (frameside === PropertizeConstants.sideLeft) {
           console.log("Current element ", currentElement, ".");
           const indexOfElement: number = newFramesItem.sourceNodesLeft.findIndex(
             (x) => x.id === currentElement.id,
@@ -139,7 +139,7 @@ function makeFramesArray() {
 
         if (parentframe !== undefined) {
           // Determine left or right of parent frame, add to according array of the object.
-          if (frameside === "left") {
+          if (frameside === PropertizeConstants.sideLeft) {
             const indexOfElement: number = parentframe.sourceNodesLeft.findIndex(
               (x) => x.id === currentElement.id,
             );
@@ -224,7 +224,6 @@ function drawAnnotations(
   sourceNodes: Array<SceneNode>,
   inputValues: AnnotationInput,
 ) {
-  console.log("entered drawing method");
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
   sortNodesAccordingToYCoords(sourceNodes);
@@ -392,9 +391,13 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         // Parent frame of new item found in parentFrames array.
         const side = determineFrameSide(currentItem, foundParent.frame);
         const startPoint =
-          side === "left" ? foundParent.startpointLeft : foundParent.startpointRight;
+          side === PropertizeConstants.sideLeft
+            ? foundParent.startpointLeft
+            : foundParent.startpointRight;
         const sourceNodes =
-          side === "left" ? foundParent.sourceNodesLeft : foundParent.sourceNodesRight;
+          side === PropertizeConstants.sideLeft
+            ? foundParent.sourceNodesLeft
+            : foundParent.sourceNodesRight;
         // Push item to corresponding array.
         sourceNodes.push(currentItem);
         // Redraw that updated array.
@@ -407,9 +410,13 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
           // Determine side of the annotation
           const side = determineFrameSide(currentItem, newParentFrame.frame);
           const startPoint =
-            side === "left" ? newParentFrame.startpointLeft : newParentFrame.startpointRight;
+            side === PropertizeConstants.sideLeft
+              ? newParentFrame.startpointLeft
+              : newParentFrame.startpointRight;
           const sourceNodes =
-            side === "left" ? newParentFrame.sourceNodesLeft : newParentFrame.sourceNodesRight;
+            side === PropertizeConstants.sideLeft
+              ? newParentFrame.sourceNodesLeft
+              : newParentFrame.sourceNodesRight;
           //sourceNodes.push(currentItem);
           drawAnnotations(startPoint, sourceNodes, inputValues);
         }
