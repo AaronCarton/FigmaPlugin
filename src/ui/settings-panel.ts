@@ -1,3 +1,4 @@
+import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
 import ApiClient from "../services/api/client";
 import EventHub from "../services/events/EventHub";
@@ -10,9 +11,11 @@ const $clientKey: HTMLInputElement | null = document.querySelector("#settings_cl
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey"); // TODO: remove this when integrated with the plugin
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
-const $button: HTMLButtonElement | null = document.querySelector(".c-plugin__btnConnect");
+
+export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
+export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 //Spinner
-const $spinner: HTMLElement | null = document.querySelector(".c-plugin__loader");
+const $spinner: HTMLElement | null = document.querySelector(".c-settings-update");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 export class Settings extends BaseComponent {
@@ -26,6 +29,7 @@ export class Settings extends BaseComponent {
     this.disableFieldsWhenNecessary();
     this.initializeEventHubEvents();
     this.initAnnotationToggleEvents();
+    $annotationToggle?.addEventListener("click", this.toggleAnnotations);
     $button?.addEventListener("click", (e: Event) => {
       e.preventDefault();
       this.connect();
@@ -80,14 +84,34 @@ export class Settings extends BaseComponent {
         $spinner?.setAttribute("hidden", "");
       });
   }
+
   toggleAnnotations(e: Event) {
     const state: boolean = (<HTMLInputElement>e.target).checked;
     if (state === true) {
-      console.log("show annotations");
+      console.log("Show annotations.");
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: MessageTitle.changeVisibility,
+            payload: { state: state },
+          },
+        },
+        "*",
+      );
     } else {
-      console.log("hide annotations");
+      console.log("Hide annotations.");
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: MessageTitle.changeVisibility,
+            payload: { state: state },
+          },
+        },
+        "*",
+      );
     }
   }
+
   disableFieldsWhenNecessary() {
     if (
       $baseURL !== null &&
@@ -112,12 +136,13 @@ export class Settings extends BaseComponent {
         $sourceKey.value.replace(/\s/g, "") !== "" &&
         $clientKey.value.replace(/\s/g, "") !== ""
       ) {
+        console.log("enable button");
         $annotationToggle.disabled = false;
         $button.addEventListener("click", this.checkConnectionSpinnerExample);
+      } else {
+        $annotationToggle.disabled = true;
+        $button.removeEventListener("click", this.checkConnectionSpinnerExample);
       }
-    } else {
-      $annotationToggle.disabled = true;
-      $button.removeEventListener("click", this.checkConnectionSpinnerExample);
     }
   }
 

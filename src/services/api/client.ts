@@ -4,6 +4,7 @@ import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
 import EventHub from "../events/EventHub";
 import { Events } from "../events/Events";
+import { $button, $date } from "../../ui/settings-panel";
 
 interface ApiOptions {
   baseURL: string;
@@ -43,6 +44,11 @@ export default class ApiClient {
         console.log(project);
         api.getAnnotations(project?.itemKey || "").then((annotations) => {
           console.log(annotations);
+          if ($button && $date) {
+            const now = new Date().toLocaleString("en-GB").replace(",", "");
+            $button.innerHTML = "Refresh";
+            $date.innerHTML = now;
+          }
           const a = annotations.find((a) => (a.attribute = "body"));
           if (a) {
             a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;

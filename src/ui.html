@@ -71,6 +71,7 @@
               id="entity-select"
               class="c-connect__field--select js-entity is-active"
               required
+              disabled
             >
               <option value="" selected disabled hidden>Choose entity</option>
               <option value="Entity 1">Entity 1</option>
@@ -78,9 +79,9 @@
               <option value="Entity 3">Entity 3</option>
               <option value="Entity 4">Entity 4</option>
             </select>
-            <div class="c-connect__field--text" id="entity-text">
+            <div class="c-connect__field--text disabled" id="entity-text">
               <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" id="entity-field" />
+                <input type="text" class="c-connect__field--input" id="entity-field" disabled />
               </div>
             </div>
           </div>
@@ -94,6 +95,7 @@
               id="attribute-select"
               class="c-connect__field--select js-attribute is-active"
               required
+              disabled
             >
               <option value="" selected disabled hidden>Choose attribute</option>
               <option value="Attribute 1">Attribute 1</option>
@@ -101,9 +103,9 @@
               <option value="Attribute 3">Attribute 3</option>
               <option value="Attribute 4">Attribute 4</option>
             </select>
-            <div class="c-connect__field--text" id="attribute-text">
+            <div class="c-connect__field--text disabled" id="attribute-text">
               <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" id="attribute-field" />
+                <input type="text" class="c-connect__field--input" id="attribute-field" disabled />
               </div>
             </div>
           </div>
@@ -117,16 +119,17 @@
               id="data-type-select"
               class="c-connect__field--select js-data-type is-active"
               required
+              disabled
             >
               <option value="" selected disabled hidden>Choose type</option>
-              <option value="Type 1">Type 1</option>
-              <option value="Type 2">Type 2</option>
-              <option value="Type 3">Type 3</option>
-              <option value="Type 4">Type 4</option>
+              <option value="String">String</option>
+              <option value="Number">Number</option>
+              <option value="Image">Image</option>
+              <option value="Symbol">Symbol</option>
             </select>
-            <div class="c-connect__field--text" id="data-type-text">
+            <div class="c-connect__field--text disabled" id="data-type-text">
               <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" id="data-type-field" />
+                <input type="text" class="c-connect__field--input" id="data-type-field" disabled />
               </div>
             </div>
           </div>
@@ -152,35 +155,43 @@
     <!-- #endregion -->
     <!-- #region SETTINGS PANEL  -->
     <section class="c-settings js-panel-item" id="settings">
-      <form class="c-plugin__form">
-        <div class="c-plugin__row">
-          <label class="c-plugin__settingsLabel" for="settings_dbLink"
+      <form class="c-settings__form">
+        <div class="c-settings__row">
+          <label class="c-settings__settingsLabel" for="settings_dbLink"
             >Connect to database, enter link:</label
           >
-          <input class="c-plugin__input" id="settings_dbLink" type="text" />
+          <input class="c-settings__input" id="settings_dbLink" type="text" />
         </div>
-        <div class="c-plugin__row">
-          <label class="c-plugin__settingsLabel" for="settings_clientKey">API client key:</label>
-          <input class="c-plugin__input" id="settings_clientKey" type="text" />
+        <div class="c-settings__row">
+          <label class="c-settings__settingsLabel" for="settings_clientKey">API client key:</label>
+          <input class="c-settings__input" id="settings_clientKey" type="text" />
         </div>
-        <div class="c-plugin__row">
-          <label class="c-plugin__settingsLabel" for="settings_sourceKey">API source key:</label>
-          <input class="c-plugin__input" id="settings_sourceKey" type="text" />
+        <div class="c-settings__row">
+          <label class="c-settings__settingsLabel" for="settings_sourceKey">API source key:</label>
+          <input class="c-settings__input" id="settings_sourceKey" type="text" />
         </div>
-        <div class="c-plugin__row">
-          <label class="c-plugin__settingsLabel" for="settings_projectKey">Project key:</label>
-          <input class="c-plugin__input" id="settings_projectKey" type="text" />
+        <div class="c-settings__row">
+          <label class="c-settings__settingsLabel" for="settings_projectKey">Project key:</label>
+          <input class="c-settings__input" id="settings_projectKey" type="text" />
         </div>
-        <div class="c-plugin__row--horizontal">
+        <div class="c-settings__row--horizontal">
           <p>Show annotations</p>
           <label class="a-annotation-toggle">
-            <input class="a-annotation-toggle__input" id="annotationToggle" type="checkbox" />
+            <input
+              class="a-annotation-toggle__input"
+              id="annotationToggle"
+              type="checkbox"
+              checked
+            />
             <span class="a-annotation-toggle__slider"></span>
           </label>
         </div>
-        <div class="c-plugin__row--horizontal">
-          <p>Last update: <span id="settings_lastUpdate">14/07/2023</span></p>
-          <button class="c-plugin__btnConnect">Connect</button>
+        <div class="c-settings__row--horizontal">
+          <p>
+            Last update:
+            <span id="settings_lastUpdate" class="c-settings__date">28/04/2023 14:23:54</span>
+          </p>
+          <a class="c-settings__btnConnect">Connect</a>
         </div>
       </form>
     </section>

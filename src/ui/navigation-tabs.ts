@@ -1,3 +1,4 @@
+import { MessageTitle } from "../classes/messageTitles";
 import { BaseComponent } from "./baseComponent";
 
 const tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
@@ -8,7 +9,7 @@ const noConnectionPanel: HTMLElement | null = document.querySelector(".js-discon
 
 const isActive = "is-active";
 
-// still testing connection purposes
+// Still testing connection purposes
 const connectionState = true;
 
 export class NavigationTabs extends BaseComponent {
@@ -39,9 +40,11 @@ export class NavigationTabs extends BaseComponent {
           parent.postMessage(
             {
               pluginMessage: {
-                type: "changeTab",
-                tab: selectedTab,
-                connection: connectionState,
+                type: MessageTitle.changeTab,
+                payload: {
+                  tab: selectedTab,
+                  connection: connectionState,
+                },
               },
             },
             "*",
@@ -63,8 +66,16 @@ function checkConnectionPurpose() {
       noConnectionPanel.classList.add(isActive);
     }
     parent.postMessage(
-      { pluginMessage: { type: "connectionCheck", connection: connectionState } },
+      {
+        pluginMessage: {
+          type: MessageTitle.connectionCheck,
+          payload: { connection: connectionState },
+        },
+      },
       "*",
     );
   }
 }
+
+// Still testing connection purposes
+checkConnectionPurpose();

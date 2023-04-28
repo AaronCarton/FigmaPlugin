@@ -1,22 +1,14 @@
-import ApiClient from "../services/api/client";
-import EventHub from "../services/events/EventHub";
-import { Events } from "../services/events/Events";
+import { MessageTitle } from "../classes/messageTitles";
+import { createFigmaError } from "../functions/createError";
+import { AnnotationInput } from "../interfaces/annotationInput";
 import { BaseComponent } from "./baseComponent";
 
-const buttons: NodeListOf<HTMLElement> = document.querySelectorAll(".js-btn");
+const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
 const dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
 const entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const dataType: HTMLInputElement | null = document.querySelector(".js-data-type");
 const sampleValue: HTMLInputElement | null = document.querySelector(".js-sample-value");
-
-// select elements
-const $inputDataSource: HTMLInputElement | null = document.querySelector("#data-source-select");
-const $inputEntity: HTMLInputElement | null = document.querySelector("#entity-select");
-const $inputAttribute: HTMLInputElement | null = document.querySelector("#attribute-select");
-const $inputDatatype: HTMLInputElement | null = document.querySelector("#data-type-select");
-const $inputValue: HTMLInputElement | null = document.querySelector("#js-sample-value");
-const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -29,24 +21,8 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    initializeEvents();
+    console.log("ConnectPanel initialized.");
   }
-}
-
-function initializeEvents() {
-  // EventHub.getInstance().makeEvent(Events.UPDATE_ANNOTATION, () => {
-  //   const body = {
-  //     projectKey: $projectKey?.value,
-  //     nodeId: "cec66bdf", // TODO: when integrated with the plugin, this should change to the node id from the figma file
-  //     dataSource: $inputDataSource?.value,
-  //     entity: $inputEntity?.value,
-  //     attribute: $inputAttribute?.value,
-  //     dataType: $inputDatatype?.value,
-  //     value: $inputValue?.value,
-  //   } as any;
-  //   ApiClient.getInstance().upsertItem("annotation", "3414883772", body); // TODO: when integrated with the plugin, this should change to the itemKey of the figma file
-  //   console.log(body); // TODO: remove this
-  // });
 }
 
 function handleIconClick(trigger: HTMLElement) {
@@ -77,7 +53,7 @@ function checkFields(
   selectElement.addEventListener("change", () => {
     const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
     const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
-    if (textField !== null && textArea !== null) {
+    if (textField && textArea) {
       if (selectElement.value.trim().length !== 0) {
         changeElement1.disabled = false;
         textField.disabled = false;
@@ -85,6 +61,59 @@ function checkFields(
       }
     }
   });
+}
+
+function updateFields(message: AnnotationInput) {
+  if (dataSrc && entity && attribute && dataType && sampleValue) {
+    dataSrc.value = message.dataSrc;
+    entity.value = message.entity;
+    entity.disabled = false;
+    attribute.value = message.attribute;
+    attribute.disabled = false;
+    dataType.value = message.dataType;
+    dataType.disabled = false;
+    sampleValue.value = message.sampleValue;
+
+    changeFieldsOnInput("entity", false);
+    changeFieldsOnInput("attribute", false);
+    changeFieldsOnInput("data-type", false);
+  } else {
+    createFigmaError("Error updating fields.", 5000, true);
+  }
+}
+
+function clearFields() {
+  if (dataSrc && entity && attribute && dataType && sampleValue) {
+    dataSrc.value = "";
+    entity.value = "";
+    entity.disabled = true;
+    attribute.value = "";
+    attribute.disabled = true;
+    dataType.value = "";
+    dataType.disabled = true;
+    sampleValue.value = "";
+
+    changeFieldsOnInput("entity", true);
+    changeFieldsOnInput("attribute", true);
+    changeFieldsOnInput("data-type", true);
+  } else {
+    createFigmaError("Error clearing fields.", 5000, true);
+  }
+}
+
+function changeFieldsOnInput(fieldName: string, state: boolean) {
+  const textField = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
+  const textArea = document.querySelector<HTMLElement>(`#${fieldName}-text`);
+
+  if (textField && textArea) {
+    if (state === true) {
+      textField.disabled = true;
+      textArea.classList.add("disabled");
+    } else {
+      textField.disabled = false;
+      textArea.classList.remove("disabled");
+    }
+  }
 }
 
 if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
@@ -110,13 +139,15 @@ if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "createText",
-            values: {
-              dataSrc: dataSrc.value.trim(),
-              entity: entity.value.trim(),
-              attribute: attribute.value.trim(),
-              dataType: dataType.value.trim(),
-              sampleValue: sampleValue.value.trim(),
+            type: MessageTitle.createText,
+            payload: {
+              values: {
+                dataSrc: dataSrc.value.trim(),
+                entity: entity.value.trim(),
+                attribute: attribute.value.trim(),
+                dataType: dataType.value.trim(),
+                sampleValue: sampleValue.value.trim(),
+              },
             },
           },
         },
@@ -125,3 +156,21 @@ if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
     }
   });
 }
+
+window.addEventListener("message", (e) => {
+  const messageType = e.data.pluginMessage.type;
+  const payload = e.data.pluginMessage.payload;
+
+  switch (messageType) {
+    case MessageTitle.updateFields:
+      updateFields(payload.values);
+      break;
+
+    case MessageTitle.clearFields:
+      clearFields();
+      break;
+
+    default:
+      break;
+  }
+});
