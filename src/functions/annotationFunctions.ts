@@ -401,7 +401,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         // Push item to corresponding array.
         sourceNodes.push(currentItem);
         // Redraw that updated array.
-        drawAnnotations(startPoint, sourceNodes, inputValues);
+        drawAnnotations(startPoint, sortNodesAccordingToYCoords(sourceNodes), inputValues);
       } else {
         // Parent frame of new item is not yet added to parentFrames Array.
         console.log;
@@ -418,7 +418,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
               ? newParentFrame.sourceNodesLeft
               : newParentFrame.sourceNodesRight;
           //sourceNodes.push(currentItem);
-          drawAnnotations(startPoint, sourceNodes, inputValues);
+          drawAnnotations(startPoint, sortNodesAccordingToYCoords(sourceNodes), inputValues);
         }
       }
       console.log(linkAnnotationToSourceNodes);
