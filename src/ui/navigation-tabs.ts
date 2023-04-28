@@ -40,8 +40,10 @@ export class NavigationTabs extends BaseComponent {
             {
               pluginMessage: {
                 type: "changeTab",
-                tab: selectedTab,
-                connection: connectionState,
+                payload: {
+                  tab: selectedTab,
+                  connection: connectionState,
+                },
               },
             },
             "*",

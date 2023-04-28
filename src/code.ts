@@ -12,7 +12,6 @@ figma.showUI(__html__, { width: 345, height: 250 });
 figma.ui.onmessage = (event) => {
   const eventType = event.type;
   const payload = event.payload;
-  console.log("event", event);
 
   loadFonts();
 
