@@ -24,8 +24,12 @@ function createAnnotation(inputValues: AnnotationInput) {
 
   Object.keys(inputValues).forEach((title, index) => {
     const titlesNode = figma.createText();
-    titlesNode.name = title;
-    titlesNode.characters = PropertizeConstants[`${title}Label`];
+    titlesNode.name = PropertizeConstants[
+      `${title}Label` as keyof typeof PropertizeConstants
+    ] as string;
+    titlesNode.characters = PropertizeConstants[
+      `${title}Label` as keyof typeof PropertizeConstants
+    ] as string;
     titlesNode.fontSize = 11;
     titlesNode.x = 15;
     titlesNode.y = 22 * index + 15;
