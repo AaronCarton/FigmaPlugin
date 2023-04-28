@@ -31,6 +31,7 @@
   color: var(--propertize__color--white);
   border: none;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .c-settings__input {
