@@ -77,30 +77,5 @@ function checkConnectionPurpose() {
   }
 }
 
-// tabs.forEach((trigger) =>
-//   trigger.addEventListener("click", () => {
-//     const selectedTab = trigger.getAttribute("data-target");
-//     tabs.forEach((item) => {
-//       item.classList.remove(isActive);
-//     });
-//     panelItems.forEach((item) => {
-//       item.classList.remove(isActive);
-//     });
-//     trigger.classList.add(isActive);
-//     if (selectedTab !== null) {
-//       document.getElementById(selectedTab)?.classList.add(isActive);
-//       parent.postMessage(
-//         {
-//           pluginMessage: {
-//             type: MessageTitle.changeTab,
-//             payload: { tab: selectedTab, connection: connectionState },
-//           },
-//         },
-//         "*",
-//       );
-//     }
-//   }),
-// );
-
 // Still testing connection purposes
 checkConnectionPurpose();
