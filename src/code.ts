@@ -41,14 +41,26 @@ figma.ui.onmessage = (event) => {
     figma.clientStorage.getAsync("baseURL").then((baseURL) => {
       figma.clientStorage.getAsync("clientKey").then((clientKey) => {
         figma.clientStorage.getAsync("sourceKey").then((sourceKey) => {
-          figma.ui.postMessage({
-            type: EventHub.getInstance().prefixEventName(Events.LOCAL_STORAGE_FETCHED),
-            message: {
-              baseURL,
-              clientKey,
-              sourceKey,
-            },
-          });
+          //TODO: check if localStorage is empty in separate function next sprint
+          if (baseURL !== undefined || clientKey !== undefined || sourceKey !== undefined) {
+            figma.ui.postMessage({
+              type: EventHub.getInstance().prefixEventName(Events.LOCAL_STORAGE_FETCHED),
+              message: {
+                baseURL,
+                clientKey,
+                sourceKey,
+              },
+            });
+          } else {
+            figma.ui.postMessage({
+              type: EventHub.getInstance().prefixEventName(Events.LOCAL_STORAGE_FETCHED),
+              message: {
+                baseURL: "t",
+                clientKey: "",
+                sourceKey: "",
+              },
+            });
+          }
         });
       });
     });

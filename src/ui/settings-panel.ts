@@ -137,10 +137,10 @@ export class Settings extends BaseComponent {
         console.log("enable button");
         $annotationToggle.disabled = false;
         $button.addEventListener("click", this.checkConnectionSpinnerExample);
+      } else {
+        $annotationToggle.disabled = true;
+        $button.removeEventListener("click", this.checkConnectionSpinnerExample);
       }
-    } else {
-      $annotationToggle.disabled = true;
-      $button.removeEventListener("click", this.checkConnectionSpinnerExample);
     }
   }
 
