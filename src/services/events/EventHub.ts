@@ -34,7 +34,7 @@ export default class EventHub {
     if (this.hasAccessToUI()) {
       // Check if event listener already exists
       if (this.checkDuplicateEvent(eventType, cb)) {
-        return console.warn(`[EVENT] - Event ${prefixedEventName} already registered with that callback.`);
+        return console.warn(`[EVENT] Event ${prefixedEventName} already registered with that callback.`);
       }
 
       // Store callback in handlers (for later removal)
@@ -51,11 +51,11 @@ export default class EventHub {
 
       // Register event listener in browser
       window.addEventListener("message", callback);
-      console.debug(`[EVENT] - Registered ${prefixedEventName} in Browser (ui.ts)`, this.handlers[prefixedEventName]);
+      console.debug(`[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`, this.handlers[prefixedEventName]);
     } else {
       // Check if event listener already exists
       if (this.checkDuplicateEvent(eventType, cb)) {
-        return console.warn(`[EVENT] - Event ${prefixedEventName} already registered with that callback, skipping...`);
+        return console.warn(`[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`);
       }
 
       // Store callback in handlers (for later removal)
@@ -72,7 +72,7 @@ export default class EventHub {
 
       // Register event listener in Figma
       figma.ui.onmessage = callback;
-      console.debug(`[EVENT] - Register ${prefixedEventName} in Figma (code.ts)`, this.handlers[prefixedEventName]);
+      console.debug(`[EVENT] Register ${prefixedEventName} in Figma (code.ts)`, this.handlers[prefixedEventName]);
     }
   }
 
@@ -94,7 +94,7 @@ export default class EventHub {
       // Send event to browser
       parent.postMessage(data, "*");
       window.postMessage(data, "*");
-      console.debug(`[EVENT] - Emit ${prefixedEventName} to Browser (ui.ts)`, data);
+      console.debug(`[EVENT] Emit ${prefixedEventName} to Browser (ui.ts)`, data);
     } else {
       const data: IfigmaMessage = {
         type: prefixedEventName,
@@ -102,7 +102,7 @@ export default class EventHub {
       };
       // Send event to Figma
       figma.ui.postMessage(data);
-      console.debug(`[EVENT] - Emit ${prefixedEventName} to Figma (code.ts)`, data);
+      console.debug(`[EVENT] Emit ${prefixedEventName} to Figma (code.ts)`, data);
     }
   }
 
@@ -119,7 +119,7 @@ export default class EventHub {
     const events = this.handlers.filter((e) => {
       return e.type === prefixedEventName && (!cb || e.originalCallback === cb);
     });
-    if (events.length === 0) return console.warn(`[EVENT] - Tried to remove unregistered ${prefixedEventName}, skipping`);
+    if (events.length === 0) return console.warn(`[EVENT] Tried to remove unregistered ${prefixedEventName}, skipping`);
 
     // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
@@ -138,7 +138,7 @@ export default class EventHub {
    */
   prefixEventType(eventType: string): any {
     if (eventType === null || eventType === undefined) throw new Error("The eventType is undefined");
-    return "PROPERTIZE_MESSAGE_" + eventType;
+    return `PROPERTIZE_MESSAGE_${eventType}`;
   }
 
   /**
