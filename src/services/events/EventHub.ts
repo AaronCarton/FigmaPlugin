@@ -138,7 +138,7 @@ export default class EventHub {
    */
   prefixEventType(eventType: string): any {
     if (eventType === null || eventType === undefined) throw new Error("The eventType is undefined");
-    return "PROPERTIZE_MESSAGE_" + eventType;
+    return "Propertize_message_" + eventType;
   }
 
   /**
