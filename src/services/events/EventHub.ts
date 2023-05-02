@@ -31,47 +31,38 @@ export default class EventHub {
     if (typeof cb !== "function") throw new TypeError("The callback must be a function");
     const prefixedEventName = this.prefixEventType(eventType);
 
-    if (this.hasAccessToUI()) {
-      // Check if event listener already exists
-      if (this.checkDuplicateEvent(eventType, cb)) {
-        return console.warn(`[EVENT] Event ${prefixedEventName} already registered with that callback.`);
-      }
+    // Check if event listener is already registered
+    if (this.checkDuplicateEvent(eventType, cb)) {
+      return console.warn(`[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`);
+    }
 
-      // Store callback in handlers (for later removal)
-      const callback = (event: any) => {
+    // Construct event listener callback
+    const callback = (event: any) => {
+      // Check payload matches that of a plugin event (else it'll be a Figma.UI event)
+      //! This might change in the future if plugin events are no longer wrapped in a pluginMessage
+      if (event.data?.pluginMessage) {
         if (event.data.pluginMessage.type === prefixedEventName) {
-          const message = event.data.pluginMessage.message;
-          const messageObject = message.messageObject; // Certain events have a messageObject inside the message
-          cb(messageObject || message); // If messageObject exists, send that, otherwise send the message
+          cb(event.data.pluginMessage.message);
         }
-      };
-      this.handlers.push({
-        type: prefixedEventName,
-        originalCallback: cb,
-        callback,
-      });
-
-      // Register event listener in browser
-      window.addEventListener("message", callback);
-      console.debug(`[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`);
-    } else {
-      // Check if event listener already exists
-      if (this.checkDuplicateEvent(eventType, cb)) {
-        return console.warn(`[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`);
-      }
-
-      // Store callback in handlers (for later removal)
-      const callback = (event: any) => {
+      } else {
         if (event.type === prefixedEventName) {
           cb(event.message);
         }
-      };
-      this.handlers.push({
-        type: prefixedEventName,
-        originalCallback: cb,
-        callback,
-      });
+      }
+    };
 
+    // Store event listener in handlers
+    this.handlers.push({
+      type: prefixedEventName,
+      originalCallback: cb,
+      callback,
+    });
+
+    if (this.hasAccessToUI()) {
+      // Register event listener in plugin
+      window.addEventListener("message", callback);
+      console.debug(`[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`);
+    } else {
       // Register event listener in Figma
       figma.ui.on("message", callback);
       console.info(`[EVENT] Register ${prefixedEventName} in Figma (code.ts)`);
@@ -85,23 +76,22 @@ export default class EventHub {
    */
   sendCustomEvent(eventType: string, message: any): void {
     const prefixedEventName = this.prefixEventType(eventType);
+    const data = {
+      type: prefixedEventName,
+      message: message,
+    };
+
     // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
-      const data = {
-        pluginMessage: {
-          type: prefixedEventName,
-          message: message,
-        },
-      };
       // Send event to browser
-      parent.postMessage(data, "*");
-      window.postMessage(data, "*");
+      // TODO: Check if it is still needed to send to both parent and window.
+      // TODO: Also check if it is still necessary to wrap the data in a pluginMessage,
+      // TODO: would it fail to differentiate between plugin and browser events in the callback if not?
+      // TODO: Is it even necessary to differentiate them?
+      parent.postMessage({ pluginMessage: data }, "*");
+      window.postMessage({ pluginMessage: data }, "*");
       console.debug(`[EVENT] Emit ${prefixedEventName} to Browser (ui.ts)`, data);
     } else {
-      const data: IfigmaMessage = {
-        type: prefixedEventName,
-        message: { messageObject: message },
-      };
       // Send event to Figma
       figma.ui.postMessage(data);
       console.info(`[EVENT] Emit ${prefixedEventName} to Figma (code.ts)`, data);
