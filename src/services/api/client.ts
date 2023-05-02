@@ -4,6 +4,7 @@ import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
 import EventHub from "../events/EventHub";
 import { Events } from "../events/Events";
+import { initAnnotations } from "../../functions/annotationFunctions";
 
 interface ApiOptions {
   baseURL: string;

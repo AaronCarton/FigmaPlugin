@@ -1,5 +1,5 @@
 import { MessageTitle } from "./classes/messageTitles";
-import { changeLayerVisibility, sendDataToFrontend } from "./functions/annotationFunctions";
+import { changeLayerVisibility, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
@@ -8,7 +8,7 @@ import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
 
 figma.showUI(__html__, { width: 345, height: 250 });
-
+figma.on("selectionchange", () => console.log(figma.currentPage.selection));
 figma.ui.onmessage = (event) => {
   const eventType = event.type;
   const payload = event.payload;
@@ -64,6 +64,10 @@ figma.ui.onmessage = (event) => {
         });
       });
     });
+  }
+
+  if (event.type === EventHub.getInstance().prefixEventName(Events.DATA_INITIALIZED)) {
+    initAnnotations(event.message);
   }
 
   if (event.type === EventHub.getInstance().prefixEventName(Events.SET_LOCAL_STORAGE)) {
