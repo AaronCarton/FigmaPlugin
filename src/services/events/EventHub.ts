@@ -35,9 +35,7 @@ export default class EventHub {
     if (this.hasAccessToUI()) {
       // Check if event listener already exists
       if (this.checkDuplicateEvent(eventType, cb)) {
-        return console.warn(
-          `[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`,
-        );
+        return console.warn(`[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`);
       }
 
       // Store callback in handlers (for later removal)
@@ -54,16 +52,11 @@ export default class EventHub {
 
       // Register event listener in browser
       window.addEventListener("message", callback);
-      console.debug(
-        `[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`,
-        this.handlers[prefixedEventName],
-      );
+      console.debug(`[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`, this.handlers[prefixedEventName]);
     } else {
       // Check if event listener already exists
       if (this.checkDuplicateEvent(eventType, cb)) {
-        return console.warn(
-          `[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`,
-        );
+        return console.warn(`[EVENT] Event ${prefixedEventName} already registered with that callback, skipping...`);
       }
 
       // Store callback in handlers (for later removal)
@@ -80,10 +73,7 @@ export default class EventHub {
 
       // Register event listener in Figma
       figma.ui.onmessage = callback;
-      console.debug(
-        `[EVENT] Register ${prefixedEventName} in Figma (code.ts)`,
-        this.handlers[prefixedEventName],
-      );
+      console.debug(`[EVENT] Register ${prefixedEventName} in Figma (code.ts)`, this.handlers[prefixedEventName]);
     }
   }
 
@@ -130,8 +120,7 @@ export default class EventHub {
     const events = this.handlers.filter((e) => {
       return e.type === prefixedEventName && (!cb || e.originalCallback === cb);
     });
-    if (events.length === 0)
-      return console.warn(`[EVENT] Tried to remove unregistered ${prefixedEventName}, skipping`);
+    if (events.length === 0) return console.warn(`[EVENT] Tried to remove unregistered ${prefixedEventName}, skipping`);
 
     // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
@@ -149,8 +138,7 @@ export default class EventHub {
    * @returns {string} - The prefixed event name. Eg."Propertize_message_eventName"
    */
   prefixEventName(eventName: string): any {
-    if (eventName === null || eventName === undefined)
-      throw new Error("The event name is undefined");
+    if (eventName === null || eventName === undefined) throw new Error("The event name is undefined");
     return "Propertize_message_" + eventName;
   }
 
@@ -161,11 +149,7 @@ export default class EventHub {
    * @returns {boolean} - True if the event is already registered, False if not
    */
   private checkDuplicateEvent(eventType: string, cb: (message: any) => void): boolean {
-    return this.handlers.some(
-      (event) =>
-        event.type === this.prefixEventName(eventType) &&
-        event.originalCallback.toString() === cb.toString(),
-    );
+    return this.handlers.some((event) => event.type === this.prefixEventName(eventType) && event.originalCallback.toString() === cb.toString());
   }
   /**
    * Checks if the window and document objects are available, which means that the code is running from ui.ts, instead of code.ts

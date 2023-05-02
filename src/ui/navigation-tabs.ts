@@ -1,11 +1,11 @@
 import { MessageTitle } from "../classes/messageTitles";
 import { BaseComponent } from "./baseComponent";
 
-const tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
-const panelItems: NodeListOf<HTMLElement> = document.querySelectorAll(".js-panel-item");
+const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
+const $panelItems: NodeListOf<HTMLElement> = document.querySelectorAll(".js-panel-item");
 
-const connectionPanel: HTMLElement | null = document.querySelector(".js-connection");
-const noConnectionPanel: HTMLElement | null = document.querySelector(".js-disconnected");
+const $connectionPanel: HTMLElement | null = document.querySelector(".js-connection");
+const $noConnectionPanel: HTMLElement | null = document.querySelector(".js-disconnected");
 
 const isActive = "is-active";
 
@@ -25,13 +25,13 @@ export class NavigationTabs extends BaseComponent {
   }
 
   private navigateBetweenTabs() {
-    tabs.forEach((tab) =>
+    $tabs.forEach((tab) =>
       tab.addEventListener("click", () => {
         const selectedTab = tab.getAttribute("data-target");
-        tabs.forEach((item) => {
+        $tabs.forEach((item) => {
           item.classList.remove(isActive);
         });
-        panelItems.forEach((item) => {
+        $panelItems.forEach((item) => {
           item.classList.remove(isActive);
         });
         tab.classList.add(isActive);
@@ -57,13 +57,13 @@ export class NavigationTabs extends BaseComponent {
 
 // still testing connection purposes
 function checkConnectionPurpose() {
-  if (connectionPanel !== null && noConnectionPanel !== null) {
+  if ($connectionPanel !== null && $noConnectionPanel !== null) {
     if (connectionState) {
-      connectionPanel.classList.add(isActive);
-      noConnectionPanel.classList.remove(isActive);
+      $connectionPanel.classList.add(isActive);
+      $noConnectionPanel.classList.remove(isActive);
     } else {
-      connectionPanel.classList.remove(isActive);
-      noConnectionPanel.classList.add(isActive);
+      $connectionPanel.classList.remove(isActive);
+      $noConnectionPanel.classList.add(isActive);
     }
     parent.postMessage(
       {

@@ -3,12 +3,12 @@ import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { BaseComponent } from "./baseComponent";
 
-const buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
-const dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
-const entity: HTMLInputElement | null = document.querySelector(".js-entity");
-const attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
-const dataType: HTMLInputElement | null = document.querySelector(".js-data-type");
-const sampleValue: HTMLInputElement | null = document.querySelector(".js-sample-value");
+const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
+const $dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
+const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
+const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
+const $dataType: HTMLInputElement | null = document.querySelector(".js-data-type");
+const $sampleValue: HTMLInputElement | null = document.querySelector(".js-sample-value");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -45,11 +45,7 @@ function handleIconClick(trigger: HTMLElement) {
   }
 }
 
-function checkFields(
-  selectElement: HTMLInputElement,
-  changeElement1: HTMLInputElement,
-  disabledId: string,
-) {
+function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
   selectElement.addEventListener("change", () => {
     const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
     const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
@@ -64,15 +60,15 @@ function checkFields(
 }
 
 function updateFields(message: AnnotationInput) {
-  if (dataSrc && entity && attribute && dataType && sampleValue) {
-    dataSrc.value = message.dataSrc;
-    entity.value = message.entity;
-    entity.disabled = false;
-    attribute.value = message.attribute;
-    attribute.disabled = false;
-    dataType.value = message.dataType;
-    dataType.disabled = false;
-    sampleValue.value = message.sampleValue;
+  if ($dataSrc && $entity && $attribute && $dataType && $sampleValue) {
+    $dataSrc.value = message.dataSrc;
+    $entity.value = message.entity;
+    $entity.disabled = false;
+    $attribute.value = message.attribute;
+    $attribute.disabled = false;
+    $dataType.value = message.dataType;
+    $dataType.disabled = false;
+    $sampleValue.value = message.sampleValue;
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
@@ -83,15 +79,15 @@ function updateFields(message: AnnotationInput) {
 }
 
 function clearFields() {
-  if (dataSrc && entity && attribute && dataType && sampleValue) {
-    dataSrc.value = "";
-    entity.value = "";
-    entity.disabled = true;
-    attribute.value = "";
-    attribute.disabled = true;
-    dataType.value = "";
-    dataType.disabled = true;
-    sampleValue.value = "";
+  if ($dataSrc && $entity && $attribute && $dataType && $sampleValue) {
+    $dataSrc.value = "";
+    $entity.value = "";
+    $entity.disabled = true;
+    $attribute.value = "";
+    $attribute.disabled = true;
+    $dataType.value = "";
+    $dataType.disabled = true;
+    $sampleValue.value = "";
 
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);
@@ -116,25 +112,25 @@ function changeFieldsOnInput(fieldName: string, state: boolean) {
   }
 }
 
-if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
-  buttons.forEach((icon) => {
+if ($buttons && $dataSrc && $entity && $attribute && $dataType && $sampleValue) {
+  $buttons.forEach((icon) => {
     icon.addEventListener("click", () => {
       handleIconClick(icon);
     });
   });
 
-  checkFields(dataSrc, entity, "entity");
-  checkFields(entity, attribute, "attribute");
-  checkFields(attribute, dataType, "data-type");
+  checkFields($dataSrc, $entity, "entity");
+  checkFields($entity, $attribute, "attribute");
+  checkFields($attribute, $dataType, "data-type");
 
-  sampleValue.addEventListener("keyup", (event: KeyboardEvent) => {
+  $sampleValue.addEventListener("keyup", (event: KeyboardEvent) => {
     if (
       event.key === "Enter" &&
-      dataSrc.value.trim().length !== 0 &&
-      entity.value.trim().length !== 0 &&
-      attribute.value.trim().length !== 0 &&
-      dataType.value.trim().length !== 0 &&
-      sampleValue.value.trim().length !== 0
+      $dataSrc.value.trim().length !== 0 &&
+      $entity.value.trim().length !== 0 &&
+      $attribute.value.trim().length !== 0 &&
+      $dataType.value.trim().length !== 0 &&
+      $sampleValue.value.trim().length !== 0
     ) {
       parent.postMessage(
         {
@@ -142,11 +138,11 @@ if (buttons && dataSrc && entity && attribute && dataType && sampleValue) {
             type: MessageTitle.createText,
             payload: {
               values: {
-                dataSrc: dataSrc.value.trim(),
-                entity: entity.value.trim(),
-                attribute: attribute.value.trim(),
-                dataType: dataType.value.trim(),
-                sampleValue: sampleValue.value.trim(),
+                dataSrc: $dataSrc.value.trim(),
+                entity: $entity.value.trim(),
+                attribute: $attribute.value.trim(),
+                dataType: $dataType.value.trim(),
+                sampleValue: $sampleValue.value.trim(),
               },
             },
           },

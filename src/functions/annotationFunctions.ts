@@ -24,12 +24,8 @@ function createAnnotation(inputValues: AnnotationInput) {
 
   Object.keys(inputValues).forEach((title, index) => {
     const titlesNode = figma.createText();
-    titlesNode.name = PropertizeConstants[
-      `${title}Label` as keyof typeof PropertizeConstants
-    ] as string;
-    titlesNode.characters = PropertizeConstants[
-      `${title}Label` as keyof typeof PropertizeConstants
-    ] as string;
+    titlesNode.name = PropertizeConstants[`${title}Label` as keyof typeof PropertizeConstants] as string;
+    titlesNode.characters = PropertizeConstants[`${title}Label` as keyof typeof PropertizeConstants] as string;
     titlesNode.fontSize = 11;
     titlesNode.x = 15;
     titlesNode.y = 22 * index + 15;
@@ -108,9 +104,7 @@ function makeFramesArray() {
 
         if (frameside === PropertizeConstants.sideLeft) {
           console.log("Current element ", currentElement, ".");
-          const indexOfElement: number = newFramesItem.sourceNodesLeft.findIndex(
-            (x) => x.id === currentElement.id,
-          );
+          const indexOfElement: number = newFramesItem.sourceNodesLeft.findIndex((x) => x.id === currentElement.id);
           console.log("Found index: ", indexOfElement, ".");
           if (indexOfElement === -1) {
             newFramesItem.sourceNodesLeft.push(currentElement);
@@ -119,9 +113,7 @@ function makeFramesArray() {
           }
         } else {
           console.log("Current element ", currentElement, ".");
-          const indexOfElement: number = newFramesItem.sourceNodesRight.findIndex(
-            (x) => x.id === currentElement.id,
-          );
+          const indexOfElement: number = newFramesItem.sourceNodesRight.findIndex((x) => x.id === currentElement.id);
           console.log("Found index: ", indexOfElement, ".");
           if (indexOfElement === -1) {
             newFramesItem.sourceNodesRight.push(currentElement);
@@ -133,16 +125,12 @@ function makeFramesArray() {
         return newFramesItem;
       } else {
         // If parentframe is already added to the array.
-        const parentframe = AnnotationElements.parentFrames.find(
-          (x) => x.frame === determinedFrame,
-        );
+        const parentframe = AnnotationElements.parentFrames.find((x) => x.frame === determinedFrame);
 
         if (parentframe !== undefined) {
           // Determine left or right of parent frame, add to according array of the object.
           if (frameside === PropertizeConstants.sideLeft) {
-            const indexOfElement: number = parentframe.sourceNodesLeft.findIndex(
-              (x) => x.id === currentElement.id,
-            );
+            const indexOfElement: number = parentframe.sourceNodesLeft.findIndex((x) => x.id === currentElement.id);
             console.log("Found index: ", indexOfElement, ".");
             if (indexOfElement === -1) {
               parentframe.sourceNodesLeft.push(currentElement);
@@ -150,9 +138,7 @@ function makeFramesArray() {
               parentframe.sourceNodesLeft[indexOfElement] == currentElement;
             }
           } else {
-            const indexOfElement: number = parentframe.sourceNodesRight.findIndex(
-              (x) => x.id === currentElement.id,
-            );
+            const indexOfElement: number = parentframe.sourceNodesRight.findIndex((x) => x.id === currentElement.id);
             console.log("Found index: ", indexOfElement, ".");
             if (indexOfElement === -1) {
               parentframe.sourceNodesRight.push(currentElement);
@@ -182,11 +168,9 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
     line.vectorPaths = [
       {
         windingRule: "EVENODD",
-        data: `M ${
-          annotation.x <= destination.absoluteBoundingBox.x
-            ? annotation.x + annotation.width
-            : annotation.x
-        } ${annotation.y + annotation.height / 2} L ${
+        data: `M ${annotation.x <= destination.absoluteBoundingBox.x ? annotation.x + annotation.width : annotation.x} ${
+          annotation.y + annotation.height / 2
+        } L ${
           annotation.x <= destination.absoluteBoundingBox.x
             ? destination.absoluteBoundingBox.x
             : destination.absoluteBoundingBox.x + destination.absoluteBoundingBox.width
@@ -198,32 +182,20 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
   }
 }
 
-function determineOverlap(
-  i: number,
-  currentAnnotation: SceneNode,
-  currentSourceNode: SceneNode,
-  lastAddedAnnotationYvalue: number,
-) {
+function determineOverlap(i: number, currentAnnotation: SceneNode, currentSourceNode: SceneNode, lastAddedAnnotationYvalue: number) {
   let y;
   // If the value is the first element or the absolute position of the last annotation is.
   // Lower than the y coordinate of the source node than look at last annotationY to draw the annotation.
   i === 0 ||
-  Math.abs(
-    lastAddedAnnotationYvalue +
-      currentAnnotation.height -
-      currentSourceNode.absoluteTransform[1][2],
-  ) < currentSourceNode.absoluteTransform[1][2]
+  Math.abs(lastAddedAnnotationYvalue + currentAnnotation.height - currentSourceNode.absoluteTransform[1][2]) <
+    currentSourceNode.absoluteTransform[1][2]
     ? (y = currentSourceNode.absoluteTransform[1][2])
     : (y = lastAddedAnnotationYvalue + currentAnnotation.height + 5);
 
   return y;
 }
 
-function drawAnnotations(
-  startPoint: number,
-  sourceNodes: Array<SceneNode>,
-  inputValues: AnnotationInput,
-) {
+function drawAnnotations(startPoint: number, sourceNodes: Array<SceneNode>, inputValues: AnnotationInput) {
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
   sortNodesAccordingToYCoords(sourceNodes);
@@ -241,9 +213,7 @@ function drawAnnotations(
     }
 
     // If links of the sourcenode already exist
-    found === undefined
-      ? (annotation = createAnnotation(inputValues))
-      : (annotation = createAnnotation(found.data));
+    found === undefined ? (annotation = createAnnotation(inputValues)) : (annotation = createAnnotation(found.data));
 
     annotation.x = startPoint;
     annotation.y = determineOverlap(i, annotation, sourceNodes[i], lastAddedAnnotationY);
@@ -290,10 +260,7 @@ function createLayer() {
 }
 
 function handleAnnotationRedraws(event: DocumentChangeEvent) {
-  if (
-    AnnotationElements.parentFrames.length > 0 &&
-    AnnotationElements.annotationLayer.visible === true
-  ) {
+  if (AnnotationElements.parentFrames.length > 0 && AnnotationElements.annotationLayer.visible === true) {
     //get data of changed nodes
     const changedNodeData = event.documentChanges;
     const listOfChangedAnnotationSourceNodes = [];
@@ -301,8 +268,8 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       const changedNode = changedNodeData[i];
 
       //make searchable = if found in here => changedNode is a sourcenode of an annotation
-      const SearchMap = JSON.stringify(AnnotationElements.parentFrames);
-      const includesChangedNode = SearchMap.match(changedNode.id);
+      const searchMap = JSON.stringify(AnnotationElements.parentFrames);
+      const includesChangedNode = searchMap.match(changedNode.id);
 
       if (includesChangedNode) {
         //gives weird error on property "node" => does not exist: it does.
@@ -315,17 +282,12 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
     //when changed nodes are found: redraw them
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
       //find linkedAnnotation
-      const linkedAnnotation = linkAnnotationToSourceNodes.find(
-        (item) => item.sourceNode.id === changedNode.id,
-      );
+      const linkedAnnotation = linkAnnotationToSourceNodes.find((item) => item.sourceNode.id === changedNode.id);
 
       //find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation
       if (linkedAnnotation) {
         figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector?.id)?.remove();
-        const connector = drawConnector(
-          <SceneNode>linkedAnnotation.annotation.absoluteBoundingBox,
-          <SceneNode>changedNode,
-        );
+        const connector = drawConnector(<SceneNode>linkedAnnotation.annotation.absoluteBoundingBox, <SceneNode>changedNode);
         if (connector !== undefined) {
           linkedAnnotation.vector = connector;
         }
@@ -367,19 +329,17 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
   console.log(inputValues, "inputValues");
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
-    const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find(
-      (x) => x.sourceNode.id === currentItem.id,
-    );
+    const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
     if (found !== undefined) {
       // Item already has an annotation.
       found.data = inputValues;
-      const Coords = found.annotation.absoluteBoundingBox;
+      const coords = found.annotation.absoluteBoundingBox;
       figma.currentPage.findOne((x) => x.id === found.annotation.id)?.remove();
       found.annotation = createAnnotation(inputValues);
       AnnotationElements.annotationLayer.appendChild(found.annotation);
-      if (Coords !== null) {
-        found.annotation.x = Coords.x;
-        found.annotation.y = Coords.y;
+      if (coords !== null) {
+        found.annotation.x = coords.x;
+        found.annotation.y = coords.y;
       }
       linkAnnotationToSourceNodes[linkAnnotationToSourceNodes.indexOf(found)] = found;
     } else {
@@ -390,14 +350,8 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       if (foundParent !== undefined) {
         // Parent frame of new item found in parentFrames array.
         const side = determineFrameSide(currentItem, foundParent.frame);
-        const startPoint =
-          side === PropertizeConstants.sideLeft
-            ? foundParent.startpointLeft
-            : foundParent.startpointRight;
-        const sourceNodes =
-          side === PropertizeConstants.sideLeft
-            ? foundParent.sourceNodesLeft
-            : foundParent.sourceNodesRight;
+        const startPoint = side === PropertizeConstants.sideLeft ? foundParent.startpointLeft : foundParent.startpointRight;
+        const sourceNodes = side === PropertizeConstants.sideLeft ? foundParent.sourceNodesLeft : foundParent.sourceNodesRight;
         // Push item to corresponding array.
         sourceNodes.push(currentItem);
         // Redraw that updated array.
@@ -409,14 +363,8 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         if (newParentFrame !== undefined) {
           // Determine side of the annotation
           const side = determineFrameSide(currentItem, newParentFrame.frame);
-          const startPoint =
-            side === PropertizeConstants.sideLeft
-              ? newParentFrame.startpointLeft
-              : newParentFrame.startpointRight;
-          const sourceNodes =
-            side === PropertizeConstants.sideLeft
-              ? newParentFrame.sourceNodesLeft
-              : newParentFrame.sourceNodesRight;
+          const startPoint = side === PropertizeConstants.sideLeft ? newParentFrame.startpointLeft : newParentFrame.startpointRight;
+          const sourceNodes = side === PropertizeConstants.sideLeft ? newParentFrame.sourceNodesLeft : newParentFrame.sourceNodesRight;
           //sourceNodes.push(currentItem);
           drawAnnotations(startPoint, sortNodesAccordingToYCoords(sourceNodes), inputValues);
         }
@@ -428,9 +376,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
-    const found = linkAnnotationToSourceNodes.find(
-      (x) => x.sourceNode.id === figma.currentPage.selection[0].id,
-    );
+    const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
     if (found !== undefined) {
       figma.ui.postMessage({
         type: MessageTitle.updateFields,
