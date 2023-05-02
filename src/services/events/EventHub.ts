@@ -65,7 +65,7 @@ export default class EventHub {
     } else {
       // Register event listener in Figma
       figma.ui.on("message", callback);
-      console.info(`[EVENT] Register ${prefixedEventName} in Figma (code.ts)`);
+      console.info(`[EVENT] Register ${prefixedEventName} in Figma (code.ts)`); //? Figma node doesn't seem to have a console.debug
     }
   }
 
@@ -94,7 +94,7 @@ export default class EventHub {
     } else {
       // Send event to Figma
       figma.ui.postMessage(data);
-      console.info(`[EVENT] Emit ${prefixedEventName} to Figma (code.ts)`, data);
+      console.info(`[EVENT] Emit ${prefixedEventName} to Figma (code.ts)`, data); //? Figma node doesn't seem to have a console.debug
     }
   }
 
