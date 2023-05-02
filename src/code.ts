@@ -9,7 +9,7 @@ import { Events } from "./services/events/Events";
 
 figma.showUI(__html__, { width: 345, height: 250 });
 
-figma.ui.onmessage = (event) => {
+figma.ui.on("message", (event) => {
   const eventType = event.type;
   const payload = event.payload;
 
@@ -35,44 +35,25 @@ figma.ui.onmessage = (event) => {
     default:
       break;
   }
+});
 
-  if (event.type === EventHub.getInstance().prefixEventName(Events.FETCH_LOCAL_STORAGE)) {
-    // TODO: try to find a way to use EventHub functions instead (without getting 'X is not a function' error)
-    figma.clientStorage.getAsync("baseURL").then((baseURL) => {
-      figma.clientStorage.getAsync("clientKey").then((clientKey) => {
-        figma.clientStorage.getAsync("sourceKey").then((sourceKey) => {
-          //TODO: check if localStorage is empty in separate function next sprint
-          if (baseURL !== undefined || clientKey !== undefined || sourceKey !== undefined) {
-            figma.ui.postMessage({
-              type: EventHub.getInstance().prefixEventName(Events.LOCAL_STORAGE_FETCHED),
-              message: {
-                baseURL,
-                clientKey,
-                sourceKey,
-              },
-            });
-          } else {
-            figma.ui.postMessage({
-              type: EventHub.getInstance().prefixEventName(Events.LOCAL_STORAGE_FETCHED),
-              message: {
-                baseURL: "t",
-                clientKey: "",
-                sourceKey: "",
-              },
-            });
-          }
-        });
-      });
-    });
-  }
+EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey }) => {
+  figma.clientStorage.setAsync("baseURL", baseURL);
+  figma.clientStorage.setAsync("clientKey", clientKey);
+  figma.clientStorage.setAsync("sourceKey", sourceKey);
+});
 
-  if (event.type === EventHub.getInstance().prefixEventName(Events.SET_LOCAL_STORAGE)) {
-    const { baseURL, clientKey, sourceKey } = event.message;
-    figma.clientStorage.setAsync("baseURL", baseURL);
-    figma.clientStorage.setAsync("clientKey", clientKey);
-    figma.clientStorage.setAsync("sourceKey", sourceKey);
-  }
-};
+EventHub.getInstance().makeEvent(Events.FETCH_LOCAL_STORAGE, async () => {
+  const baseURL: string = (await figma.clientStorage.getAsync("baseURL")) || "";
+  const clientKey: string = (await figma.clientStorage.getAsync("clientKey")) || "";
+  const sourceKey: string = (await figma.clientStorage.getAsync("sourceKey")) || "";
+
+  EventHub.getInstance().sendCustomEvent(Events.LOCAL_STORAGE_FETCHED, {
+    baseURL,
+    clientKey,
+    sourceKey,
+  });
+});
 
 figma.on("selectionchange", () => {
   sendDataToFrontend();
@@ -83,6 +64,7 @@ figma.on("close", async () => {
   AnnotationElements.annotationLayer.remove();
   figma.closePlugin();
 });
+
 // Dispatch all components -> in figma use postMessage
 // Use the class names for initializeComponent
 initializeComponent("Settings");
