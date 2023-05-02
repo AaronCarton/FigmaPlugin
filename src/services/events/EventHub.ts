@@ -41,7 +41,9 @@ export default class EventHub {
       // Store callback in handlers (for later removal)
       const callback = (event: any) => {
         if (event.data.pluginMessage.type === prefixedEventName) {
-          cb(event.data.pluginMessage.message);
+          const message = event.data.pluginMessage.message;
+          const messageObject = message.messageObject; // Certain events have a messageObject inside the message
+          cb(messageObject || message); // If messageObject exists, send that, otherwise send the message
         }
       };
       this.handlers.push({
@@ -52,7 +54,7 @@ export default class EventHub {
 
       // Register event listener in browser
       window.addEventListener("message", callback);
-      console.debug(`[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`, this.handlers[prefixedEventName]);
+      console.debug(`[EVENT] Registered ${prefixedEventName} in Browser (ui.ts)`);
     } else {
       // Check if event listener already exists
       if (this.checkDuplicateEvent(eventType, cb)) {
@@ -61,7 +63,7 @@ export default class EventHub {
 
       // Store callback in handlers (for later removal)
       const callback = (event: any) => {
-        if (event.type === eventType) {
+        if (event.type === prefixedEventName) {
           cb(event.message);
         }
       };
@@ -72,8 +74,8 @@ export default class EventHub {
       });
 
       // Register event listener in Figma
-      figma.ui.onmessage = callback;
-      console.debug(`[EVENT] Register ${prefixedEventName} in Figma (code.ts)`, this.handlers[prefixedEventName]);
+      figma.ui.on("message", callback);
+      console.info(`[EVENT] Register ${prefixedEventName} in Figma (code.ts)`);
     }
   }
 
@@ -103,7 +105,7 @@ export default class EventHub {
       };
       // Send event to Figma
       figma.ui.postMessage(data);
-      console.debug(`[EVENT] Emit ${prefixedEventName} to Figma (code.ts)`, data);
+      console.info(`[EVENT] Emit ${prefixedEventName} to Figma (code.ts)`, data);
     }
   }
 
