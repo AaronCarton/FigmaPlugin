@@ -36,7 +36,7 @@ figma.ui.onmessage = (event) => {
       break;
   }
 
-  if (event.type === EventHub.getInstance().prefixEventName(Events.FETCH_LOCAL_STORAGE)) {
+  if (event.type === EventHub.getInstance().prefixEventType(Events.FETCH_LOCAL_STORAGE)) {
     // TODO: try to find a way to use EventHub functions instead (without getting 'X is not a function' error)
     figma.clientStorage.getAsync("baseURL").then((baseURL) => {
       figma.clientStorage.getAsync("clientKey").then((clientKey) => {
@@ -44,7 +44,7 @@ figma.ui.onmessage = (event) => {
           //TODO: check if localStorage is empty in separate function next sprint
           if (baseURL !== undefined || clientKey !== undefined || sourceKey !== undefined) {
             figma.ui.postMessage({
-              type: EventHub.getInstance().prefixEventName(Events.LOCAL_STORAGE_FETCHED),
+              type: EventHub.getInstance().prefixEventType(Events.LOCAL_STORAGE_FETCHED),
               message: {
                 baseURL,
                 clientKey,
@@ -53,7 +53,7 @@ figma.ui.onmessage = (event) => {
             });
           } else {
             figma.ui.postMessage({
-              type: EventHub.getInstance().prefixEventName(Events.LOCAL_STORAGE_FETCHED),
+              type: EventHub.getInstance().prefixEventType(Events.LOCAL_STORAGE_FETCHED),
               message: {
                 baseURL: "t",
                 clientKey: "",
@@ -66,7 +66,7 @@ figma.ui.onmessage = (event) => {
     });
   }
 
-  if (event.type === EventHub.getInstance().prefixEventName(Events.SET_LOCAL_STORAGE)) {
+  if (event.type === EventHub.getInstance().prefixEventType(Events.SET_LOCAL_STORAGE)) {
     const { baseURL, clientKey, sourceKey } = event.message;
     figma.clientStorage.setAsync("baseURL", baseURL);
     figma.clientStorage.setAsync("clientKey", clientKey);
