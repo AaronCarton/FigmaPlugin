@@ -8,9 +8,8 @@
     "watch": "node ./eswatch.js --watch",
     "lint": "eslint . --ext .ts",
     "test": "jest",
-    "test:jsdom": "jest --env=jsdom",
-    "test:event": "jest tests/eventHandler.test.ts --env=jsdom",
-    "test:api": "jest tests/apiClient.test.ts" 
+    "test:api": "jest tests/apiClient.test.ts",
+    "test:eventHub": "jest tests/eventHub.test.ts --env=jsdom"  
 
   },
   "author": "",
