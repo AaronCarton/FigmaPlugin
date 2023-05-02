@@ -15,6 +15,7 @@
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": false }],
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-inferrable-types": "off",
     "prefer-arrow-callback": ["warn"],
     "prettier/prettier": ["error"]
   }
