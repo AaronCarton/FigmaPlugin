@@ -4,7 +4,6 @@ import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
 import EventHub from "../events/EventHub";
 import { Events } from "../events/Events";
-import { $button, $date } from "../../ui/settings-panel";
 
 interface ApiOptions {
   baseURL: string;
@@ -119,12 +118,7 @@ export default class ApiClient {
       throw new Error("SourceKey is required");
     }
 
-    console.log(
-      "ApiClient initialized: baseURL: %s, clientKey: %s, sourceKey: %s",
-      baseURL,
-      clientKey,
-      sourceKey,
-    ); // TODO: Remove
+    console.log("ApiClient initialized: baseURL: %s, clientKey: %s, sourceKey: %s", baseURL, clientKey, sourceKey); // TODO: Remove
   }
 
   ////////* API CALLS */ ///////
@@ -136,9 +130,7 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to a project
    */
   public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
-    return this.getById<Project>("project", projectKey, includeArchived).then((res) =>
-      res ? new Project(res, this) : null,
-    );
+    return this.getById<Project>("project", projectKey, includeArchived).then((res) => (res ? new Project(res, this) : null));
   }
 
   /**
@@ -148,12 +140,9 @@ export default class ApiClient {
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
-    return this.searchItem<Annotation>(
-      "annotation",
-      `projectKey.eq.${projectKey}`,
-      undefined,
-      includeArchived,
-    ).then((res) => res.results.map((res) => new Annotation(res.item, this)));
+    return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, includeArchived).then((res) =>
+      res.results.map((res) => new Annotation(res.item, this)),
+    );
   }
 
   /**
@@ -189,11 +178,7 @@ export default class ApiClient {
    * @param {string} id - ID of the item to search for
    * @param {boolean} includeArchived - Whether to include archived items in results
    */
-  public async getById<T extends ODSObject<T>>(
-    itemType: string,
-    id: string,
-    includeArchived = false,
-  ): Promise<T | null> {
+  public async getById<T extends ODSObject<T>>(itemType: string, id: string, includeArchived = false): Promise<T | null> {
     const res = await this.fetchData(`/api/items/${itemType}/null/${id}`, {
       method: "GET",
       apiKey: ApiClient.CLIENT_APIKEY,
@@ -224,11 +209,7 @@ export default class ApiClient {
    * @param {string} filter - Filter to apply to the search (e.g. projectKey.eq.123)
    * @param {string} parent - Optional parent (e.g. "project")
    */
-  public async searchItem<
-    Type extends ODSObject<Type>,
-    ParentType = undefined,
-    ParentKey extends string = "",
-  >(
+  public async searchItem<Type extends ODSObject<Type>, ParentType = undefined, ParentKey extends string = "">(
     itemType: string,
     filter: string,
     parent?: ParentKey,
@@ -253,11 +234,7 @@ export default class ApiClient {
    * @param {string} itemKey - Key of the item
    * @param {Type} body - Item to upsert
    */
-  public async upsertItem<Type extends ODSObject<Type>>(
-    itemType: string,
-    itemKey: string,
-    body: Type,
-  ) {
+  public async upsertItem<Type extends ODSObject<Type>>(itemType: string, itemKey: string, body: Type) {
     const res = await this.fetchData(`/api/items/${itemType}/null/${itemKey}`, {
       method: "PUT",
       apiKey: ApiClient.SOURCE_APIKEY,

@@ -17,6 +17,14 @@
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-inferrable-types": "off",
     "prefer-arrow-callback": ["warn"],
-    "prettier/prettier": ["error"]
+    "prettier/prettier": ["error"],
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": ["variable"],
+        "format": ["camelCase", "UPPER_CASE"],
+        "leadingUnderscore": "allow"
+      }
+    ]
   }
 }

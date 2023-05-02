@@ -46,23 +46,20 @@ export class Settings extends BaseComponent {
         $date.innerHTML = now;
       }
     });
-    EventHub.getInstance().makeEvent(
-      Events.LOCAL_STORAGE_FETCHED,
-      ({ baseURL, clientKey, sourceKey }) => {
-        $baseURL?.setAttribute("value", baseURL || "");
-        $clientKey?.setAttribute("value", clientKey || "");
-        $sourceKey?.setAttribute("value", sourceKey || "");
-        this.disableFieldsWhenNecessary();
+    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
+      $baseURL?.setAttribute("value", baseURL || "");
+      $clientKey?.setAttribute("value", clientKey || "");
+      $sourceKey?.setAttribute("value", sourceKey || "");
+      this.disableFieldsWhenNecessary();
 
-        // TODO: emit event to initialize data right away, because we got the values from localStorage
-        // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-        //   $projectKey: $projectKey?.value,
-        //   baseURL,
-        //   clientKey,
-        //   sourceKey,
-        // });
-      },
-    );
+      // TODO: emit event to initialize data right away, because we got the values from localStorage
+      // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
+      //   $projectKey: $projectKey?.value,
+      //   baseURL,
+      //   clientKey,
+      //   sourceKey,
+      // });
+    });
     EventHub.getInstance().sendCustomEvent(Events.FETCH_LOCAL_STORAGE, {});
   }
 
@@ -121,13 +118,7 @@ export class Settings extends BaseComponent {
   }
 
   disableFieldsWhenNecessary() {
-    if (
-      $baseURL !== null &&
-      $clientKey !== null &&
-      $annotationToggle !== null &&
-      $button !== null &&
-      $sourceKey !== null
-    ) {
+    if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null && $sourceKey !== null) {
       //replace makes sure people can not connect with empty strings (for example pressing spacebar)
       if ($baseURL.value.replace(/\s/g, "") !== "") {
         $clientKey.disabled = false;
@@ -139,11 +130,7 @@ export class Settings extends BaseComponent {
       } else {
         $sourceKey.disabled = true;
       }
-      if (
-        $baseURL.value.replace(/\s/g, "") !== "" &&
-        $sourceKey.value.replace(/\s/g, "") !== "" &&
-        $clientKey.value.replace(/\s/g, "") !== ""
-      ) {
+      if ($baseURL.value.replace(/\s/g, "") !== "" && $sourceKey.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
         console.log("enable button");
         $annotationToggle.disabled = false;
         $button.addEventListener("click", this.checkConnectionSpinnerExample);
