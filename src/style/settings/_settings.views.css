@@ -12,3 +12,13 @@
   color: var(--propertize__color--primary);
   fill: var(--propertize__color--primary);
 }
+
+.disabled {
+  background: var(--propertize__color--accent);
+  border-radius: var(--propertize__border-radius);
+  opacity: 0.5;
+}
+
+.hidden {
+  display: none;
+}

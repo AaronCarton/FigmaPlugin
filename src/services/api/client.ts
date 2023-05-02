@@ -1,7 +1,9 @@
-import { ODSObject, ODSResponse } from "../../interfaces/ods/interface.ODSresponse";
+import { ODSObject, ODSResponse, stripODS } from "../../interfaces/ods/interface.ODSresponse";
 import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
+import EventHub from "../events/EventHub";
+import { Events } from "../events/Events";
 
 interface ApiOptions {
   baseURL: string;
@@ -19,10 +21,48 @@ interface RequestOptions {
 }
 
 export default class ApiClient {
-  private static instance: ApiClient;
+  private static instance: ApiClient | undefined;
   public static BASE_URL: string;
   public static CLIENT_APIKEY: string;
   public static SOURCE_APIKEY: string;
+
+  public static initializeEvents() {
+    const eventHub = EventHub.getInstance();
+
+    // Initialize API client
+    eventHub.makeEvent(Events.INITIALIZE_DATA, ({ projectKey, baseURL, clientKey, sourceKey }) => {
+      ApiClient.resetClient(); // Reset client first if already initialized
+
+      const api = ApiClient.initialize({
+        baseURL,
+        clientKey,
+        sourceKey,
+      });
+
+      api.getProject(projectKey).then((project) => {
+        console.log(project);
+        api.getAnnotations(project?.itemKey || "").then((annotations) => {
+          const a = annotations.find((a) => (a.attribute = "body"));
+          if (a) {
+            a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
+          }
+          EventHub.getInstance().sendCustomEvent(Events.DATA_INITIALIZED, annotations);
+        });
+      });
+
+      // Register create listener
+      eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
+        await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
+      });
+
+      // Register update listener
+      eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
+        await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
+      });
+      // TODO: add ARCHIVE and UNARCHIVE listeners
+    });
+  }
 
   /**
    * Configure API client
@@ -44,6 +84,17 @@ export default class ApiClient {
     return ApiClient.instance;
   }
 
+  public static resetClient() {
+    // Reset API instance
+    ApiClient.instance = undefined;
+    ApiClient.BASE_URL = "";
+    ApiClient.CLIENT_APIKEY = "";
+    ApiClient.SOURCE_APIKEY = "";
+    // Remove listeners
+    EventHub.getInstance().removeEvent(Events.CREATE_ANNOTATION);
+    EventHub.getInstance().removeEvent(Events.UPDATE_ANNOTATION);
+  }
+
   /**
    * Get the API client instance
    * @throws If the API client has not been initialized
@@ -58,14 +109,16 @@ export default class ApiClient {
       throw new Error("ApiClient has already been initialized");
     }
     if (!baseURL) {
-      throw new Error("baseURL is required");
+      throw new Error("BaseURL is required.");
     }
     if (!clientKey) {
-      throw new Error("clientKey is required");
+      throw new Error("ClientKey is required");
     }
     if (!sourceKey) {
-      throw new Error("sourceKey is required");
+      throw new Error("SourceKey is required");
     }
+
+    console.log("ApiClient initialized: baseURL: %s, clientKey: %s, sourceKey: %s", baseURL, clientKey, sourceKey); // TODO: Remove
   }
 
   ////////* API CALLS */ ///////
@@ -77,9 +130,7 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to a project
    */
   public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
-    return this.getById<Project>("project", projectKey, includeArchived).then((res) =>
-      res ? new Project(res, this) : null,
-    );
+    return this.getById<Project>("project", projectKey, includeArchived).then((res) => (res ? new Project(res, this) : null));
   }
 
   /**
@@ -89,12 +140,9 @@ export default class ApiClient {
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
-    return this.searchItem<Annotation>(
-      "annotation",
-      `projectKey.eq.${projectKey}`,
-      undefined,
-      includeArchived,
-    ).then((res) => res.results.map((res) => new Annotation(res.item, this)));
+    return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, includeArchived).then((res) =>
+      res.results.map((res) => new Annotation(res.item, this)),
+    );
   }
 
   /**
@@ -130,11 +178,7 @@ export default class ApiClient {
    * @param {string} id - ID of the item to search for
    * @param {boolean} includeArchived - Whether to include archived items in results
    */
-  public async getById<T extends ODSObject<T>>(
-    itemType: string,
-    id: string,
-    includeArchived = false,
-  ): Promise<T | null> {
+  public async getById<T extends ODSObject<T>>(itemType: string, id: string, includeArchived = false): Promise<T | null> {
     const res = await this.fetchData(`/api/items/${itemType}/null/${id}`, {
       method: "GET",
       apiKey: ApiClient.CLIENT_APIKEY,
@@ -165,17 +209,13 @@ export default class ApiClient {
    * @param {string} filter - Filter to apply to the search (e.g. projectKey.eq.123)
    * @param {string} parent - Optional parent (e.g. "project")
    */
-  public async searchItem<
-    Type extends ODSObject<Type>,
-    ParentType = undefined,
-    ParentKey extends string = "",
-  >(
+  public async searchItem<Type extends ODSObject<Type>, ParentType = undefined, ParentKey extends string = "">(
     itemType: string,
     filter: string,
     parent?: ParentKey,
     includeArchived?: boolean,
   ): Promise<ODSResponse<Type, ParentType, ParentKey>> {
-    const res = await this.fetchData(`/api/search/${itemType}`, {
+    return await this.fetchData(`/api/search/${itemType}`, {
       method: "POST",
       apiKey: ApiClient.CLIENT_APIKEY,
       body: {
@@ -184,9 +224,7 @@ export default class ApiClient {
       parent: parent,
       metadata: true,
       includeArchived: includeArchived,
-    });
-
-    return res.json();
+    }).then((res) => res.json());
   }
 
   /**
@@ -196,11 +234,7 @@ export default class ApiClient {
    * @param {string} itemKey - Key of the item
    * @param {Type} body - Item to upsert
    */
-  public async upsertItem<Type extends ODSObject<Type>>(
-    itemType: string,
-    itemKey: string,
-    body: Type,
-  ) {
+  public async upsertItem<Type extends ODSObject<Type>>(itemType: string, itemKey: string, body: Type) {
     const res = await this.fetchData(`/api/items/${itemType}/null/${itemKey}`, {
       method: "PUT",
       apiKey: ApiClient.SOURCE_APIKEY,
@@ -221,20 +255,26 @@ export default class ApiClient {
   private async fetchData(url: string, options: RequestOptions): Promise<Response> {
     const { method, body, apiKey, metadata } = options;
 
+    const headers = {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey || "",
+      "x-include-metadata": metadata ? "true" : "false",
+      "x-include-archived": options.includeArchived ? "true" : "false",
+      "x-expand": options.parent || "",
+      "Access-Control-*": "*",
+    };
+
     // Create request
     console.debug(`[API] Request: ${method} ${url}`, body, "key:", apiKey);
     const res = await fetch(ApiClient.BASE_URL + url, {
       method: method,
       body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "x-include-metadata": metadata ? "true" : "false",
-        "x-include-archived": options.includeArchived ? "true" : "false",
-        "x-expand": options.parent || "",
-      },
+      headers: headers,
+    }).catch((err) => {
+      console.error("[API] Fetch Error", err); // temporary - remove later
+      throw err;
     });
-    console.debug(`[API] Response: ${method} ${url}`, res);
+    console.debug(`[API] Response: ${method} ${url}`, res); // temporary - remove later
 
     // Error handling
     if (!res.ok) {

@@ -18,11 +18,11 @@
   position: absolute;
   inset: 0px;
   border-radius: 50%;
-  border: 5px solid var(--propertize-accent-color);
+  border: 5px solid var(---propertize__color--accent);
   animation: prixClipFix 2s linear infinite;
 }
 .c-spinner::after {
-  border-color: var(--propertize-accent-red);
+  border-color: var(--propertize__color--red);
   animation: prixClipFix 2s linear infinite, rotate 0.5s linear infinite reverse;
   inset: 6px;
 }
