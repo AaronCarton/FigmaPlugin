@@ -24,8 +24,6 @@ function createAnnotation(inputValues: AnnotationInput) {
   frame.dashPattern = [10, 5];
   frame.cornerRadius = 10;
 
-  console.log("inputvalues:", inputValues);
-
   Object.keys(inputValues).forEach((title, index) => {
     const titlesNode = figma.createText();
     titlesNode.name = PropertizeConstants[`${title}Label` as keyof typeof PropertizeConstants] as string;
@@ -209,16 +207,20 @@ function determineOverlap(i: number, currentAnnotation: SceneNode, currentSource
   return y;
 }
 
-function drawAnnotations(startPoint: number, sourceNodes: Array<SceneNode>, inputValues: AnnotationInput | Array<AnnotationInput>) {
+function drawAnnotations(
+  startPoint: number,
+  sourceNodes: Array<SceneNode>,
+  inputValues: AnnotationInput | Array<{ id: string; AnnotationInput: AnnotationInput }>,
+) {
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
-  sortNodesAccordingToYCoords(sourceNodes);
+  //sortNodesAccordingToYCoords(sourceNodes);
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
+  console.log("LENGTH", sourceNodes.length);
   for (let i = 0; i < sourceNodes.length; i++) {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
-    console.log("drawing now", sourceNodes[i], found);
-    let annotation: FrameNode = figma.createFrame();
+    let annotation: FrameNode | null = null;
 
     // Remove old drawn vector an annotation of the sourcenode (only if the sourcenode already had an annotation).
     if (found !== undefined) {
@@ -226,15 +228,29 @@ function drawAnnotations(startPoint: number, sourceNodes: Array<SceneNode>, inpu
       figma.currentPage.findOne((x) => x.id === found?.vector.id)?.remove();
     }
 
-    // If links of the sourcenode already exist
-    // found === undefined ? (annotation = createAnnotation(inputValues)) : (annotation = createAnnotation(found.data));
+    // If links of the sourcenode doesn't exist.
     if (found === undefined) {
-      Array.isArray(inputValues) ? (annotation = createAnnotation(inputValues[i])) : (annotation = createAnnotation(inputValues));
+      //check if inputValues is an array
+      if (Array.isArray(inputValues)) {
+        //Get annotationInput values from element with same sourceNode Id.
+        const findData = inputValues.find((x) => x.id === sourceNodes[i].id)?.AnnotationInput;
+        if (findData !== undefined) {
+          annotation = createAnnotation(findData);
+        }
+      } else {
+        //Not an array (a.k.a being called from updateAnnotation function instead of initAnnotations)
+        annotation = createAnnotation(inputValues);
+      }
     } else {
+      // If links of the sourcenode already exist.
       annotation = createAnnotation(found.data);
     }
 
-    console.log("new anno", annotation, inputValues);
+    //Had to initialise annotation before using the variable (null), this check is to prevent the annotation from staying null and getting rid of all the warnings.
+    if (annotation === null) {
+      return null;
+    }
+
     annotation.x = startPoint;
     annotation.y = determineOverlap(i, annotation, sourceNodes[i], lastAddedAnnotationY);
     lastAddedAnnotationY = annotation.y;
@@ -249,7 +265,7 @@ function drawAnnotations(startPoint: number, sourceNodes: Array<SceneNode>, inpu
           annotation: annotation,
           sourceNode: sourceNodes[i],
           vector: line,
-          data: inputValues[i],
+          data: inputValues[i].AnnotationInput,
         });
       } else {
         // Creating a new link and pushing it to array.
@@ -337,17 +353,21 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   console.log("data:", annotationData);
   createLayer();
   makeFramesArray(annotationData);
-  const inputValues: Array<AnnotationInput> = [];
-  annotationData.forEach((element) => {
+  const inputValues: Array<{ id: string; AnnotationInput: AnnotationInput }> = [];
+  for (let i = 0; i < annotationData.length; i++) {
+    const element = annotationData[i];
     inputValues.push({
-      dataSrc: element.dataSource,
-      entity: element.entity,
-      attribute: element.attribute,
-      dataType: element.dataType,
-      sampleValue: element.value,
+      id: element.nodeId,
+      AnnotationInput: {
+        dataSrc: element.dataSource,
+        entity: element.entity,
+        attribute: element.attribute,
+        dataType: element.dataType,
+        sampleValue: element.value,
+      },
     });
-  });
-  console.log("annotation elements finished for drawing", AnnotationElements.parentFrames);
+  }
+
   if (AnnotationElements.parentFrames !== null) {
     for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
       const currentFrame = AnnotationElements.parentFrames[i];
@@ -366,7 +386,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
   console.log("UPDATING");
   console.log(selection, "selection");
-  console.log(inputValues, "inputValues");
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
