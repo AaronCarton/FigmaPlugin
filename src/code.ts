@@ -72,6 +72,13 @@ figma.ui.onmessage = (event) => {
     figma.clientStorage.setAsync("clientKey", clientKey);
     figma.clientStorage.setAsync("sourceKey", sourceKey);
   }
+
+  if (event.type === EventHub.getInstance().prefixEventName(Events.FETCH_PROJECT_KEY)) {
+    figma.ui.postMessage({
+      type: EventHub.getInstance().prefixEventName(Events.PROJECT_KEY_FETCHED),
+      message: figma.fileKey,
+    });
+  }
 };
 
 figma.on("selectionchange", () => {
@@ -92,6 +99,3 @@ initializeComponent("ConnectPanel");
 function initializeComponent(componentName: string): void {
   figma.ui.postMessage({ type: `initialize${componentName}` });
 }
-
-// Log the fima file key
-console.log("[TEST] Figma file key: ", figma.fileKey);

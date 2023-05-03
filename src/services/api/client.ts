@@ -129,7 +129,8 @@ export default class ApiClient {
    * @param {boolean} includeArchived - Whether to return an archived project if it exists
    * @returns {Promise<Project>} - Promise that resolves to a project
    */
-  public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
+  public async getProject(projectKey: string, includeArchived: boolean = false): Promise<Project | null> {
+    // Old code
     return this.getById<Project>("project", projectKey, includeArchived).then((res) => (res ? new Project(res, this) : null));
   }
 

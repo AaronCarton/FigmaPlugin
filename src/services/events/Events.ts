@@ -11,4 +11,6 @@ export class Events {
   public static readonly FETCH_LOCAL_STORAGE: string = "FETCH_LOCAL_STORAGE";
   public static readonly LOCAL_STORAGE_FETCHED: string = "LOCAL_STORAGE_FETCHED";
   public static readonly SET_LOCAL_STORAGE: string = "SET_LOCAL_STORAGE";
+  public static readonly FETCH_PROJECT_KEY: string = "FETCH_PROJECT_KEY";
+  public static readonly PROJECT_KEY_FETCHED: string = "PROJECT_KEY_FETCHED";
 }
