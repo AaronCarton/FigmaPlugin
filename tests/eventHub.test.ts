@@ -120,14 +120,16 @@ describe("Tests for eventHub: sendCustomEvent()", () => {
 describe("Tests for eventHub: makeEvent()", () => {
   let eventType: string;
   let isCalled: boolean;
+  let counter: number;
 
   beforeEach(() => {
     eventType = "testEvent";
   });
 
   afterEach(() => {
-    // Clean up event listener after each test
+    // Clean up after each test
     isCalled = false;
+    counter = 0;
     window.removeEventListener("message", expect.any(Function));
   });
 
@@ -148,6 +150,29 @@ describe("Tests for eventHub: makeEvent()", () => {
     window.postMessage(data, "*");
     waitUntil(() => isCalled).then(() => {
       expect(isCalled).toBe(true);
+    });
+  });
+
+  test("callback is not called twice when two exact same makeEvent()'s are called", () => {
+    EventHub.getInstance().makeEvent(eventType, () => {
+      counter++;
+    });
+
+    EventHub.getInstance().makeEvent(eventType, () => {
+      counter++;
+    });
+
+    const prefixEventType = EventHub.getInstance().prefixEventType(eventType);
+    const data = {
+      pluginMessage: {
+        type: prefixEventType,
+        message: "messageTest",
+      },
+    };
+    window.postMessage(data, "*");
+
+    waitUntil(() => counter === 1).then(() => {
+      expect(counter).toBe(1);
     });
   });
 
