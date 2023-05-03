@@ -179,7 +179,7 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
     line.vectorPaths = [
       {
         windingRule: "EVENODD",
-        data: `M ${annotation.x <= destination.absoluteBoundingBox.x ? annotation.x + annotation.width : annotation.x} ${
+        data: `M ${annotation.x <= destination.absoluteBoundingBox.x ? annotation.x + annotation.width + 5 : annotation.x + 5} ${
           annotation.y + annotation.height / 2
         } L ${
           annotation.x <= destination.absoluteBoundingBox.x
