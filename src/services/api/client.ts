@@ -130,8 +130,14 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to a project
    */
   public async getProject(projectKey: string, includeArchived: boolean = false): Promise<Project | null> {
-    // Old code
-    return this.getById<Project>("project", projectKey, includeArchived).then((res) => (res ? new Project(res, this) : null));
+    return this.getById<Project>("project", projectKey, includeArchived).then((res) =>
+      res
+        ? new Project(res, this)
+        : this.createProject(projectKey, {
+            lastUpdated: new Date().toISOString(),
+            customerId: projectKey,
+          }),
+    );
   }
 
   /**
