@@ -3,9 +3,9 @@ import { changeLayerVisibility, initAnnotations, sendDataToFrontend } from "./fu
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
-import { checkInitState } from "./functions/checkInitFunction";
 import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
+import { updateAnnotations } from "./functions/annotationFunctions";
 
 figma.showUI(__html__, { width: 345, height: 250 });
 
@@ -25,7 +25,7 @@ figma.ui.onmessage = (event) => {
       break;
 
     case MessageTitle.createText:
-      checkInitState(payload.values);
+      updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, payload.values);
       break;
 
     case MessageTitle.changeVisibility:
