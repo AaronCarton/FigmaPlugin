@@ -27,7 +27,8 @@ export default class EventHub {
    * @param {function} cb - The function that will be called when the event is triggered
    */
   makeEvent(eventType: string, cb: (message: any) => void): void {
-    if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
+    // Check if eventType is empty
+    if (!eventType) throw new Error("The event type cannot be empty");
     if (typeof cb !== "function") throw new TypeError("The callback must be a function");
     const prefixedEventName = this.prefixEventName(eventType);
 
@@ -148,7 +149,7 @@ export default class EventHub {
    * @param {function} cb - Callback function that will be checked
    * @returns {boolean} - True if the event is already registered, False if not
    */
-  private checkDuplicateEvent(eventType: string, cb: (message: any) => void): boolean {
+  checkDuplicateEvent(eventType: string, cb: (message: any) => void): boolean {
     return this.handlers.some((event) => event.type === this.prefixEventName(eventType) && event.originalCallback.toString() === cb.toString());
   }
   /**
@@ -157,5 +158,9 @@ export default class EventHub {
    */
   private hasAccessToUI() {
     return window && document;
+  }
+
+  getHandlers(): Event[] {
+    return this.handlers;
   }
 }
