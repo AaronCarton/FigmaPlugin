@@ -40,6 +40,13 @@ export class Settings extends BaseComponent {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.DATA_INITIALIZED, (data: Annotation[]) => {
       console.log("DATA_INITIALIZED", data);
+
+      // Test to load the data into dropdown
+      this.loadDropdonwns("data-source", data);
+      this.loadDropdonwns("entity", data);
+      this.loadDropdonwns("attribute", data);
+      this.loadDropdonwns("data-type", data);
+
       if ($button && $date) {
         const now = new Date().toLocaleString("en-GB").replace(",", "");
         $button.innerHTML = "Refresh";
@@ -74,6 +81,46 @@ export class Settings extends BaseComponent {
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
+    });
+  }
+
+  loadDropdonwns(elementName: string, ODSData: Annotation[]) {
+    const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
+    const array: string[] = [];
+    const unique: string[] = [];
+
+    for (const annotation of ODSData) {
+      if (elementName === "data-source") {
+        if (annotation.dataSource !== "null") {
+          array.push(annotation.dataSource);
+        }
+      }
+      if (elementName === "entity") {
+        if (annotation.entity !== "null") {
+          array.push(annotation.entity);
+        }
+      }
+      if (elementName === "attribute") {
+        if (annotation.attribute !== "null") {
+          array.push(annotation.attribute);
+        }
+      }
+      if (elementName === "data-type") {
+        if (annotation.dataType !== "null") {
+          array.push(annotation.dataType);
+        }
+      }
+    }
+
+    array.forEach((element) => {
+      if (!unique.includes(element)) {
+        unique.push(element);
+      }
+    });
+
+    unique.forEach((element) => {
+      const newOption = new Option(element, element);
+      $dropDown?.add(newOption);
     });
   }
 
