@@ -140,7 +140,7 @@ export default class ApiClient {
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
-    return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, includeArchived).then((res) =>
+    return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, undefined, includeArchived).then((res) =>
       res.results.map((res) => new Annotation(res.item, this)),
     );
   }
@@ -207,11 +207,14 @@ export default class ApiClient {
    * @template ParentKey - Optional key under which the parent will be found (e.g. "project")
    * @param {string} itemType - Index of item to search for (e.g. "annotation")
    * @param {string} filter - Filter to apply to the search (e.g. projectKey.eq.123)
+   * @param {string[]} facets - Optional facets to include in the response (e.g. ["dataType", "entity"])
    * @param {string} parent - Optional parent (e.g. "project")
+   * @param {boolean} includeArchived - Whether to include archived items in results
    */
   public async searchItem<Type extends ODSObject<Type>, ParentType = undefined, ParentKey extends string = "">(
     itemType: string,
     filter: string,
+    facets?: string[],
     parent?: ParentKey,
     includeArchived?: boolean,
   ): Promise<ODSResponse<Type, ParentType, ParentKey>> {
@@ -220,6 +223,7 @@ export default class ApiClient {
       apiKey: ApiClient.CLIENT_APIKEY,
       body: {
         filter: filter,
+        facets: facets?.map((f) => ({ attribute: f })),
       },
       parent: parent,
       metadata: true,
