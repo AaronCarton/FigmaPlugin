@@ -133,9 +133,11 @@ export class Settings extends BaseComponent {
       if ($baseURL.value.replace(/\s/g, "") !== "" && $sourceKey.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
         console.log("enable button");
         $annotationToggle.disabled = false;
+        $button.disabled = false;
         $button.addEventListener("click", this.checkConnectionSpinnerExample);
       } else {
         $annotationToggle.disabled = true;
+        $button.disabled = true;
         $button.removeEventListener("click", this.checkConnectionSpinnerExample);
       }
     }

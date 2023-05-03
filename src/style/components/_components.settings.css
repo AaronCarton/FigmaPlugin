@@ -31,7 +31,10 @@
   color: var(--propertize__color--white);
   border: none;
   border-radius: 10px;
-  cursor: pointer;
+}
+
+.c-settings__btnConnect:disabled {
+  opacity: 0.4;
 }
 
 .c-settings__input {
