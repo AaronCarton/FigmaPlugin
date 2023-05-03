@@ -55,10 +55,10 @@ export class Settings extends BaseComponent {
       console.log("facets fetched", facets);
 
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.key)]));
-      this.loadDropdonwns("data-source", data["dataSource"]);
-      this.loadDropdonwns("entity", data["entity"]);
-      this.loadDropdonwns("attribute", data["attribute"]);
-      this.loadDropdonwns("data-type", data["dataType"]);
+      this.loadDropdowns("data-source", data["dataSource"]);
+      this.loadDropdowns("entity", data["entity"]);
+      this.loadDropdowns("attribute", data["attribute"]);
+      this.loadDropdowns("data-type", data["dataType"]);
     });
     EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
       $baseURL?.setAttribute("value", baseURL || "");
@@ -91,7 +91,7 @@ export class Settings extends BaseComponent {
     });
   }
 
-  loadDropdonwns(elementName: string, data: string[]) {
+  loadDropdowns(elementName: string, data: string[]) {
     const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
     data.forEach((element) => {
       const newOption = new Option(element, element);
