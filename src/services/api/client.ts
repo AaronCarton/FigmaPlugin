@@ -50,7 +50,9 @@ export default class ApiClient {
           EventHub.getInstance().sendCustomEvent(Events.DATA_INITIALIZED, annotations);
         });
       });
+    });
 
+    eventHub.makeEvent(Events.DATA_INITIALIZED, () => {
       // Register create listener
       eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
         await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
@@ -66,9 +68,10 @@ export default class ApiClient {
 
   /**
    * Configure API client
-   * @param {string} baseURL - Base URL of the ODS API
-   * @param {string} clientKey - Client API key
-   * @param {string} sourceKey - Source API key
+   * @param {ApiOptions} options - Options to configure the API client
+   * @param {string} options.baseURL - Base URL of the ODS API
+   * @param {string} options.clientKey - Client API key
+   * @param {string} options.sourceKey - Source API key
    */
   public static initialize({ baseURL, clientKey, sourceKey }: ApiOptions) {
     // Return existing instance if already initialized
