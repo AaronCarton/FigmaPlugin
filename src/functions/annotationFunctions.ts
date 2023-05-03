@@ -183,8 +183,8 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
           annotation.y + annotation.height / 2
         } L ${
           annotation.x <= destination.absoluteBoundingBox.x
-            ? destination.absoluteBoundingBox.x
-            : destination.absoluteBoundingBox.x + destination.absoluteBoundingBox.width
+            ? destination.absoluteBoundingBox.x + 5
+            : destination.absoluteBoundingBox.x + destination.absoluteBoundingBox.width + 5
         } ${destination.absoluteBoundingBox.y + destination.absoluteBoundingBox.height / 2}`,
       },
     ];
