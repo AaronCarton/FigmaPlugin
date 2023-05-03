@@ -27,7 +27,7 @@ export default class EventHub {
    * @param {function} cb - The callback function that will be invoked when the event is triggered
    */
   makeEvent(eventType: string, cb: (message: any) => void): void {
-    if (eventType && eventType.trim() === "") throw new Error("The event type cannot be empty");
+    if (!eventType) throw new Error("The event type cannot be empty");
     if (typeof cb !== "function") throw new TypeError("The callback must be a function");
     const prefixEventType = this.prefixEventType(eventType);
 
