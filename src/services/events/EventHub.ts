@@ -129,7 +129,7 @@ export default class EventHub {
    * @returns {string} - The prefixed event type. Eg."PROPERTIZE_MESSAGE_EVENT_TYPE"
    */
   prefixEventType(eventType: string): any {
-    if (eventType === null || eventType === undefined) throw new Error("The eventType is undefined");
+    if (!eventType) throw new Error("The event type cannot be empty");
     return `PROPERTIZE_MESSAGE_${eventType}`;
   }
 
