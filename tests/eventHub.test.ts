@@ -85,6 +85,33 @@ describe("Tests for eventHub: getInstance()", () => {
   });
 });
 
+describe("Tests for eventHub: removeEvent()", () => {
+  let eventType: string;
+  afterEach(() => {
+    EventHub.getInstance().getHandlers().splice(0, EventHub.getInstance().getHandlers().length);
+  });
+
+  beforeAll(() => {
+    eventType = "testEvent";
+    const prefixedEventName = EventHub.getInstance().prefixEventType(eventType);
+    function cb() {
+      console.log("cb1");
+    }
+
+    EventHub.getInstance().getHandlers().push({
+      type: prefixedEventName,
+      originalCallback: cb,
+      callback: cb,
+    });
+  });
+  test("Is event removed?", () => {
+    const eventHub = EventHub.getInstance();
+    const prefixedEventName = eventHub.prefixEventType(eventType);
+    eventHub.removeEvent(eventType);
+    expect(eventHub.getHandlers().find((event) => event.type === prefixedEventName)).toBeUndefined();
+  });
+});
+
 describe("Tests for eventHub: sendCustomEvent()", () => {
   let isCalled: boolean;
   beforeEach(() => {
@@ -220,33 +247,6 @@ describe("Tests for eventHub: makeEvent() and sendCustomEvent() together", () =>
     waitUntil(() => isCalled).then(() => {
       expect(isCalled).toBe(true);
     });
-  });
-});
-
-describe("Tests for eventHub: removeEvent()", () => {
-  let eventType: string;
-  afterEach(() => {
-    EventHub.getInstance().getHandlers().splice(0, EventHub.getInstance().getHandlers().length);
-  });
-
-  beforeAll(() => {
-    eventType = "testEvent";
-    const prefixedEventName = EventHub.getInstance().prefixEventType(eventType);
-    function cb() {
-      console.log("cb1");
-    }
-
-    EventHub.getInstance().getHandlers().push({
-      type: prefixedEventName,
-      originalCallback: cb,
-      callback: cb,
-    });
-  });
-  test("Is event removed?", () => {
-    const eventHub = EventHub.getInstance();
-    const prefixedEventName = eventHub.prefixEventType(eventType);
-    eventHub.removeEvent(eventType);
-    expect(eventHub.getHandlers().find((event) => event.type === prefixedEventName)).toBeUndefined();
   });
 });
 
