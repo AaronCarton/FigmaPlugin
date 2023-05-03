@@ -4,6 +4,7 @@ import ApiClient from "../services/api/client";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
+import { changeConnectionState } from "./navigation-tabs";
 
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
@@ -52,6 +53,8 @@ export class Settings extends BaseComponent {
         $button.innerHTML = "Refresh";
         $date.innerHTML = now;
       }
+
+      changeConnectionState(true);
     });
     EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
       $baseURL?.setAttribute("value", baseURL || "");

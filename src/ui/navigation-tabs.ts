@@ -10,7 +10,7 @@ const $noConnectionPanel: HTMLElement | null = document.querySelector(".js-disco
 const isActive = "is-active";
 
 // Still testing connection purposes
-const connectionState = true;
+let connectionState = false;
 
 export class NavigationTabs extends BaseComponent {
   componentType = "NavigationTabs";
@@ -20,7 +20,7 @@ export class NavigationTabs extends BaseComponent {
   }
 
   initComponent(): void {
-    checkConnectionPurpose();
+    // checkConnectionPurpose();
     this.navigateBetweenTabs();
   }
 
@@ -77,5 +77,17 @@ function checkConnectionPurpose() {
   }
 }
 
+export function changeConnectionState(state: boolean) {
+  connectionState = state;
+  if ($connectionPanel && $noConnectionPanel) {
+    if (connectionState == true) {
+      $connectionPanel.classList.add(isActive);
+      $noConnectionPanel.classList.remove(isActive);
+    } else {
+      $connectionPanel.classList.remove(isActive);
+      $noConnectionPanel.classList.add(isActive);
+    }
+  }
+}
 // Still testing connection purposes
-checkConnectionPurpose();
+// checkConnectionPurpose();
