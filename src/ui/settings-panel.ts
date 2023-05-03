@@ -41,7 +41,7 @@ export class Settings extends BaseComponent {
   initializeEventHubEvents() {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
-      console.log("annotations fetched", annotations);
+      console.log("Annotations fetched: ", annotations, ".");
 
       if ($button && $date) {
         const now = new Date().toLocaleString("en-GB").replace(",", "");
@@ -52,8 +52,6 @@ export class Settings extends BaseComponent {
       changeConnectionState(true);
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
-      console.log("facets fetched", facets);
-
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.key)]));
       this.loadDropdowns("data-source", data["dataSource"]);
       this.loadDropdowns("entity", data["entity"]);

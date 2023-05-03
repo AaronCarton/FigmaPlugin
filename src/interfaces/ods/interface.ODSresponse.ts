@@ -25,20 +25,22 @@ export interface ODSResponse<T extends ODSObject<T>, U = undefined, K extends st
   >;
 }
 
+export interface ODSFacetValues {
+  key: string;
+  displayName: string;
+  value: string;
+  count: number;
+  countText: string;
+  selected: boolean;
+  sortKey: string;
+}
+
 export interface ODSFacet {
   name: string;
   displayName: string;
   description: string;
   totalValueCount: number;
-  values: {
-    key: string;
-    displayName: string;
-    value: string;
-    count: number;
-    countText: string;
-    selected: boolean;
-    sortKey: string;
-  }[];
+  values: ODSFacetValues[];
 }
 
 /**

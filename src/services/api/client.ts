@@ -4,6 +4,7 @@ import Project, { IProject } from "../../interfaces/interface.project";
 import APIError from "../../interfaces/ods/interface.APIerror";
 import EventHub from "../events/EventHub";
 import { Events } from "../events/Events";
+import { PropertizeConstants } from "../../classes/propertizeConstants";
 
 interface ApiOptions {
   baseURL: string;
@@ -41,7 +42,7 @@ export default class ApiClient {
 
       api.getProject(projectKey).then((project) => {
         api
-          .searchItem<Annotation>("annotation", `projectKey.eq.${project?.itemKey}`, ["entity", "attribute", "dataSource", "dataType"])
+          .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
           .then((response) => {
             const annotations = response.results.map((res) => new Annotation(res.item, api));
             EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
