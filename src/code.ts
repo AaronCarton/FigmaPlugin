@@ -8,7 +8,7 @@ import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
 
 figma.showUI(__html__, { width: 345, height: 250 });
-figma.on("selectionchange", () => console.log(figma.currentPage.selection));
+
 figma.ui.onmessage = (event) => {
   const eventType = event.type;
   const payload = event.payload;
