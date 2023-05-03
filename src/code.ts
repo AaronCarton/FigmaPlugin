@@ -92,3 +92,6 @@ initializeComponent("ConnectPanel");
 function initializeComponent(componentName: string): void {
   figma.ui.postMessage({ type: `initialize${componentName}` });
 }
+
+// Log the fima file key
+console.log("[TEST] Figma file key: ", figma.fileKey);
