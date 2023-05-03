@@ -40,15 +40,13 @@ export default class ApiClient {
       });
 
       api.getProject(projectKey).then((project) => {
-        console.log(project);
-        api.getAnnotations(project?.itemKey || "").then((annotations) => {
-          const a = annotations.find((a) => (a.attribute = "body"));
-          if (a) {
-            a.value = `A bunch of text that fills up a body... ${new Date().toISOString()}`;
-            EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION, a);
-          }
-          EventHub.getInstance().sendCustomEvent(Events.DATA_INITIALIZED, annotations);
-        });
+        api
+          .searchItem<Annotation>("annotation", `projectKey.eq.${project?.itemKey}`, ["entity", "attribute", "dataSource", "dataType"])
+          .then((response) => {
+            const annotations = response.results.map((res) => new Annotation(res.item, api));
+            EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
+            EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
+          });
       });
 
       // Register create listener
