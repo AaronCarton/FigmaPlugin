@@ -95,7 +95,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
 
   if (selection.length > 0) {
     sortNodesAccordingToYCoords(selection);
-    //alles ok met selection logic (2 elems present)
     console.log("selection", selection);
 
     for (let i = 0; i < selection.length; i++) {
@@ -132,8 +131,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
         }
 
         AnnotationElements.parentFrames.push(newFramesItem);
-
-        //return newFramesItem;
       } else {
         // If parentframe is already added to the array.
         const parentframe = AnnotationElements.parentFrames.find((x) => x.frame === determinedFrame);
@@ -165,7 +162,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
 }
 
 function drawConnector(annotation: SceneNode, destination: SceneNode) {
-  console.log("line (anno, dest): ", annotation, destination);
   if (destination.absoluteBoundingBox !== null && annotation.absoluteBoundingBox !== null) {
     const line = figma.createVector();
     line.strokeCap = "ARROW_LINES";
@@ -213,7 +209,7 @@ function drawAnnotations(
 ) {
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
-  //sortNodesAccordingToYCoords(sourceNodes);
+
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
@@ -228,15 +224,15 @@ function drawAnnotations(
 
     // If links of the sourcenode doesn't exist.
     if (found === undefined) {
-      //check if inputValues is an array
+      // Check if inputValues is an array.
       if (Array.isArray(inputValues)) {
-        //Get annotationInput values from element with same sourceNode Id.
+        // Get annotationInput values from element with same sourceNode Id.
         const findData = inputValues.find((x) => x.id === sourceNodes[i].id)?.AnnotationInput;
         if (findData !== undefined) {
           annotation = createAnnotation(findData);
         }
       } else {
-        //Not an array (a.k.a being called from updateAnnotation function instead of initAnnotations)
+        // Not an array (a.k.a being called from updateAnnotation function instead of initAnnotations).
         annotation = createAnnotation(inputValues);
       }
     } else {
@@ -303,30 +299,30 @@ function createLayer() {
 
 function handleConnectorRedraws(event: DocumentChangeEvent) {
   if (AnnotationElements.parentFrames.length > 0 && AnnotationElements.annotationLayer.visible === true) {
-    //get data of changed nodes
+    //Get data of changed nodes.
     const changedNodeData = event.documentChanges;
     const listOfChangedAnnotationSourceNodes = [];
     for (let i = 0; i < changedNodeData.length; i++) {
       const changedNode = changedNodeData[i];
 
-      //make searchable = if found in here => changedNode is a sourcenode of an annotation
+      //Make searchable = if found in here => changedNode is a sourcenode of an annotation
       const searchMap = JSON.stringify(AnnotationElements.parentFrames);
       const includesChangedNode = searchMap.match(changedNode.id);
 
       if (includesChangedNode) {
-        //gives weird error on property "node" => does not exist: it does.
+        //Gives weird error on property "node" => does not exist: it does.
         listOfChangedAnnotationSourceNodes.push(changedNode.node);
       }
     }
 
     console.log("changedNodes", listOfChangedAnnotationSourceNodes);
 
-    //when changed nodes are found: redraw them
+    // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
       //find linkedAnnotation
       const linkedAnnotation = linkAnnotationToSourceNodes.find((item) => item.sourceNode.id === changedNode.id);
 
-      //find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation
+      // Find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation.
       if (linkedAnnotation) {
         figma.currentPage.findOne((n) => n.id === linkedAnnotation.vector?.id)?.remove();
         const connector = drawConnector(<SceneNode>linkedAnnotation.annotation.absoluteBoundingBox, <SceneNode>changedNode);
@@ -377,7 +373,7 @@ export function initAnnotations(annotationData: Array<Annotation>) {
       }
     }
   }
-  //listen to updates after first initial drawing of the annotations
+  // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
 }
 
@@ -418,7 +414,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         console.log;
         //make data for new parentframe
         makeFramesArray(null);
-        //if parent doesn't exist the newly added item will always be the last in the array
+        // If parent doesn't exist the newly added item will always be the last in the array.
         const newParentFrame = AnnotationElements.parentFrames[AnnotationElements.parentFrames.length - 1];
 
         if (newParentFrame !== undefined) {
@@ -426,7 +422,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
           const side = determineFrameSide(currentItem, newParentFrame.frame);
           const startPoint = side === PropertizeConstants.sideLeft ? newParentFrame.startpointLeft : newParentFrame.startpointRight;
           const sourceNodes = side === PropertizeConstants.sideLeft ? newParentFrame.sourceNodesLeft : newParentFrame.sourceNodesRight;
-          //sourceNodes.push(currentItem);
           drawAnnotations(startPoint, sortNodesAccordingToYCoords(sourceNodes), inputValues);
         }
       }
