@@ -1,5 +1,6 @@
 import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
+import { ODSFacet } from "../interfaces/ods/interface.ODSresponse";
 import ApiClient from "../services/api/client";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
@@ -38,20 +39,23 @@ export class Settings extends BaseComponent {
 
   initializeEventHubEvents() {
     ApiClient.initializeEvents();
-    EventHub.getInstance().makeEvent(Events.DATA_INITIALIZED, (data: Annotation[]) => {
-      console.log("DATA_INITIALIZED", data);
-
-      // Test to load the data into dropdown
-      this.loadDropdonwns("data-source", data);
-      this.loadDropdonwns("entity", data);
-      this.loadDropdonwns("attribute", data);
-      this.loadDropdonwns("data-type", data);
+    EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
+      console.log("annotations fetched", annotations);
 
       if ($button && $date) {
         const now = new Date().toLocaleString("en-GB").replace(",", "");
         $button.innerHTML = "Refresh";
         $date.innerHTML = now;
       }
+    });
+    EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
+      console.log("facets fetched", facets);
+
+      const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.key)]));
+      this.loadDropdonwns("data-source", data["dataSource"]);
+      this.loadDropdonwns("entity", data["entity"]);
+      this.loadDropdonwns("attribute", data["attribute"]);
+      this.loadDropdonwns("data-type", data["dataType"]);
     });
     EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
       $baseURL?.setAttribute("value", baseURL || "");
@@ -84,41 +88,9 @@ export class Settings extends BaseComponent {
     });
   }
 
-  loadDropdonwns(elementName: string, ODSData: Annotation[]) {
+  loadDropdonwns(elementName: string, data: string[]) {
     const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
-    const array: string[] = [];
-    const unique: string[] = [];
-
-    for (const annotation of ODSData) {
-      if (elementName === "data-source") {
-        if (annotation.dataSource !== "null") {
-          array.push(annotation.dataSource);
-        }
-      }
-      if (elementName === "entity") {
-        if (annotation.entity !== "null") {
-          array.push(annotation.entity);
-        }
-      }
-      if (elementName === "attribute") {
-        if (annotation.attribute !== "null") {
-          array.push(annotation.attribute);
-        }
-      }
-      if (elementName === "data-type") {
-        if (annotation.dataType !== "null") {
-          array.push(annotation.dataType);
-        }
-      }
-    }
-
-    array.forEach((element) => {
-      if (!unique.includes(element)) {
-        unique.push(element);
-      }
-    });
-
-    unique.forEach((element) => {
+    data.forEach((element) => {
       const newOption = new Option(element, element);
       $dropDown?.add(newOption);
     });
