@@ -83,9 +83,9 @@ function determineParentFrame(elem: SceneNode) {
 function makeFramesArray(initData: Array<Annotation> | null) {
   console.log("Making frame array...");
   let selection: Array<SceneNode> = [];
+
   if (initData !== null) {
     initData.forEach((element: Annotation) => {
-      console.log("element trying to find now", element);
       const foundElement = figma.currentPage.findOne((x) => x.id === element.nodeId);
       foundElement !== null ? selection.push(foundElement) : console.log("MakeFramesArray error creating array from initData");
     });
@@ -99,7 +99,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
     console.log("selection", selection);
 
     for (let i = 0; i < selection.length; i++) {
-      console.log(i);
       // Vars needed for each calculation.
       const currentElement = selection[i];
       const determinedFrame = determineParentFrame(currentElement);
@@ -131,13 +130,13 @@ function makeFramesArray(initData: Array<Annotation> | null) {
             newFramesItem.sourceNodesRight[indexOfElement] == currentElement;
           }
         }
+
         AnnotationElements.parentFrames.push(newFramesItem);
+
         //return newFramesItem;
       } else {
         // If parentframe is already added to the array.
         const parentframe = AnnotationElements.parentFrames.find((x) => x.frame === determinedFrame);
-
-        console.log("parent second element found");
 
         if (parentframe !== undefined) {
           // Determine left or right of parent frame, add to according array of the object.
@@ -217,7 +216,6 @@ function drawAnnotations(
   //sortNodesAccordingToYCoords(sourceNodes);
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
-  console.log("LENGTH", sourceNodes.length);
   for (let i = 0; i < sourceNodes.length; i++) {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
     let annotation: FrameNode | null = null;
@@ -350,9 +348,9 @@ export function changeLayerVisibility(state: boolean) {
 
 export function initAnnotations(annotationData: Array<Annotation>) {
   console.log("initing");
-  console.log("data:", annotationData);
   createLayer();
   makeFramesArray(annotationData);
+  // Make inputValues array needed for drawing initial annotations.
   const inputValues: Array<{ id: string; AnnotationInput: AnnotationInput }> = [];
   for (let i = 0; i < annotationData.length; i++) {
     const element = annotationData[i];
@@ -384,11 +382,11 @@ export function initAnnotations(annotationData: Array<Annotation>) {
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
-  console.log("UPDATING");
-  console.log(selection, "selection");
+  console.log("updating");
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
+
     if (found !== undefined) {
       // Item already has an annotation.
       found.data = inputValues;
@@ -419,8 +417,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         // Parent frame of new item is not yet added to parentFrames Array.
         console.log;
         //make data for new parentframe
-        const test = makeFramesArray(null);
-        console.log("frame array in update", test);
+        makeFramesArray(null);
         //if parent doesn't exist the newly added item will always be the last in the array
         const newParentFrame = AnnotationElements.parentFrames[AnnotationElements.parentFrames.length - 1];
 
@@ -433,8 +430,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
           drawAnnotations(startPoint, sortNodesAccordingToYCoords(sourceNodes), inputValues);
         }
       }
-      console.log(linkAnnotationToSourceNodes);
-      console.log(AnnotationElements.parentFrames);
     }
   }
 }
