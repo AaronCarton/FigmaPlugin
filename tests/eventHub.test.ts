@@ -3,13 +3,79 @@ import EventHub from "../src/services/events/EventHub";
 describe("Tests for eventHub: prefixEventType()", () => {
   test("Is prefix added to type?", () => {
     const type = "testType";
-    expect(EventHub.getInstance().prefixEventName(type)).toEqual("Propertize_message_" + type);
+    expect(EventHub.getInstance().prefixEventType(type)).toEqual("PROPERTIZE_MESSAGE_" + type);
   });
 
   test("Is an error thrown when type is empty?", () => {
     expect(() => {
-      EventHub.getInstance().prefixEventName("");
-    }).toThrowError("The event name is undefined");
+      EventHub.getInstance().prefixEventType("");
+    }).toThrowError("The event type cannot be empty");
+  });
+});
+
+describe("Tests for eventHub: checkDuplicateEvent()", () => {
+  let eventType: string;
+  let anotherEventType: string;
+  afterEach(() => {
+    // Clear handlers after each test
+    EventHub.getInstance().getHandlers().splice(0, EventHub.getInstance().getHandlers().length);
+  });
+
+  test("Is duplicate event detected?", () => {
+    eventType = "testEvent";
+    const eventHub = EventHub.getInstance();
+    const prefixedEventName = eventHub.prefixEventType(eventType);
+    function cb() {
+      console.log("cb1");
+    }
+
+    eventHub.getHandlers().push({
+      type: prefixedEventName,
+      originalCallback: cb,
+      callback: cb,
+    });
+
+    expect(eventHub.checkDuplicateEvent(eventType, cb)).toBe(true);
+  });
+
+  test("Is not detected for different callbacks", () => {
+    eventType = "testEvent";
+    const eventHub = EventHub.getInstance();
+    const prefixedEventName = eventHub.prefixEventType(eventType);
+
+    function cb() {
+      console.log("cb1");
+    }
+
+    function anotherCb() {
+      console.log("anotherCb");
+    }
+
+    eventHub.getHandlers().push({
+      type: prefixedEventName,
+      originalCallback: cb,
+      callback: cb,
+    });
+
+    expect(eventHub.checkDuplicateEvent(eventType, anotherCb)).toBe(false);
+  });
+
+  test("Is not detected for different event types", () => {
+    eventType = "testEvent";
+    anotherEventType = "testEvent2";
+    const eventHub = EventHub.getInstance();
+    const prefixedEventName = eventHub.prefixEventType(eventType);
+    function cb() {
+      console.log("cb1");
+    }
+
+    eventHub.getHandlers().push({
+      type: prefixedEventName,
+      originalCallback: cb,
+      callback: cb,
+    });
+
+    expect(eventHub.checkDuplicateEvent(anotherEventType, cb)).toBe(false);
   });
 });
 
@@ -21,8 +87,8 @@ describe("Tests for eventHub: getInstance()", () => {
 
 describe("Tests for eventHub: sendCustomEvent()", () => {
   let isCalled: boolean;
-  beforeAll(() => {
-    const prefixedEventName = EventHub.getInstance().prefixEventName("testType");
+  beforeEach(() => {
+    const prefixedEventName = EventHub.getInstance().prefixEventType("testType");
     window.addEventListener("message", (event) => {
       if (event.data.pluginMessage.type === prefixedEventName) {
         isCalled = true;
@@ -30,13 +96,13 @@ describe("Tests for eventHub: sendCustomEvent()", () => {
     });
   });
 
-  afterAll(() => {
+  afterEach(() => {
     isCalled = false;
   });
 
   test("Is event sent?", () => {
     const type = "testType";
-    const prefixEventType = EventHub.getInstance().prefixEventName("testType");
+    const prefixEventType = EventHub.getInstance().prefixEventType("testType");
     const data = {
       pluginMessage: {
         type: prefixEventType,
@@ -44,6 +110,7 @@ describe("Tests for eventHub: sendCustomEvent()", () => {
       },
     };
     EventHub.getInstance().sendCustomEvent(type, data);
+
     waitUntil(() => isCalled).then(() => {
       expect(isCalled).toBe(true);
     });
@@ -68,7 +135,7 @@ describe("Tests for eventHub: makeEvent()", () => {
     EventHub.getInstance().makeEvent(eventType, () => {
       isCalled = true;
     });
-    const prefixEventType = EventHub.getInstance().prefixEventName(eventType);
+    const prefixEventType = EventHub.getInstance().prefixEventType(eventType);
 
     // Simulate a matching event
     const data = {
@@ -111,7 +178,7 @@ describe("Tests for eventHub: makeEvent() and sendCustomEvent() together", () =>
   test("Is event registred and sent?", () => {
     const eventHub = EventHub.getInstance();
     eventType = "testEvent";
-    const prefixEventType = eventHub.prefixEventName(eventType);
+    const prefixEventType = eventHub.prefixEventType(eventType);
 
     eventHub.makeEvent(eventType, () => {
       isCalled = true;
@@ -131,37 +198,30 @@ describe("Tests for eventHub: makeEvent() and sendCustomEvent() together", () =>
   });
 });
 
-// describe("Tests for eventHub: removeEvent()", () => {
-//   beforeAll(() => {
-//     EventHub.getInstance().getHandlers().push({
-//       type: "testEvent",
-
-//     });
-//   });
-//   test("Is event removed?", () => {
-
-//   });
-
-// });
-
-describe("Tests for eventHub: checkDuplicateEvent()", () => {
+describe("Tests for eventHub: removeEvent()", () => {
   let eventType: string;
+  afterEach(() => {
+    EventHub.getInstance().getHandlers().splice(0, EventHub.getInstance().getHandlers().length);
+  });
 
-  test("Is duplicate event detected?", () => {
+  beforeAll(() => {
     eventType = "testEvent";
-    const eventHub = EventHub.getInstance();
-    const prefixedEventName = eventHub.prefixEventName(eventType);
+    const prefixedEventName = EventHub.getInstance().prefixEventType(eventType);
     function cb() {
       console.log("cb1");
     }
 
-    eventHub.getHandlers().push({
+    EventHub.getInstance().getHandlers().push({
       type: prefixedEventName,
       originalCallback: cb,
-      callback,
+      callback: cb,
     });
-
-    expect(eventHub.checkDuplicateEvent(eventType, cb)).toBe(true);
+  });
+  test("Is event removed?", () => {
+    const eventHub = EventHub.getInstance();
+    const prefixedEventName = eventHub.prefixEventType(eventType);
+    eventHub.removeEvent(eventType);
+    expect(eventHub.getHandlers().find((event) => event.type === prefixedEventName)).toBeUndefined();
   });
 });
 
