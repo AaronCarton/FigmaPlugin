@@ -10,7 +10,7 @@ const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLi
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
-let $projectKey: string = "";
+let projectKey: string = "";
 export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
 export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 //Spinner
@@ -61,8 +61,8 @@ export class Settings extends BaseComponent {
       // });
     });
 
-    EventHub.getInstance().makeEvent(Events.PROJECT_KEY_FETCHED, (projectKey) => {
-      $projectKey = projectKey;
+    EventHub.getInstance().makeEvent(Events.PROJECT_KEY_FETCHED, (pk) => {
+      projectKey = pk;
     });
 
     EventHub.getInstance().sendCustomEvent(Events.FETCH_LOCAL_STORAGE, {});
@@ -71,7 +71,7 @@ export class Settings extends BaseComponent {
 
   connect() {
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-      projectKey: $projectKey,
+      projectKey: projectKey,
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
