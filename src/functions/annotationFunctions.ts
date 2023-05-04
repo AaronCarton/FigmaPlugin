@@ -5,6 +5,7 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
+import { createFigmaError } from "./createError";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let layerState = true;
@@ -87,7 +88,7 @@ function makeFramesArray(initData: Array<Annotation> | null) {
   if (initData !== null) {
     initData.forEach((element: Annotation) => {
       const foundElement = figma.currentPage.findOne((x) => x.id === element.nodeId);
-      foundElement !== null ? selection.push(foundElement) : console.log("MakeFramesArray error creating array from initData");
+      foundElement !== null ? selection.push(foundElement) : createFigmaError("MakeFramesArray error creating array from initData", 2000, true);
     });
   } else {
     selection = <Array<SceneNode>>figma.currentPage.selection;
