@@ -44,30 +44,31 @@ export default class ApiClient {
         api
           .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
           .then((response) => {
-            const annotations = response.results.map((res) => new Annotation(res.item, api));
+            const annotations = response.results.map((res) => new Annotation(res.item));
             EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
             EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
           });
       });
-
-      // Register create listener
-      eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
-        await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
-      });
-
-      // Register update listener
-      eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
-        await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
-      });
-      // TODO: add ARCHIVE and UNARCHIVE listeners
     });
+
+    // Register create listener
+    eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
+      await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
+    });
+
+    // Register update listener
+    eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
+      await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
+    });
+    // TODO: add ARCHIVE and UNARCHIVE listeners
   }
 
   /**
    * Configure API client
-   * @param {string} baseURL - Base URL of the ODS API
-   * @param {string} clientKey - Client API key
-   * @param {string} sourceKey - Source API key
+   * @param {ApiOptions} options - Options to configure the API client
+   * @param {string} options.baseURL - Base URL of the ODS API
+   * @param {string} options.clientKey - Client API key
+   * @param {string} options.sourceKey - Source API key
    */
   public static initialize({ baseURL, clientKey, sourceKey }: ApiOptions) {
     // Return existing instance if already initialized
@@ -129,7 +130,7 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to a project
    */
   public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
-    return this.getById<Project>("project", projectKey, includeArchived).then((res) => (res ? new Project(res, this) : null));
+    return this.getById<Project>(PropertizeConstants.project, projectKey, includeArchived).then((res) => (res ? new Project(res) : null));
   }
 
   /**
@@ -139,8 +140,8 @@ export default class ApiClient {
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
-    return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, undefined, includeArchived).then((res) =>
-      res.results.map((res) => new Annotation(res.item, this)),
+    return this.searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${projectKey}`, undefined, undefined, includeArchived).then(
+      (res) => res.results.map((res) => new Annotation(res.item)),
     );
   }
 
@@ -151,8 +152,8 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to the created annotation
    */
   public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
-    return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(
-      () => new Annotation({ ...annotation, itemKey, itemType: "annotation" } as Annotation, this),
+    return await this.upsertItem(PropertizeConstants.annotation, itemKey, annotation as Annotation).then(
+      () => new Annotation({ ...annotation, itemKey, itemType: PropertizeConstants.annotation } as Annotation),
     );
   }
 
@@ -163,8 +164,8 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to the created project
    */
   public async createProject(itemKey: string, project: IProject): Promise<Project> {
-    return await this.upsertItem("project", itemKey, project as Project).then(
-      () => new Project({ ...project, itemKey, itemType: "project" } as Project, this),
+    return await this.upsertItem(PropertizeConstants.project, itemKey, project as Project).then(
+      () => new Project({ ...project, itemKey, itemType: PropertizeConstants.project } as Project),
     );
   }
 
