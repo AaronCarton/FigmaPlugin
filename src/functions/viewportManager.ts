@@ -54,13 +54,18 @@ function determineViewports(documentChanges: DocumentChange[]) {
   // Remote = other user in the document made the change => dont run current users plugin on changes made by other user
   let filtered = linkAnnotationToSourceNodes.filter((element) => {
     const found = documentChanges.find((x) => x.id === element.sourceNode.id);
-    if (found?.origin === "REMOTE") {
-      return true;
-    } else {
+    // Element not found in annotationNodes => skip
+    if (found === undefined) {
       return false;
     }
-  });
 
+    if (found?.origin === "REMOTE") {
+      return false;
+    } else {
+      return true;
+    }
+  });
+  console.log("filtered", filtered);
   // Loop through filtered annotations and check if they are in the viewport.
   filtered = linkAnnotationToSourceNodes.filter((element) => {
     return isItemInViewport(element, currentviewPort);
@@ -80,6 +85,3 @@ function determineViewports(documentChanges: DocumentChange[]) {
 export function viewportManager(event: DocumentChangeEvent) {
   determineViewports(event.documentChanges);
 }
-
-//On:zoom event doesn't exist in figma plugin API, most frequent event we can get is on:documentChange.
-figma.on("documentchange", (event) => viewportManager(event));

@@ -346,8 +346,7 @@ export function initAnnotations(inputValues: string[]) {
       }
     }
   }
-  viewportManager();
   //listen to updates after first initial drawing of the annotations
   figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
-  figma.on("documentchange", viewportManager);
+  figma.on("documentchange", (event) => viewportManager(event));
 }
