@@ -1,6 +1,5 @@
 /* eslint-disable func-style */
 /* eslint-disable @typescript-eslint/no-explicit-any */ //! Should be fixed later
-import { IfigmaMessage } from "../../interfaces/interface.figmaMessage";
 
 interface Event {
   type: string;
@@ -40,14 +39,10 @@ export default class EventHub {
     const callback = (event: any) => {
       // Check payload matches that of a plugin event (else it'll be a Figma.UI event)
       //! This might change in the future if plugin events are no longer wrapped in a pluginMessage
-      if (event.data?.pluginMessage) {
-        if (event.data.pluginMessage.type === prefixEventType) {
-          cb(event.data.pluginMessage.message);
-        }
-      } else {
-        if (event.type === prefixEventType) {
-          cb(event.message);
-        }
+      if (event.data?.pluginMessage && event.data.pluginMessage.type === prefixEventType) {
+        cb(event.data.pluginMessage.message);
+      } else if (event.type === prefixEventType) {
+        cb(event.message);
       }
     };
 

@@ -52,18 +52,16 @@ export default class ApiClient {
       });
     });
 
-    eventHub.makeEvent(Events.DATA_INITIALIZED, () => {
-      // Register create listener
-      eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
-        await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
-      });
-
-      // Register update listener
-      eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
-        await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
-      });
-      // TODO: add ARCHIVE and UNARCHIVE listeners
+    // Register create listener
+    eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
+      await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
     });
+
+    // Register update listener
+    eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
+      await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
+    });
+    // TODO: add ARCHIVE and UNARCHIVE listeners
   }
 
   /**
