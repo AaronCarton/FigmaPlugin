@@ -1,4 +1,3 @@
-import ApiClient from "../services/api/client";
 import { ODSObject } from "./ods/interface.ODSresponse";
 
 export interface IAnnotation {
@@ -20,8 +19,8 @@ export default class Annotation extends ODSObject<Annotation> implements IAnnota
   public dataType: string;
   public value: string;
 
-  constructor(annotation: Annotation, api: ApiClient) {
-    super(api, annotation);
+  constructor(annotation: Annotation) {
+    super(annotation);
 
     this.projectKey = annotation.projectKey;
     this.nodeId = annotation.nodeId;

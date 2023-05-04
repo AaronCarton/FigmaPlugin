@@ -50,25 +50,26 @@ export default class ApiClient {
           EventHub.getInstance().sendCustomEvent(Events.DATA_INITIALIZED, annotations);
         });
       });
-
-      // Register create listener
-      eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
-        await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
-      });
-
-      // Register update listener
-      eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
-        await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
-      });
-      // TODO: add ARCHIVE and UNARCHIVE listeners
     });
+
+    // Register create listener
+    eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
+      await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
+    });
+
+    // Register update listener
+    eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
+      await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
+    });
+    // TODO: add ARCHIVE and UNARCHIVE listeners
   }
 
   /**
    * Configure API client
-   * @param {string} baseURL - Base URL of the ODS API
-   * @param {string} clientKey - Client API key
-   * @param {string} sourceKey - Source API key
+   * @param {ApiOptions} options - Options to configure the API client
+   * @param {string} options.baseURL - Base URL of the ODS API
+   * @param {string} options.clientKey - Client API key
+   * @param {string} options.sourceKey - Source API key
    */
   public static initialize({ baseURL, clientKey, sourceKey }: ApiOptions) {
     // Return existing instance if already initialized
@@ -132,7 +133,7 @@ export default class ApiClient {
   public async getProject(projectKey: string, includeArchived: boolean = false): Promise<Project | null> {
     return this.getById<Project>("project", projectKey, includeArchived).then((res) =>
       res
-        ? new Project(res, this)
+        ? new Project(res)
         : this.createProject(projectKey, {
             lastUpdated: new Date().toISOString(),
             customerId: projectKey,
@@ -148,7 +149,7 @@ export default class ApiClient {
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
     return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, includeArchived).then((res) =>
-      res.results.map((res) => new Annotation(res.item, this)),
+      res.results.map((res) => new Annotation(res.item)),
     );
   }
 
@@ -160,7 +161,7 @@ export default class ApiClient {
    */
   public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
     return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(
-      () => new Annotation({ ...annotation, itemKey, itemType: "annotation" } as Annotation, this),
+      () => new Annotation({ ...annotation, itemKey, itemType: "annotation" } as Annotation),
     );
   }
 
@@ -172,7 +173,7 @@ export default class ApiClient {
    */
   public async createProject(itemKey: string, project: IProject): Promise<Project> {
     return await this.upsertItem("project", itemKey, project as Project).then(
-      () => new Project({ ...project, itemKey, itemType: "project" } as Project, this),
+      () => new Project({ ...project, itemKey, itemType: "project" } as Project),
     );
   }
 

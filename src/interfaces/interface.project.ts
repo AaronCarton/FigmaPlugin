@@ -10,8 +10,8 @@ export default class Project extends ODSObject<Project> implements IProject {
   public lastUpdated: string;
   public customerId: string;
 
-  constructor(project: Project, api: ApiClient) {
-    super(api, project);
+  constructor(project: Project) {
+    super(project);
 
     this.lastUpdated = project.lastUpdated;
     this.customerId = project.customerId;
