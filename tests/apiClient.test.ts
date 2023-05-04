@@ -1,4 +1,5 @@
 import { IAnnotation } from "../src/interfaces/interface.annotation";
+import { IProject } from "../src/interfaces/interface.project";
 import ApiClient from "../src/services/api/client";
 import { config } from "dotenv";
 
@@ -27,7 +28,7 @@ describe("Tests validation keys", () => {
 
 describe("Tests for API client: projects", () => {
   test("Can create project", async () => {
-    const project = {
+    const project: IProject = {
       lastUpdated: new Date().toISOString(),
       customerId: "1234",
     };
@@ -38,6 +39,12 @@ describe("Tests for API client: projects", () => {
   });
 
   test("Get Project by projectkey", async () => {
+    const project: IProject = {
+      lastUpdated: new Date().toISOString(),
+      customerId: "1234",
+    };
+    await apiClient.createProject("100", project);
+
     await apiClient.getProject("100").then(async (res) => {
       expect(res).not.toEqual(0);
       expect(res?.itemKey).toEqual("100"); // Check if the project key is correct
@@ -45,14 +52,25 @@ describe("Tests for API client: projects", () => {
   });
 
   test("Can archive project", async () => {
-    await apiClient.getProject("100").then(async (res) => {
+    const project: IProject = {
+      lastUpdated: new Date().toISOString(),
+      customerId: "1234",
+    };
+    await apiClient.createProject("101", project);
+    await apiClient.getProject("101").then(async (res) => {
       res?.archive();
       expect(res?.archived).not.toBeNull(); // Check if the archive field of the project isn't null
     });
   });
 
   test("Cannot get archived project when IncludeArchived = false", async () => {
-    await apiClient.getProject("100", false).then(async (res) => {
+    const project: IProject = {
+      lastUpdated: new Date().toISOString(),
+      customerId: "1234",
+    };
+    await apiClient.createProject("102", project);
+
+    await apiClient.getProject("102", false).then(async (res) => {
       waitUntil(() => res === null) // Wait for archived annotation to be indexed first
         .then(() => {
           expect(res).toBeNull();
@@ -64,9 +82,15 @@ describe("Tests for API client: projects", () => {
   });
 
   test("Can get archived project when IncludeArchived = true", async () => {
-    await apiClient.getProject("100", true).then(async (res) => {
+    const project: IProject = {
+      lastUpdated: new Date().toISOString(),
+      customerId: "1234",
+    };
+    await apiClient.createProject("103", project);
+
+    await apiClient.getProject("103", true).then(async (res) => {
       expect(res).not.toBeNull();
-      expect(res?.itemKey).toEqual("100"); // Check if the project key is correct
+      expect(res?.itemKey).toEqual("103"); // Check if the project key is correct
     });
   });
 });
@@ -89,16 +113,50 @@ describe("Tests for API client: annotations", () => {
   });
 
   test("Get annotations by projectKey", async () => {
-    await apiClient.getAnnotations("100").then(async (res) => {
+    const project: IProject = {
+      lastUpdated: new Date().toISOString(),
+      customerId: "1234",
+    };
+    await apiClient.createProject("104", project);
+
+    const annotation: IAnnotation = {
+      projectKey: "104",
+      nodeId: "f249d3d2",
+      dataSource: "someSource",
+      entity: "someEntity",
+      attribute: "titleArchived",
+      dataType: "string",
+      value: "Some neat title",
+    };
+    await apiClient.createAnnotation("104", annotation);
+
+    await apiClient.getAnnotations("104").then(async (res) => {
       waitUntil(() => res !== null).then(() => {
         expect(res).not.toEqual(0);
-        expect(res[0].itemKey).toEqual("100"); // Check if the annotation key is correct
+        expect(res[0].itemKey).toEqual("104"); // Check if the annotation key is correct
       });
     });
   });
 
   test("Can archive annotation", async () => {
-    await apiClient.getAnnotations("100").then(async (res) => {
+    const project: IProject = {
+      lastUpdated: new Date().toISOString(),
+      customerId: "1234",
+    };
+    await apiClient.createProject("105", project);
+
+    const annotation: IAnnotation = {
+      projectKey: "105",
+      nodeId: "f249d3d2",
+      dataSource: "someSource",
+      entity: "someEntity",
+      attribute: "titleArchived",
+      dataType: "string",
+      value: "Some neat title",
+    };
+    await apiClient.createAnnotation("105", annotation);
+
+    await apiClient.getAnnotations("105").then(async (res) => {
       waitUntil(() => res[0].archived !== null).then(() => {
         res[0].archive();
         expect(res[0].archived).not.toBeNull();
@@ -107,7 +165,24 @@ describe("Tests for API client: annotations", () => {
   });
 
   test("Cannot get archived annotation when IncludeArchived = false", async () => {
-    await apiClient.getAnnotations("100", false).then(async (res) => {
+    const project: IProject = {
+      lastUpdated: new Date().toISOString(),
+      customerId: "1234",
+    };
+    await apiClient.createProject("106", project);
+
+    const annotation: IAnnotation = {
+      projectKey: "106",
+      nodeId: "f249d3d2",
+      dataSource: "someSource",
+      entity: "someEntity",
+      attribute: "titleArchived",
+      dataType: "string",
+      value: "Some neat title",
+    };
+    await apiClient.createAnnotation("106", annotation);
+
+    await apiClient.getAnnotations("106", false).then(async (res) => {
       waitUntil(() => res === null) // Wait for archived annotation to be indexed first
         .then(() => {
           expect(res.length).toEqual(0);
@@ -119,9 +194,26 @@ describe("Tests for API client: annotations", () => {
   });
 
   test("Can get archived annotation when IncludeArchived = true", async () => {
-    await apiClient.getAnnotations("100", true).then(async (res) => {
+    const project: IProject = {
+      lastUpdated: new Date().toISOString(),
+      customerId: "1234",
+    };
+    await apiClient.createProject("107", project);
+
+    const annotation: IAnnotation = {
+      projectKey: "107",
+      nodeId: "f249d3d2",
+      dataSource: "someSource",
+      entity: "someEntity",
+      attribute: "titleArchived",
+      dataType: "string",
+      value: "Some neat title",
+    };
+    await apiClient.createAnnotation("107", annotation);
+
+    await apiClient.getAnnotations("107", true).then(async (res) => {
       expect(res).not.toBeNull();
-      expect(res[0].itemKey).toEqual("100");
+      expect(res[0].itemKey).toEqual("107");
     });
   });
 });
