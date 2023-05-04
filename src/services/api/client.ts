@@ -133,7 +133,7 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to a project
    */
   public async getProject(projectKey: string, includeArchived = false): Promise<Project | null> {
-    return this.getById<Project>("project", projectKey, includeArchived).then((res) => (res ? new Project(res, this) : null));
+    return this.getById<Project>("project", projectKey, includeArchived).then((res) => (res ? new Project(res) : null));
   }
 
   /**
@@ -144,7 +144,7 @@ export default class ApiClient {
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
     return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, includeArchived).then((res) =>
-      res.results.map((res) => new Annotation(res.item, this)),
+      res.results.map((res) => new Annotation(res.item)),
     );
   }
 
@@ -156,7 +156,7 @@ export default class ApiClient {
    */
   public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
     return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(
-      () => new Annotation({ ...annotation, itemKey, itemType: "annotation" } as Annotation, this),
+      () => new Annotation({ ...annotation, itemKey, itemType: "annotation" } as Annotation),
     );
   }
 
@@ -168,7 +168,7 @@ export default class ApiClient {
    */
   public async createProject(itemKey: string, project: IProject): Promise<Project> {
     return await this.upsertItem("project", itemKey, project as Project).then(
-      () => new Project({ ...project, itemKey, itemType: "project" } as Project, this),
+      () => new Project({ ...project, itemKey, itemType: "project" } as Project),
     );
   }
 

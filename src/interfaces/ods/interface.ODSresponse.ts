@@ -36,17 +36,13 @@ export interface ODSResponse<T extends ODSObject<T>, U = undefined, K extends st
  * @example class Annotation extends ODSObject<Annotation> { ... }
  */
 export abstract class ODSObject<T extends ODSObject<T>> {
-  protected API: ApiClient;
-
   public itemType: string;
   public partition: string;
   public itemKey: string;
   public localized: [];
   public archived: string | null;
 
-  constructor(api: ApiClient, obj: T) {
-    this.API = api;
-
+  constructor(obj: T) {
     this.itemType = obj.itemType;
     this.partition = obj.partition;
     this.itemKey = obj.itemKey;
@@ -70,14 +66,6 @@ export abstract class ODSObject<T extends ODSObject<T>> {
    */
   public async restore() {
     this.archived = null; // remove archived property
-  }
-
-  /**
-   * Save the item
-   * @deprecated USE UPDATE_ANNOTATION EVENT INSTEAD
-   */
-  public async save() {
-    await this.API.upsertItem(this.itemType, this.itemKey, stripODS(this));
   }
 }
 
