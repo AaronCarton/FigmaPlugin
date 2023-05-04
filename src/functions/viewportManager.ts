@@ -55,9 +55,9 @@ function determineViewports(documentChanges: DocumentChange[]) {
   let filtered = linkAnnotationToSourceNodes.filter((element) => {
     const found = documentChanges.find((x) => x.id === element.sourceNode.id);
     if (found?.origin === "REMOTE") {
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   });
 
