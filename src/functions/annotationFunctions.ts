@@ -5,7 +5,6 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
-import { createFigmaError } from "./createError";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let layerState = true;
@@ -26,6 +25,9 @@ function createAnnotation(inputValues: AnnotationInput) {
   frame.cornerRadius = 10;
 
   Object.keys(inputValues).forEach((title, index) => {
+    // TODO: this is a hack to prevent the archived label from being created, should be changed later
+    if (title === "archived" || title === "projectKey" || title === "nodeId") return;
+    console.log("VALUES PITTAAA: ", inputValues);
     const titlesNode = figma.createText();
     titlesNode.name = PropertizeConstants[`${title}Label` as keyof typeof PropertizeConstants] as string;
     titlesNode.characters = PropertizeConstants[`${title}Label` as keyof typeof PropertizeConstants] as string;
@@ -88,7 +90,7 @@ function makeFramesArray(initData: Array<Annotation> | null) {
   if (initData !== null) {
     initData.forEach((element: Annotation) => {
       const foundElement = figma.currentPage.findOne((x) => x.id === element.nodeId);
-      foundElement !== null ? selection.push(foundElement) : createFigmaError("MakeFramesArray error creating array from initData", 2000, true);
+      foundElement !== null ? selection.push(foundElement) : console.warn("MakeFramesArray error creating array from initData");
     });
   } else {
     selection = <Array<SceneNode>>figma.currentPage.selection;
@@ -354,11 +356,11 @@ export function initAnnotations(annotationData: Array<Annotation>) {
     inputValues.push({
       id: element.nodeId,
       AnnotationInput: {
-        dataSrc: element.dataSource,
+        dataSource: element.dataSource,
         entity: element.entity,
         attribute: element.attribute,
         dataType: element.dataType,
-        sampleValue: element.value,
+        value: element.value,
       },
     });
   }

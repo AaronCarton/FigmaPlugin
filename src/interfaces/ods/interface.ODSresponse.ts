@@ -96,7 +96,7 @@ export abstract class ODSObject<T extends ODSObject<T>> {
  * @returns {T} a new object without the ODS properties
  */
 export function stripODS<T extends ODSObject<T>>(obj: T): T {
-  const x = { ...obj } as Record<string, unknown>;
+  const x = Object.assign({}, obj) as Record<string, unknown>;
   delete x.API;
   delete x.itemKey;
   delete x.itemType;

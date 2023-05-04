@@ -1,7 +1,7 @@
 export interface AnnotationInput {
-  dataSrc: string;
+  dataSource: string;
   entity: string;
   attribute: string;
   dataType: string;
-  sampleValue: string;
+  value: string;
 }
