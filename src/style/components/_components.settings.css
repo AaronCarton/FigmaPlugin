@@ -27,11 +27,20 @@
 
 .c-settings__btnConnect {
   padding: 8px 12px;
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
   background-color: var(--propertize__color--blue);
   color: var(--propertize__color--white);
   border: none;
   border-radius: 10px;
+}
+
+.button-pointer {
   cursor: pointer;
+}
+
+.c-settings__btnConnect:disabled {
+  opacity: 0.4;
 }
 
 .c-settings__input {

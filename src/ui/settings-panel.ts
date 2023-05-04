@@ -1,9 +1,11 @@
 import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
+import { ODSFacet } from "../interfaces/ods/interface.ODSresponse";
 import ApiClient from "../services/api/client";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
+import { changeConnectionState } from "./navigation-tabs";
 
 //input elements
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
@@ -38,13 +40,22 @@ export class Settings extends BaseComponent {
 
   initializeEventHubEvents() {
     ApiClient.initializeEvents();
-    EventHub.getInstance().makeEvent(Events.DATA_INITIALIZED, (data: Annotation[]) => {
-      console.log("DATA_INITIALIZED", data);
+    EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
+      console.log("Annotations fetched: ", annotations, ".");
+
       if ($button && $date) {
         const now = new Date().toLocaleString("en-GB").replace(",", "");
         $button.innerHTML = "Refresh";
         $date.innerHTML = now;
       }
+
+      changeConnectionState(true);
+    });
+    EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
+      const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.key)]));
+      Object.keys(data).forEach((key) => {
+        this.loadDropdowns(key, data[key]);
+      });
     });
     EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
       $baseURL?.setAttribute("value", baseURL || "");
@@ -74,6 +85,14 @@ export class Settings extends BaseComponent {
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
+    });
+  }
+
+  loadDropdowns(elementName: string, data: string[]) {
+    const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
+    data.forEach((element) => {
+      const newOption = new Option(element, element);
+      $dropDown?.add(newOption);
     });
   }
 
@@ -133,9 +152,13 @@ export class Settings extends BaseComponent {
       if ($baseURL.value.replace(/\s/g, "") !== "" && $sourceKey.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
         console.log("enable button");
         $annotationToggle.disabled = false;
+        $button.disabled = false;
+        $button.classList.add("button-pointer");
         $button.addEventListener("click", this.checkConnectionSpinnerExample);
       } else {
         $annotationToggle.disabled = true;
+        $button.disabled = true;
+        $button.classList.remove("button-pointer");
         $button.removeEventListener("click", this.checkConnectionSpinnerExample);
       }
     }

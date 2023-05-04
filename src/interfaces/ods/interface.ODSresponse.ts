@@ -13,6 +13,7 @@ export interface ODSResponse<T extends ODSObject<T>, U = undefined, K extends st
   pageSize: number;
   totalPageCount: number;
   totalItemCount: number;
+  facets: ODSFacet[];
   results: Array<
     {
       item: T;
@@ -22,6 +23,24 @@ export interface ODSResponse<T extends ODSObject<T>, U = undefined, K extends st
           [P in K]: U;
         })
   >;
+}
+
+export interface ODSFacetValues {
+  key: string;
+  displayName: string;
+  value: string;
+  count: number;
+  countText: string;
+  selected: boolean;
+  sortKey: string;
+}
+
+export interface ODSFacet {
+  name: string;
+  displayName: string;
+  description: string;
+  totalValueCount: number;
+  values: ODSFacetValues[];
 }
 
 /**
