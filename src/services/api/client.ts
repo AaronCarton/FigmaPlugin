@@ -44,7 +44,7 @@ export default class ApiClient {
         api
           .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
           .then((response) => {
-            const annotations = response.results.map((res) => new Annotation(res.item, api));
+            const annotations = response.results.map((res) => new Annotation(res.item));
             EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
             EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
           });
@@ -147,8 +147,8 @@ export default class ApiClient {
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
-    return this.searchItem<Annotation>("annotation", `projectKey.eq.${projectKey}`, undefined, undefined, includeArchived).then((res) =>
-      res.results.map((res) => new Annotation(res.item, this)),
+    return this.searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${projectKey}`, undefined, undefined, includeArchived).then(
+      (res) => res.results.map((res) => new Annotation(res.item)),
     );
   }
 
@@ -159,8 +159,8 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to the created annotation
    */
   public async createAnnotation(itemKey: string, annotation: IAnnotation): Promise<Annotation> {
-    return await this.upsertItem("annotation", itemKey, annotation as Annotation).then(
-      () => new Annotation({ ...annotation, itemKey, itemType: "annotation" } as Annotation),
+    return await this.upsertItem(PropertizeConstants.annotation, itemKey, annotation as Annotation).then(
+      () => new Annotation({ ...annotation, itemKey, itemType: PropertizeConstants.annotation } as Annotation),
     );
   }
 
@@ -171,8 +171,8 @@ export default class ApiClient {
    * @returns {Promise<Project>} - Promise that resolves to the created project
    */
   public async createProject(itemKey: string, project: IProject): Promise<Project> {
-    return await this.upsertItem("project", itemKey, project as Project).then(
-      () => new Project({ ...project, itemKey, itemType: "project" } as Project),
+    return await this.upsertItem(PropertizeConstants.project, itemKey, project as Project).then(
+      () => new Project({ ...project, itemKey, itemType: PropertizeConstants.project } as Project),
     );
   }
 
