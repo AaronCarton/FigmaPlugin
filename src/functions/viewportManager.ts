@@ -23,7 +23,7 @@ function isItemInViewport(item: annotationLinkItem, viewport: viewportObject) {
   }
 }
 
-function determineViewports(documentChanges: DocumentChange[]) {
+function determineViewports() {
   if (linkAnnotationToSourceNodes) {
     linkAnnotationToSourceNodes.forEach((element) => {
       if (element.vector === undefined) {
@@ -52,22 +52,22 @@ function determineViewports(documentChanges: DocumentChange[]) {
 
   // First filter annotations by origin
   // Remote = other user in the document made the change => dont run current users plugin on changes made by other user
-  let filtered = linkAnnotationToSourceNodes.filter((element) => {
-    const found = documentChanges.find((x) => x.id === element.sourceNode.id);
-    // Element not found in annotationNodes => skip
-    if (found === undefined) {
-      return false;
-    }
+  // let filtered = linkAnnotationToSourceNodes.filter((element) => {
+  //   const found = documentChanges.find((x) => x.id === element.sourceNode.id);
+  //   // Element not found in annotationNodes => skip
+  //   if (found === undefined) {
+  //     return false;
+  //   }
 
-    if (found?.origin === "REMOTE") {
-      return false;
-    } else {
-      return true;
-    }
-  });
-  console.log("filtered", filtered);
+  //   if (found?.origin === "REMOTE") {
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // });
+  // console.log("filtered", filtered);
   // Loop through filtered annotations and check if they are in the viewport.
-  filtered = linkAnnotationToSourceNodes.filter((element) => {
+  const filtered = linkAnnotationToSourceNodes.filter((element) => {
     return isItemInViewport(element, currentviewPort);
   });
 
@@ -82,6 +82,9 @@ function determineViewports(documentChanges: DocumentChange[]) {
   });
 }
 
-export function viewportManager(event: DocumentChangeEvent) {
-  determineViewports(event.documentChanges);
+export function viewportManager() {
+  //determineViewports();
+  setInterval(() => {
+    determineViewports();
+  }, 1000);
 }

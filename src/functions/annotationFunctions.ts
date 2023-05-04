@@ -270,13 +270,14 @@ function createLayer() {
   annotationElements.annotationLayer.locked = true;
 }
 
-function handleAnnotationRedraws(event: DocumentChangeEvent) {
+// function handleAnnotationRedraws(event: DocumentChangeEvent) {
+  function handleAnnotationRedraws() {
   if (
     annotationElements.parentFrames.length > 0 &&
     annotationElements.annotationLayer.visible === true
   ) {
     //get data of changed nodes
-    const changedNodeData = event.documentChanges;
+    const changedNodeData = figma.currentPage.selection;
     const listOfChangedAnnotationSourceNodes = [];
     for (let i = 0; i < changedNodeData.length; i++) {
       const changedNode = changedNodeData[i];
@@ -286,7 +287,7 @@ function handleAnnotationRedraws(event: DocumentChangeEvent) {
       if (includesChangedNode) {
         //gives weird error on property "node" => does not exist: it does.
         console.log("changed", changedNode);
-        listOfChangedAnnotationSourceNodes.push(changedNode.node);
+        listOfChangedAnnotationSourceNodes.push(changedNode);
       }
     }
     console.log("changedNodes", listOfChangedAnnotationSourceNodes);
@@ -347,6 +348,10 @@ export function initAnnotations(inputValues: string[]) {
     }
   }
   //listen to updates after first initial drawing of the annotations
-  figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
-  figma.on("documentchange", (event) => viewportManager(event));
+  //figma.on("documentchange", (event: DocumentChangeEvent) => handleAnnotationRedraws(event));
+  setInterval(() => {
+    handleAnnotationRedraws();
+  }, 1000);
+  //figma.on("documentchange", () => viewportManager());
+  viewportManager();
 }
