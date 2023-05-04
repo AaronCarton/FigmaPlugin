@@ -1,5 +1,3 @@
-import ApiClient from "../../services/api/client";
-
 /**
  * ODSresponse is a generic interface for the response from the ODS API.
  * @param T is the type of the item in the response (e.g. Annotation)
