@@ -1,6 +1,7 @@
 export class Events {
   public static readonly INITIALIZE_DATA: string = "INITIALIZE_DATA";
-  public static readonly DATA_INITIALIZED: string = "DATA_INITIALIZED";
+  public static readonly ANNOTATIONS_FETCHED: string = "ANNOTATIONS_FETCHED";
+  public static readonly FACETS_FETCHED: string = "FACETS_FETCHED";
 
   public static readonly CREATE_ANNOTATION: string = "CREATE_ANNOTATION";
   public static readonly ANNOTATION_CREATED: string = "ANNOTATION_CREATED";

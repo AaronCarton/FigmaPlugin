@@ -4,10 +4,10 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { BaseComponent } from "./baseComponent";
 
 const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
-const $dataSrc: HTMLInputElement | null = document.querySelector(".js-data-source");
+const $dataSrc: HTMLInputElement | null = document.querySelector(".js-dataSource");
 const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
-const $dataType: HTMLInputElement | null = document.querySelector(".js-data-type");
+const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
 const $sampleValue: HTMLInputElement | null = document.querySelector(".js-sample-value");
 
 const iconCheck = "c-icon_check_class";
@@ -72,7 +72,7 @@ function updateFields(message: AnnotationInput) {
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
-    changeFieldsOnInput("data-type", false);
+    changeFieldsOnInput("dataType", false);
   } else {
     createFigmaError("Error updating fields.", 5000, true);
   }
@@ -91,7 +91,7 @@ function clearFields() {
 
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);
-    changeFieldsOnInput("data-type", true);
+    changeFieldsOnInput("dataType", true);
   } else {
     createFigmaError("Error clearing fields.", 5000, true);
   }
@@ -121,7 +121,7 @@ if ($buttons && $dataSrc && $entity && $attribute && $dataType && $sampleValue) 
 
   checkFields($dataSrc, $entity, "entity");
   checkFields($entity, $attribute, "attribute");
-  checkFields($attribute, $dataType, "data-type");
+  checkFields($attribute, $dataType, "dataType");
 
   $sampleValue.addEventListener("keyup", (event: KeyboardEvent) => {
     if (

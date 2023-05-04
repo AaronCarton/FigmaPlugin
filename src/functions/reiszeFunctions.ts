@@ -21,6 +21,6 @@ export function resizeByConnection(connection: boolean) {
   if (connection) {
     figma.ui.resize(345, 250);
   } else {
-    figma.ui.resize(345, 124);
+    figma.ui.resize(345, 250);
   }
 }
