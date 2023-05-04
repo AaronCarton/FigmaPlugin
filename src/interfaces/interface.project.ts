@@ -1,4 +1,3 @@
-import ApiClient from "../services/api/client";
 import { ODSObject } from "./ods/interface.ODSresponse";
 
 export interface IProject {

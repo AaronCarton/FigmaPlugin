@@ -11,9 +11,8 @@ import { changeConnectionState } from "./navigation-tabs";
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
-const $projectKey: HTMLInputElement | null = document.querySelector("#settings_projectKey"); // TODO: remove this when integrated with the plugin
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
-
+let projectKey: string = "";
 export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
 export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 //Spinner
@@ -57,6 +56,7 @@ export class Settings extends BaseComponent {
         this.loadDropdowns(key, data[key]);
       });
     });
+
     EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
       $baseURL?.setAttribute("value", baseURL || "");
       $clientKey?.setAttribute("value", clientKey || "");
@@ -71,12 +71,18 @@ export class Settings extends BaseComponent {
       //   sourceKey,
       // });
     });
+
+    EventHub.getInstance().makeEvent(Events.PROJECT_KEY_FETCHED, (pk) => {
+      projectKey = pk;
+    });
+
     EventHub.getInstance().sendCustomEvent(Events.FETCH_LOCAL_STORAGE, {});
+    EventHub.getInstance().sendCustomEvent(Events.FETCH_PROJECT_KEY, {});
   }
 
   connect() {
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-      projectKey: $projectKey?.value,
+      projectKey: projectKey,
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,

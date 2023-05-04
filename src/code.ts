@@ -55,6 +55,11 @@ EventHub.getInstance().makeEvent(Events.FETCH_LOCAL_STORAGE, async () => {
   });
 });
 
+EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
+  const projectKey = figma.fileKey;
+  EventHub.getInstance().sendCustomEvent(Events.PROJECT_KEY_FETCHED, projectKey);
+});
+
 figma.on("selectionchange", () => {
   sendDataToFrontend();
 });
