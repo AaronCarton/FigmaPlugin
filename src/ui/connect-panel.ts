@@ -1,6 +1,9 @@
 import { MessageTitle } from "../classes/messageTitles";
 import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
+import { IAnnotation } from "../interfaces/interface.annotation";
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
@@ -23,6 +26,8 @@ export class ConnectPanel extends BaseComponent {
   initComponent(): void {
     console.log("ConnectPanel initialized.");
   }
+
+  // initializeEventHubEvents() {}
 }
 
 function handleIconClick(trigger: HTMLElement) {
@@ -132,6 +137,15 @@ if ($buttons && $dataSrc && $entity && $attribute && $dataType && $sampleValue) 
       $dataType.value.trim().length !== 0 &&
       $sampleValue.value.trim().length !== 0
     ) {
+      EventHub.getInstance().sendCustomEvent(Events.CREATE_ANNOTATION, {
+        dataSource: $dataSrc.value.trim(),
+        entity: $entity.value.trim(),
+        attribute: $attribute.value.trim(),
+        dataType: $dataType.value.trim(),
+        value: $sampleValue.value.trim(),
+      } as IAnnotation);
+
+      // TODO: change to eventhub
       parent.postMessage(
         {
           pluginMessage: {

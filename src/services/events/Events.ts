@@ -5,6 +5,7 @@ export class Events {
 
   public static readonly CREATE_ANNOTATION: string = "CREATE_ANNOTATION";
   public static readonly ANNOTATION_CREATED: string = "ANNOTATION_CREATED";
+  public static readonly DRAW_ANNOTATION: string = "DRAW_ANNOTATION";
 
   public static readonly UPDATE_ANNOTATION: string = "UPDATE_ANNOTATION";
   public static readonly TOGGLE_ANNOTATIONS: string = "TOGGLE_ANNOTATIONS";

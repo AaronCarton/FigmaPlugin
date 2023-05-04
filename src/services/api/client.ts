@@ -5,6 +5,7 @@ import APIError from "../../interfaces/ods/interface.APIerror";
 import EventHub from "../events/EventHub";
 import { Events } from "../events/Events";
 import { PropertizeConstants } from "../../classes/propertizeConstants";
+import generateUUID from "../../functions/generateUUID";
 
 interface ApiOptions {
   baseURL: string;
@@ -52,8 +53,12 @@ export default class ApiClient {
     });
 
     // Register create listener
-    eventHub.makeEvent(Events.CREATE_ANNOTATION, async (obj: Annotation) => {
-      await ApiClient.getInstance().createAnnotation(obj.itemKey, stripODS(obj));
+    eventHub.makeEvent(Events.ANNOTATION_CREATED, async (obj: IAnnotation) => {
+      ApiClient.getInstance()
+        .createAnnotation(generateUUID(), obj)
+        .then((annotation) => {
+          EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, annotation);
+        });
     });
 
     // Register update listener
