@@ -24,25 +24,27 @@ function createAnnotation(inputValues: AnnotationInput) {
   frame.dashPattern = [10, 5];
   frame.cornerRadius = 10;
 
-  Object.keys(inputValues).forEach((title, index) => {
-    // TODO: this is a hack to prevent the archived label from being created, should be changed later
-    if (title === "archived" || title === "projectKey" || title === "nodeId") return;
-    console.log("VALUES PITTAAA: ", inputValues);
+  const titles = {
+    "Data Source": inputValues.dataSource,
+    Entity: inputValues.entity,
+    Attribute: inputValues.attribute,
+    "Data Type": inputValues.dataType,
+    "Sample Value": inputValues.value,
+  };
+
+  Object.entries(titles).forEach(([title, value], index) => {
     const titlesNode = figma.createText();
-    titlesNode.name = PropertizeConstants[`${title}Label` as keyof typeof PropertizeConstants] as string;
-    titlesNode.characters = PropertizeConstants[`${title}Label` as keyof typeof PropertizeConstants] as string;
+    titlesNode.name = title;
+    titlesNode.characters = title;
     titlesNode.fontSize = 11;
     titlesNode.x = 15;
     titlesNode.y = 22 * index + 15;
     titlesNode.fontName = { family: "Inter", style: "Semi Bold" };
     titlesNode.fills = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
     frame.appendChild(titlesNode);
-  });
-
-  Object.values(inputValues).forEach((title, index) => {
     const valuesNode = figma.createText();
-    valuesNode.name = title;
-    valuesNode.characters = title;
+    valuesNode.name = value;
+    valuesNode.characters = value;
     valuesNode.fontSize = 11;
     valuesNode.x = 105;
     valuesNode.y = 22 * index + 15;
