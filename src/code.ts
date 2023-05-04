@@ -1,13 +1,13 @@
 import { MessageTitle } from "./classes/messageTitles";
-import { changeLayerVisibility, sendDataToFrontend } from "./functions/annotationFunctions";
+import { changeLayerVisibility, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
-import { checkInitState } from "./functions/checkInitFunction";
 import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
 import { createFigmaError } from "./functions/createError";
-import { IAnnotation } from "./interfaces/interface.annotation";
+import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
+import { updateAnnotations } from "./functions/annotationFunctions";
 
 figma.showUI(__html__, { width: 345, height: 250 });
 
@@ -27,7 +27,7 @@ figma.ui.on("message", (event) => {
       break;
 
     case MessageTitle.createText:
-      checkInitState(payload.values);
+      updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, payload.values);
       break;
 
     case MessageTitle.changeVisibility:
@@ -69,6 +69,10 @@ EventHub.getInstance().makeEvent(Events.CREATE_ANNOTATION, (annotation: IAnnotat
   if (figma.currentPage.selection.length > 1) return createFigmaError("Only one node can be selected", 5000, true);
   const nodeId = figma.currentPage.selection[0].id;
   EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_CREATED, { ...annotation, projectKey, nodeId });
+});
+
+EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
+  initAnnotations(annotations);
 });
 
 figma.on("selectionchange", () => {
