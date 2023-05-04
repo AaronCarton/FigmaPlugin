@@ -26,8 +26,6 @@ export class ConnectPanel extends BaseComponent {
   initComponent(): void {
     console.log("ConnectPanel initialized.");
   }
-
-  // initializeEventHubEvents() {}
 }
 
 function handleIconClick(trigger: HTMLElement) {
@@ -144,24 +142,6 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
         dataType: $dataType.value.trim(),
         value: $value.value.trim(),
       } as IAnnotation);
-
-      // parent.postMessage(
-      //   {
-      //     pluginMessage: {
-      //       type: MessageTitle.createText,
-      //       payload: {
-      //         values: {
-      //           dataSource: $dataSource.value.trim(),
-      //           entity: $entity.value.trim(),
-      //           attribute: $attribute.value.trim(),
-      //           dataType: $dataType.value.trim(),
-      //           value: $value.value.trim(),
-      //         },
-      //       },
-      //     },
-      //   },
-      //   "*",
-      // );
     }
   });
 }
