@@ -134,7 +134,7 @@ export default class EventHub {
    * @param {function} cb - Callback function that will be checked
    * @returns {boolean} - True if the event is already registered, False if not
    */
-  private checkDuplicateEvent(eventType: string, cb: (message: any) => void): boolean {
+  checkDuplicateEvent(eventType: string, cb: (message: any) => void): boolean {
     return this.handlers.some((event) => event.type === this.prefixEventType(eventType) && event.originalCallback.toString() === cb.toString());
   }
 
@@ -144,5 +144,9 @@ export default class EventHub {
    */
   private hasAccessToUI() {
     return window && document;
+  }
+
+  getHandlers(): Event[] {
+    return this.handlers;
   }
 }
