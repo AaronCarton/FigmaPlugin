@@ -53,10 +53,9 @@ export class Settings extends BaseComponent {
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.key)]));
-      this.loadDropdowns("data-source", data["dataSource"]);
-      this.loadDropdowns("entity", data["entity"]);
-      this.loadDropdowns("attribute", data["attribute"]);
-      this.loadDropdowns("data-type", data["dataType"]);
+      Object.keys(data).forEach((key) => {
+        this.loadDropdowns(key, data[key]);
+      });
     });
     EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
       $baseURL?.setAttribute("value", baseURL || "");
