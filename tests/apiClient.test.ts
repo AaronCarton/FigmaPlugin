@@ -1,3 +1,4 @@
+import { IAnnotation } from "../src/interfaces/interface.annotation";
 import ApiClient from "../src/services/api/client";
 import { config } from "dotenv";
 
@@ -72,7 +73,7 @@ describe("Tests for API client: projects", () => {
 
 describe("Tests for API client: annotations", () => {
   test("Can create annotation", async () => {
-    const annotation = {
+    const annotation: IAnnotation = {
       projectKey: "100",
       nodeId: "f249d3d2",
       dataSource: "someSource",

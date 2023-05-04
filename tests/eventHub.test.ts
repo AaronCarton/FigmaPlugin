@@ -1,18 +1,5 @@
 import EventHub from "../src/services/events/EventHub";
 
-describe("Tests for eventHub: prefixEventType()", () => {
-  test("Is prefix added to type?", () => {
-    const type = "testType";
-    expect(EventHub.getInstance().prefixEventType(type)).toEqual("PROPERTIZE_MESSAGE_" + type);
-  });
-
-  test("Is an error thrown when type is empty?", () => {
-    expect(() => {
-      EventHub.getInstance().prefixEventType("");
-    }).toThrowError("The event type cannot be empty");
-  });
-});
-
 describe("Tests for eventHub: checkDuplicateEvent()", () => {
   let eventType: string;
   let anotherEventType: string;
@@ -180,6 +167,14 @@ describe("Tests for eventHub: makeEvent()", () => {
     });
   });
 
+  test("Is event not registred with an empty event type?", () => {
+    expect(() => {
+      EventHub.getInstance().makeEvent("", () => {
+        jest.fn();
+      });
+    }).toThrowError("The event type cannot be empty");
+  });
+
   test("callback is not called twice when two exact same makeEvent()'s are called", () => {
     EventHub.getInstance().makeEvent(eventType, () => {
       counter++;
@@ -260,10 +255,10 @@ function waitUntil(condition: () => boolean): Promise<void> {
       } else {
         count++;
         if (count > 3) {
-          // checks 3 times, 1.5 seconds in total
+          // checks 3 times, 0.3 seconds in total
           reject(new Error("Timeout"));
         } else {
-          setTimeout(check, 500);
+          setTimeout(check, 50);
         }
       }
     }
