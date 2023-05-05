@@ -51,7 +51,7 @@ export class Settings extends BaseComponent {
       changeConnectionState(true);
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
-      const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.key)]));
+      const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.value)]));
       Object.keys(data).forEach((key) => {
         this.loadDropdowns(key, data[key]);
       });
