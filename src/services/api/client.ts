@@ -56,8 +56,6 @@ export default class ApiClient {
 
     // Register create listener
     eventHub.makeEvent(Events.ANNOTATION_UPSERTED, async (obj: IAnnotation) => {
-      console.log("Upserting annotation", obj);
-
       // Check if annotation already exists
       const index = ApiClient.annotations_cache.findIndex((annotation) => annotation.nodeId === obj.nodeId);
       if (index !== -1) {
@@ -117,7 +115,7 @@ export default class ApiClient {
     ApiClient.CLIENT_APIKEY = "";
     ApiClient.SOURCE_APIKEY = "";
     // Remove listeners
-    // EventHub.getInstance().removeEvent(Events.ANNOTATION_UPSERTED);
+    //// EventHub.getInstance().removeEvent(Events.ANNOTATION_UPSERTED);
   }
 
   /**
