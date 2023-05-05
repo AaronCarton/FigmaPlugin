@@ -26,8 +26,8 @@ function createAnnotation(inputValues: AnnotationInput) {
 
   const titles = {
     "Data Source": inputValues.dataSource,
-    Entity: inputValues.entity,
-    Attribute: inputValues.attribute,
+    "Entity": inputValues.entity,
+    "Attribute": inputValues.attribute,
     "Data Type": inputValues.dataType,
     "Sample Value": inputValues.value,
   };
