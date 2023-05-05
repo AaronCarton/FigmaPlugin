@@ -135,7 +135,7 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
       $dataType.value.trim().length !== 0 &&
       $value.value.trim().length !== 0
     ) {
-      EventHub.getInstance().sendCustomEvent(Events.CREATE_ANNOTATION, {
+      EventHub.getInstance().sendCustomEvent(Events.UPSERT_ANNOTATION, {
         dataSource: $dataSource.value.trim(),
         entity: $entity.value.trim(),
         attribute: $attribute.value.trim(),

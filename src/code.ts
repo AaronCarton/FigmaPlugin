@@ -9,6 +9,8 @@ import { createFigmaError } from "./functions/createError";
 import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
+import ApiClient from "./services/api/client";
+import { AnnotationInput } from "./interfaces/annotationInput";
 
 figma.showUI(__html__, { width: 345, height: 250 });
 
@@ -66,12 +68,12 @@ EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
 });
 
 //////* ANNOTATION EVENTS *//////
-EventHub.getInstance().makeEvent(Events.CREATE_ANNOTATION, (annotation: IAnnotation) => {
+EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotation) => {
   if (figma.currentPage.selection.length === 0) return createFigmaError("Select something to create an annotation.", 5000, true);
   if (figma.currentPage.selection.length > 1) return createFigmaError("Only one node can be selected.", 5000, true);
   annotation.projectKey = figma.fileKey || "";
   annotation.nodeId = figma.currentPage.selection[0].id;
-  EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_CREATED, annotation);
+  EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_UPSERTED, annotation);
 });
 
 EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
