@@ -2,6 +2,7 @@ import { frame } from "../interfaces/frame";
 import { annotationElements } from "../classes/annotationElements";
 import { viewportManager } from "./viewportManager";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
+import createMask from "./mask";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 
@@ -271,7 +272,7 @@ function createLayer() {
 }
 
 // function handleAnnotationRedraws(event: DocumentChangeEvent) {
-  function handleAnnotationRedraws() {
+function handleAnnotationRedraws() {
   if (
     annotationElements.parentFrames.length > 0 &&
     annotationElements.annotationLayer.visible === true
@@ -353,5 +354,5 @@ export function initAnnotations(inputValues: string[]) {
     handleAnnotationRedraws();
   }, 1000);
   //figma.on("documentchange", () => viewportManager());
-  viewportManager();
+  createMask();
 }

@@ -3,6 +3,7 @@
   "id": "1217741474609568641",
   "api": "1.0.0",
   "main": "dist/code.js",
+  "enablePrivatePluginApi": true,
   "capabilities": [],
   "enableProposedApi": false,
   "editorType": [
