@@ -27,6 +27,7 @@ export default class ApiClient {
   public static BASE_URL: string;
   public static CLIENT_APIKEY: string;
   public static SOURCE_APIKEY: string;
+  public static annotations_cache: Array<Annotation> = [];
 
   public static initializeEvents() {
     const eventHub = EventHub.getInstance();
@@ -46,6 +47,7 @@ export default class ApiClient {
           .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
           .then((response) => {
             const annotations = response.results.map((res) => new Annotation(res.item));
+            ApiClient.annotations_cache = annotations; // Store annotations in cache
             EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
             EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
           });
@@ -53,18 +55,37 @@ export default class ApiClient {
     });
 
     // Register create listener
-    eventHub.makeEvent(Events.ANNOTATION_CREATED, async (obj: IAnnotation) => {
-      ApiClient.getInstance()
-        .createAnnotation(generateUUID(), obj)
-        .then((annotation) => {
-          EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, annotation);
-        });
+    eventHub.makeEvent(Events.ANNOTATION_UPSERTED, async (obj: IAnnotation) => {
+      console.log("Upserting annotation", obj);
+
+      // Check if annotation already exists
+      const index = ApiClient.annotations_cache.findIndex((annotation) => annotation.nodeId === obj.nodeId);
+      if (index !== -1) {
+        const foundAnno = ApiClient.annotations_cache[index];
+        // Update existing annotation
+        foundAnno.dataSource = obj.dataSource;
+        foundAnno.dataType = obj.dataType;
+        foundAnno.entity = obj.entity;
+        foundAnno.attribute = obj.attribute;
+        foundAnno.value = obj.value;
+        // Update annotation in cache
+        ApiClient.annotations_cache[index] = foundAnno;
+        // Update annotation in ODS
+        ApiClient.getInstance()
+          .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
+          .then(() => {
+            EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, foundAnno);
+          });
+      } else {
+        ApiClient.getInstance()
+          .createAnnotation(generateUUID(), obj)
+          .then((annotation) => {
+            ApiClient.annotations_cache.push(annotation); // Add annotation to cache
+            EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, annotation);
+          });
+      }
     });
 
-    // Register update listener
-    eventHub.makeEvent(Events.UPDATE_ANNOTATION, async (obj: Annotation) => {
-      await ApiClient.getInstance().upsertItem(obj.itemType, obj.itemKey, stripODS(obj));
-    });
     // TODO: add ARCHIVE and UNARCHIVE listeners
   }
 
@@ -96,8 +117,7 @@ export default class ApiClient {
     ApiClient.CLIENT_APIKEY = "";
     ApiClient.SOURCE_APIKEY = "";
     // Remove listeners
-    EventHub.getInstance().removeEvent(Events.CREATE_ANNOTATION);
-    EventHub.getInstance().removeEvent(Events.UPDATE_ANNOTATION);
+    // EventHub.getInstance().removeEvent(Events.ANNOTATION_UPSERTED);
   }
 
   /**
