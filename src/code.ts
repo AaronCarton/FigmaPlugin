@@ -40,10 +40,7 @@ figma.ui.on("message", (event) => {
   }
 });
 
-EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation) => {
-  updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
-});
-
+//LOCAL STORAGE EVENTS
 EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey }) => {
   figma.clientStorage.setAsync("baseURL", baseURL);
   figma.clientStorage.setAsync("clientKey", clientKey);
@@ -62,11 +59,12 @@ EventHub.getInstance().makeEvent(Events.FETCH_LOCAL_STORAGE, async () => {
   });
 });
 
+//PROJECT KEY EVENTS
 EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
   const projectKey = figma.fileKey;
   EventHub.getInstance().sendCustomEvent(Events.PROJECT_KEY_FETCHED, projectKey);
 });
-
+//ANNOTATION EVENTS
 EventHub.getInstance().makeEvent(Events.CREATE_ANNOTATION, (annotation: IAnnotation) => {
   if (figma.currentPage.selection.length > 1) return createFigmaError("Only one node can be selected", 5000, true);
   annotation.projectKey = figma.fileKey || "";
@@ -76,6 +74,10 @@ EventHub.getInstance().makeEvent(Events.CREATE_ANNOTATION, (annotation: IAnnotat
 
 EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
   initAnnotations(annotations);
+});
+
+EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation) => {
+  updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
 });
 
 figma.on("selectionchange", () => {
