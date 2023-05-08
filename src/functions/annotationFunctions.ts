@@ -90,6 +90,7 @@ function makeFramesArray(initData: Array<Annotation> | null) {
   let selection: Array<SceneNode> = [];
 
   if (initData !== null) {
+    console.log("initData", initData);
     initData.forEach((element: Annotation) => {
       const foundElement = figma.currentPage.findOne((x) => x.id === element.nodeId);
       foundElement !== null ? selection.push(foundElement) : console.warn("MakeFramesArray error creating array from initData");
@@ -258,13 +259,17 @@ function drawAnnotations(
     // Updating the link of the drawn annotation and its elements
     if (found === undefined && line !== undefined) {
       if (Array.isArray(inputValues)) {
+        const data = inputValues.find((x) => x.id === sourceNodes[i]?.id);
         // Creating a new link and pushing it to array.
-        linkAnnotationToSourceNodes.push({
-          annotation: annotation,
-          sourceNode: sourceNodes[i],
-          vector: line,
-          data: inputValues[i].AnnotationInput,
-        });
+        if (data !== undefined) {
+          linkAnnotationToSourceNodes.push({
+            annotation: annotation,
+            sourceNode: sourceNodes[i],
+            vector: line,
+            // data: inputValues[i].AnnotationInput,
+            data: data?.AnnotationInput,
+          });
+        }
       } else {
         // Creating a new link and pushing it to array.
         linkAnnotationToSourceNodes.push({
@@ -437,6 +442,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
+    console.log("FOUND", found);
     if (found !== undefined) {
       figma.ui.postMessage({
         type: MessageTitle.updateFields,
