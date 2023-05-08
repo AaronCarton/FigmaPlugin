@@ -214,7 +214,6 @@ function drawAnnotations(
 ) {
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
-
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
@@ -371,10 +370,10 @@ export function initAnnotations(annotationData: Array<Annotation>) {
     for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
       const currentFrame = AnnotationElements.parentFrames[i];
       if (currentFrame.sourceNodesLeft.length > 0) {
-        drawAnnotations(currentFrame.startpointLeft, currentFrame.sourceNodesLeft, inputValues);
+        drawAnnotations(currentFrame.startpointLeft, sortNodesAccordingToYCoords(currentFrame.sourceNodesLeft), inputValues);
       }
       if (currentFrame.sourceNodesRight.length > 0) {
-        drawAnnotations(currentFrame.startpointRight, currentFrame.sourceNodesRight, inputValues);
+        drawAnnotations(currentFrame.startpointRight, sortNodesAccordingToYCoords(currentFrame.sourceNodesRight), inputValues);
       }
     }
   }
@@ -431,6 +430,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         }
       }
     }
+    console.log(linkAnnotationToSourceNodes);
   }
 }
 
