@@ -90,6 +90,7 @@ function makeFramesArray(initData: Array<Annotation> | null) {
   let selection: Array<SceneNode> = [];
 
   if (initData !== null) {
+    console.log("initData", initData);
     initData.forEach((element: Annotation) => {
       const foundElement = figma.currentPage.findOne((x) => x.id === element.nodeId);
       foundElement !== null ? selection.push(foundElement) : console.warn("MakeFramesArray error creating array from initData");
@@ -214,7 +215,6 @@ function drawAnnotations(
 ) {
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
-
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
@@ -259,13 +259,17 @@ function drawAnnotations(
     // Updating the link of the drawn annotation and its elements
     if (found === undefined && line !== undefined) {
       if (Array.isArray(inputValues)) {
+        const associatedInputValue = inputValues.find((x) => x.id === sourceNodes[i]?.id);
         // Creating a new link and pushing it to array.
-        linkAnnotationToSourceNodes.push({
-          annotation: annotation,
-          sourceNode: sourceNodes[i],
-          vector: line,
-          data: inputValues[i].AnnotationInput,
-        });
+        if (associatedInputValue !== undefined) {
+          linkAnnotationToSourceNodes.push({
+            annotation: annotation,
+            sourceNode: sourceNodes[i],
+            vector: line,
+            // data: inputValues[i].AnnotationInput,
+            data: associatedInputValue?.AnnotationInput,
+          });
+        }
       } else {
         // Creating a new link and pushing it to array.
         linkAnnotationToSourceNodes.push({
@@ -371,10 +375,10 @@ export function initAnnotations(annotationData: Array<Annotation>) {
     for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
       const currentFrame = AnnotationElements.parentFrames[i];
       if (currentFrame.sourceNodesLeft.length > 0) {
-        drawAnnotations(currentFrame.startpointLeft, currentFrame.sourceNodesLeft, inputValues);
+        drawAnnotations(currentFrame.startpointLeft, sortNodesAccordingToYCoords(currentFrame.sourceNodesLeft), inputValues);
       }
       if (currentFrame.sourceNodesRight.length > 0) {
-        drawAnnotations(currentFrame.startpointRight, currentFrame.sourceNodesRight, inputValues);
+        drawAnnotations(currentFrame.startpointRight, sortNodesAccordingToYCoords(currentFrame.sourceNodesRight), inputValues);
       }
     }
   }
@@ -431,12 +435,14 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         }
       }
     }
+    console.log(linkAnnotationToSourceNodes);
   }
 }
 
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
+    console.log("FOUND", found);
     if (found !== undefined) {
       figma.ui.postMessage({
         type: MessageTitle.updateFields,
