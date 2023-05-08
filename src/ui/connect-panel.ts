@@ -15,6 +15,7 @@ const $value: HTMLInputElement | null = document.querySelector(".js-sample-value
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
+const maxCharactersInputfield = 5;
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -33,20 +34,34 @@ function handleIconClick(trigger: HTMLElement) {
   const inputSelect = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-select`);
   const inputText = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
   const inputField = document.querySelector<HTMLInputElement>(`#${selectedAttribute}-field`);
+
   if (selectedAttribute && inputSelect && inputText && inputField) {
-    if (inputField.value.trim().length !== 0) {
-      const newOption = new Option(inputField.value, inputField.value);
-      if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
-        console.log("Check: ", inputField.value);
-        inputSelect.add(newOption);
+    if (isEmpty(inputField)) {
+      if (isLessCharactersThanMax(inputField)) {
+        const newOption = new Option(inputField.value, inputField.value);
+        if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
+          console.log("Check: ", inputField.value);
+          inputSelect.add(newOption);
+        }
+        inputSelect.value = inputField.value;
+        inputSelect.dispatchEvent(new Event("change"));
+      } else {
+        EventHub.getInstance().sendCustomEvent(Events.FORM_MAX_LENGTH, {});
       }
-      inputSelect.value = inputField.value;
-      inputSelect.dispatchEvent(new Event("change"));
     }
+
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
   }
+}
+
+function isLessCharactersThanMax(inputField: HTMLInputElement) {
+  return inputField.value.length <= maxCharactersInputfield;
+}
+
+function isEmpty(inputField: HTMLInputElement) {
+  return inputField.value.trim().length !== 0;
 }
 
 function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {

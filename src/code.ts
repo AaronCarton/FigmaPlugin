@@ -81,7 +81,10 @@ EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annot
 EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation) => {
   updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
 });
-
+//////* FORM VALIDATION EVENTS *//////
+EventHub.getInstance().makeEvent(Events.FORM_MAX_LENGTH, () => {
+  createFigmaError("The maximum length of the text is 35 characters.", 5000, true);
+});
 //////* FIGMA EVENTS *//////
 figma.on("selectionchange", () => {
   sendDataToFrontend();

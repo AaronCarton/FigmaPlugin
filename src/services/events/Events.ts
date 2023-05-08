@@ -15,4 +15,6 @@ export class Events {
   public static readonly SET_LOCAL_STORAGE: string = "SET_LOCAL_STORAGE";
   public static readonly FETCH_PROJECT_KEY: string = "FETCH_PROJECT_KEY";
   public static readonly PROJECT_KEY_FETCHED: string = "PROJECT_KEY_FETCHED";
+
+  public static readonly FORM_MAX_LENGTH: string = "FORM_MAX_LENGTH";
 }
