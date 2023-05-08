@@ -30,6 +30,27 @@
   cursor: pointer;
 }
 
+.c-connect__remove {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--propertize__spacing--large);
+  width: 100%;
+}
+
+.c-connect__cta--remove {
+  padding: 8px 12px;
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
+  background-color: var(--propertize__color--red);
+  color: var(--propertize__color--white);
+  border: none;
+  border-radius: 10px;
+}
+
+.c-connect__cta--remove:disabled {
+  opacity: 0.4;
+}
+
 .c-icon_check_class {
   background-image: var(--icon-check);
   height: 32px;

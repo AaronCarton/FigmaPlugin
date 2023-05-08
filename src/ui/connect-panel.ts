@@ -12,6 +12,7 @@ const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
 const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
+const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -63,7 +64,7 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
 }
 
 function updateFields(message: AnnotationInput) {
-  if ($dataSource && $entity && $attribute && $dataType && $value) {
+  if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn) {
     $dataSource.value = message.dataSource;
     $entity.value = message.entity;
     $entity.disabled = false;
@@ -72,6 +73,8 @@ function updateFields(message: AnnotationInput) {
     $dataType.value = message.dataType;
     $dataType.disabled = false;
     $value.value = message.value;
+    $removeBtn.disabled = false;
+    $removeBtn.classList.add("button-pointer");
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
@@ -82,7 +85,7 @@ function updateFields(message: AnnotationInput) {
 }
 
 function clearFields() {
-  if ($dataSource && $entity && $attribute && $dataType && $value) {
+  if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn) {
     $dataSource.value = "";
     $entity.value = "";
     $entity.disabled = true;
@@ -91,6 +94,8 @@ function clearFields() {
     $dataType.value = "";
     $dataType.disabled = true;
     $value.value = "";
+    $removeBtn.disabled = true;
+    $removeBtn.classList.remove("button-pointer");
 
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);

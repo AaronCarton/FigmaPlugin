@@ -10,7 +10,7 @@ import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
 
-figma.showUI(__html__, { width: 345, height: 250 });
+figma.showUI(__html__, { width: 345, height: 296 });
 
 figma.ui.on("message", (event) => {
   const eventType = event.type;
