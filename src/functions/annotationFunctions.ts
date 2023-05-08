@@ -7,6 +7,7 @@ import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
+let highlightedVector: VectorNode;
 let layerState = true;
 
 function createAnnotation(inputValues: AnnotationInput) {
@@ -173,9 +174,9 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
     line.strokeCap = "ARROW_LINES";
     line.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
     line.strokeWeight = 2;
+    console.log("LINE: ", line);
     AnnotationElements.annotationLayer.appendChild(line);
     AnnotationElements.annotationLayer.clipsContent = false;
-
     // M = starting point.
     // L = end point.
     line.vectorPaths = [
@@ -290,6 +291,12 @@ function drawAnnotations(
         };
     }
   }
+}
+
+function highlightSelectedVector(found: annotationLinkItem) {
+  if (highlightedVector) highlightedVector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+  found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+  highlightedVector = found.vector;
 }
 
 // Creating the annotation layer.
@@ -442,8 +449,9 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
-    console.log("FOUND", found);
+
     if (found !== undefined) {
+      highlightSelectedVector(found);
       figma.ui.postMessage({
         type: MessageTitle.updateFields,
         payload: {
