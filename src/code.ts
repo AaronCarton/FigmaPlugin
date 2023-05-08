@@ -40,6 +40,8 @@ figma.ui.on("message", (event) => {
   }
 });
 
+EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
+
 //////* LOCAL STORAGE EVENTS *//////
 EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey }) => {
   figma.clientStorage.setAsync("baseURL", baseURL);

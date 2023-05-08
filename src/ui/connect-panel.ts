@@ -110,8 +110,8 @@ function validateDataType() {
   const value = $value?.value.trim();
 
   if (dataType && value && !dataTypeRegex[dataType]?.test(value)) {
-    console.warn("Sample value does not match data type.");
-    // createFigmaError("Sample value does not match data type.", 5000, true);
+    console.error("Sample value does not match data type.");
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Sample value does not match data type.");
     return false;
   }
   return true;
