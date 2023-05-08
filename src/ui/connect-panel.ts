@@ -33,15 +33,16 @@ function handleIconClick(trigger: HTMLElement) {
   const inputSelect = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-select`);
   const inputText = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
   const inputField = document.querySelector<HTMLInputElement>(`#${selectedAttribute}-field`);
-
   if (selectedAttribute && inputSelect && inputText && inputField) {
-    const newOption = new Option(inputField.value, inputField.value);
-    if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
-      inputSelect.add(newOption);
+    if (inputField.value.trim().length !== 0) {
+      const newOption = new Option(inputField.value, inputField.value);
+      if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
+        console.log("Check: ", inputField.value);
+        inputSelect.add(newOption);
+      }
+      inputSelect.value = inputField.value;
+      inputSelect.dispatchEvent(new Event("change"));
     }
-    inputSelect.value = inputField.value;
-    inputSelect.dispatchEvent(new Event("change"));
-
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
