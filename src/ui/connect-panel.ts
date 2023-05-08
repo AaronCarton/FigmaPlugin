@@ -39,7 +39,8 @@ function handleIconClick(trigger: HTMLElement) {
     if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
       inputSelect.add(newOption);
     }
-    inputSelect.value = inputField.value;
+    inputSelect.value = inputField.value.trim();
+    inputField.value = "";
     inputSelect.dispatchEvent(new Event("change"));
 
     trigger.classList.toggle(iconCheck);
