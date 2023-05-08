@@ -76,21 +76,21 @@ export class Settings extends BaseComponent {
       projectKey = pk;
     });
 
-    EventHub.getInstance().sendCustomEvent(Events.FETCH_LOCAL_STORAGE, {});
-    EventHub.getInstance().sendCustomEvent(Events.FETCH_PROJECT_KEY, {});
+    EventHub.getInstance().sendCustomEvent(Events.FETCH_LOCAL_STORAGE, null);
+    EventHub.getInstance().sendCustomEvent(Events.FETCH_PROJECT_KEY, null);
   }
 
   connect() {
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
       projectKey: projectKey,
-      baseURL: $baseURL?.value,
-      clientKey: $clientKey?.value,
-      sourceKey: $sourceKey?.value,
+      baseURL: $baseURL?.value || "",
+      clientKey: $clientKey?.value || "",
+      sourceKey: $sourceKey?.value || "",
     });
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
-      baseURL: $baseURL?.value,
-      clientKey: $clientKey?.value,
-      sourceKey: $sourceKey?.value,
+      baseURL: $baseURL?.value || "",
+      clientKey: $clientKey?.value || "",
+      sourceKey: $sourceKey?.value || "",
     });
   }
 

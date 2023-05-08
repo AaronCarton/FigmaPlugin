@@ -1,5 +1,6 @@
 /* eslint-disable func-style */
 /* eslint-disable @typescript-eslint/no-explicit-any */ //! Should be fixed later
+import { EventHub as IEventHub } from "../../interfaces/interface.EventHub";
 
 interface Event {
   type: string;
@@ -15,7 +16,7 @@ export default class EventHub {
    * Creates an instance of the EventHub if it doesn't exist and returns it if it does
    * @returns {EventHub} The instance of the EventHub
    */
-  public static getInstance(): EventHub {
+  public static getInstance(): IEventHub {
     if (!EventHub.instance) EventHub.instance = new EventHub();
     return EventHub.instance;
   }
