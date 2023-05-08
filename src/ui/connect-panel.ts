@@ -100,6 +100,23 @@ function clearFields() {
   }
 }
 
+function validateDataType() {
+  const dataTypeRegex: { [key: string]: RegExp } = {
+    string: /^[\w\s]+$/,
+    number: /^[\d]+$/,
+    int: /^[\d]+$/,
+  };
+  const dataType = $dataType?.value.trim().toLowerCase();
+  const value = $value?.value.trim();
+
+  if (dataType && value && !dataTypeRegex[dataType]?.test(value)) {
+    console.warn("Sample value does not match data type.");
+    // createFigmaError("Sample value does not match data type.", 5000, true);
+    return false;
+  }
+  return true;
+}
+
 function changeFieldsOnInput(fieldName: string, state: boolean) {
   const textField = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
   const textArea = document.querySelector<HTMLElement>(`#${fieldName}-text`);
@@ -135,6 +152,9 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
       $dataType.value.trim().length !== 0 &&
       $value.value.trim().length !== 0
     ) {
+      // Validate is sample value matches data type first
+      if (!validateDataType()) return;
+
       EventHub.getInstance().sendCustomEvent(Events.UPSERT_ANNOTATION, {
         dataSource: $dataSource.value.trim(),
         entity: $entity.value.trim(),
