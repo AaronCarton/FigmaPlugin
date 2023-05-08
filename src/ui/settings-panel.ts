@@ -160,7 +160,6 @@ export class Settings extends BaseComponent {
         $sourceKey.disabled = true;
       }
       if ($baseURL.value.replace(/\s/g, "") !== "" && $sourceKey.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
-        console.log("enable button");
         $annotationToggle.disabled = false;
         $button.disabled = false;
         $button.classList.add("button-pointer");
