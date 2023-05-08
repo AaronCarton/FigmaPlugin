@@ -259,15 +259,15 @@ function drawAnnotations(
     // Updating the link of the drawn annotation and its elements
     if (found === undefined && line !== undefined) {
       if (Array.isArray(inputValues)) {
-        const data = inputValues.find((x) => x.id === sourceNodes[i]?.id);
+        const associatedInputValue = inputValues.find((x) => x.id === sourceNodes[i]?.id);
         // Creating a new link and pushing it to array.
-        if (data !== undefined) {
+        if (associatedInputValue !== undefined) {
           linkAnnotationToSourceNodes.push({
             annotation: annotation,
             sourceNode: sourceNodes[i],
             vector: line,
             // data: inputValues[i].AnnotationInput,
-            data: data?.AnnotationInput,
+            data: associatedInputValue?.AnnotationInput,
           });
         }
       } else {
