@@ -15,7 +15,7 @@ const $value: HTMLInputElement | null = document.querySelector(".js-sample-value
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
-const maxCharactersInputfield = 5;
+const maxCharactersInputfield = 35;
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
