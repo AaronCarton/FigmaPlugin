@@ -1,4 +1,5 @@
 import { MessageTitle } from "../classes/messageTitles";
+import { getSelection } from "../code";
 import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
@@ -28,6 +29,11 @@ export class ConnectPanel extends BaseComponent {
     console.log("ConnectPanel initialized.");
   }
 }
+
+// TODO: move this to a better place
+$removeBtn?.addEventListener("click", () => {
+  EventHub.getInstance().sendCustomEvent(Events.INIT_ARCHIVE_ANNOTATION, {});
+});
 
 function handleIconClick(trigger: HTMLElement) {
   const selectedAttribute = trigger.getAttribute("data-target");

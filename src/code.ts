@@ -82,6 +82,12 @@ EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation
   updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
 });
 
+EventHub.getInstance().makeEvent(Events.INIT_ARCHIVE_ANNOTATION, (annotation: IAnnotation) => {
+  annotation.projectKey = figma.fileKey || "";
+  annotation.nodeId = figma.currentPage.selection[0].id;
+  EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, annotation);
+});
+
 //////* FIGMA EVENTS *//////
 figma.on("selectionchange", () => {
   sendDataToFrontend();
