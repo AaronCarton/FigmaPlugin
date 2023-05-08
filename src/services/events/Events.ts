@@ -17,5 +17,4 @@ export class Events {
   public static readonly PROJECT_KEY_FETCHED: string = "PROJECT_KEY_FETCHED";
 
   public static readonly FIGMA_ERROR: string = "FIGMA_ERROR";
-  public static readonly FORM_MAX_LENGTH: string = "FORM_MAX_LENGTH";
 }

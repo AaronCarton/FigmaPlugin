@@ -40,8 +40,6 @@ figma.ui.on("message", (event) => {
   }
 });
 
-EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
-
 //////* LOCAL STORAGE EVENTS *//////
 EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey }) => {
   figma.clientStorage.setAsync("baseURL", baseURL);
@@ -83,11 +81,10 @@ EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annot
 EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation) => {
   updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
 });
-//////* FORM VALIDATION EVENTS *//////
-EventHub.getInstance().makeEvent(Events.FORM_MAX_LENGTH, () => {
-  createFigmaError("The maximum length of the text is 35 characters.", 5000, true);
-});
+
 //////* FIGMA EVENTS *//////
+EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
+
 figma.on("selectionchange", () => {
   sendDataToFrontend();
 });
