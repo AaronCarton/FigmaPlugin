@@ -62,7 +62,7 @@ EventHub.getInstance().makeEvent(Events.FETCH_LOCAL_STORAGE, async () => {
 //////* PROJECT KEY EVENTS *//////
 EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
   const projectKey = figma.fileKey;
-  EventHub.getInstance().sendCustomEvent(Events.PROJECT_KEY_FETCHED, projectKey);
+  EventHub.getInstance().sendCustomEvent(Events.PROJECT_KEY_FETCHED, projectKey || "null");
 });
 
 //////* ANNOTATION EVENTS *//////

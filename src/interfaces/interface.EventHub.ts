@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/adjacent-overload-signatures */
 import { Events } from "../services/events/Events";
 import Annotation, { IAnnotation } from "./interface.annotation";
 import { ODSFacet } from "./ods/interface.ODSresponse";
@@ -23,7 +22,7 @@ export interface EventMap {
 
   [Events.UPSERT_ANNOTATION]: IAnnotation;
   [Events.ANNOTATION_UPSERTED]: IAnnotation;
-  [Events.DRAW_ANNOTATION]: IAnnotation;
+  [Events.DRAW_ANNOTATION]: Annotation;
 
   [Events.TOGGLE_ANNOTATIONS]: null;
   [Events.FETCH_LOCAL_STORAGE]: null;
