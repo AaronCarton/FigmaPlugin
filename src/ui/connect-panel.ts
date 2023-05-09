@@ -37,7 +37,9 @@ function handleIconClick(trigger: HTMLElement) {
   if (selectedAttribute && inputSelect && inputText && inputField) {
     const newOption = new Option(inputField.value.trim(), inputField.value.trim());
     if (!Array.from(inputSelect.options).some((option) => option.value.trim() === newOption.value.trim())) {
-      inputSelect.add(newOption);
+      if (isOptionEmpty(newOption)) {
+        inputSelect.add(newOption);
+      }
     }
     inputSelect.value = inputField.value.trim();
     inputField.value = "";
@@ -47,6 +49,10 @@ function handleIconClick(trigger: HTMLElement) {
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
   }
+}
+
+function isOptionEmpty(newOption: HTMLOptionElement) {
+  return !(newOption.value.trim().length === 0);
 }
 
 function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
