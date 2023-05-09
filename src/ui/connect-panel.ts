@@ -36,7 +36,7 @@ function handleIconClick(trigger: HTMLElement) {
 
   if (selectedAttribute && inputSelect && inputText && inputField) {
     const newOption = new Option(inputField.value.trim(), inputField.value.trim());
-    if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
+    if (!Array.from(inputSelect.options).some((option) => option.value.trim() === newOption.value.trim())) {
       inputSelect.add(newOption);
     }
     inputSelect.value = inputField.value.trim();

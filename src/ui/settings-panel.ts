@@ -98,7 +98,7 @@ export class Settings extends BaseComponent {
     const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
     if ($dropDown) {
       // remove all options
-      $dropDown.innerHTML = "";
+      $dropDown.options.length = 0;
     }
     data.forEach((element) => {
       const newOption = new Option(element, element);
