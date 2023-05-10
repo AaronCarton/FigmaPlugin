@@ -307,7 +307,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
     //Get data of changed nodes.
     const changedNodeData = event.documentChanges;
     console.log(changedNodeData);
-    const listOfChangedAnnotationSourceNodes: Array<SceneNode | FrameNode> = [];
+    let listOfChangedAnnotationSourceNodes: Array<SceneNode | FrameNode> = [];
     for (let i = 0; i < changedNodeData.length; i++) {
       const changedNode = changedNodeData[i];
 
@@ -315,13 +315,14 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
       console.log("looking for parent frame");
       for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
         const currentParent = AnnotationElements.parentFrames[i];
-        const found = changedNodeData.find((x) => x.id === currentParent.frame.id);
+        const found = changedNodeData.find((x) => x.node.id === currentParent.frame.id);
         let includesChangedNode;
         if (found !== undefined) {
           console.log(found);
           //Add all children of the current parent to the changedNodes because ultimately they must change aswell
           const parentChildren = currentParent.sourceNodesLeft.concat(currentParent.sourceNodesRight);
-          listOfChangedAnnotationSourceNodes.concat(parentChildren);
+          console.log("children", parentChildren);
+          listOfChangedAnnotationSourceNodes = listOfChangedAnnotationSourceNodes.concat(parentChildren);
         } else {
           //Make searchable = if found in here => changedNode is a sourcenode of an annotation
           const searchMap = JSON.stringify(AnnotationElements.parentFrames);
@@ -333,7 +334,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
         }
       }
     }
-
+    console.log("updated changed array", listOfChangedAnnotationSourceNodes);
     // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
       //find linkedAnnotation
