@@ -97,7 +97,7 @@ export class Settings extends BaseComponent {
   loadDropdowns(elementName: string, data: string[]) {
     const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
     const texts: { [key: string]: string } = {
-      dataSource: "Choose a source",
+      dataSource: "Choose source",
       entity: "Choose entity",
       attribute: "Choose attribute",
       dataType: "Choose data type",
