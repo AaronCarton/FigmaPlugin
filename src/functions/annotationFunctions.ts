@@ -8,6 +8,7 @@ import Annotation from "../interfaces/interface.annotation";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let highlightedVector: VectorNode;
+let highlightedAnnotation: FrameNode;
 let layerState = true;
 
 function createAnnotation(inputValues: AnnotationInput) {
@@ -299,6 +300,29 @@ function highlightSelectedVector(found: annotationLinkItem) {
   highlightedVector = found.vector;
 }
 
+function highlightSelectedAnnotation(found: { annotation: FrameNode }) {
+  if (highlightedAnnotation) {
+    highlightedAnnotation.fills = [{ type: "SOLID", color: PropertizeConstants.figmaLightBlue }];
+    highlightedAnnotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+    highlightedAnnotation.strokeWeight = 1;
+    highlightedAnnotation.strokeAlign = "CENTER";
+    highlightedAnnotation.strokeCap = "ROUND";
+    highlightedAnnotation.strokeJoin = "ROUND";
+    highlightedAnnotation.dashPattern = [10, 5];
+    highlightedAnnotation.cornerRadius = 10;
+  }
+  found.annotation.fills = [{ type: "SOLID", color: PropertizeConstants.figmaLightBlue }];
+  found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+  found.annotation.strokeWeight = 1;
+  found.annotation.strokeAlign = "CENTER";
+  found.annotation.strokeCap = "ROUND";
+  found.annotation.strokeJoin = "ROUND";
+  found.annotation.dashPattern = [0, 0];
+  found.annotation.cornerRadius = 10;
+
+  highlightedAnnotation = found.annotation;
+}
+
 // Creating the annotation layer.
 function createLayer() {
   // Finding older version of annotationlayer and deleting it => prevents multiple annotationlayers.
@@ -452,6 +476,7 @@ export function sendDataToFrontend() {
 
     if (found !== undefined) {
       highlightSelectedVector(found);
+      highlightSelectedAnnotation(found);
       figma.ui.postMessage({
         type: MessageTitle.updateFields,
         payload: {
