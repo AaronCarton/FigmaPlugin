@@ -266,7 +266,6 @@ function drawAnnotations(
             annotation: annotation,
             sourceNode: sourceNodes[i],
             vector: line,
-            // data: inputValues[i].AnnotationInput,
             data: associatedInputValue?.AnnotationInput,
           });
         }
