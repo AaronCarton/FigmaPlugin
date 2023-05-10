@@ -1,5 +1,11 @@
 import { MessageTitle } from "./classes/messageTitles";
-import { changeLayerVisibility, deleteAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
+import {
+  changeLayerVisibility,
+  checkIfAnnotationExists,
+  deleteAnnotation,
+  initAnnotations,
+  sendDataToFrontend,
+} from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
@@ -88,14 +94,17 @@ EventHub.getInstance().makeEvent(Events.INIT_ARCHIVE_ANNOTATION, (annotation: IA
   EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, annotation);
 });
 
-EventHub.getInstance().makeEvent(Events.ANNOTATION_ARCHIVED, () => {
-  console.log("Annotation archived");
-  deleteAnnotation();
+EventHub.getInstance().makeEvent(Events.ANNOTATION_ARCHIVED, (annotation: Annotation) => {
+  deleteAnnotation(annotation);
 });
 
 //////* FIGMA EVENTS *//////
 figma.on("selectionchange", () => {
   sendDataToFrontend();
+});
+
+figma.on("documentchange", (event: DocumentChangeEvent) => {
+  checkIfAnnotationExists(event);
 });
 
 figma.on("close", async () => {

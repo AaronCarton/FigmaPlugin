@@ -4,11 +4,14 @@ import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
-import Annotation from "../interfaces/interface.annotation";
+import Annotation, { IAnnotation } from "../interfaces/interface.annotation";
 import { createFigmaError } from "./createError";
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let layerState = true;
+export let lastSelectedNode: string = "";
 
 function createAnnotation(inputValues: AnnotationInput) {
   const page = figma.currentPage;
@@ -442,6 +445,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
+    lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
     console.log("FOUND", found);
     if (found !== undefined) {
@@ -460,13 +464,31 @@ export function sendDataToFrontend() {
   }
 }
 
-export function deleteAnnotation() {
-  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
+export function deleteAnnotation(annotation: Annotation) {
+  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
   if (found) {
     found.vector.remove();
     found.annotation.remove();
     figma.ui.postMessage({ type: MessageTitle.clearFields });
   } else {
     createFigmaError("Couldn't remove annotation.", 5000, true);
+  }
+}
+
+export function checkIfAnnotationExists(event: DocumentChangeEvent) {
+  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === event.documentChanges[0].id);
+  if (found) {
+    const annotation: IAnnotation = {
+      dataSource: found.data.dataSource.toString(),
+      entity: found.data.entity.toString(),
+      attribute: found.data.attribute.toString(),
+      dataType: found.data.dataType.toString(),
+      value: found.data.value.toString(),
+      nodeId: event.documentChanges[0].id,
+      projectKey: figma.fileKey || "",
+    };
+    EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, annotation);
+  } else {
+    console.log("Annotation doesn't exist.");
   }
 }
