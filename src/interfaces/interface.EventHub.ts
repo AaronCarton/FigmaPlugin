@@ -31,6 +31,7 @@ export interface EventMap {
   [Events.SET_LOCAL_STORAGE]: LocalStoragePayload;
   [Events.FETCH_PROJECT_KEY]: null;
   [Events.PROJECT_KEY_FETCHED]: string;
+  [Events.FIGMA_ERROR]: string;
 
   [Events.UI_INITIALIZE_COMPONENT]: string;
   [Events.UI_CHANGE_TAB]: { tab: string; connection: boolean };
