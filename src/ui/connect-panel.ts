@@ -37,7 +37,7 @@ function handleIconClick(trigger: HTMLElement) {
   if (selectedAttribute && inputSelect && inputText && inputField) {
     const newOption = new Option(inputField.value.trim(), inputField.value.trim());
     if (!Array.from(inputSelect.options).some((option) => option.value.trim() === newOption.value.trim())) {
-      if (isOptionEmpty(newOption)) {
+      if (isOptionNotEmpty(newOption)) {
         inputSelect.add(newOption);
       }
     }
@@ -50,7 +50,7 @@ function handleIconClick(trigger: HTMLElement) {
   }
 }
 
-function isOptionEmpty(newOption: HTMLOptionElement) {
+function isOptionNotEmpty(newOption: HTMLOptionElement) {
   return !(newOption.value.trim().length === 0);
 }
 
