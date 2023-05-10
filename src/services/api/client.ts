@@ -73,6 +73,8 @@ export default class ApiClient {
           .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
           .then(() => {
             EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, foundAnno);
+            console.log("FoundAnno:", foundAnno.value);
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_NODETEXT_FROM_ODS, foundAnno.value);
           });
       } else {
         ApiClient.getInstance()

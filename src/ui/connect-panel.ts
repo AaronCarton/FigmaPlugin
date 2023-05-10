@@ -198,9 +198,8 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
     }
   });
 }
-EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE, (sampleValue: string) => {
+EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
-  console.log("in connect: ", sampleValue);
 });
 window.addEventListener("message", (e) => {
   const messageType = e.data.pluginMessage.type;

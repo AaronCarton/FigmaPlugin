@@ -83,6 +83,14 @@ EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation
   updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
 });
 
+EventHub.getInstance().makeEvent(Events.UPDATE_NODETEXT_FROM_ODS, (sampleValue: string) => {
+  if (figma.currentPage.selection.length === 1) {
+    if (figma.currentPage.selection[0].type === "TEXT") {
+      figma.currentPage.selection[0].characters = sampleValue;
+    }
+  }
+});
+
 //////* FIGMA EVENTS *//////
 EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
 

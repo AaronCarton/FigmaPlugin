@@ -474,7 +474,7 @@ export function sendDataToFrontend() {
     }
     if (found === undefined) {
       if (figma.currentPage.selection[0].type === "TEXT") {
-        EventHub.getInstance().sendCustomEvent(Events.SET_SAMPLE_VALUE, figma.currentPage.selection[0].characters);
+        EventHub.getInstance().sendCustomEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, figma.currentPage.selection[0].characters);
       } else {
         figma.ui.postMessage({ type: MessageTitle.clearFields });
       }
