@@ -175,7 +175,6 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
     line.strokeCap = "ARROW_LINES";
     line.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
     line.strokeWeight = 2;
-    console.log("LINE: ", line);
     AnnotationElements.annotationLayer.appendChild(line);
     AnnotationElements.annotationLayer.clipsContent = false;
     // M = starting point.
@@ -302,23 +301,11 @@ function highlightSelectedVector(found: annotationLinkItem) {
 
 function highlightSelectedAnnotation(found: { annotation: FrameNode }) {
   if (highlightedAnnotation) {
-    highlightedAnnotation.fills = [{ type: "SOLID", color: PropertizeConstants.figmaLightBlue }];
     highlightedAnnotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-    highlightedAnnotation.strokeWeight = 1;
-    highlightedAnnotation.strokeAlign = "CENTER";
-    highlightedAnnotation.strokeCap = "ROUND";
-    highlightedAnnotation.strokeJoin = "ROUND";
     highlightedAnnotation.dashPattern = [10, 5];
-    highlightedAnnotation.cornerRadius = 10;
   }
-  found.annotation.fills = [{ type: "SOLID", color: PropertizeConstants.figmaLightBlue }];
   found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
-  found.annotation.strokeWeight = 1;
-  found.annotation.strokeAlign = "CENTER";
-  found.annotation.strokeCap = "ROUND";
-  found.annotation.strokeJoin = "ROUND";
   found.annotation.dashPattern = [0, 0];
-  found.annotation.cornerRadius = 10;
 
   highlightedAnnotation = found.annotation;
 }
