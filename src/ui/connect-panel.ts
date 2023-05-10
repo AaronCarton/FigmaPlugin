@@ -15,7 +15,7 @@ const $value: HTMLInputElement | null = document.querySelector(".js-sample-value
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
-const maxCharactersInputfield = 5;
+const maxCharactersInputfield = 35;
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -40,7 +40,6 @@ function handleIconClick(trigger: HTMLElement) {
       if (isLessCharactersThanMax(inputField)) {
         const newOption = new Option(inputField.value, inputField.value);
         if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
-          console.log("Check: ", inputField.value);
           inputSelect.add(newOption);
         }
         inputSelect.value = inputField.value;
@@ -126,7 +125,6 @@ function validateDataType() {
   const value = $value?.value.trim();
 
   if (dataType && value && !dataTypeRegex[dataType]?.test(value)) {
-    console.error("Sample value does not match data type.");
     EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Sample value does not match data type.");
     return false;
   }
