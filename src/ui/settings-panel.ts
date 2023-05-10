@@ -49,6 +49,7 @@ export class Settings extends BaseComponent {
       }
 
       changeConnectionState(true);
+      hideSpinner();
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.value)]));
@@ -87,7 +88,8 @@ export class Settings extends BaseComponent {
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
     });
-    $spinner?.removeAttribute("hidden");
+    showSpinner();
+
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
@@ -119,16 +121,16 @@ export class Settings extends BaseComponent {
   }
 
   checkConnectionSpinnerExample() {
-    //$plugin?.classList.add("no-pointer");
-    $spinner?.removeAttribute("hidden");
-    // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
-    // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
-    fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
-      .then((response) => response.json())
-      .then(() => {
-        $plugin?.classList.remove("no-pointer");
-        $spinner?.setAttribute("hidden", "");
-      });
+    // //$plugin?.classList.add("no-pointer");
+    // $spinner?.removeAttribute("hidden");
+    // // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
+    // // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
+    // fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
+    //   .then((response) => response.json())
+    //   .then(() => {
+    //     $plugin?.classList.remove("no-pointer");
+    //     $spinner?.setAttribute("hidden", "");
+    //   });
   }
 
   toggleAnnotations(e: Event) {
@@ -192,4 +194,11 @@ export class Settings extends BaseComponent {
     $clientKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
     $sourceKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
   }
+}
+function showSpinner() {
+  $spinner?.removeAttribute("hidden");
+}
+
+function hideSpinner() {
+  $spinner?.setAttribute("hidden", "");
 }

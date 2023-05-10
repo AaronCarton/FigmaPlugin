@@ -68,3 +68,7 @@
   background-repeat: no-repeat;
   background-position: left;
 }
+
+.no-pointer {
+  pointer-events: none;
+}

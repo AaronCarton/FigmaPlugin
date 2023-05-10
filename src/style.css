@@ -4,3 +4,7 @@
 @import "./style/atoms/atoms.css";
 @import "./style/utilities/utilities.css";
 @import "./style/settings/settings.css";
+
+.no-pointer {
+    pointer-events: none;
+  }
