@@ -1,4 +1,3 @@
-import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
 import { ODSFacet } from "../interfaces/ods/interface.ODSresponse";
 import ApiClient from "../services/api/client";
@@ -121,29 +120,7 @@ export class Settings extends BaseComponent {
 
   toggleAnnotations(e: Event) {
     const state: boolean = (<HTMLInputElement>e.target).checked;
-    if (state === true) {
-      console.log("Show annotations.");
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: MessageTitle.changeVisibility,
-            payload: { state: state },
-          },
-        },
-        "*",
-      );
-    } else {
-      console.log("Hide annotations.");
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: MessageTitle.changeVisibility,
-            payload: { state: state },
-          },
-        },
-        "*",
-      );
-    }
+    EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_VISIBILITY, state);
   }
 
   disableFieldsWhenNecessary() {

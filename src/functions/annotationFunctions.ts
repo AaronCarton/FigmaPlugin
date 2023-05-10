@@ -3,8 +3,9 @@ import { AnnotationElements } from "../classes/annotationElements";
 import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
-import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let layerState = true;
@@ -444,17 +445,12 @@ export function sendDataToFrontend() {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
     console.log("FOUND", found);
     if (found !== undefined) {
-      figma.ui.postMessage({
-        type: MessageTitle.updateFields,
-        payload: {
-          values: found.data,
-        },
-      });
+      EventHub.getInstance().sendCustomEvent(Events.UI_UPDATE_FIELDS, found.data);
     }
     if (found === undefined) {
-      figma.ui.postMessage({ type: MessageTitle.clearFields });
+      EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null);
     }
   } else {
-    figma.ui.postMessage({ type: MessageTitle.clearFields });
+    EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null);
   }
 }

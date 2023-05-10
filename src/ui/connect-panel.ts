@@ -1,4 +1,3 @@
-import { MessageTitle } from "../classes/messageTitles";
 import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
@@ -24,7 +23,8 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    console.log("ConnectPanel initialized.");
+    EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
+    EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
   }
 }
 
@@ -145,21 +145,3 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
     }
   });
 }
-
-window.addEventListener("message", (e) => {
-  const messageType = e.data.pluginMessage.type;
-  const payload = e.data.pluginMessage.payload;
-
-  switch (messageType) {
-    case MessageTitle.updateFields:
-      updateFields(payload.values);
-      break;
-
-    case MessageTitle.clearFields:
-      clearFields();
-      break;
-
-    default:
-      break;
-  }
-});
