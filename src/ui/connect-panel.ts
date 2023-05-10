@@ -96,6 +96,25 @@ function updateFields(message: AnnotationInput) {
   }
 }
 
+function setSampleValueInForm(sampleValue: string) {
+  if ($dataSource && $entity && $attribute && $dataType && $value) {
+    $dataSource.value = "";
+    $entity.value = "";
+    $entity.disabled = false;
+    $attribute.value = "";
+    $attribute.disabled = false;
+    $dataType.value = "";
+    $dataType.disabled = false;
+    $value.value = sampleValue;
+
+    changeFieldsOnInput("entity", false);
+    changeFieldsOnInput("attribute", false);
+    changeFieldsOnInput("dataType", false);
+  } else {
+    createFigmaError("Error updating fields.", 5000, true);
+  }
+}
+
 function clearFields() {
   if ($dataSource && $entity && $attribute && $dataType && $value) {
     $dataSource.value = "";
@@ -179,7 +198,10 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
     }
   });
 }
-
+EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE, (sampleValue: string) => {
+  setSampleValueInForm(sampleValue);
+  console.log("in connect: ", sampleValue);
+});
 window.addEventListener("message", (e) => {
   const messageType = e.data.pluginMessage.type;
   const payload = e.data.pluginMessage.payload;

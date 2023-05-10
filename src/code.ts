@@ -71,6 +71,7 @@ EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotat
   if (figma.currentPage.selection.length > 1) return createFigmaError("Only one node can be selected.", 5000, true);
   annotation.projectKey = figma.fileKey || "";
   annotation.nodeId = figma.currentPage.selection[0].id;
+
   EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_UPSERTED, annotation);
 });
 
@@ -94,7 +95,6 @@ figma.on("close", async () => {
   AnnotationElements.annotationLayer.remove();
   figma.closePlugin();
 });
-
 // Dispatch all components -> in figma use postMessage
 // Use the class names for initializeComponent
 initializeComponent("Settings");
