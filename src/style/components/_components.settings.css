@@ -1,5 +1,6 @@
 .c-settings {
   display: none;
+  /* position: relative; */
 }
 
 .c-settings__form {

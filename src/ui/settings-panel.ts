@@ -119,7 +119,7 @@ export class Settings extends BaseComponent {
   }
 
   checkConnectionSpinnerExample() {
-    $plugin?.classList.add("no-pointer");
+    //$plugin?.classList.add("no-pointer");
     $spinner?.removeAttribute("hidden");
     // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
     // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
