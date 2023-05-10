@@ -336,7 +336,6 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
       }
     }
 
-
     // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
       //find linkedAnnotation

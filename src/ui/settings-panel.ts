@@ -40,7 +40,6 @@ export class Settings extends BaseComponent {
   initializeEventHubEvents() {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
-
       if ($button && $date) {
         const now = new Date().toLocaleString("en-GB").replace(",", "");
         $button.innerHTML = "Refresh";
