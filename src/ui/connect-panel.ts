@@ -25,7 +25,7 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    console.log("ConnectPanel initialized.");
+    /// does nothing
   }
 }
 

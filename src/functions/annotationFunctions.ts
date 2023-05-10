@@ -88,11 +88,9 @@ function determineParentFrame(elem: SceneNode) {
 }
 
 function makeFramesArray(initData: Array<Annotation> | null) {
-  console.log("Making frame array...");
   let selection: Array<SceneNode> = [];
 
   if (initData !== null) {
-    console.log("initData", initData);
     initData.forEach((element: Annotation) => {
       const foundElement = figma.currentPage.findOne((x) => x.id === element.nodeId);
       foundElement !== null ? selection.push(foundElement) : console.warn("MakeFramesArray error creating array from initData");
@@ -103,7 +101,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
 
   if (selection.length > 0) {
     sortNodesAccordingToYCoords(selection);
-    console.log("selection", selection);
 
     for (let i = 0; i < selection.length; i++) {
       // Vars needed for each calculation.
@@ -147,7 +144,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
           // Determine left or right of parent frame, add to according array of the object.
           if (frameside === PropertizeConstants.sideLeft) {
             const indexOfElement: number = parentframe.sourceNodesLeft.findIndex((x) => x.id === currentElement.id);
-            console.log("Found index: ", indexOfElement, ".");
             if (indexOfElement === -1) {
               parentframe.sourceNodesLeft.push(currentElement);
             } else {
@@ -155,7 +151,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
             }
           } else {
             const indexOfElement: number = parentframe.sourceNodesRight.findIndex((x) => x.id === currentElement.id);
-            console.log("Found index: ", indexOfElement, ".");
             if (indexOfElement === -1) {
               parentframe.sourceNodesRight.push(currentElement);
             } else {
@@ -341,7 +336,6 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
       }
     }
 
-    console.log("changedNodes", listOfChangedAnnotationSourceNodes);
 
     // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
@@ -369,7 +363,6 @@ export function changeLayerVisibility(state: boolean) {
 }
 
 export function initAnnotations(annotationData: Array<Annotation>) {
-  console.log("initing");
   createLayer();
   makeFramesArray(annotationData);
   // Make inputValues array needed for drawing initial annotations.
@@ -404,7 +397,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
-  console.log("updating");
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
@@ -452,7 +444,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         }
       }
     }
-    console.log(linkAnnotationToSourceNodes);
   }
 }
 

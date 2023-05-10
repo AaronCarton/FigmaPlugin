@@ -40,7 +40,6 @@ export class Settings extends BaseComponent {
   initializeEventHubEvents() {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
-      console.log("Annotations fetched: ", annotations, ".");
 
       if ($button && $date) {
         const now = new Date().toLocaleString("en-GB").replace(",", "");
@@ -133,7 +132,6 @@ export class Settings extends BaseComponent {
   toggleAnnotations(e: Event) {
     const state: boolean = (<HTMLInputElement>e.target).checked;
     if (state === true) {
-      console.log("Show annotations.");
       parent.postMessage(
         {
           pluginMessage: {
@@ -144,7 +142,6 @@ export class Settings extends BaseComponent {
         "*",
       );
     } else {
-      console.log("Hide annotations.");
       parent.postMessage(
         {
           pluginMessage: {
@@ -171,7 +168,6 @@ export class Settings extends BaseComponent {
         $sourceKey.disabled = true;
       }
       if ($baseURL.value.replace(/\s/g, "") !== "" && $sourceKey.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
-        console.log("enable button");
         $annotationToggle.disabled = false;
         $button.disabled = false;
         $button.classList.add("button-pointer");

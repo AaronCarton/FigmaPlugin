@@ -13,7 +13,7 @@ describe("Tests for eventHub: checkDuplicateEvent()", () => {
     const eventHub = EventHub.getInstance();
     const prefixedEventName = eventHub.prefixEventType(eventType);
     function cb() {
-      console.log("cb1");
+      // Do nothing
     }
 
     eventHub.getHandlers().push({
@@ -31,11 +31,11 @@ describe("Tests for eventHub: checkDuplicateEvent()", () => {
     const prefixedEventName = eventHub.prefixEventType(eventType);
 
     function cb() {
-      console.log("cb1");
+      // Do nothing
     }
 
     function anotherCb() {
-      console.log("anotherCb");
+      // Do nothing
     }
 
     eventHub.getHandlers().push({
@@ -53,7 +53,7 @@ describe("Tests for eventHub: checkDuplicateEvent()", () => {
     const eventHub = EventHub.getInstance();
     const prefixedEventName = eventHub.prefixEventType(eventType);
     function cb() {
-      console.log("cb1");
+      // Do nothing
     }
 
     eventHub.getHandlers().push({
@@ -82,7 +82,7 @@ describe("Tests for eventHub: removeEvent()", () => {
     eventType = "testEvent";
     const prefixedEventName = EventHub.getInstance().prefixEventType(eventType);
     function cb() {
-      console.log("cb1");
+      // Do nothing
     }
 
     EventHub.getInstance().getHandlers().push({
