@@ -62,14 +62,6 @@ export class Settings extends BaseComponent {
       $clientKey?.setAttribute("value", clientKey || "");
       $sourceKey?.setAttribute("value", sourceKey || "");
       this.disableFieldsWhenNecessary();
-
-      // TODO: emit event to initialize data right away, because we got the values from localStorage
-      // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-      //   $projectKey: $projectKey?.value,
-      //   baseURL,
-      //   clientKey,
-      //   sourceKey,
-      // });
     });
 
     EventHub.getInstance().makeEvent(Events.PROJECT_KEY_FETCHED, (pk) => {
@@ -120,8 +112,7 @@ export class Settings extends BaseComponent {
   checkConnectionSpinnerExample() {
     $plugin?.classList.add("no-pointer");
     $spinner?.removeAttribute("hidden");
-    // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
-    // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
+
     fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
       .then((response) => response.json())
       .then(() => {
