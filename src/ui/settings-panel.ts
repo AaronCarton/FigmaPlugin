@@ -16,7 +16,7 @@ let projectKey: string = "";
 export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
 export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 //Spinner
-const $spinner: HTMLElement | null = document.querySelector(".c-settings-update");
+const $spinner: HTMLElement | null = document.querySelector(".c-spinner");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
 export class Settings extends BaseComponent {
@@ -87,6 +87,7 @@ export class Settings extends BaseComponent {
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
     });
+    $spinner?.removeAttribute("hidden");
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
