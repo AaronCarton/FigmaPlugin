@@ -27,7 +27,7 @@ export default class ApiClient {
   public static BASE_URL: string;
   public static CLIENT_APIKEY: string;
   public static SOURCE_APIKEY: string;
-  public static annotations_cache: Array<Annotation> = [];
+  public static ods_annotations: Array<Annotation> = [];
 
   public static initializeEvents() {
     const eventHub = EventHub.getInstance();
@@ -47,7 +47,7 @@ export default class ApiClient {
           .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
           .then((response) => {
             const annotations = response.results.map((res) => new Annotation(res.item));
-            ApiClient.annotations_cache = annotations; // Store annotations in cache
+            ApiClient.ods_annotations = annotations; // Store annotations in cache
             EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
             EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
           });
@@ -57,9 +57,9 @@ export default class ApiClient {
     // Register create listener
     eventHub.makeEvent(Events.ANNOTATION_UPSERTED, async (obj: IAnnotation) => {
       // Check if annotation already exists
-      const index = ApiClient.annotations_cache.findIndex((annotation) => annotation.nodeId === obj.nodeId);
+      const index = ApiClient.ods_annotations.findIndex((annotation) => annotation.nodeId === obj.nodeId);
       if (index !== -1) {
-        const foundAnno = ApiClient.annotations_cache[index];
+        const foundAnno = ApiClient.ods_annotations[index];
         // Update existing annotation
         foundAnno.dataSource = obj.dataSource;
         foundAnno.dataType = obj.dataType;
@@ -67,7 +67,7 @@ export default class ApiClient {
         foundAnno.attribute = obj.attribute;
         foundAnno.value = obj.value;
         // Update annotation in cache
-        ApiClient.annotations_cache[index] = foundAnno;
+        ApiClient.ods_annotations[index] = foundAnno;
         // Update annotation in ODS
         ApiClient.getInstance()
           .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
@@ -78,7 +78,7 @@ export default class ApiClient {
         ApiClient.getInstance()
           .createAnnotation(generateUUID(), obj)
           .then((annotation) => {
-            ApiClient.annotations_cache.push(annotation); // Add annotation to cache
+            ApiClient.ods_annotations.push(annotation); // Add annotation to cache
             EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, annotation);
           });
       }
