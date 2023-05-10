@@ -77,6 +77,21 @@ EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotat
 
 EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
   initAnnotations(annotations);
+
+  const textNodes = figma.currentPage.findAllWithCriteria({
+    types: ["TEXT"],
+  });
+
+  textNodes.forEach((textNode) => {
+    annotations.forEach((annotation) => {
+      if (textNode.id === annotation.nodeId) {
+        if (textNode.characters !== annotation.value) {
+          const textNodeCharacters = textNode.characters;
+          EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, { textNodeCharacters, annotation });
+        }
+      }
+    });
+  });
 });
 
 EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation) => {

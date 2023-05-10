@@ -18,6 +18,6 @@ export class Events {
 
   public static readonly SET_SAMPLE_VALUE_FROM_FIGMANODE: string = "SET_SAMPLE_VALUE_FROM_FIGMA";
   public static readonly UPDATE_NODETEXT_FROM_ODS: string = "UPDATE_NODETEXT_FROM_ODS";
-
+  public static readonly UPDATE_ANNOTATION_BY_TEXTNODE: string = "UPDATE_ANNOTATION_BY_TEXTNODE";
   public static readonly FIGMA_ERROR: string = "FIGMA_ERROR";
 }
