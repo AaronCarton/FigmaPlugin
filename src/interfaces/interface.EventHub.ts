@@ -1,4 +1,5 @@
 import { Events } from "../services/events/Events";
+import { AnnotationInput } from "./annotationInput";
 import Annotation, { IAnnotation } from "./interface.annotation";
 import { ODSFacet } from "./ods/interface.ODSresponse";
 
@@ -30,6 +31,12 @@ export interface EventMap {
   [Events.SET_LOCAL_STORAGE]: LocalStoragePayload;
   [Events.FETCH_PROJECT_KEY]: null;
   [Events.PROJECT_KEY_FETCHED]: string;
+
+  [Events.UI_INITIALIZE_COMPONENT]: string;
+  [Events.UI_CHANGE_TAB]: { tab: string; connection: boolean };
+  [Events.UI_CHANGE_VISIBILITY]: boolean;
+  [Events.UI_UPDATE_FIELDS]: AnnotationInput;
+  [Events.UI_CLEAR_FIELDS]: null;
 }
 
 export interface EventHub {
