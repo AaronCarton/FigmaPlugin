@@ -7,8 +7,9 @@ import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
-let highlightedVector: VectorNode;
-let highlightedAnnotation: FrameNode;
+// let highlightedVector: VectorNode;
+// let highlightedAnnotation: FrameNode;
+let highlightedAnnotationLinkItem: annotationLinkItem | undefined = undefined;
 let layerState = true;
 
 function createAnnotation(inputValues: AnnotationInput) {
@@ -292,21 +293,22 @@ function drawAnnotations(
   }
 }
 
-function highlightSelectedVector(found: annotationLinkItem) {
-  if (highlightedVector) highlightedVector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-  found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
-  highlightedVector = found.vector;
-}
-
-function highlightSelectedAnnotation(found: { annotation: FrameNode }) {
-  if (highlightedAnnotation) {
-    highlightedAnnotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-    highlightedAnnotation.dashPattern = [10, 5];
+function highlight(found: annotationLinkItem) {
+  //reset previous
+  if (highlightedAnnotationLinkItem !== undefined) {
+    //reset annotation
+    highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+    highlightedAnnotationLinkItem.annotation.dashPattern = [10, 5];
+    //reset vector
+    highlightedAnnotationLinkItem.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
   }
-  found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
-  found.annotation.dashPattern = [0, 0];
-
-  highlightedAnnotation = found.annotation;
+  //set new highlighted annotation and vector
+  if (found) {
+    found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+    found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+    found.annotation.dashPattern = [0, 0];
+    highlightedAnnotationLinkItem = found;
+  }
 }
 
 // Creating the annotation layer.
@@ -355,6 +357,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
         if (connector !== undefined) {
           linkedAnnotation.vector = connector;
         }
+        highlight(linkedAnnotation);
       }
     });
   }
@@ -420,6 +423,11 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         found.annotation.x = coords.x;
         found.annotation.y = coords.y;
       }
+      //if the highlighted item is updated = update the global var aswell to keep track of changing id of the vector and annotation
+      if (highlightedAnnotationLinkItem !== undefined && found.sourceNode.id === highlightedAnnotationLinkItem.sourceNode.id) {
+        highlightedAnnotationLinkItem = found;
+        highlight(found);
+      }
       linkAnnotationToSourceNodes[linkAnnotationToSourceNodes.indexOf(found)] = found;
     } else {
       // Item doesn't have an annotation yet.
@@ -460,9 +468,16 @@ export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
 
+    highlightedAnnotationLinkItem === undefined
+      ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
+      : console.log("highlight is not undefined");
+
     if (found !== undefined) {
-      highlightSelectedVector(found);
-      highlightSelectedAnnotation(found);
+      if (found !== highlightedAnnotationLinkItem) {
+        console.log("found new item to highlight: ", found);
+        highlight(found);
+      }
+
       figma.ui.postMessage({
         type: MessageTitle.updateFields,
         payload: {
