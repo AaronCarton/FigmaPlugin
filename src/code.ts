@@ -1,5 +1,5 @@
 import { MessageTitle } from "./classes/messageTitles";
-import { changeLayerVisibility, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
+import { changeLayerVisibility, deleteAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
@@ -86,6 +86,11 @@ EventHub.getInstance().makeEvent(Events.INIT_ARCHIVE_ANNOTATION, (annotation: IA
   annotation.projectKey = figma.fileKey || "";
   annotation.nodeId = figma.currentPage.selection[0].id;
   EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, annotation);
+});
+
+EventHub.getInstance().makeEvent(Events.ANNOTATION_ARCHIVED, () => {
+  console.log("Annotation archived");
+  deleteAnnotation();
 });
 
 //////* FIGMA EVENTS *//////

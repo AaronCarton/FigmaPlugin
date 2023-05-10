@@ -1,5 +1,4 @@
 import { MessageTitle } from "../classes/messageTitles";
-import { getSelection } from "../code";
 import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
@@ -29,11 +28,6 @@ export class ConnectPanel extends BaseComponent {
     console.log("ConnectPanel initialized.");
   }
 }
-
-// TODO: move this to a better place
-$removeBtn?.addEventListener("click", () => {
-  EventHub.getInstance().sendCustomEvent(Events.INIT_ARCHIVE_ANNOTATION, {});
-});
 
 function handleIconClick(trigger: HTMLElement) {
   const selectedAttribute = trigger.getAttribute("data-target");
@@ -126,7 +120,7 @@ function changeFieldsOnInput(fieldName: string, state: boolean) {
   }
 }
 
-if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
+if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $removeBtn) {
   $buttons.forEach((icon) => {
     icon.addEventListener("click", () => {
       handleIconClick(icon);
@@ -154,6 +148,21 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
         value: $value.value.trim(),
       } as IAnnotation);
     }
+  });
+
+  $removeBtn.addEventListener("click", () => {
+    EventHub.getInstance().sendCustomEvent(Events.INIT_ARCHIVE_ANNOTATION, {
+      dataSource: $dataSource.value.trim(),
+      entity: $entity.value.trim(),
+      attribute: $attribute.value.trim(),
+      dataType: $dataType.value.trim(),
+      value: $value.value.trim(),
+    } as IAnnotation);
+  });
+
+  EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, () => {
+    $removeBtn.disabled = false;
+    $removeBtn.classList.add("button-pointer");
   });
 }
 

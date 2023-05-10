@@ -5,6 +5,7 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
+import { createFigmaError } from "./createError";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let layerState = true;
@@ -456,5 +457,16 @@ export function sendDataToFrontend() {
     }
   } else {
     figma.ui.postMessage({ type: MessageTitle.clearFields });
+  }
+}
+
+export function deleteAnnotation() {
+  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
+  if (found) {
+    found.vector.remove();
+    found.annotation.remove();
+    figma.ui.postMessage({ type: MessageTitle.clearFields });
+  } else {
+    createFigmaError("Couldn't remove annotation.", 5000, true);
   }
 }
