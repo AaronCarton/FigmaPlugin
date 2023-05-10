@@ -1,17 +1,21 @@
 import { MessageTitle } from "../classes/messageTitles";
 import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
+import { IAnnotation } from "../interfaces/interface.annotation";
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
-const $dataSrc: HTMLInputElement | null = document.querySelector(".js-dataSource");
+const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSource");
 const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
-const $sampleValue: HTMLInputElement | null = document.querySelector(".js-sample-value");
+const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
+const maxCharactersInputfield = 35;
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -32,17 +36,31 @@ function handleIconClick(trigger: HTMLElement) {
   const inputField = document.querySelector<HTMLInputElement>(`#${selectedAttribute}-field`);
 
   if (selectedAttribute && inputSelect && inputText && inputField) {
-    const newOption = new Option(inputField.value, inputField.value);
-    if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
-      inputSelect.add(newOption);
+    if (isEmpty(inputField)) {
+      if (isLessCharactersThanMax(inputField)) {
+        const newOption = new Option(inputField.value, inputField.value);
+        if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
+          inputSelect.add(newOption);
+        }
+        inputSelect.value = inputField.value;
+        inputSelect.dispatchEvent(new Event("change"));
+      } else {
+        EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "The maximum length of the text is 35 characters.");
+      }
     }
-    inputSelect.value = inputField.value;
-    inputSelect.dispatchEvent(new Event("change"));
 
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
   }
+}
+
+function isLessCharactersThanMax(inputField: HTMLInputElement) {
+  return inputField.value.length <= maxCharactersInputfield;
+}
+
+function isEmpty(inputField: HTMLInputElement) {
+  return inputField.value.trim().length !== 0;
 }
 
 function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
@@ -60,15 +78,15 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
 }
 
 function updateFields(message: AnnotationInput) {
-  if ($dataSrc && $entity && $attribute && $dataType && $sampleValue) {
-    $dataSrc.value = message.dataSrc;
+  if ($dataSource && $entity && $attribute && $dataType && $value) {
+    $dataSource.value = message.dataSource;
     $entity.value = message.entity;
     $entity.disabled = false;
     $attribute.value = message.attribute;
     $attribute.disabled = false;
     $dataType.value = message.dataType;
     $dataType.disabled = false;
-    $sampleValue.value = message.sampleValue;
+    $value.value = message.value;
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
@@ -79,15 +97,15 @@ function updateFields(message: AnnotationInput) {
 }
 
 function clearFields() {
-  if ($dataSrc && $entity && $attribute && $dataType && $sampleValue) {
-    $dataSrc.value = "";
+  if ($dataSource && $entity && $attribute && $dataType && $value) {
+    $dataSource.value = "";
     $entity.value = "";
     $entity.disabled = true;
     $attribute.value = "";
     $attribute.disabled = true;
     $dataType.value = "";
     $dataType.disabled = true;
-    $sampleValue.value = "";
+    $value.value = "";
 
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);
@@ -95,6 +113,22 @@ function clearFields() {
   } else {
     createFigmaError("Error clearing fields.", 5000, true);
   }
+}
+
+function validateDataType() {
+  const dataTypeRegex: { [key: string]: RegExp } = {
+    string: /^[\w\s]+$/,
+    number: /^[\d]+$/,
+    int: /^[\d]+$/,
+  };
+  const dataType = $dataType?.value.trim().toLowerCase();
+  const value = $value?.value.trim();
+
+  if (dataType && value && !dataTypeRegex[dataType]?.test(value)) {
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Sample value does not match data type.");
+    return false;
+  }
+  return true;
 }
 
 function changeFieldsOnInput(fieldName: string, state: boolean) {
@@ -112,43 +146,36 @@ function changeFieldsOnInput(fieldName: string, state: boolean) {
   }
 }
 
-if ($buttons && $dataSrc && $entity && $attribute && $dataType && $sampleValue) {
+if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
   $buttons.forEach((icon) => {
     icon.addEventListener("click", () => {
       handleIconClick(icon);
     });
   });
 
-  checkFields($dataSrc, $entity, "entity");
+  checkFields($dataSource, $entity, "entity");
   checkFields($entity, $attribute, "attribute");
   checkFields($attribute, $dataType, "dataType");
 
-  $sampleValue.addEventListener("keyup", (event: KeyboardEvent) => {
+  $value.addEventListener("keyup", (event: KeyboardEvent) => {
     if (
       event.key === "Enter" &&
-      $dataSrc.value.trim().length !== 0 &&
+      $dataSource.value.trim().length !== 0 &&
       $entity.value.trim().length !== 0 &&
       $attribute.value.trim().length !== 0 &&
       $dataType.value.trim().length !== 0 &&
-      $sampleValue.value.trim().length !== 0
+      $value.value.trim().length !== 0
     ) {
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: MessageTitle.createText,
-            payload: {
-              values: {
-                dataSrc: $dataSrc.value.trim(),
-                entity: $entity.value.trim(),
-                attribute: $attribute.value.trim(),
-                dataType: $dataType.value.trim(),
-                sampleValue: $sampleValue.value.trim(),
-              },
-            },
-          },
-        },
-        "*",
-      );
+      // Validate is sample value matches data type first
+      if (!validateDataType()) return;
+
+      EventHub.getInstance().sendCustomEvent(Events.UPSERT_ANNOTATION, {
+        dataSource: $dataSource.value.trim(),
+        entity: $entity.value.trim(),
+        attribute: $attribute.value.trim(),
+        dataType: $dataType.value.trim(),
+        value: $value.value.trim(),
+      } as IAnnotation);
     }
   });
 }

@@ -3,8 +3,9 @@ export class Events {
   public static readonly ANNOTATIONS_FETCHED: string = "ANNOTATIONS_FETCHED";
   public static readonly FACETS_FETCHED: string = "FACETS_FETCHED";
 
-  public static readonly CREATE_ANNOTATION: string = "CREATE_ANNOTATION";
-  public static readonly ANNOTATION_CREATED: string = "ANNOTATION_CREATED";
+  public static readonly UPSERT_ANNOTATION: string = "UPSERT_ANNOTATION";
+  public static readonly ANNOTATION_UPSERTED: string = "ANNOTATION_UPSERTED";
+  public static readonly DRAW_ANNOTATION: string = "DRAW_ANNOTATION";
 
   public static readonly UPDATE_ANNOTATION: string = "UPDATE_ANNOTATION";
   public static readonly TOGGLE_ANNOTATIONS: string = "TOGGLE_ANNOTATIONS";
@@ -14,4 +15,6 @@ export class Events {
   public static readonly SET_LOCAL_STORAGE: string = "SET_LOCAL_STORAGE";
   public static readonly FETCH_PROJECT_KEY: string = "FETCH_PROJECT_KEY";
   public static readonly PROJECT_KEY_FETCHED: string = "PROJECT_KEY_FETCHED";
+
+  public static readonly FIGMA_ERROR: string = "FIGMA_ERROR";
 }
