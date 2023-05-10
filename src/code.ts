@@ -58,6 +58,8 @@ EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation
 });
 
 //////* FIGMA EVENTS *//////
+EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
+
 figma.on("selectionchange", () => {
   sendDataToFrontend();
 });

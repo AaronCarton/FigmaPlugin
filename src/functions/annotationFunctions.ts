@@ -8,6 +8,8 @@ import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
+let highlightedVector: VectorNode;
+let highlightedAnnotation: FrameNode;
 let layerState = true;
 
 function createAnnotation(inputValues: AnnotationInput) {
@@ -176,7 +178,6 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
     line.strokeWeight = 2;
     AnnotationElements.annotationLayer.appendChild(line);
     AnnotationElements.annotationLayer.clipsContent = false;
-
     // M = starting point.
     // L = end point.
     line.vectorPaths = [
@@ -267,7 +268,6 @@ function drawAnnotations(
             annotation: annotation,
             sourceNode: sourceNodes[i],
             vector: line,
-            // data: inputValues[i].AnnotationInput,
             data: associatedInputValue?.AnnotationInput,
           });
         }
@@ -443,7 +443,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
-    console.log("FOUND", found);
+
     if (found !== undefined) {
       EventHub.getInstance().sendCustomEvent(Events.UI_UPDATE_FIELDS, found.data, true);
     }

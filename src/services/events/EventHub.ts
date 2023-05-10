@@ -82,12 +82,8 @@ export default class EventHub {
     // Check is event is for Figma or browser
     if (this.hasAccessToUI()) {
       // Send event to browser
-      // TODO: Check if it is still needed to send to both parent and window.
-      // TODO: Also check if it is still necessary to wrap the data in a pluginMessage,
-      // TODO: would it fail to differentiate between plugin and browser events in the callback if not?
-      // TODO: Is it even necessary to differentiate them?
-      parent.postMessage({ pluginMessage: data }, "*");
-      window.postMessage({ pluginMessage: data }, "*");
+      window.postMessage({ pluginMessage: data }, "*"); // send event across the plugin (UI.ts)
+      parent.postMessage({ pluginMessage: data }, "*"); // also send event to the parent (code.ts)
       if (!suppressLog) console.debug(`[EVENT] Emit ${prefixEventType} to Browser (ui.ts)`, data);
     } else {
       // Send event to Figma

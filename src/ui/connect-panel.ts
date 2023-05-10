@@ -14,6 +14,7 @@ const $value: HTMLInputElement | null = document.querySelector(".js-sample-value
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
+const maxCharactersInputfield = 35;
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -35,17 +36,31 @@ function handleIconClick(trigger: HTMLElement) {
   const inputField = document.querySelector<HTMLInputElement>(`#${selectedAttribute}-field`);
 
   if (selectedAttribute && inputSelect && inputText && inputField) {
-    const newOption = new Option(inputField.value, inputField.value);
-    if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
-      inputSelect.add(newOption);
+    if (isEmpty(inputField)) {
+      if (isLessCharactersThanMax(inputField)) {
+        const newOption = new Option(inputField.value, inputField.value);
+        if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
+          inputSelect.add(newOption);
+        }
+        inputSelect.value = inputField.value;
+        inputSelect.dispatchEvent(new Event("change"));
+      } else {
+        EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "The maximum length of the text is 35 characters.");
+      }
     }
-    inputSelect.value = inputField.value;
-    inputSelect.dispatchEvent(new Event("change"));
 
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
   }
+}
+
+function isLessCharactersThanMax(inputField: HTMLInputElement) {
+  return inputField.value.length <= maxCharactersInputfield;
+}
+
+function isEmpty(inputField: HTMLInputElement) {
+  return inputField.value.trim().length !== 0;
 }
 
 function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
@@ -100,6 +115,22 @@ function clearFields() {
   }
 }
 
+function validateDataType() {
+  const dataTypeRegex: { [key: string]: RegExp } = {
+    string: /^[\w\s]+$/,
+    number: /^[\d]+$/,
+    int: /^[\d]+$/,
+  };
+  const dataType = $dataType?.value.trim().toLowerCase();
+  const value = $value?.value.trim();
+
+  if (dataType && value && !dataTypeRegex[dataType]?.test(value)) {
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Sample value does not match data type.");
+    return false;
+  }
+  return true;
+}
+
 function changeFieldsOnInput(fieldName: string, state: boolean) {
   const textField = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
   const textArea = document.querySelector<HTMLElement>(`#${fieldName}-text`);
@@ -135,6 +166,9 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
       $dataType.value.trim().length !== 0 &&
       $value.value.trim().length !== 0
     ) {
+      // Validate is sample value matches data type first
+      if (!validateDataType()) return;
+
       EventHub.getInstance().sendCustomEvent(Events.UPSERT_ANNOTATION, {
         dataSource: $dataSource.value.trim(),
         entity: $entity.value.trim(),
