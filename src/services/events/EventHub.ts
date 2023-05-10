@@ -1,6 +1,7 @@
 /* eslint-disable func-style */
 /* eslint-disable @typescript-eslint/no-explicit-any */ //! Should be fixed later
-import { EventHub as IEventHub } from "../../interfaces/interface.EventHub";
+import { EventMap } from "../../interfaces/interface.EventHub";
+import { Events } from "./Events";
 
 interface Event {
   type: string;
@@ -16,7 +17,7 @@ export default class EventHub {
    * Creates an instance of the EventHub if it doesn't exist and returns it if it does
    * @returns {EventHub} The instance of the EventHub
    */
-  public static getInstance(): IEventHub {
+  public static getInstance() {
     if (!EventHub.instance) EventHub.instance = new EventHub();
     return EventHub.instance;
   }
@@ -26,7 +27,7 @@ export default class EventHub {
    * @param {string} eventType - The name of the event that will be registered
    * @param {function} cb - The callback function that will be invoked when the event is triggered
    */
-  makeEvent(eventType: string, cb: (message: any) => void): void {
+  makeEvent<T extends Events>(eventType: T, cb: (message: EventMap[T]) => void): void {
     if (!eventType) throw new Error("The event type cannot be empty");
     if (typeof cb !== "function") throw new TypeError("The callback must be a function");
     const prefixEventType = this.prefixEventType(eventType);
@@ -71,7 +72,7 @@ export default class EventHub {
    * @param {any} message - The message that will be sent with the event
    * @param {boolean} suppressLog - If true, the event will not be logged to the console
    */
-  sendCustomEvent(eventType: string, message: any, suppressLog = false): void {
+  sendCustomEvent<T extends Events>(eventType: T, message: EventMap[T], suppressLog = false): void {
     const prefixEventType = this.prefixEventType(eventType);
     const data = {
       type: prefixEventType,

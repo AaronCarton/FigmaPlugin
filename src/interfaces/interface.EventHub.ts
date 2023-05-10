@@ -38,8 +38,3 @@ export interface EventMap {
   [Events.UI_UPDATE_FIELDS]: AnnotationInput;
   [Events.UI_CLEAR_FIELDS]: null;
 }
-
-export interface EventHub {
-  sendCustomEvent<T extends Events>(eventType: T, message: EventMap[T], suppressLog?: boolean): void;
-  makeEvent<T extends Events>(eventType: T, cb: (message: EventMap[T]) => void): void;
-}
