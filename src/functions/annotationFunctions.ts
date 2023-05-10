@@ -303,19 +303,34 @@ function createLayer() {
 
 function handleConnectorRedraws(event: DocumentChangeEvent) {
   if (AnnotationElements.parentFrames.length > 0 && AnnotationElements.annotationLayer.visible === true) {
+    console.log("changing");
     //Get data of changed nodes.
     const changedNodeData = event.documentChanges;
-    const listOfChangedAnnotationSourceNodes = [];
+    console.log(changedNodeData);
+    const listOfChangedAnnotationSourceNodes: Array<SceneNode | FrameNode> = [];
     for (let i = 0; i < changedNodeData.length; i++) {
       const changedNode = changedNodeData[i];
 
-      //Make searchable = if found in here => changedNode is a sourcenode of an annotation
-      const searchMap = JSON.stringify(AnnotationElements.parentFrames);
-      const includesChangedNode = searchMap.match(changedNode.id);
-
-      if (includesChangedNode) {
-        //Gives weird error on property "node" => does not exist: it does.
-        listOfChangedAnnotationSourceNodes.push(changedNode.node);
+      //look if it is a parentframe
+      console.log("looking for parent frame");
+      for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
+        const currentParent = AnnotationElements.parentFrames[i];
+        const found = changedNodeData.find((x) => x.id === currentParent.frame.id);
+        let includesChangedNode;
+        if (found !== undefined) {
+          console.log(found);
+          //Add all children of the current parent to the changedNodes because ultimately they must change aswell
+          const parentChildren = currentParent.sourceNodesLeft.concat(currentParent.sourceNodesRight);
+          listOfChangedAnnotationSourceNodes.concat(parentChildren);
+        } else {
+          //Make searchable = if found in here => changedNode is a sourcenode of an annotation
+          const searchMap = JSON.stringify(AnnotationElements.parentFrames);
+          includesChangedNode = searchMap.match(changedNode.id);
+        }
+        if (includesChangedNode) {
+          //Gives weird error on property "node" => does not exist: it does.
+          listOfChangedAnnotationSourceNodes.push(changedNode.node);
+        }
       }
     }
 
