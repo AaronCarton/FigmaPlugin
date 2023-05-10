@@ -17,7 +17,7 @@ export const $button: HTMLButtonElement | null = document.querySelector(".c-sett
 export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 //Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-spinner");
-const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
+const $plugin: HTMLElement | null = document.querySelector(".c-content");
 
 export class Settings extends BaseComponent {
   componentType = "Settings";
@@ -120,23 +120,9 @@ export class Settings extends BaseComponent {
     });
   }
 
-  checkConnectionSpinnerExample() {
-    // //$plugin?.classList.add("no-pointer");
-    // $spinner?.removeAttribute("hidden");
-    // // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
-    // // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
-    // fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
-    //   .then((response) => response.json())
-    //   .then(() => {
-    //     $plugin?.classList.remove("no-pointer");
-    //     $spinner?.setAttribute("hidden", "");
-    //   });
-  }
-
   toggleAnnotations(e: Event) {
     const state: boolean = (<HTMLInputElement>e.target).checked;
     if (state === true) {
-      console.log("Show annotations.");
       parent.postMessage(
         {
           pluginMessage: {
@@ -147,7 +133,6 @@ export class Settings extends BaseComponent {
         "*",
       );
     } else {
-      console.log("Hide annotations.");
       parent.postMessage(
         {
           pluginMessage: {
@@ -174,16 +159,13 @@ export class Settings extends BaseComponent {
         $sourceKey.disabled = true;
       }
       if ($baseURL.value.replace(/\s/g, "") !== "" && $sourceKey.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
-        console.log("enable button");
         $annotationToggle.disabled = false;
         $button.disabled = false;
         $button.classList.add("button-pointer");
-        $button.addEventListener("click", this.checkConnectionSpinnerExample);
       } else {
         $annotationToggle.disabled = true;
         $button.disabled = true;
         $button.classList.remove("button-pointer");
-        $button.removeEventListener("click", this.checkConnectionSpinnerExample);
       }
     }
   }
@@ -197,8 +179,10 @@ export class Settings extends BaseComponent {
 }
 function showSpinner() {
   $spinner?.removeAttribute("hidden");
+  $plugin?.classList.add("no-pointer");
 }
 
 function hideSpinner() {
   $spinner?.setAttribute("hidden", "");
+  $plugin?.classList.remove("no-pointer");
 }

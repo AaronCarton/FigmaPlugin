@@ -1,7 +1,6 @@
 import { PropertizeConstants } from "../classes/propertizeConstants";
 
 export function resizeByTab(tab: string, connection: boolean) {
-  console.log("Resize");
   switch (tab) {
     case PropertizeConstants.connectTab:
       resizeByConnection(connection);

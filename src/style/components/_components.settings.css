@@ -1,6 +1,5 @@
 .c-settings {
   display: none;
-  /* position: relative; */
 }
 
 .c-settings__form {
@@ -71,4 +70,5 @@
 
 .no-pointer {
   pointer-events: none;
+  filter: blur(1px);
 }
