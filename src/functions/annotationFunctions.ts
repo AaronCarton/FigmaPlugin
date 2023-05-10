@@ -445,12 +445,12 @@ export function sendDataToFrontend() {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
     console.log("FOUND", found);
     if (found !== undefined) {
-      EventHub.getInstance().sendCustomEvent(Events.UI_UPDATE_FIELDS, found.data);
+      EventHub.getInstance().sendCustomEvent(Events.UI_UPDATE_FIELDS, found.data, true);
     }
     if (found === undefined) {
-      EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null);
+      EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
     }
   } else {
-    EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null);
+    EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
   }
 }

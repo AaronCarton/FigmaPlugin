@@ -69,8 +69,9 @@ export default class EventHub {
    * Sends a custom event with a give eventType and a message to either the Figma editor or the browser
    * @param {string} eventType - The name of the event that will be sent
    * @param {any} message - The message that will be sent with the event
+   * @param {boolean} suppressLog - If true, the event will not be logged to the console
    */
-  sendCustomEvent(eventType: string, message: any): void {
+  sendCustomEvent(eventType: string, message: any, suppressLog = false): void {
     const prefixEventType = this.prefixEventType(eventType);
     const data = {
       type: prefixEventType,
@@ -86,11 +87,11 @@ export default class EventHub {
       // TODO: Is it even necessary to differentiate them?
       parent.postMessage({ pluginMessage: data }, "*");
       window.postMessage({ pluginMessage: data }, "*");
-      console.debug(`[EVENT] Emit ${prefixEventType} to Browser (ui.ts)`, data);
+      if (!suppressLog) console.debug(`[EVENT] Emit ${prefixEventType} to Browser (ui.ts)`, data);
     } else {
       // Send event to Figma
       figma.ui.postMessage(data);
-      console.info(`[EVENT] Emit ${prefixEventType} to Figma (code.ts)`, data); //? Figma node doesn't seem to have a console.debug
+      if (!suppressLog) console.info(`[EVENT] Emit ${prefixEventType} to Figma (code.ts)`, data); //? Figma node doesn't seem to have a console.debug
     }
   }
 

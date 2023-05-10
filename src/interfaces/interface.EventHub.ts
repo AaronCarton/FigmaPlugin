@@ -40,6 +40,6 @@ export interface EventMap {
 }
 
 export interface EventHub {
-  sendCustomEvent<T extends Events>(eventType: T, message: EventMap[T]): void;
+  sendCustomEvent<T extends Events>(eventType: T, message: EventMap[T], suppressLog?: boolean): void;
   makeEvent<T extends Events>(eventType: T, cb: (message: EventMap[T]) => void): void;
 }
