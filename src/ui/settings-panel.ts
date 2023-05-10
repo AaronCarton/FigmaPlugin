@@ -12,10 +12,11 @@ const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLi
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
+
 let projectKey: string = "";
+
 export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
 export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
-//Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-settings-update");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
 
@@ -41,9 +42,9 @@ export class Settings extends BaseComponent {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
       console.log("Annotations fetched: ", annotations, ".");
+      const now: string = new Date().toLocaleString("en-GB").replace(",", "");
 
       if ($button && $date) {
-        const now = new Date().toLocaleString("en-GB").replace(",", "");
         $button.innerHTML = "Refresh";
         $date.innerHTML = now;
       }
@@ -57,11 +58,15 @@ export class Settings extends BaseComponent {
       });
     });
 
-    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
+    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
       $baseURL?.setAttribute("value", baseURL || "");
       $clientKey?.setAttribute("value", clientKey || "");
       $sourceKey?.setAttribute("value", sourceKey || "");
       this.disableFieldsWhenNecessary();
+
+      if ($date) {
+        $date.innerHTML = lastUpdate || "";
+      }
 
       // TODO: emit event to initialize data right away, because we got the values from localStorage
       // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
@@ -81,6 +86,7 @@ export class Settings extends BaseComponent {
   }
 
   connect() {
+    const now: string = new Date().toLocaleString("en-GB").replace(",", "");
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
       projectKey: projectKey,
       baseURL: $baseURL?.value,
@@ -91,6 +97,7 @@ export class Settings extends BaseComponent {
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
+      lastUpdate: now,
     });
   }
 
