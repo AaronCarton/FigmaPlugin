@@ -26,6 +26,20 @@ export class ConnectPanel extends BaseComponent {
 
   initComponent(): void {
     console.log("ConnectPanel initialized.");
+    // Add "Enter" event listeners to input fields to trigger icon click
+    [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
+      if (!select) return;
+      const selectedAttribute = select.getAttribute("data-target");
+      const input = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-field`);
+      const btn = document.querySelector<HTMLElement>(`#${selectedAttribute}-btn`);
+      if (input && btn) {
+        input.addEventListener("keyup", (event: KeyboardEvent) => {
+          if (event.key === "Enter") {
+            handleIconClick(btn);
+          }
+        });
+      }
+    });
   }
 }
 

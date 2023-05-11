@@ -31,7 +31,13 @@
         <div class="c-connect__item">
           <div class="c-connect__field">
             <span class="c-connect__field--title">Data source</span>
-            <select name="dataSource-select" id="dataSource-select" class="c-connect__field--select js-dataSource is-active" required>
+            <select
+              name="dataSource-select"
+              id="dataSource-select"
+              data-target="dataSource"
+              class="c-connect__field--select js-dataSource is-active"
+              required
+            >
               <option value="" selected disabled hidden>Choose source</option>
             </select>
             <div class="c-connect__field--text" id="dataSource-text">
@@ -40,12 +46,19 @@
               </div>
             </div>
           </div>
-          <button class="c-connect__cta js-btn" data-target="dataSource"></button>
+          <button class="c-connect__cta js-btn" id="dataSource-btn" data-target="dataSource"></button>
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
             <span class="c-connect__field--title">Entity</span>
-            <select name="entity-select" id="entity-select" class="c-connect__field--select js-entity is-active" required disabled>
+            <select
+              name="entity-select"
+              id="entity-select"
+              data-target="entity"
+              class="c-connect__field--select js-entity is-active"
+              required
+              disabled
+            >
               <option value="" selected disabled hidden>Choose entity</option>
             </select>
             <div class="c-connect__field--text disabled" id="entity-text">
@@ -54,12 +67,19 @@
               </div>
             </div>
           </div>
-          <button class="c-connect__cta js-btn" data-target="entity"></button>
+          <button class="c-connect__cta js-btn" id="entity-btn" data-target="entity"></button>
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
             <span class="c-connect__field--title">Attribute</span>
-            <select name="attribute-select" id="attribute-select" class="c-connect__field--select js-attribute is-active" required disabled>
+            <select
+              name="attribute-select"
+              id="attribute-select"
+              data-target="attribute"
+              class="c-connect__field--select js-attribute is-active"
+              required
+              disabled
+            >
               <option value="" selected disabled hidden>Choose attribute</option>
             </select>
             <div class="c-connect__field--text disabled" id="attribute-text">
@@ -68,12 +88,19 @@
               </div>
             </div>
           </div>
-          <button class="c-connect__cta js-btn" data-target="attribute"></button>
+          <button class="c-connect__cta js-btn" id="attribute-btn" data-target="attribute"></button>
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
             <span class="c-connect__field--title">Data type</span>
-            <select name="dataType-select" id="dataType-select" class="c-connect__field--select js-dataType is-active" required disabled>
+            <select
+              name="dataType-select"
+              id="dataType-select"
+              data-target="dataType"
+              class="c-connect__field--select js-dataType is-active"
+              required
+              disabled
+            >
               <option value="" selected disabled hidden>Choose type</option>
             </select>
             <div class="c-connect__field--text disabled" id="dataType-text">
@@ -82,7 +109,7 @@
               </div>
             </div>
           </div>
-          <button class="c-connect__cta js-btn" data-target="dataType"></button>
+          <button class="c-connect__cta js-btn" id="dataType-btn" data-target="dataType"></button>
         </div>
         <div class="c-connect__item c-connect__attribute">
           <div class="c-connect__field">
