@@ -294,23 +294,6 @@ function drawAnnotations(
   }
 }
 
-function highlightSelectedVector(found: annotationLinkItem) {
-  if (highlightedVector) highlightedVector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-  found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
-  highlightedVector = found.vector;
-}
-
-function highlightSelectedAnnotation(found: { annotation: FrameNode }) {
-  if (highlightedAnnotation) {
-    highlightedAnnotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-    highlightedAnnotation.dashPattern = [10, 5];
-  }
-  found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
-  found.annotation.dashPattern = [0, 0];
-
-  highlightedAnnotation = found.annotation;
-}
-
 // Creating the annotation layer.
 function createLayer() {
   // Finding older version of annotationlayer and deleting it => prevents multiple annotationlayers.
@@ -463,8 +446,6 @@ export function sendDataToFrontend() {
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
 
     if (found !== undefined) {
-      highlightSelectedVector(found);
-      highlightSelectedAnnotation(found);
       figma.ui.postMessage({
         type: MessageTitle.updateFields,
         payload: {
