@@ -62,6 +62,15 @@ export class Settings extends BaseComponent {
       $clientKey?.setAttribute("value", clientKey || "");
       $sourceKey?.setAttribute("value", sourceKey || "");
       this.disableFieldsWhenNecessary();
+
+      // TODO: emit event to initialize data right away, because we got the values from localStorage
+      // KEEP THIS
+      // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
+      //   $projectKey: projectKey,
+      //   baseURL,
+      //   clientKey,
+      //   sourceKey,
+      // });
     });
 
     EventHub.getInstance().makeEvent(Events.PROJECT_KEY_FETCHED, (pk) => {
