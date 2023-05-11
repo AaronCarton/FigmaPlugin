@@ -42,11 +42,11 @@ export class Settings extends BaseComponent {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
       console.log("Annotations fetched: ", annotations, ".");
-      const now: string = new Date().toLocaleString("en-GB").replace(",", "");
+      const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
 
       if ($button && $date) {
         $button.innerHTML = "Refresh";
-        $date.innerHTML = now;
+        $date.innerHTML = currentTime;
       }
 
       changeConnectionState(true);
@@ -86,7 +86,7 @@ export class Settings extends BaseComponent {
   }
 
   connect() {
-    const now: string = new Date().toLocaleString("en-GB").replace(",", "");
+    const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
       projectKey: projectKey,
       baseURL: $baseURL?.value,
@@ -97,7 +97,7 @@ export class Settings extends BaseComponent {
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
-      lastUpdate: now,
+      lastUpdate: currentTime,
     });
   }
 
