@@ -42,16 +42,23 @@ export default class ApiClient {
         sourceKey,
       });
 
-      api.getProject(projectKey).then((project) => {
-        api
-          .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
-          .then((response) => {
-            const annotations = response.results.map((res) => new Annotation(res.item));
-            ApiClient.ods_annotations = annotations; // Store annotations in cache
-            EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
-            EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
-          });
-      });
+      api
+        .getProject(projectKey)
+        .then((project) => {
+          api
+            .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
+            .then((response) => {
+              const annotations = response.results.map((res) => new Annotation(res.item));
+              ApiClient.ods_annotations = annotations; // Store annotations in cache
+              EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
+              EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
+            });
+        })
+        .catch((error) => {
+          if (error instanceof APIError) {
+            EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, error.message);
+          }
+        });
     });
 
     // Register create listener
