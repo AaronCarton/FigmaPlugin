@@ -38,4 +38,7 @@ export interface EventMap {
   [Events.UI_CHANGE_VISIBILITY]: boolean;
   [Events.UI_UPDATE_FIELDS]: AnnotationInput;
   [Events.UI_CLEAR_FIELDS]: null;
+
+  // Default option
+  [key: string]: unknown;
 }
