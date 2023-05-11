@@ -86,7 +86,6 @@ export default class ApiClient {
 
     eventHub.makeEvent(Events.ARCHIVE_ANNOTATION, (obj: IAnnotation) => {
       const index = ApiClient.annotations_cache.findIndex((annotation) => annotation.nodeId === obj.nodeId);
-
       console.log("index", index);
 
       if (index !== -1) {

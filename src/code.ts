@@ -104,7 +104,12 @@ figma.on("selectionchange", () => {
 });
 
 figma.on("documentchange", (event: DocumentChangeEvent) => {
-  checkIfAnnotationExists(event);
+  console.log("documentchange", event);
+  event.documentChanges.forEach((change) => {
+    if (change.type === "DELETE") {
+      EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id });
+    }
+  });
 });
 
 figma.on("close", async () => {

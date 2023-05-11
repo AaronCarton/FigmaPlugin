@@ -179,13 +179,12 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
     line.strokeWeight = 2;
     AnnotationElements.annotationLayer.appendChild(line);
     AnnotationElements.annotationLayer.clipsContent = false;
-
     // M = starting point.
     // L = end point.
     line.vectorPaths = [
       {
         windingRule: "EVENODD",
-        data: `M ${annotation.x <= destination.absoluteBoundingBox.x ? annotation.x + annotation.width + 5 : annotation.x - 5} ${
+        data: `M ${annotation.x <= destination.absoluteBoundingBox?.x ? annotation.x + annotation.width + 5 : annotation.x - 5} ${
           annotation.y + annotation.height / 2
         } L ${
           annotation.x <= destination.absoluteBoundingBox.x
@@ -332,6 +331,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
 
     // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
+      if (changedNode.removed) return;
       //find linkedAnnotation
       const linkedAnnotation = linkAnnotationToSourceNodes.find((item) => item.sourceNode.id === changedNode.id);
 
@@ -466,9 +466,13 @@ export function sendDataToFrontend() {
 
 export function deleteAnnotation(annotation: Annotation) {
   const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
+
+  // remove annotation from array
   if (found) {
     found.vector.remove();
     found.annotation.remove();
+    linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(found), 1);
+    // TODO: Remove annotation from parentFrame array
     figma.ui.postMessage({ type: MessageTitle.clearFields });
   } else {
     createFigmaError("Couldn't remove annotation.", 5000, true);
@@ -476,6 +480,7 @@ export function deleteAnnotation(annotation: Annotation) {
 }
 
 export function checkIfAnnotationExists(event: DocumentChangeEvent) {
+  // if (event.documentChanges[0].type === "DELETE") {
   const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === event.documentChanges[0].id);
   if (found) {
     const annotation: IAnnotation = {
@@ -492,3 +497,4 @@ export function checkIfAnnotationExists(event: DocumentChangeEvent) {
     console.log("Annotation doesn't exist.");
   }
 }
+// }
