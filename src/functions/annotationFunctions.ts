@@ -313,6 +313,7 @@ function unhighlight() {
     //reset vector
     highlightedAnnotationLinkItem.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
   }
+  highlightedAnnotationLinkItem = undefined;
 }
 
 // Creating the annotation layer.
