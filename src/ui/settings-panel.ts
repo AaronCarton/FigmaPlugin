@@ -46,7 +46,7 @@ export class Settings extends BaseComponent {
 
       if ($button && $date) {
         $button.innerHTML = "Refresh";
-        $date.innerHTML = currentTime;
+        $date.innerText = currentTime;
       }
 
       changeConnectionState(true);
@@ -65,7 +65,7 @@ export class Settings extends BaseComponent {
       this.disableFieldsWhenNecessary();
 
       if ($date) {
-        $date.innerHTML = lastUpdate || "";
+        $date.innerText = lastUpdate || "";
       }
 
       // TODO: emit event to initialize data right away, because we got the values from localStorage
