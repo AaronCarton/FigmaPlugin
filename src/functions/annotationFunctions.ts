@@ -295,19 +295,23 @@ function drawAnnotations(
 
 function highlight(found: annotationLinkItem) {
   //reset previous
-  if (highlightedAnnotationLinkItem !== undefined) {
-    //reset annotation
-    highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-    highlightedAnnotationLinkItem.annotation.dashPattern = [10, 5];
-    //reset vector
-    highlightedAnnotationLinkItem.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-  }
+  unhighlight();
   //set new highlighted annotation and vector
   if (found) {
     found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
     found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
     found.annotation.dashPattern = [0, 0];
     highlightedAnnotationLinkItem = found;
+  }
+}
+
+function unhighlight() {
+  if (highlightedAnnotationLinkItem !== undefined) {
+    //reset annotation
+    highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+    highlightedAnnotationLinkItem.annotation.dashPattern = [10, 5];
+    //reset vector
+    highlightedAnnotationLinkItem.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
   }
 }
 
@@ -487,8 +491,10 @@ export function sendDataToFrontend() {
     }
     if (found === undefined) {
       figma.ui.postMessage({ type: MessageTitle.clearFields });
+      unhighlight();
     }
   } else {
     figma.ui.postMessage({ type: MessageTitle.clearFields });
+    unhighlight();
   }
 }
