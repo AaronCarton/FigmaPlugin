@@ -117,7 +117,7 @@ function clearFields() {
 
 function validateDataType() {
   const dataTypeRegex: { [key: string]: RegExp } = {
-    string: /^[\w\s]+$/,
+    string: /^[\w\s\S]+$/,
     number: /^[\d]+$/,
     int: /^[\d]+$/,
   };
