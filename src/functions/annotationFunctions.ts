@@ -7,8 +7,7 @@ import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
-// let highlightedVector: VectorNode;
-// let highlightedAnnotation: FrameNode;
+
 let highlightedAnnotationLinkItem: annotationLinkItem | undefined = undefined;
 let layerState = true;
 
