@@ -41,7 +41,9 @@ export class ConnectPanel extends BaseComponent {
           }
         });
         // cancel when clicking outside the input field
-        input.addEventListener("focusout", () => {
+        input.addEventListener("blur", (ev) => {
+          // if the click is on the icon, don't cancel
+          if (ev.relatedTarget === btn) return;
           btn.classList.toggle(iconCheck);
           text.classList.toggle(isActiveField);
           select.classList.toggle(isActiveField);
@@ -65,6 +67,7 @@ function handleIconClick(trigger: HTMLElement) {
           inputSelect.add(newOption);
         }
         inputSelect.value = inputField.value;
+        inputField.value = ""; // clear input field after adding new option
         inputSelect.dispatchEvent(new Event("change"));
       } else {
         EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "The maximum length of the text is 35 characters.");
