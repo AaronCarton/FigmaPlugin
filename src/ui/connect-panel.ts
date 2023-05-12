@@ -12,8 +12,6 @@ const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
 const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
-const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
-const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -80,7 +78,7 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
 }
 
 function updateFields(message: AnnotationInput) {
-  if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
+  if ($dataSource && $entity && $attribute && $dataType && $value) {
     $dataSource.value = message.dataSource;
     $entity.value = message.entity;
     $entity.disabled = false;
@@ -89,11 +87,6 @@ function updateFields(message: AnnotationInput) {
     $dataType.value = message.dataType;
     $dataType.disabled = false;
     $value.value = message.value;
-    $removeBtn.disabled = false;
-    $removeBtn.classList.add("button-pointer");
-    $createBtn.innerText = "Update annotation";
-    $createBtn.disabled = false;
-    $createBtn.classList.add("button-pointer");
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
@@ -104,7 +97,7 @@ function updateFields(message: AnnotationInput) {
 }
 
 function clearFields() {
-  if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
+  if ($dataSource && $entity && $attribute && $dataType && $value) {
     $dataSource.value = "";
     $entity.value = "";
     $entity.disabled = true;
@@ -113,11 +106,6 @@ function clearFields() {
     $dataType.value = "";
     $dataType.disabled = true;
     $value.value = "";
-    $removeBtn.disabled = true;
-    $removeBtn.classList.remove("button-pointer");
-    $createBtn.innerText = "Create annotation";
-    $createBtn.disabled = true;
-    $createBtn.classList.remove("button-pointer");
 
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);
@@ -158,25 +146,7 @@ function changeFieldsOnInput(fieldName: string, state: boolean) {
   }
 }
 
-function disableCreate() {
-  if ($dataSource && $entity && $attribute && $dataType && $value && $createBtn) {
-    if (
-      $dataSource.value.trim().length !== 0 &&
-      $entity.value.trim().length !== 0 &&
-      $attribute.value.trim().length !== 0 &&
-      $dataType.value.trim().length !== 0 &&
-      $value.value.trim().length !== 0
-    ) {
-      $createBtn.disabled = false;
-      $createBtn.classList.add("button-pointer");
-    } else {
-      $createBtn.disabled = true;
-      $createBtn.classList.remove("button-pointer");
-    }
-  }
-}
-
-if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
+if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
   $buttons.forEach((icon) => {
     icon.addEventListener("click", () => {
       handleIconClick(icon);
@@ -207,44 +177,6 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
         value: $value.value.trim(),
       } as IAnnotation);
     }
-  });
-
-  $createBtn.addEventListener("click", () => {
-    if (
-      $dataSource.value.trim().length !== 0 &&
-      $entity.value.trim().length !== 0 &&
-      $attribute.value.trim().length !== 0 &&
-      $dataType.value.trim().length !== 0 &&
-      $value.value.trim().length !== 0
-    ) {
-      EventHub.getInstance().sendCustomEvent(Events.UPSERT_ANNOTATION, {
-        dataSource: $dataSource.value.trim(),
-        entity: $entity.value.trim(),
-        attribute: $attribute.value.trim(),
-        dataType: $dataType.value.trim(),
-        value: $value.value.trim(),
-      } as IAnnotation);
-    }
-  });
-
-  $removeBtn.addEventListener("click", () => {
-    EventHub.getInstance().sendCustomEvent(Events.INIT_ARCHIVE_ANNOTATION, {
-      dataSource: $dataSource.value.trim(),
-      entity: $entity.value.trim(),
-      attribute: $attribute.value.trim(),
-      dataType: $dataType.value.trim(),
-      value: $value.value.trim(),
-    } as IAnnotation);
-  });
-
-  EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, () => {
-    $removeBtn.disabled = false;
-    $removeBtn.classList.add("button-pointer");
-    $createBtn.innerText = "Update annotation";
-  });
-
-  $value.addEventListener("keyup", () => {
-    disableCreate();
   });
 }
 
