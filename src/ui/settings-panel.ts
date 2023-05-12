@@ -92,6 +92,8 @@ export class Settings extends BaseComponent {
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
     });
+
+    toggleShowAnnotations();
   }
 
   loadDropdowns(elementName: string, data: string[]) {
@@ -192,3 +194,9 @@ export class Settings extends BaseComponent {
     $sourceKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
   }
 }
+function toggleShowAnnotations() {
+  if ($annotationToggle) {
+    $annotationToggle.checked = true;
+  }
+}
+
