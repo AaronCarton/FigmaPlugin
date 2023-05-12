@@ -30,9 +30,9 @@
   cursor: pointer;
 }
 
-.c-connect__remove {
+.c-connect__buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: var(--propertize__spacing--large);
   width: 100%;
 }
@@ -48,6 +48,20 @@
 }
 
 .c-connect__cta--remove:disabled {
+  opacity: 0.4;
+}
+
+.c-connect__cta--create {
+  padding: 8px 12px;
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
+  background-color: var(--propertize__color--blue);
+  color: var(--propertize__color--white);
+  border: none;
+  border-radius: 10px;
+}
+
+.c-connect__cta--create:disabled {
   opacity: 0.4;
 }
 
