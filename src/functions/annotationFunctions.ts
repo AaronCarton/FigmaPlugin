@@ -8,8 +8,8 @@ import Annotation from "../interfaces/interface.annotation";
 import { createFigmaError } from "./createError";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
-let layerState = true;
 export let lastSelectedNode: string = "";
+let layerState = true;
 
 function createAnnotation(inputValues: AnnotationInput) {
   const page = figma.currentPage;
@@ -464,28 +464,26 @@ export function sendDataToFrontend() {
 
 export function archiveAnnotation(annotation: Annotation) {
   const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
-  console.log("found in del", found);
-  // remove annotation from array
+  // Remove annotation from array
   if (found) {
     // Deletes found element from the parentframe array
-    for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
-      const currentParent = AnnotationElements.parentFrames[i];
+    AnnotationElements.parentFrames.forEach((currentParent) => {
       const leftFound = currentParent.sourceNodesLeft.find((x) => x.id === found.sourceNode.id);
       if (leftFound === undefined) {
         const rightFound = currentParent.sourceNodesRight.find((x) => x.id === found.sourceNode.id);
         if (rightFound === undefined) {
-          continue;
+          return;
         } else {
           const deleted = currentParent.sourceNodesRight.splice(currentParent.sourceNodesRight.indexOf(rightFound));
           console.log("deleted", deleted);
-          break;
+          return;
         }
       } else {
         const deleted = currentParent.sourceNodesLeft.splice(currentParent.sourceNodesLeft.indexOf(leftFound));
         console.log("deleted", deleted);
-        break;
+        return;
       }
-    }
+    });
 
     found.vector.remove();
     found.annotation.remove();
