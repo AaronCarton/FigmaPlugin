@@ -72,6 +72,8 @@
 
 .c-connect__field--text {
   display: none;
+  width: 100%;
+  padding-right: 10px;
 }
 
 .c-connect__field--border {
@@ -79,7 +81,7 @@
   justify-content: start;
   align-items: center;
   color: var(--propertize__color--secondary);
-  width: 188px;
+  width: 100%;
   height: 31px;
   border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);
