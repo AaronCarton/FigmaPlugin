@@ -90,10 +90,13 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
   selectElement.addEventListener("change", () => {
     const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
     const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
-    if (textField && textArea) {
+    const button = document.querySelector<HTMLButtonElement>(`#${disabledId}-btn`);
+    if (textField && textArea && button) {
       if (selectElement.value.trim().length !== 0) {
         changeElement1.disabled = false;
         textField.disabled = false;
+        button.disabled = false;
+        button.classList.remove("disabled-btn");
         textArea.classList.remove("disabled");
       }
     }
