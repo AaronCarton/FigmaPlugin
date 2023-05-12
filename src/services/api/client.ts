@@ -84,7 +84,20 @@ export default class ApiClient {
       }
     });
 
-    // TODO: add ARCHIVE and UNARCHIVE listeners
+    eventHub.makeEvent(Events.ARCHIVE_ANNOTATION, (obj: IAnnotation) => {
+      const index = ApiClient.annotations_cache.findIndex((annotation) => annotation.nodeId === obj.nodeId);
+
+      if (index !== -1) {
+        const foundAnno = ApiClient.annotations_cache[index];
+        ApiClient.annotations_cache[index].archived = new Date().toISOString();
+        ApiClient.getInstance()
+          .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
+          .then(() => {
+            ApiClient.annotations_cache.splice(index, 1); // Remove annotation from cache
+            EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_ARCHIVED, foundAnno);
+          });
+      }
+    });
   }
 
   /**

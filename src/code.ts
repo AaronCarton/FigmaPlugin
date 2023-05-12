@@ -1,5 +1,5 @@
 import { MessageTitle } from "./classes/messageTitles";
-import { changeLayerVisibility, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
+import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
@@ -10,7 +10,7 @@ import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
 
-figma.showUI(__html__, { width: 345, height: 250 });
+figma.showUI(__html__, { width: 345, height: 296 });
 
 figma.ui.on("message", (event) => {
   const eventType = event.type;
@@ -85,11 +85,30 @@ EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation
   updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
 });
 
+EventHub.getInstance().makeEvent(Events.INIT_ARCHIVE_ANNOTATION, (annotation: IAnnotation) => {
+  annotation.projectKey = figma.fileKey || "";
+  annotation.nodeId = figma.currentPage.selection[0].id;
+  EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, annotation);
+});
+
+EventHub.getInstance().makeEvent(Events.ANNOTATION_ARCHIVED, (annotation: Annotation) => {
+  archiveAnnotation(annotation);
+});
+
 //////* FIGMA EVENTS *//////
 EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
 
 figma.on("selectionchange", () => {
   sendDataToFrontend();
+});
+
+figma.on("documentchange", (event: DocumentChangeEvent) => {
+  console.log("documentchange", event);
+  event.documentChanges.forEach((change) => {
+    if (change.type === "DELETE") {
+      EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id });
+    }
+  });
 });
 
 figma.on("close", async () => {

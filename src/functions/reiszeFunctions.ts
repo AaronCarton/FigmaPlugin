@@ -18,8 +18,8 @@ export function resizeByTab(tab: string, connection: boolean) {
 
 export function resizeByConnection(connection: boolean) {
   if (connection) {
-    figma.ui.resize(345, 250);
+    figma.ui.resize(345, 296);
   } else {
-    figma.ui.resize(345, 250);
+    figma.ui.resize(345, 296);
   }
 }
