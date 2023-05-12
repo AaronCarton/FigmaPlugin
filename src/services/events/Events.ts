@@ -17,4 +17,6 @@ export class Events {
   public static readonly PROJECT_KEY_FETCHED: string = "PROJECT_KEY_FETCHED";
 
   public static readonly FIGMA_ERROR: string = "FIGMA_ERROR";
+
+  public static readonly API_ERROR: string = "API_ERROR";
 }

@@ -316,12 +316,16 @@ export default class ApiClient {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
         case 401:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Unauthorized, please check your API key");
           throw new APIError(res, "Unauthorized, please check your API key");
         case 400:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Bad request, is the item structure correct?");
           throw new APIError(res, "Bad request, is the item structure correct?");
         case 500:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Internal Server Error");
           throw new APIError(res, "Internal Server Error");
         default:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Something went wrong, please try again later");
           throw new APIError(res, "Something went wrong, please try again later");
       }
     }

@@ -33,6 +33,7 @@ export class Settings extends BaseComponent {
     $button?.addEventListener("click", (e: Event) => {
       e.preventDefault();
       this.connect();
+      $button.disabled = true;
     });
   }
 
@@ -45,6 +46,7 @@ export class Settings extends BaseComponent {
       if ($button && $date) {
         $button.innerHTML = "Refresh";
         $date.innerText = currentTime;
+        $button.disabled = false;
       }
 
       changeConnectionState(true);
@@ -73,6 +75,11 @@ export class Settings extends BaseComponent {
       //   clientKey,
       //   sourceKey,
       // });
+    });
+
+    EventHub.getInstance().makeEvent(Events.API_ERROR, (message) => {
+      $button?.removeAttribute("disabled");
+      EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, message);
     });
 
     EventHub.getInstance().makeEvent(Events.PROJECT_KEY_FETCHED, (pk) => {
