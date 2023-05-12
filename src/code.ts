@@ -76,6 +76,7 @@ EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotat
 
 EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
   initAnnotations(annotations);
+  EventHub.getInstance().sendCustomEvent(Events.CLEAR_FIELDS_AT_STARTUP, {});
 });
 
 EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation) => {

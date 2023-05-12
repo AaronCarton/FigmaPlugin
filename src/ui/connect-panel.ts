@@ -25,7 +25,9 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    console.log("ConnectPanel initialized.");
+    EventHub.getInstance().makeEvent(Events.CLEAR_FIELDS_AT_STARTUP, () => {
+      clearFields();
+    });
   }
 }
 
