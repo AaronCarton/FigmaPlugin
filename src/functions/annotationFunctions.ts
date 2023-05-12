@@ -304,6 +304,8 @@ function createLayer() {
   // Make layer lockable e.g. not dragged by accident.
   AnnotationElements.annotationLayer.locked = true;
   AnnotationElements.annotationLayer.visible = layerState;
+
+  figma.group([AnnotationElements.annotationLayer], figma.currentPage);
 }
 
 function handleConnectorRedraws(event: DocumentChangeEvent) {
