@@ -466,13 +466,32 @@ export function sendDataToFrontend() {
 
 export function deleteAnnotation(annotation: Annotation) {
   const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
-
+  console.log("found in del", found);
   // remove annotation from array
   if (found) {
+    // Deletes found element from the parentframe array
+    for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
+      const currentParent = AnnotationElements.parentFrames[i];
+      const leftFound = currentParent.sourceNodesLeft.find((x) => x.id === found.sourceNode.id);
+      if (leftFound === undefined) {
+        const rightFound = currentParent.sourceNodesRight.find((x) => x.id === found.sourceNode.id);
+        if (rightFound === undefined) {
+          continue;
+        } else {
+          const deleted = currentParent.sourceNodesRight.splice(currentParent.sourceNodesRight.indexOf(rightFound));
+          console.log("deleted", deleted);
+          break;
+        }
+      } else {
+        const deleted = currentParent.sourceNodesLeft.splice(currentParent.sourceNodesLeft.indexOf(leftFound));
+        console.log("deleted", deleted);
+        break;
+      }
+    }
+
     found.vector.remove();
     found.annotation.remove();
     linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(found), 1);
-    // TODO: Remove annotation from parentFrame array
     figma.ui.postMessage({ type: MessageTitle.clearFields });
   } else {
     createFigmaError("Couldn't remove annotation.", 5000, true);
