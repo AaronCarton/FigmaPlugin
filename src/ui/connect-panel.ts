@@ -45,6 +45,7 @@ function handleIconClick(trigger: HTMLElement) {
           inputSelect.add(newOption);
         }
         inputSelect.value = inputField.value;
+        inputField.value = "";
         inputSelect.dispatchEvent(new Event("change"));
       } else {
         EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "The maximum length of the text is 35 characters.");
