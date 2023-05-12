@@ -140,8 +140,6 @@ export default class ApiClient {
     if (!sourceKey) {
       throw new Error("SourceKey is required");
     }
-
-    console.log("ApiClient initialized: baseURL: %s, clientKey: %s, sourceKey: %s", baseURL, clientKey, sourceKey); // TODO: Remove
   }
 
   ////////* API CALLS */ ///////

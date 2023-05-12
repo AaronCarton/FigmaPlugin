@@ -93,7 +93,6 @@ figma.on("selectionchange", () => {
 });
 
 figma.on("close", async () => {
-  console.log("closing");
   AnnotationElements.annotationLayer.remove();
   figma.closePlugin();
 });

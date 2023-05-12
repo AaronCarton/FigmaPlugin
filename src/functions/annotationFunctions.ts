@@ -88,7 +88,6 @@ function determineParentFrame(elem: SceneNode) {
 }
 
 function makeFramesArray(initData: Array<Annotation> | null) {
-  console.log("Making frame array...");
   let selection: Array<SceneNode> = [];
 
   if (initData !== null) {
@@ -352,7 +351,6 @@ export function changeLayerVisibility(state: boolean) {
 }
 
 export function initAnnotations(annotationData: Array<Annotation>) {
-  console.log("initing");
   createLayer();
   makeFramesArray(annotationData);
   // Make inputValues array needed for drawing initial annotations.
@@ -387,7 +385,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
-  console.log("updating");
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
