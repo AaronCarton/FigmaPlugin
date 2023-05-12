@@ -19,11 +19,6 @@
   opacity: 0.5;
 }
 
-.disabled-btn {
-  opacity: 0.5;
-  cursor: default;
-}
-
 .hidden {
   display: none;
 }

@@ -96,7 +96,7 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
         changeElement1.disabled = false;
         textField.disabled = false;
         button.disabled = false;
-        button.classList.remove("disabled-btn");
+        button.classList.remove("c-connect__cta--disabled");
         textArea.classList.remove("disabled");
       }
     }

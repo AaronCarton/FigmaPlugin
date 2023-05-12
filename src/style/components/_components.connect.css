@@ -35,6 +35,11 @@
   cursor: pointer;
 }
 
+.c-connect__cta--disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .c-icon_check_class {
   background-image: var(--icon-check);
   height: 32px;
