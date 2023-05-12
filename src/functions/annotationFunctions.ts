@@ -319,7 +319,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
       const searchMap = JSON.stringify(AnnotationElements.parentFrames);
       const includesChangedNode = searchMap.match(changedNode.id);
 
-      if (includesChangedNode) {
+      if (includesChangedNode && changedNode.type === "PROPERTY_CHANGE" && changedNode.node.removed === false) {
         //Gives weird error on property "node" => does not exist: it does.
         listOfChangedAnnotationSourceNodes.push(changedNode.node);
       }
@@ -329,7 +329,6 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
 
     // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
-      if (changedNode.removed) return;
       //find linkedAnnotation
       const linkedAnnotation = linkAnnotationToSourceNodes.find((item) => item.sourceNode.id === changedNode.id);
 
