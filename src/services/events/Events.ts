@@ -18,5 +18,5 @@ export class Events {
 
   public static readonly FIGMA_ERROR: string = "FIGMA_ERROR";
 
-  public static readonly TEST_ERROR: string = "TEST_ERROR";
+  public static readonly API_ERROR: string = "API_ERROR";
 }

@@ -74,7 +74,7 @@ export class Settings extends BaseComponent {
       // });
     });
 
-    EventHub.getInstance().makeEvent(Events.TEST_ERROR, (message) => {
+    EventHub.getInstance().makeEvent(Events.API_ERROR, (message) => {
       $button?.removeAttribute("disabled");
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, message);
     });
