@@ -8,17 +8,15 @@ import { BaseComponent } from "./baseComponent";
 import { changeConnectionState } from "./navigation-tabs";
 
 //input elements
+export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
+export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
-
-let projectKey: string = "";
-
-export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
-export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 const $spinner: HTMLElement | null = document.querySelector(".c-settings-update");
 const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
+let projectKey: string = "";
 
 export class Settings extends BaseComponent {
   componentType = "Settings";
