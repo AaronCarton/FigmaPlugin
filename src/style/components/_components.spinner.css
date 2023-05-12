@@ -1,4 +1,5 @@
 .c-spinner {
+  display: hidden;
   filter: blur(0px);
   z-index: 99;
   margin-left: calc(50% - 48px);
@@ -11,6 +12,11 @@
   position: absolute;
   animation: rotate 1s linear infinite;
 }
+
+.c-spinner + .is-active {
+  display: block;
+}
+
 .c-spinner::before,
 .c-spinner::after {
   content: "";

@@ -49,7 +49,7 @@ export class Settings extends BaseComponent {
       }
 
       changeConnectionState(true);
-      hideSpinner();
+      spinnerEvents();
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.value)]));
@@ -88,7 +88,7 @@ export class Settings extends BaseComponent {
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
     });
-    showSpinner();
+    spinnerEvents();
 
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
       baseURL: $baseURL?.value,
@@ -177,12 +177,8 @@ export class Settings extends BaseComponent {
     $sourceKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
   }
 }
-function showSpinner() {
-  $spinner?.removeAttribute("hidden");
-  $plugin?.classList.add("no-pointer");
-}
 
-function hideSpinner() {
-  $spinner?.setAttribute("hidden", "");
-  $plugin?.classList.remove("no-pointer");
+function spinnerEvents() {
+  $spinner?.classList.toggle("is-active");
+  $plugin?.classList.toggle("no-pointer");
 }
