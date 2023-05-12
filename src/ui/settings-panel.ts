@@ -199,4 +199,3 @@ function toggleShowAnnotations() {
     $annotationToggle.checked = true;
   }
 }
-
