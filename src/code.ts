@@ -5,7 +5,6 @@ import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
 import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
-import { createFigmaError } from "./functions/createError";
 import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
@@ -67,8 +66,9 @@ EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
 
 //////* ANNOTATION EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotation) => {
-  if (figma.currentPage.selection.length === 0) return createFigmaError("Select something to create an annotation.", 5000, true);
-  if (figma.currentPage.selection.length > 1) return createFigmaError("Only one node can be selected.", 5000, true);
+  if (figma.currentPage.selection.length === 0)
+    return EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Select something to create an annotation.");
+  if (figma.currentPage.selection.length > 1) return EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Only one node can be selected.");
   annotation.projectKey = figma.fileKey || "";
   annotation.nodeId = figma.currentPage.selection[0].id;
   EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_UPSERTED, annotation);

@@ -1,5 +1,4 @@
 import { MessageTitle } from "../classes/messageTitles";
-import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -106,7 +105,7 @@ function updateFields(message: AnnotationInput) {
     changeFieldsOnInput("attribute", false);
     changeFieldsOnInput("dataType", false);
   } else {
-    createFigmaError("Error updating fields.", 5000, true);
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
   }
 }
 
@@ -125,7 +124,7 @@ function clearFields() {
     changeFieldsOnInput("attribute", true);
     changeFieldsOnInput("dataType", true);
   } else {
-    createFigmaError("Error clearing fields.", 5000, true);
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
   }
 }
 
