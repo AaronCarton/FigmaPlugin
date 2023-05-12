@@ -28,14 +28,23 @@ export class ConnectPanel extends BaseComponent {
     // Add "Enter" event listeners to input fields to trigger icon click
     [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
       if (!select) return;
+      // TODO: refactor this to a separate function,
+      // TODO: shares a lot of duplicate code with handleIconClick
       const selectedAttribute = select.getAttribute("data-target");
       const input = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-field`);
+      const text = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
       const btn = document.querySelector<HTMLElement>(`#${selectedAttribute}-btn`);
-      if (input && btn) {
+      if (input && btn && text) {
         input.addEventListener("keyup", (event: KeyboardEvent) => {
           if (event.key === "Enter") {
             handleIconClick(btn);
           }
+        });
+        // cancel when clicking outside the input field
+        input.addEventListener("focusout", () => {
+          btn.classList.toggle(iconCheck);
+          text.classList.toggle(isActiveField);
+          select.classList.toggle(isActiveField);
         });
       }
     });
@@ -65,6 +74,7 @@ function handleIconClick(trigger: HTMLElement) {
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
+    inputField.focus();
   }
 }
 
