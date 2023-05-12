@@ -34,6 +34,7 @@ export class Settings extends BaseComponent {
     $button?.addEventListener("click", (e: Event) => {
       e.preventDefault();
       this.connect();
+      $button.disabled = true;
     });
   }
 
@@ -46,6 +47,7 @@ export class Settings extends BaseComponent {
         const now = new Date().toLocaleString("en-GB").replace(",", "");
         $button.innerHTML = "Refresh";
         $date.innerHTML = now;
+        $button.disabled = false;
       }
 
       changeConnectionState(true);

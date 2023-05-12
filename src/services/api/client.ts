@@ -6,6 +6,7 @@ import EventHub from "../events/EventHub";
 import { Events } from "../events/Events";
 import { PropertizeConstants } from "../../classes/propertizeConstants";
 import generateUUID from "../../functions/generateUUID";
+import { $button } from "../../ui/settings-panel";
 
 interface ApiOptions {
   baseURL: string;
@@ -311,7 +312,8 @@ export default class ApiClient {
     console.debug(`[API] Response: ${method} ${url}`, res); // temporary - remove later
 
     // Error handling
-    if (!res.ok) {
+    if (!res.ok && $button) {
+      $button.disabled = false;
       switch (res.status) {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
