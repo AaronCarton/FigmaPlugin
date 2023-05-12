@@ -6,7 +6,6 @@ import EventHub from "../events/EventHub";
 import { Events } from "../events/Events";
 import { PropertizeConstants } from "../../classes/propertizeConstants";
 import generateUUID from "../../functions/generateUUID";
-import { $button } from "../../ui/settings-panel";
 
 interface ApiOptions {
   baseURL: string;
@@ -312,18 +311,21 @@ export default class ApiClient {
     console.debug(`[API] Response: ${method} ${url}`, res); // temporary - remove later
 
     // Error handling
-    if (!res.ok && $button) {
-      $button.disabled = false;
+    if (!res.ok) {
       switch (res.status) {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
         case 401:
+          EventHub.getInstance().sendCustomEvent(Events.TEST_ERROR, "Unauthorized, please check your API key");
           throw new APIError(res, "Unauthorized, please check your API key");
         case 400:
+          EventHub.getInstance().sendCustomEvent(Events.TEST_ERROR, "Bad request, is the item structure correct?");
           throw new APIError(res, "Bad request, is the item structure correct?");
         case 500:
+          EventHub.getInstance().sendCustomEvent(Events.TEST_ERROR, "Internal Server Error");
           throw new APIError(res, "Internal Server Error");
         default:
+          EventHub.getInstance().sendCustomEvent(Events.TEST_ERROR, "Something went wrong, please try again later");
           throw new APIError(res, "Something went wrong, please try again later");
       }
     }
