@@ -40,6 +40,41 @@
   cursor: default;
 }
 
+.c-connect__buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--propertize__spacing--large);
+  width: 100%;
+}
+
+.c-connect__remove {
+  padding: 8px 12px;
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
+  background-color: var(--propertize__color--red);
+  color: var(--propertize__color--white);
+  border: none;
+  border-radius: 10px;
+}
+
+.c-connect__remove:disabled {
+  opacity: 0.4;
+}
+
+.c-connect__create {
+  padding: 8px 12px;
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
+  background-color: var(--propertize__color--blue);
+  color: var(--propertize__color--white);
+  border: none;
+  border-radius: 10px;
+}
+
+.c-connect__create:disabled {
+  opacity: 0.4;
+}
+
 .c-icon_check_class {
   background-image: var(--icon-check);
   height: 32px;
