@@ -4,10 +4,8 @@ import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
-import Annotation, { IAnnotation } from "../interfaces/interface.annotation";
+import Annotation from "../interfaces/interface.annotation";
 import { createFigmaError } from "./createError";
-import EventHub from "../services/events/EventHub";
-import { Events } from "../services/events/Events";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 let layerState = true;
@@ -464,7 +462,7 @@ export function sendDataToFrontend() {
   }
 }
 
-export function deleteAnnotation(annotation: Annotation) {
+export function archiveAnnotation(annotation: Annotation) {
   const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
   console.log("found in del", found);
   // remove annotation from array
@@ -497,23 +495,3 @@ export function deleteAnnotation(annotation: Annotation) {
     createFigmaError("Couldn't remove annotation.", 5000, true);
   }
 }
-
-export function checkIfAnnotationExists(event: DocumentChangeEvent) {
-  // if (event.documentChanges[0].type === "DELETE") {
-  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === event.documentChanges[0].id);
-  if (found) {
-    const annotation: IAnnotation = {
-      dataSource: found.data.dataSource.toString(),
-      entity: found.data.entity.toString(),
-      attribute: found.data.attribute.toString(),
-      dataType: found.data.dataType.toString(),
-      value: found.data.value.toString(),
-      nodeId: event.documentChanges[0].id,
-      projectKey: figma.fileKey || "",
-    };
-    EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, annotation);
-  } else {
-    console.log("Annotation doesn't exist.");
-  }
-}
-// }

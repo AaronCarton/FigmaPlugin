@@ -1,11 +1,5 @@
 import { MessageTitle } from "./classes/messageTitles";
-import {
-  changeLayerVisibility,
-  checkIfAnnotationExists,
-  deleteAnnotation,
-  initAnnotations,
-  sendDataToFrontend,
-} from "./functions/annotationFunctions";
+import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
@@ -95,7 +89,7 @@ EventHub.getInstance().makeEvent(Events.INIT_ARCHIVE_ANNOTATION, (annotation: IA
 });
 
 EventHub.getInstance().makeEvent(Events.ANNOTATION_ARCHIVED, (annotation: Annotation) => {
-  deleteAnnotation(annotation);
+  archiveAnnotation(annotation);
 });
 
 //////* FIGMA EVENTS *//////

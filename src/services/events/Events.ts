@@ -3,7 +3,6 @@ export class Events {
   public static readonly ANNOTATIONS_FETCHED: string = "ANNOTATIONS_FETCHED";
   public static readonly FACETS_FETCHED: string = "FACETS_FETCHED";
 
-  // TODO: change to INIT_UPSERT_ANNOTATION, UPSERT_ANNOTATION, ANNOTATION_UPSERTED
   public static readonly UPSERT_ANNOTATION: string = "UPSERT_ANNOTATION";
   public static readonly ANNOTATION_UPSERTED: string = "ANNOTATION_UPSERTED";
   public static readonly DRAW_ANNOTATION: string = "DRAW_ANNOTATION";

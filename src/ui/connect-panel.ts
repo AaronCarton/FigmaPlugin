@@ -206,6 +206,7 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, () => {
     $removeBtn.disabled = false;
     $removeBtn.classList.add("button-pointer");
+    $createBtn.innerText = "Update annotation";
   });
 
   $value.addEventListener("keyup", () => {
