@@ -95,7 +95,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
   let selection: Array<SceneNode> = [];
 
   if (initData !== null) {
-    console.log("initData", initData);
     initData.forEach((element: Annotation) => {
       const foundElement = figma.currentPage.findOne((x) => x.id === element.nodeId);
       foundElement !== null ? selection.push(foundElement) : console.warn("MakeFramesArray error creating array from initData");
@@ -106,7 +105,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
 
   if (selection.length > 0) {
     sortNodesAccordingToYCoords(selection);
-    console.log("selection", selection);
 
     for (let i = 0; i < selection.length; i++) {
       // Vars needed for each calculation.
@@ -150,7 +148,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
           // Determine left or right of parent frame, add to according array of the object.
           if (frameside === PropertizeConstants.sideLeft) {
             const indexOfElement: number = parentframe.sourceNodesLeft.findIndex((x) => x.id === currentElement.id);
-            console.log("Found index: ", indexOfElement, ".");
             if (indexOfElement === -1) {
               parentframe.sourceNodesLeft.push(currentElement);
             } else {
@@ -158,7 +155,6 @@ function makeFramesArray(initData: Array<Annotation> | null) {
             }
           } else {
             const indexOfElement: number = parentframe.sourceNodesRight.findIndex((x) => x.id === currentElement.id);
-            console.log("Found index: ", indexOfElement, ".");
             if (indexOfElement === -1) {
               parentframe.sourceNodesRight.push(currentElement);
             } else {
@@ -350,8 +346,6 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
       }
     }
 
-    console.log("changedNodes", listOfChangedAnnotationSourceNodes);
-
     // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
       //find linkedAnnotation
@@ -465,7 +459,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         }
       }
     }
-    console.log(linkAnnotationToSourceNodes);
   }
 }
 
@@ -518,12 +511,10 @@ export function archiveAnnotation(annotation: Annotation) {
           return;
         } else {
           const deleted = currentParent.sourceNodesRight.splice(currentParent.sourceNodesRight.indexOf(rightFound));
-          console.log("deleted", deleted);
           return;
         }
       } else {
         const deleted = currentParent.sourceNodesLeft.splice(currentParent.sourceNodesLeft.indexOf(leftFound));
-        console.log("deleted", deleted);
         return;
       }
     });

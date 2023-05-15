@@ -42,7 +42,6 @@ export class Settings extends BaseComponent {
   initializeEventHubEvents() {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
-      console.log("Annotations fetched: ", annotations, ".");
       const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
 
       if ($button && $date) {
