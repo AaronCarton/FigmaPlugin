@@ -1,4 +1,5 @@
 .c-spinner {
+  display: hidden;
   filter: blur(0px);
   z-index: 99;
   margin-left: calc(50% - 48px);
@@ -11,6 +12,11 @@
   position: absolute;
   animation: rotate 1s linear infinite;
 }
+
+.c-spinner + .is-active {
+  display: block;
+}
+
 .c-spinner::before,
 .c-spinner::after {
   content: "";
@@ -18,12 +24,13 @@
   position: absolute;
   inset: 0px;
   border-radius: 50%;
-  border: 5px solid var(---propertize__color--accent);
-  animation: prixClipFix 2s linear infinite;
+  border: 5px solid var(--propertize__color--blue);
+
+  animation: prixClipFix 1s linear infinite;
 }
 .c-spinner::after {
-  border-color: var(--propertize__color--red);
-  animation: prixClipFix 2s linear infinite, rotate 0.5s linear infinite reverse;
+  border-color: var(--propertize__color--blue);
+  animation: prixClipFix 1s linear infinite, rotate 0.5s linear infinite reverse;
   inset: 6px;
 }
 

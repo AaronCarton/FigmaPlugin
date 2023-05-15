@@ -5,8 +5,10 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
+import { createFigmaError } from "./createError";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
+export let lastSelectedNode: string = "";
 
 let highlightedAnnotationLinkItem: annotationLinkItem | undefined = undefined;
 let layerState = true;
@@ -88,7 +90,6 @@ function determineParentFrame(elem: SceneNode) {
 }
 
 function makeFramesArray(initData: Array<Annotation> | null) {
-  console.log("Making frame array...");
   let selection: Array<SceneNode> = [];
 
   if (initData !== null) {
@@ -182,7 +183,7 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
     line.vectorPaths = [
       {
         windingRule: "EVENODD",
-        data: `M ${annotation.x <= destination.absoluteBoundingBox.x ? annotation.x + annotation.width + 5 : annotation.x - 5} ${
+        data: `M ${annotation.x <= destination.absoluteBoundingBox?.x ? annotation.x + annotation.width + 5 : annotation.x - 5} ${
           annotation.y + annotation.height / 2
         } L ${
           annotation.x <= destination.absoluteBoundingBox.x
@@ -341,7 +342,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
       const searchMap = JSON.stringify(AnnotationElements.parentFrames);
       const includesChangedNode = searchMap.match(changedNode.id);
 
-      if (includesChangedNode) {
+      if (includesChangedNode && changedNode.type === "PROPERTY_CHANGE" && changedNode.node.removed === false) {
         //Gives weird error on property "node" => does not exist: it does.
         listOfChangedAnnotationSourceNodes.push(changedNode.node);
       }
@@ -376,7 +377,6 @@ export function changeLayerVisibility(state: boolean) {
 }
 
 export function initAnnotations(annotationData: Array<Annotation>) {
-  console.log("initing");
   createLayer();
   makeFramesArray(annotationData);
   // Make inputValues array needed for drawing initial annotations.
@@ -411,7 +411,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
-  console.log("updating");
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
@@ -470,6 +469,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
+    lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
 
     highlightedAnnotationLinkItem === undefined
@@ -496,5 +496,37 @@ export function sendDataToFrontend() {
   } else {
     figma.ui.postMessage({ type: MessageTitle.clearFields });
     resetHighlightedAnnotation();
+  }
+}
+
+export function archiveAnnotation(annotation: Annotation) {
+  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
+  // Remove annotation from array
+  if (found) {
+    // Deletes found element from the parentframe array
+    AnnotationElements.parentFrames.forEach((currentParent) => {
+      const leftFound = currentParent.sourceNodesLeft.find((x) => x.id === found.sourceNode.id);
+      if (leftFound === undefined) {
+        const rightFound = currentParent.sourceNodesRight.find((x) => x.id === found.sourceNode.id);
+        if (rightFound === undefined) {
+          return;
+        } else {
+          const deleted = currentParent.sourceNodesRight.splice(currentParent.sourceNodesRight.indexOf(rightFound));
+          console.log("deleted", deleted);
+          return;
+        }
+      } else {
+        const deleted = currentParent.sourceNodesLeft.splice(currentParent.sourceNodesLeft.indexOf(leftFound));
+        console.log("deleted", deleted);
+        return;
+      }
+    });
+
+    found.vector.remove();
+    found.annotation.remove();
+    linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(found), 1);
+    figma.ui.postMessage({ type: MessageTitle.clearFields });
+  } else {
+    createFigmaError("Couldn't remove annotation.", 5000, true);
   }
 }

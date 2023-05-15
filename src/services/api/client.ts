@@ -84,7 +84,20 @@ export default class ApiClient {
       }
     });
 
-    // TODO: add ARCHIVE and UNARCHIVE listeners
+    eventHub.makeEvent(Events.ARCHIVE_ANNOTATION, (obj: IAnnotation) => {
+      const index = ApiClient.annotations_cache.findIndex((annotation) => annotation.nodeId === obj.nodeId);
+
+      if (index !== -1) {
+        const foundAnno = ApiClient.annotations_cache[index];
+        ApiClient.annotations_cache[index].archived = new Date().toISOString();
+        ApiClient.getInstance()
+          .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
+          .then(() => {
+            ApiClient.annotations_cache.splice(index, 1); // Remove annotation from cache
+            EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_ARCHIVED, foundAnno);
+          });
+      }
+    });
   }
 
   /**
@@ -140,8 +153,6 @@ export default class ApiClient {
     if (!sourceKey) {
       throw new Error("SourceKey is required");
     }
-
-    console.log("ApiClient initialized: baseURL: %s, clientKey: %s, sourceKey: %s", baseURL, clientKey, sourceKey); // TODO: Remove
   }
 
   ////////* API CALLS */ ///////
@@ -316,12 +327,16 @@ export default class ApiClient {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
         case 401:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Unauthorized, please check your API key");
           throw new APIError(res, "Unauthorized, please check your API key");
         case 400:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Bad request, is the item structure correct?");
           throw new APIError(res, "Bad request, is the item structure correct?");
         case 500:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Internal Server Error");
           throw new APIError(res, "Internal Server Error");
         default:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Something went wrong, please try again later");
           throw new APIError(res, "Something went wrong, please try again later");
       }
     }

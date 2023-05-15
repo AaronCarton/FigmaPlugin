@@ -1,5 +1,5 @@
 import { MessageTitle } from "./classes/messageTitles";
-import { changeLayerVisibility, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
+import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
@@ -10,7 +10,7 @@ import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
 
-figma.showUI(__html__, { width: 345, height: 250 });
+figma.showUI(__html__, { width: 345, height: 296 });
 
 figma.ui.on("message", (event) => {
   const eventType = event.type;
@@ -41,21 +41,24 @@ figma.ui.on("message", (event) => {
 });
 
 //////* LOCAL STORAGE EVENTS *//////
-EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey }) => {
+EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
   figma.clientStorage.setAsync("baseURL", baseURL);
   figma.clientStorage.setAsync("clientKey", clientKey);
   figma.clientStorage.setAsync("sourceKey", sourceKey);
+  figma.clientStorage.setAsync("lastUpdate", lastUpdate);
 });
 
 EventHub.getInstance().makeEvent(Events.FETCH_LOCAL_STORAGE, async () => {
   const baseURL: string = (await figma.clientStorage.getAsync("baseURL")) || "";
   const clientKey: string = (await figma.clientStorage.getAsync("clientKey")) || "";
   const sourceKey: string = (await figma.clientStorage.getAsync("sourceKey")) || "";
+  const lastUpdate: string = (await figma.clientStorage.getAsync("lastUpdate")) || "";
 
   EventHub.getInstance().sendCustomEvent(Events.LOCAL_STORAGE_FETCHED, {
     baseURL,
     clientKey,
     sourceKey,
+    lastUpdate,
   });
 });
 
@@ -82,6 +85,16 @@ EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation
   updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
 });
 
+EventHub.getInstance().makeEvent(Events.INIT_ARCHIVE_ANNOTATION, (annotation: IAnnotation) => {
+  annotation.projectKey = figma.fileKey || "";
+  annotation.nodeId = figma.currentPage.selection[0].id;
+  EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, annotation);
+});
+
+EventHub.getInstance().makeEvent(Events.ANNOTATION_ARCHIVED, (annotation: Annotation) => {
+  archiveAnnotation(annotation);
+});
+
 //////* FIGMA EVENTS *//////
 EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
 
@@ -89,8 +102,16 @@ figma.on("selectionchange", () => {
   sendDataToFrontend();
 });
 
+figma.on("documentchange", (event: DocumentChangeEvent) => {
+  console.log("documentchange", event);
+  event.documentChanges.forEach((change) => {
+    if (change.type === "DELETE") {
+      EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id });
+    }
+  });
+});
+
 figma.on("close", async () => {
-  console.log("closing");
   AnnotationElements.annotationLayer.remove();
   figma.closePlugin();
 });
