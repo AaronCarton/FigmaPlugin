@@ -511,12 +511,10 @@ export function archiveAnnotation(annotation: Annotation) {
           return;
         } else {
           const deleted = currentParent.sourceNodesRight.splice(currentParent.sourceNodesRight.indexOf(rightFound));
-          console.log("deleted", deleted);
           return;
         }
       } else {
         const deleted = currentParent.sourceNodesLeft.splice(currentParent.sourceNodesLeft.indexOf(leftFound));
-        console.log("deleted", deleted);
         return;
       }
     });

@@ -127,7 +127,6 @@ figma.on("selectionchange", () => {
 });
 
 figma.on("documentchange", (event: DocumentChangeEvent) => {
-  console.log("documentchange", event);
   event.documentChanges.forEach((change) => {
     if (change.type === "DELETE") {
       EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id });
