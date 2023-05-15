@@ -146,7 +146,7 @@ function setSampleValueInForm(sampleValue: string) {
     changeFieldsOnInput("attribute", false);
     changeFieldsOnInput("dataType", false);
   } else {
-    createFigmaError("Error updating fields.", 5000, true);
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
   }
 }
 
