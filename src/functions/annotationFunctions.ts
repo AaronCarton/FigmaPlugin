@@ -304,7 +304,7 @@ function highlight(found: annotationLinkItem) {
 }
 
 function resetHighlightedAnnotation() {
-  if (highlightedAnnotationLinkItem !== undefined) {
+  if (highlightedAnnotationLinkItem !== undefined && highlightedAnnotationLinkItem.annotation.removed === false) {
     //reset annotation
     highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
     highlightedAnnotationLinkItem.annotation.dashPattern = [10, 5];
