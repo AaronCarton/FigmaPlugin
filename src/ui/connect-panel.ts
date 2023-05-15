@@ -33,21 +33,21 @@ export class ConnectPanel extends BaseComponent {
       // TODO: refactor this to a separate function,
       // TODO: shares a lot of duplicate code with handleIconClick
       const selectedAttribute = select.getAttribute("data-target");
-      const input = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-field`);
-      const text = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
-      const btn = document.querySelector<HTMLElement>(`#${selectedAttribute}-btn`);
-      if (input && btn && text) {
-        input.addEventListener("keyup", (event: KeyboardEvent) => {
+      const $input = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-field`);
+      const $text = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
+      const $addIcon = document.querySelector<HTMLElement>(`#${selectedAttribute}-btn`);
+      if ($input && $addIcon && $text) {
+        $input.addEventListener("keyup", (event: KeyboardEvent) => {
           if (event.key === "Enter") {
-            handleIconClick(btn);
+            handleIconClick($addIcon);
           }
         });
         // cancel when clicking outside the input field
-        input.addEventListener("blur", (ev) => {
+        $input.addEventListener("blur", (ev) => {
           // if the click is on the icon, don't cancel
-          if (ev.relatedTarget === btn) return;
-          btn.classList.toggle(iconCheck);
-          text.classList.toggle(isActiveField);
+          if (ev.relatedTarget === $addIcon) return;
+          $addIcon.classList.toggle(iconCheck);
+          $text.classList.toggle(isActiveField);
           select.classList.toggle(isActiveField);
         });
       }
