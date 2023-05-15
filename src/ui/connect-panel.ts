@@ -26,6 +26,7 @@ export class ConnectPanel extends BaseComponent {
 
   initComponent(): void {
     EventHub.getInstance().makeEvent(Events.CLEAR_FIELDS_AT_STARTUP, () => {
+      //Clear unwanted values from form fields at startup
       clearFields();
     });
   }
