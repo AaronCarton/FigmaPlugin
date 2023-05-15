@@ -74,15 +74,39 @@ EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotat
   if (figma.currentPage.selection.length > 1) return EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Only one node can be selected.");
   annotation.projectKey = figma.fileKey || "";
   annotation.nodeId = figma.currentPage.selection[0].id;
+
   EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_UPSERTED, annotation);
 });
 
 EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
   initAnnotations(annotations);
+
+  const textNodes = figma.currentPage.findAllWithCriteria({
+    types: ["TEXT"],
+  });
+
+  textNodes.forEach((textNode) => {
+    annotations.forEach((annotation) => {
+      if (textNode.id === annotation.nodeId) {
+        if (textNode.characters !== annotation.value) {
+          const textNodeCharacters = textNode.characters;
+          EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, { textNodeCharacters, annotation });
+        }
+      }
+    });
+  });
 });
 
 EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation) => {
   updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
+});
+
+EventHub.getInstance().makeEvent(Events.UPDATE_NODETEXT_FROM_ODS, (sampleValue: string) => {
+  if (figma.currentPage.selection.length === 1) {
+    if (figma.currentPage.selection[0].type === "TEXT") {
+      figma.currentPage.selection[0].characters = sampleValue;
+    }
+  }
 });
 
 EventHub.getInstance().makeEvent(Events.INIT_ARCHIVE_ANNOTATION, (annotation: IAnnotation) => {
@@ -115,7 +139,6 @@ figma.on("close", async () => {
   AnnotationElements.annotationLayer.remove();
   figma.closePlugin();
 });
-
 // Dispatch all components -> in figma use postMessage
 // Use the class names for initializeComponent
 initializeComponent("Settings");

@@ -61,6 +61,23 @@ export default class ApiClient {
         });
     });
 
+    eventHub.makeEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, (message: any) => {
+      const index = ApiClient.ods_annotations.findIndex((annotation) => annotation.nodeId === message.annotation.nodeId);
+      if (index !== -1) {
+        const foundAnno = ApiClient.ods_annotations[index];
+        // Update existing annotation
+        foundAnno.value = message.textNodeCharacters;
+        // Update annotation in cache
+        ApiClient.ods_annotations[index] = foundAnno;
+        // Update annotation in ODS
+        ApiClient.getInstance()
+          .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
+          .then(() => {
+            EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, foundAnno);
+          });
+      }
+    });
+
     // Register create listener
     eventHub.makeEvent(Events.ANNOTATION_UPSERTED, async (obj: IAnnotation) => {
       // Check if annotation already exists
@@ -80,12 +97,15 @@ export default class ApiClient {
           .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
           .then(() => {
             EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, foundAnno);
+            console.log("FoundAnno:", foundAnno.value);
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_NODETEXT_FROM_ODS, foundAnno.value);
           });
       } else {
         ApiClient.getInstance()
           .createAnnotation(generateUUID(), obj)
           .then((annotation) => {
             ApiClient.ods_annotations.push(annotation); // Add annotation to cache
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_NODETEXT_FROM_ODS, annotation.value);
             EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, annotation);
           });
       }
