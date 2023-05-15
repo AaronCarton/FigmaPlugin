@@ -8,16 +8,17 @@ import { BaseComponent } from "./baseComponent";
 import { changeConnectionState } from "./navigation-tabs";
 
 //input elements
+export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
+export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
+
 let projectKey: string = "";
-export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
-export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 //Spinner
-const $spinner: HTMLElement | null = document.querySelector(".c-settings-update");
-const $plugin: HTMLElement | null = document.querySelector(".js-settings-view");
+const $spinner: HTMLElement | null = document.querySelector(".c-spinner");
+const $plugin: HTMLElement | null = document.querySelector(".c-content");
 
 export class Settings extends BaseComponent {
   componentType = "Settings";
@@ -34,6 +35,7 @@ export class Settings extends BaseComponent {
     $button?.addEventListener("click", (e: Event) => {
       e.preventDefault();
       this.connect();
+      $button.disabled = true;
     });
   }
 
@@ -41,14 +43,16 @@ export class Settings extends BaseComponent {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
       console.log("Annotations fetched: ", annotations, ".");
+      const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
 
       if ($button && $date) {
-        const now = new Date().toLocaleString("en-GB").replace(",", "");
         $button.innerHTML = "Refresh";
-        $date.innerHTML = now;
+        $date.innerText = currentTime;
+        $button.disabled = false;
       }
 
       changeConnectionState(true);
+      spinnerEvents();
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.value)]));
@@ -57,19 +61,29 @@ export class Settings extends BaseComponent {
       });
     });
 
-    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
+    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
       $baseURL?.setAttribute("value", baseURL || "");
       $clientKey?.setAttribute("value", clientKey || "");
       $sourceKey?.setAttribute("value", sourceKey || "");
       this.disableFieldsWhenNecessary();
 
+      if ($date) {
+        $date.innerText = lastUpdate || "";
+      }
+
       // TODO: emit event to initialize data right away, because we got the values from localStorage
+      // KEEP THIS
       // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-      //   $projectKey: $projectKey?.value,
+      //   $projectKey: projectKey,
       //   baseURL,
       //   clientKey,
       //   sourceKey,
       // });
+    });
+
+    EventHub.getInstance().makeEvent(Events.API_ERROR, (message) => {
+      $button?.removeAttribute("disabled");
+      EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, message);
     });
 
     EventHub.getInstance().makeEvent(Events.PROJECT_KEY_FETCHED, (pk) => {
@@ -81,16 +95,20 @@ export class Settings extends BaseComponent {
   }
 
   connect() {
+    const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
       projectKey: projectKey,
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
     });
+    spinnerEvents();
+
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
       baseURL: $baseURL?.value,
       clientKey: $clientKey?.value,
       sourceKey: $sourceKey?.value,
+      lastUpdate: currentTime,
     });
   }
 
@@ -117,23 +135,9 @@ export class Settings extends BaseComponent {
     });
   }
 
-  checkConnectionSpinnerExample() {
-    $plugin?.classList.add("no-pointer");
-    $spinner?.removeAttribute("hidden");
-    // const dbURL: string | null | undefined = $dbURL?.value.replace(/\s/g, "").trim();
-    // const apiKey: string | null | undefined = $apiKey?.value.replace(/\s/g, "").trim();
-    fetch("https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms")
-      .then((response) => response.json())
-      .then(() => {
-        $plugin?.classList.remove("no-pointer");
-        $spinner?.setAttribute("hidden", "");
-      });
-  }
-
   toggleAnnotations(e: Event) {
     const state: boolean = (<HTMLInputElement>e.target).checked;
     if (state === true) {
-      console.log("Show annotations.");
       parent.postMessage(
         {
           pluginMessage: {
@@ -144,7 +148,6 @@ export class Settings extends BaseComponent {
         "*",
       );
     } else {
-      console.log("Hide annotations.");
       parent.postMessage(
         {
           pluginMessage: {
@@ -171,16 +174,13 @@ export class Settings extends BaseComponent {
         $sourceKey.disabled = true;
       }
       if ($baseURL.value.replace(/\s/g, "") !== "" && $sourceKey.value.replace(/\s/g, "") !== "" && $clientKey.value.replace(/\s/g, "") !== "") {
-        console.log("enable button");
         $annotationToggle.disabled = false;
         $button.disabled = false;
         $button.classList.add("button-pointer");
-        $button.addEventListener("click", this.checkConnectionSpinnerExample);
       } else {
         $annotationToggle.disabled = true;
         $button.disabled = true;
         $button.classList.remove("button-pointer");
-        $button.removeEventListener("click", this.checkConnectionSpinnerExample);
       }
     }
   }
@@ -191,4 +191,9 @@ export class Settings extends BaseComponent {
     $clientKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
     $sourceKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
   }
+}
+
+function spinnerEvents() {
+  $spinner?.classList.toggle("is-active");
+  $plugin?.classList.toggle("no-pointer");
 }
