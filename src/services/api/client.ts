@@ -42,16 +42,40 @@ export default class ApiClient {
         sourceKey,
       });
 
-      api.getProject(projectKey).then((project) => {
-        api
-          .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
-          .then((response) => {
-            const annotations = response.results.map((res) => new Annotation(res.item));
-            ApiClient.ods_annotations = annotations; // Store annotations in cache
-            EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
-            EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
+      api
+        .getProject(projectKey)
+        .then((project) => {
+          api
+            .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
+            .then((response) => {
+              const annotations = response.results.map((res) => new Annotation(res.item));
+              ApiClient.ods_annotations = annotations; // Store annotations in cache
+              EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
+              EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
+            });
+        })
+        .catch((error) => {
+          if (error instanceof APIError) {
+            EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, error.message);
+          }
+        });
+    });
+
+    eventHub.makeEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, (message: any) => {
+      const index = ApiClient.ods_annotations.findIndex((annotation) => annotation.nodeId === message.annotation.nodeId);
+      if (index !== -1) {
+        const foundAnno = ApiClient.ods_annotations[index];
+        // Update existing annotation
+        foundAnno.value = message.textNodeCharacters;
+        // Update annotation in cache
+        ApiClient.ods_annotations[index] = foundAnno;
+        // Update annotation in ODS
+        ApiClient.getInstance()
+          .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
+          .then(() => {
+            EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, foundAnno);
           });
-      });
+      }
     });
 
     // Register create listener
@@ -73,12 +97,15 @@ export default class ApiClient {
           .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
           .then(() => {
             EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, foundAnno);
+            console.log("FoundAnno:", foundAnno.value);
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_NODETEXT_FROM_ODS, foundAnno.value);
           });
       } else {
         ApiClient.getInstance()
           .createAnnotation(generateUUID(), obj)
           .then((annotation) => {
             ApiClient.ods_annotations.push(annotation); // Add annotation to cache
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_NODETEXT_FROM_ODS, annotation.value);
             EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, annotation);
           });
       }

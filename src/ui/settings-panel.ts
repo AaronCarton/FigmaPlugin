@@ -126,6 +126,7 @@ export class Settings extends BaseComponent {
       // add default option
       const defaultOption = new Option(texts[elementName], "");
       defaultOption.disabled = true;
+      defaultOption.selected = true;
       $dropDown.add(defaultOption);
     }
     data.forEach((element) => {

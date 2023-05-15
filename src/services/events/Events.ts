@@ -20,6 +20,10 @@ export class Events {
   public static readonly FETCH_PROJECT_KEY: string = "FETCH_PROJECT_KEY";
   public static readonly PROJECT_KEY_FETCHED: string = "PROJECT_KEY_FETCHED";
 
+  public static readonly SET_SAMPLE_VALUE_FROM_FIGMANODE: string = "SET_SAMPLE_VALUE_FROM_FIGMA";
+  public static readonly UPDATE_NODETEXT_FROM_ODS: string = "UPDATE_NODETEXT_FROM_ODS";
+  public static readonly UPDATE_ANNOTATION_BY_TEXTNODE: string = "UPDATE_ANNOTATION_BY_TEXTNODE";
+
   public static readonly FIGMA_ERROR: string = "FIGMA_ERROR";
 
   public static readonly API_ERROR: string = "API_ERROR";

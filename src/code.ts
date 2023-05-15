@@ -5,7 +5,6 @@ import { loadFonts } from "./functions/loadFonts";
 import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
 import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
-import { createFigmaError } from "./functions/createError";
 import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
@@ -70,19 +69,44 @@ EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
 
 //////* ANNOTATION EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotation) => {
-  if (figma.currentPage.selection.length === 0) return createFigmaError("Select something to create an annotation.", 5000, true);
-  if (figma.currentPage.selection.length > 1) return createFigmaError("Only one node can be selected.", 5000, true);
+  if (figma.currentPage.selection.length === 0)
+    return EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Select something to create an annotation.");
+  if (figma.currentPage.selection.length > 1) return EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Only one node can be selected.");
   annotation.projectKey = figma.fileKey || "";
   annotation.nodeId = figma.currentPage.selection[0].id;
+
   EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_UPSERTED, annotation);
 });
 
 EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
   initAnnotations(annotations);
+
+  const textNodes = figma.currentPage.findAllWithCriteria({
+    types: ["TEXT"],
+  });
+
+  textNodes.forEach((textNode) => {
+    annotations.forEach((annotation) => {
+      if (textNode.id === annotation.nodeId) {
+        if (textNode.characters !== annotation.value) {
+          const textNodeCharacters = textNode.characters;
+          EventHub.getInstance().sendCustomEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, { textNodeCharacters, annotation });
+        }
+      }
+    });
+  });
 });
 
 EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, (annotation: Annotation) => {
   updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, stripODS(annotation));
+});
+
+EventHub.getInstance().makeEvent(Events.UPDATE_NODETEXT_FROM_ODS, (sampleValue: string) => {
+  if (figma.currentPage.selection.length === 1) {
+    if (figma.currentPage.selection[0].type === "TEXT") {
+      figma.currentPage.selection[0].characters = sampleValue;
+    }
+  }
 });
 
 EventHub.getInstance().makeEvent(Events.INIT_ARCHIVE_ANNOTATION, (annotation: IAnnotation) => {
@@ -115,7 +139,6 @@ figma.on("close", async () => {
   AnnotationElements.annotationLayer.remove();
   figma.closePlugin();
 });
-
 // Dispatch all components -> in figma use postMessage
 // Use the class names for initializeComponent
 initializeComponent("Settings");

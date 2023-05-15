@@ -1,5 +1,4 @@
 import { MessageTitle } from "../classes/messageTitles";
-import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -27,7 +26,31 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    /// does nothing
+    // Add "Enter" event listeners to input fields to trigger icon click
+    [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
+      if (!select) return;
+      // TODO: refactor this to a separate function,
+      // TODO: shares a lot of duplicate code with handleIconClick
+      const selectedAttribute = select.getAttribute("data-target");
+      const $input = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-field`);
+      const $text = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
+      const $addIcon = document.querySelector<HTMLElement>(`#${selectedAttribute}-btn`);
+      if ($input && $addIcon && $text) {
+        $input.addEventListener("keyup", (event: KeyboardEvent) => {
+          if (event.key === "Enter") {
+            handleIconClick($addIcon);
+          }
+        });
+        // cancel when clicking outside the input field
+        $input.addEventListener("blur", (ev) => {
+          // if the click is on the icon, don't cancel
+          if (ev.relatedTarget === $addIcon) return;
+          $addIcon.classList.toggle(iconCheck);
+          $text.classList.toggle(isActiveField);
+          select.classList.toggle(isActiveField);
+        });
+      }
+    });
   }
 }
 
@@ -45,6 +68,7 @@ function handleIconClick(trigger: HTMLElement) {
           inputSelect.add(newOption);
         }
         inputSelect.value = inputField.value;
+        inputField.value = ""; // clear input field after adding new option
         inputSelect.dispatchEvent(new Event("change"));
       } else {
         EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "The maximum length of the text is 35 characters.");
@@ -54,6 +78,7 @@ function handleIconClick(trigger: HTMLElement) {
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
+    inputField.focus();
   }
 }
 
@@ -69,10 +94,13 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
   selectElement.addEventListener("change", () => {
     const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
     const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
-    if (textField && textArea) {
+    const button = document.querySelector<HTMLButtonElement>(`#${disabledId}-btn`);
+    if (textField && textArea && button) {
       if (selectElement.value.trim().length !== 0) {
         changeElement1.disabled = false;
         textField.disabled = false;
+        button.disabled = false;
+        button.classList.remove("c-connect__cta--disabled");
         textArea.classList.remove("disabled");
       }
     }
@@ -94,6 +122,25 @@ function updateFields(message: AnnotationInput) {
     $createBtn.innerText = "Update annotation";
     $createBtn.disabled = false;
     $createBtn.classList.add("button-pointer");
+
+    changeFieldsOnInput("entity", false);
+    changeFieldsOnInput("attribute", false);
+    changeFieldsOnInput("dataType", false);
+  } else {
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
+  }
+}
+
+function setSampleValueInForm(sampleValue: string) {
+  if ($dataSource && $entity && $attribute && $dataType && $value) {
+    $dataSource.value = "";
+    $entity.value = "";
+    $entity.disabled = false;
+    $attribute.value = "";
+    $attribute.disabled = false;
+    $dataType.value = "";
+    $dataType.disabled = false;
+    $value.value = sampleValue;
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
@@ -123,13 +170,13 @@ function clearFields() {
     changeFieldsOnInput("attribute", true);
     changeFieldsOnInput("dataType", true);
   } else {
-    createFigmaError("Error clearing fields.", 5000, true);
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
   }
 }
 
 function validateDataType() {
   const dataTypeRegex: { [key: string]: RegExp } = {
-    string: /^[\w\s]+$/,
+    string: /^[\w\s\S]+$/,
     number: /^[\d]+$/,
     int: /^[\d]+$/,
   };
@@ -247,7 +294,9 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
     disableCreate();
   });
 }
-
+EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
+  setSampleValueInForm(sampleValue);
+});
 window.addEventListener("message", (e) => {
   const messageType = e.data.pluginMessage.type;
   const payload = e.data.pluginMessage.payload;

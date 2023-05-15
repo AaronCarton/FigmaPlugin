@@ -5,6 +5,8 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 import { createFigmaError } from "./createError";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
@@ -483,8 +485,12 @@ export function sendDataToFrontend() {
       });
     }
     if (found === undefined) {
-      figma.ui.postMessage({ type: MessageTitle.clearFields });
-      resetHighlightedAnnotation();
+      if (figma.currentPage.selection[0].type === "TEXT") {
+        EventHub.getInstance().sendCustomEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, figma.currentPage.selection[0].characters);
+      } else {
+        figma.ui.postMessage({ type: MessageTitle.clearFields });
+        resetHighlightedAnnotation();
+      }
     }
   } else {
     figma.ui.postMessage({ type: MessageTitle.clearFields });
