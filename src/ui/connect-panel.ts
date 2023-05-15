@@ -193,14 +193,17 @@ function validateDataType() {
 function changeFieldsOnInput(fieldName: string, state: boolean) {
   const textField = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
   const textArea = document.querySelector<HTMLElement>(`#${fieldName}-text`);
+  const button = document.querySelector<HTMLButtonElement>(`#${fieldName}-btn`);
 
-  if (textField && textArea) {
+  if (textField && textArea && button) {
     if (state === true) {
       textField.disabled = true;
       textArea.classList.add("disabled");
+      button.classList.add("c-connect__cta--disabled");
     } else {
       textField.disabled = false;
       textArea.classList.remove("disabled");
+      button.classList.remove("c-connect__cta--disabled");
     }
   }
 }
