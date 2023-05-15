@@ -72,8 +72,9 @@ export class Settings extends BaseComponent {
       }
 
       // TODO: emit event to initialize data right away, because we got the values from localStorage
+      // KEEP THIS
       // EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-      //   $projectKey: $projectKey?.value,
+      //   $projectKey: projectKey,
       //   baseURL,
       //   clientKey,
       //   sourceKey,
