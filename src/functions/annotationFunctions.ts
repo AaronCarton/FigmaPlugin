@@ -246,7 +246,7 @@ function drawAnnotations(
       annotation = createAnnotation(found.data);
     }
 
-    //Had to initialise annotation before using the variable (null), this check is to prevent the annotation from staying null and getting rid of all the warnings.
+    // Had to initialise annotation before using the variable (null), this check is to prevent the annotation from staying null and getting rid of all the warnings.
     if (annotation === null) {
       return null;
     }
@@ -293,9 +293,9 @@ function drawAnnotations(
 }
 
 function highlight(found: annotationLinkItem) {
-  //reset previous
-  unhighlight();
-  //set new highlighted annotation and vector
+  // Reset previous
+  resetHighlightedAnnotation();
+  // Set new highlighted annotation and vector
   if (found) {
     found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
     found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
@@ -304,7 +304,7 @@ function highlight(found: annotationLinkItem) {
   }
 }
 
-function unhighlight() {
+function resetHighlightedAnnotation() {
   if (highlightedAnnotationLinkItem !== undefined) {
     //reset annotation
     highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
@@ -427,7 +427,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         found.annotation.x = coords.x;
         found.annotation.y = coords.y;
       }
-      //if the highlighted item is updated = update the global var aswell to keep track of changing id of the vector and annotation
+      // If the highlighted item is updated = update the global var aswell to keep track of changing id of the vector and annotation
       if (highlightedAnnotationLinkItem !== undefined && found.sourceNode.id === highlightedAnnotationLinkItem.sourceNode.id) {
         highlightedAnnotationLinkItem = found;
         highlight(found);
@@ -474,11 +474,11 @@ export function sendDataToFrontend() {
 
     highlightedAnnotationLinkItem === undefined
       ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
-      : console.log("highlight is not undefined");
+      : console.log("Highlight is not undefined");
 
     if (found !== undefined) {
       if (found !== highlightedAnnotationLinkItem) {
-        console.log("found new item to highlight: ", found);
+        console.log("Found new item to highlight: ", found);
         highlight(found);
       }
 
@@ -491,10 +491,10 @@ export function sendDataToFrontend() {
     }
     if (found === undefined) {
       figma.ui.postMessage({ type: MessageTitle.clearFields });
-      unhighlight();
+      resetHighlightedAnnotation();
     }
   } else {
     figma.ui.postMessage({ type: MessageTitle.clearFields });
-    unhighlight();
+    resetHighlightedAnnotation();
   }
 }
