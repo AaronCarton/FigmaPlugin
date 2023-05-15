@@ -5,10 +5,12 @@ import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
+import { createFigmaError } from "./createError";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
-let highlightedVector: VectorNode;
-let highlightedAnnotation: FrameNode;
+export let lastSelectedNode: string = "";
+
+let highlightedAnnotationLinkItem: annotationLinkItem | undefined = undefined;
 let layerState = true;
 
 function createAnnotation(inputValues: AnnotationInput) {
@@ -177,7 +179,7 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
     line.vectorPaths = [
       {
         windingRule: "EVENODD",
-        data: `M ${annotation.x <= destination.absoluteBoundingBox.x ? annotation.x + annotation.width + 5 : annotation.x - 5} ${
+        data: `M ${annotation.x <= destination.absoluteBoundingBox?.x ? annotation.x + annotation.width + 5 : annotation.x - 5} ${
           annotation.y + annotation.height / 2
         } L ${
           annotation.x <= destination.absoluteBoundingBox.x
@@ -241,7 +243,7 @@ function drawAnnotations(
       annotation = createAnnotation(found.data);
     }
 
-    //Had to initialise annotation before using the variable (null), this check is to prevent the annotation from staying null and getting rid of all the warnings.
+    // Had to initialise annotation before using the variable (null), this check is to prevent the annotation from staying null and getting rid of all the warnings.
     if (annotation === null) {
       return null;
     }
@@ -287,21 +289,27 @@ function drawAnnotations(
   }
 }
 
-function highlightSelectedVector(found: annotationLinkItem) {
-  if (highlightedVector) highlightedVector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-  found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
-  highlightedVector = found.vector;
+function highlight(found: annotationLinkItem) {
+  // Reset previous
+  resetHighlightedAnnotation();
+  // Set new highlighted annotation and vector
+  if (found) {
+    found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+    found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+    found.annotation.dashPattern = [0, 0];
+    highlightedAnnotationLinkItem = found;
+  }
 }
 
-function highlightSelectedAnnotation(found: { annotation: FrameNode }) {
-  if (highlightedAnnotation) {
-    highlightedAnnotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-    highlightedAnnotation.dashPattern = [10, 5];
+function resetHighlightedAnnotation() {
+  if (highlightedAnnotationLinkItem !== undefined) {
+    //reset annotation
+    highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+    highlightedAnnotationLinkItem.annotation.dashPattern = [10, 5];
+    //reset vector
+    highlightedAnnotationLinkItem.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
   }
-  found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
-  found.annotation.dashPattern = [0, 0];
-
-  highlightedAnnotation = found.annotation;
+  highlightedAnnotationLinkItem = undefined;
 }
 
 // Creating the annotation layer.
@@ -330,7 +338,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
       const searchMap = JSON.stringify(AnnotationElements.parentFrames);
       const includesChangedNode = searchMap.match(changedNode.id);
 
-      if (includesChangedNode) {
+      if (includesChangedNode && changedNode.type === "PROPERTY_CHANGE" && changedNode.node.removed === false) {
         //Gives weird error on property "node" => does not exist: it does.
         listOfChangedAnnotationSourceNodes.push(changedNode.node);
       }
@@ -348,6 +356,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
         if (connector !== undefined) {
           linkedAnnotation.vector = connector;
         }
+        highlight(linkedAnnotation);
       }
     });
   }
@@ -411,6 +420,11 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         found.annotation.x = coords.x;
         found.annotation.y = coords.y;
       }
+      // If the highlighted item is updated = update the global var aswell to keep track of changing id of the vector and annotation
+      if (highlightedAnnotationLinkItem !== undefined && found.sourceNode.id === highlightedAnnotationLinkItem.sourceNode.id) {
+        highlightedAnnotationLinkItem = found;
+        highlight(found);
+      }
       linkAnnotationToSourceNodes[linkAnnotationToSourceNodes.indexOf(found)] = found;
     } else {
       // Item doesn't have an annotation yet.
@@ -448,11 +462,19 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
+    lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
 
+    highlightedAnnotationLinkItem === undefined
+      ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
+      : console.log("Highlight is not undefined");
+
     if (found !== undefined) {
-      highlightSelectedVector(found);
-      highlightSelectedAnnotation(found);
+      if (found !== highlightedAnnotationLinkItem) {
+        console.log("Found new item to highlight: ", found);
+        highlight(found);
+      }
+
       figma.ui.postMessage({
         type: MessageTitle.updateFields,
         payload: {
@@ -462,8 +484,42 @@ export function sendDataToFrontend() {
     }
     if (found === undefined) {
       figma.ui.postMessage({ type: MessageTitle.clearFields });
+      resetHighlightedAnnotation();
     }
   } else {
     figma.ui.postMessage({ type: MessageTitle.clearFields });
+    resetHighlightedAnnotation();
+  }
+}
+
+export function archiveAnnotation(annotation: Annotation) {
+  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
+  // Remove annotation from array
+  if (found) {
+    // Deletes found element from the parentframe array
+    AnnotationElements.parentFrames.forEach((currentParent) => {
+      const leftFound = currentParent.sourceNodesLeft.find((x) => x.id === found.sourceNode.id);
+      if (leftFound === undefined) {
+        const rightFound = currentParent.sourceNodesRight.find((x) => x.id === found.sourceNode.id);
+        if (rightFound === undefined) {
+          return;
+        } else {
+          const deleted = currentParent.sourceNodesRight.splice(currentParent.sourceNodesRight.indexOf(rightFound));
+          console.log("deleted", deleted);
+          return;
+        }
+      } else {
+        const deleted = currentParent.sourceNodesLeft.splice(currentParent.sourceNodesLeft.indexOf(leftFound));
+        console.log("deleted", deleted);
+        return;
+      }
+    });
+
+    found.vector.remove();
+    found.annotation.remove();
+    linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(found), 1);
+    figma.ui.postMessage({ type: MessageTitle.clearFields });
+  } else {
+    createFigmaError("Couldn't remove annotation.", 5000, true);
   }
 }
