@@ -109,6 +109,8 @@ export class Settings extends BaseComponent {
       sourceKey: $sourceKey?.value,
       lastUpdate: currentTime,
     });
+
+    toggleShowAnnotations();
   }
 
   loadDropdowns(elementName: string, data: string[]) {
@@ -192,7 +194,11 @@ export class Settings extends BaseComponent {
     $sourceKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
   }
 }
-
+function toggleShowAnnotations() {
+  if ($annotationToggle) {
+    $annotationToggle.checked = true;
+  }
+}
 function spinnerEvents() {
   $spinner?.classList.toggle("is-active");
   $plugin?.classList.toggle("no-pointer");
