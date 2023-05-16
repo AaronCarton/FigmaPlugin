@@ -42,16 +42,40 @@ export default class ApiClient {
         sourceKey,
       });
 
-      api.getProject(projectKey).then((project) => {
-        api
-          .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
-          .then((response) => {
-            const annotations = response.results.map((res) => new Annotation(res.item));
-            ApiClient.ods_annotations = annotations; // Store annotations in cache
-            EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
-            EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
+      api
+        .getProject(projectKey)
+        .then((project) => {
+          api
+            .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
+            .then((response) => {
+              const annotations = response.results.map((res) => new Annotation(res.item));
+              ApiClient.ods_annotations = annotations; // Store annotations in cache
+              EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
+              EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
+            });
+        })
+        .catch((error) => {
+          if (error instanceof APIError) {
+            EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, error.message);
+          }
+        });
+    });
+
+    eventHub.makeEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, (message: any) => {
+      const index = ApiClient.ods_annotations.findIndex((annotation) => annotation.nodeId === message.annotation.nodeId);
+      if (index !== -1) {
+        const foundAnno = ApiClient.ods_annotations[index];
+        // Update existing annotation
+        foundAnno.value = message.textNodeCharacters;
+        // Update annotation in cache
+        ApiClient.ods_annotations[index] = foundAnno;
+        // Update annotation in ODS
+        ApiClient.getInstance()
+          .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
+          .then(() => {
+            EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, foundAnno);
           });
-      });
+      }
     });
 
     // Register create listener
@@ -73,18 +97,33 @@ export default class ApiClient {
           .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
           .then(() => {
             EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, foundAnno);
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_NODETEXT_FROM_ODS, foundAnno.value);
           });
       } else {
         ApiClient.getInstance()
           .createAnnotation(generateUUID(), obj)
           .then((annotation) => {
             ApiClient.ods_annotations.push(annotation); // Add annotation to cache
+            EventHub.getInstance().sendCustomEvent(Events.UPDATE_NODETEXT_FROM_ODS, annotation.value);
             EventHub.getInstance().sendCustomEvent(Events.DRAW_ANNOTATION, annotation);
           });
       }
     });
 
-    // TODO: add ARCHIVE and UNARCHIVE listeners
+    eventHub.makeEvent(Events.ARCHIVE_ANNOTATION, (obj: IAnnotation) => {
+      const index = ApiClient.ods_annotations.findIndex((annotation) => annotation.nodeId === obj.nodeId);
+
+      if (index !== -1) {
+        const foundAnno = ApiClient.ods_annotations[index];
+        ApiClient.ods_annotations[index].archived = new Date().toISOString();
+        ApiClient.getInstance()
+          .upsertItem(foundAnno.itemType, foundAnno.itemKey, stripODS(foundAnno))
+          .then(() => {
+            ApiClient.ods_annotations.splice(index, 1); // Remove annotation from cache
+            EventHub.getInstance().sendCustomEvent(Events.ANNOTATION_ARCHIVED, foundAnno);
+          });
+      }
+    });
   }
 
   /**
@@ -140,8 +179,6 @@ export default class ApiClient {
     if (!sourceKey) {
       throw new Error("SourceKey is required");
     }
-
-    console.log("ApiClient initialized: baseURL: %s, clientKey: %s, sourceKey: %s", baseURL, clientKey, sourceKey); // TODO: Remove
   }
 
   ////////* API CALLS */ ///////
@@ -316,12 +353,16 @@ export default class ApiClient {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
         case 401:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Unauthorized, please check your API key");
           throw new APIError(res, "Unauthorized, please check your API key");
         case 400:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Bad request, is the item structure correct?");
           throw new APIError(res, "Bad request, is the item structure correct?");
         case 500:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Internal Server Error");
           throw new APIError(res, "Internal Server Error");
         default:
+          EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Something went wrong, please try again later");
           throw new APIError(res, "Something went wrong, please try again later");
       }
     }

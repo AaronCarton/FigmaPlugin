@@ -67,3 +67,8 @@
   background-repeat: no-repeat;
   background-position: left;
 }
+
+.no-pointer {
+  pointer-events: none;
+  filter: blur(1px);
+}
