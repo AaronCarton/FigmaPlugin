@@ -296,8 +296,12 @@ function highlight(found: annotationLinkItem) {
   resetHighlightedAnnotation();
   // Set new highlighted annotation and vector
   if (found) {
-    found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
-    found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+    found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkRed }];
+    found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkRed }];
+    found.annotation.fills = [{ type: "SOLID", color: PropertizeConstants.figmaRed }];
+    found.annotation.children.forEach((x) => {
+      x.fills = [{ type: "SOLID", color: PropertizeConstants.figmaWhite }];
+    });
     found.annotation.dashPattern = [0, 0];
     highlightedAnnotationLinkItem = found;
   }
@@ -307,7 +311,12 @@ function resetHighlightedAnnotation() {
   if (highlightedAnnotationLinkItem !== undefined && highlightedAnnotationLinkItem.annotation.removed === false) {
     //reset annotation
     highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+    highlightedAnnotationLinkItem.annotation.fills = [{ type: "SOLID", color: PropertizeConstants.figmaLightBlue }];
     highlightedAnnotationLinkItem.annotation.dashPattern = [10, 5];
+    highlightedAnnotationLinkItem.annotation.children.forEach((child) => {
+      child = <FrameNode>child;
+      child.fills = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+    });
     //reset vector
     highlightedAnnotationLinkItem.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
   }
