@@ -106,6 +106,7 @@ export class Settings extends BaseComponent {
       baseURL: $baseURL?.value || "",
       clientKey: $clientKey?.value || "",
       sourceKey: $sourceKey?.value || "",
+      lastUpdate: currentTime,
     });
 
     toggleShowAnnotations();

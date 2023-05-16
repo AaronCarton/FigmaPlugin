@@ -1,4 +1,3 @@
-import { MessageTitle } from "../classes/messageTitles";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -301,21 +300,4 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
 }
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
-});
-window.addEventListener("message", (e) => {
-  const messageType = e.data.pluginMessage.type;
-  const payload = e.data.pluginMessage.payload;
-
-  switch (messageType) {
-    case MessageTitle.updateFields:
-      updateFields(payload.values);
-      break;
-
-    case MessageTitle.clearFields:
-      clearFields();
-      break;
-
-    default:
-      break;
-  }
 });

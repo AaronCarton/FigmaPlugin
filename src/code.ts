@@ -1,5 +1,3 @@
-import { changeLayerVisibility, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
-import { MessageTitle } from "./classes/messageTitles";
 import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
@@ -106,7 +104,7 @@ figma.on("selectionchange", () => {
 figma.on("documentchange", (event: DocumentChangeEvent) => {
   event.documentChanges.forEach((change) => {
     if (change.type === "DELETE") {
-      EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id });
+      EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id } as IAnnotation);
     }
   });
 });
