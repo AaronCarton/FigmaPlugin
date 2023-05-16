@@ -1,8 +1,7 @@
-import { MessageTitle } from "./classes/messageTitles";
 import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
-import { resizeByConnection, resizeByTab } from "./functions/reiszeFunctions";
+import { resizeByTab } from "./functions/reiszeFunctions";
 import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
 import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
@@ -11,33 +10,9 @@ import { stripODS } from "./interfaces/ods/interface.ODSresponse";
 
 figma.showUI(__html__, { width: 345, height: 296 });
 
-figma.ui.on("message", (event) => {
-  const eventType = event.type;
-  const payload = event.payload;
-
-  loadFonts();
-
-  switch (eventType) {
-    case MessageTitle.changeTab:
-      resizeByTab(payload.tab, payload.connection);
-      break;
-
-    case MessageTitle.connectionCheck:
-      resizeByConnection(payload.connection);
-      break;
-
-    case MessageTitle.createText:
-      updateAnnotations(<Array<SceneNode>>figma.currentPage.selection, payload.values);
-      break;
-
-    case MessageTitle.changeVisibility:
-      changeLayerVisibility(payload.state);
-      break;
-
-    default:
-      break;
-  }
-});
+//////* UI EVENTS *//////
+EventHub.getInstance().makeEvent(Events.UI_CHANGE_TAB, ({ tab, connection }) => resizeByTab(tab, connection));
+EventHub.getInstance().makeEvent(Events.UI_CHANGE_VISIBILITY, (state) => changeLayerVisibility(state));
 
 //////* LOCAL STORAGE EVENTS *//////
 EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
@@ -64,7 +39,7 @@ EventHub.getInstance().makeEvent(Events.FETCH_LOCAL_STORAGE, async () => {
 //////* PROJECT KEY EVENTS *//////
 EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
   const projectKey = figma.fileKey;
-  EventHub.getInstance().sendCustomEvent(Events.PROJECT_KEY_FETCHED, projectKey);
+  EventHub.getInstance().sendCustomEvent(Events.PROJECT_KEY_FETCHED, projectKey || "null");
 });
 
 //////* ANNOTATION EVENTS *//////
@@ -129,7 +104,7 @@ figma.on("selectionchange", () => {
 figma.on("documentchange", (event: DocumentChangeEvent) => {
   event.documentChanges.forEach((change) => {
     if (change.type === "DELETE") {
-      EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id });
+      EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id } as IAnnotation);
     }
   });
 });
@@ -138,12 +113,11 @@ figma.on("close", async () => {
   AnnotationElements.annotationLayer.remove();
   figma.closePlugin();
 });
-// Dispatch all components -> in figma use postMessage
-// Use the class names for initializeComponent
-initializeComponent("Settings");
-initializeComponent("NavigationTabs");
-initializeComponent("ConnectPanel");
 
-function initializeComponent(componentName: string): void {
-  figma.ui.postMessage({ type: `initialize${componentName}` });
-}
+// Initialize the UI components
+loadFonts();
+["Settings", "NavigationTabs", "ConnectPanel"].forEach((componentName) => {
+  console.log(`initialize${componentName}`);
+
+  EventHub.getInstance().sendCustomEvent(Events.UI_INITIALIZE_COMPONENT, componentName);
+});

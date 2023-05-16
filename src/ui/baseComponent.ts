@@ -1,3 +1,6 @@
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
+
 export abstract class BaseComponent {
   abstract componentType: string;
 
@@ -5,7 +8,9 @@ export abstract class BaseComponent {
 
   constructor() {
     window.addEventListener("message", (event) => {
-      if (event.data.pluginMessage.type === "initialize" + this.componentType) {
+      const eventType = EventHub.getInstance().prefixEventType(Events.UI_INITIALIZE_COMPONENT);
+
+      if (event.data.pluginMessage.type === eventType && event.data.pluginMessage.message === this.componentType) {
         this.initComponent();
       }
     });

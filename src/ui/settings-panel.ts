@@ -1,4 +1,3 @@
-import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
 import { ODSFacet } from "../interfaces/ods/interface.ODSresponse";
 import ApiClient from "../services/api/client";
@@ -89,24 +88,24 @@ export class Settings extends BaseComponent {
       projectKey = pk;
     });
 
-    EventHub.getInstance().sendCustomEvent(Events.FETCH_LOCAL_STORAGE, {});
-    EventHub.getInstance().sendCustomEvent(Events.FETCH_PROJECT_KEY, {});
+    EventHub.getInstance().sendCustomEvent(Events.FETCH_LOCAL_STORAGE, null);
+    EventHub.getInstance().sendCustomEvent(Events.FETCH_PROJECT_KEY, null);
   }
 
   connect() {
     const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
       projectKey: projectKey,
-      baseURL: $baseURL?.value,
-      clientKey: $clientKey?.value,
-      sourceKey: $sourceKey?.value,
+      baseURL: $baseURL?.value || "",
+      clientKey: $clientKey?.value || "",
+      sourceKey: $sourceKey?.value || "",
     });
     spinnerEvents();
 
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
-      baseURL: $baseURL?.value,
-      clientKey: $clientKey?.value,
-      sourceKey: $sourceKey?.value,
+      baseURL: $baseURL?.value || "",
+      clientKey: $clientKey?.value || "",
+      sourceKey: $sourceKey?.value || "",
       lastUpdate: currentTime,
     });
 
@@ -139,27 +138,7 @@ export class Settings extends BaseComponent {
 
   toggleAnnotations(e: Event) {
     const state: boolean = (<HTMLInputElement>e.target).checked;
-    if (state === true) {
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: MessageTitle.changeVisibility,
-            payload: { state: state },
-          },
-        },
-        "*",
-      );
-    } else {
-      parent.postMessage(
-        {
-          pluginMessage: {
-            type: MessageTitle.changeVisibility,
-            payload: { state: state },
-          },
-        },
-        "*",
-      );
-    }
+    EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_VISIBILITY, state);
   }
 
   disableFieldsWhenNecessary() {
