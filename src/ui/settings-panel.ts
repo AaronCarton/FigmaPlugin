@@ -95,10 +95,15 @@ export class Settings extends BaseComponent {
   connect() {
     const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-      projectKey: projectKey,
       baseURL: $baseURL?.value || "",
       clientKey: $clientKey?.value || "",
       sourceKey: $sourceKey?.value || "",
+      filters: {
+        projectKey: [projectKey],
+        entity: ["sometest"],
+        dataType: ["number"],
+        value: ["95", "953"],
+      },
     });
     spinnerEvents();
 
