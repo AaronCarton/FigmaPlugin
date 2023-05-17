@@ -76,7 +76,7 @@
 }
 
 .figma-light #settings_clientKey,
-#settings_sourceKey {
+.figma-light #settings_sourceKey {
   padding-left: var(--propertize__spacing--huge);
   background-image: var(--icon-key-light);
   background-repeat: no-repeat;
@@ -84,7 +84,7 @@
 }
 
 .figma-dark #settings_clientKey,
-#settings_sourceKey {
+.figma-dark #settings_sourceKey {
   padding-left: var(--propertize__spacing--huge);
   background-image: var(--icon-key-dark);
   background-repeat: no-repeat;
