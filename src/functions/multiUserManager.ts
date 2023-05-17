@@ -37,5 +37,6 @@ function handleChanges() {
 }
 
 export default function multiUserManager() {
+  console.log("Updating MP data");
   handleChanges();
 }

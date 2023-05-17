@@ -423,7 +423,7 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   }
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
-  multiUserManager();
+  figma.on("documentchange", () => multiUserManager());
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
@@ -549,4 +549,5 @@ export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFram
   if (AnnotationElements.parentFrames !== parentFrames) {
     AnnotationElements.parentFrames = parentFrames;
   }
+  console.log("updated", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
 }
