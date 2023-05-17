@@ -388,7 +388,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
         value: element.value,
       },
     });
-    multiUserManager();
   }
 
   if (AnnotationElements.parentFrames !== null) {
@@ -402,9 +401,12 @@ export function initAnnotations(annotationData: Array<Annotation>) {
       }
     }
   }
-  figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
-  figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements));
-
+  if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames) {
+    console.log("setting plugin data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
+    figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
+    figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
+    multiUserManager();
+  }
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
 }
