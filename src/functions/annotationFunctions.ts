@@ -405,19 +405,25 @@ export function initAnnotations(annotationData: Array<Annotation>) {
       }
     }
   } else {
+    // If layer is found => set annotationLayer to found annotation layer.
     AnnotationElements.annotationLayer = annotationLayerFound as FrameNode;
   }
+
+  // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
   if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames && !annotationLayerFound) {
     console.log("setting plugin data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
     figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
     figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
   }
+
+  // If you are not the first person to launch the plugin, you should get the parentframes and link array from the pluginData.
   if (annotationLayerFound) {
     AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData("MP_AnnotationElements")) as Array<frame>;
+    linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData("MP_linkAnnotationToSourceNodes")) as Array<annotationLinkItem>;
   }
-  multiUserManager();
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
+  multiUserManager();
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
@@ -474,9 +480,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       }
     }
   }
-  figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
-  figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
-  multiUserManager();
 }
 
 export function sendDataToFrontend() {
