@@ -404,6 +404,8 @@ export function initAnnotations(annotationData: Array<Annotation>) {
         }
       }
     }
+  } else {
+    AnnotationElements.annotationLayer = annotationLayerFound as FrameNode;
   }
   if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames && !annotationLayerFound) {
     console.log("setting plugin data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
