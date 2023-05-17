@@ -1,4 +1,4 @@
-.c-nav {
+.figma-light .c-nav {
   font-weight: var(--propertize__font-weight--semibold);
   height: 39px;
   display: flex;
@@ -6,6 +6,16 @@
   align-items: center;
   padding: 0 var(--propertize__spacing--large);
   border-bottom: 1px solid var(--propertize__color--accent);
+}
+
+.figma-dark .c-nav {
+  font-weight: var(--propertize__font-weight--semibold);
+  height: 39px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--propertize__spacing--large);
+  border-bottom: 1px solid var(--propertize__color--tertiary);
 }
 
 .c-nav__left {
@@ -19,8 +29,12 @@
   color: var(--propertize__color--secondary);
 }
 
-.c-nav__left-item.is-active .a-settings-icon {
+.figma-light .c-nav__left-item.is-active .a-settings-icon {
   fill: var(--propertize__color--primary);
+}
+
+.figma-dark .c-nav__left-item.is-active .a-settings-icon {
+  fill: var(--propertize__color--white);
 }
 
 .c-nav__right-item {

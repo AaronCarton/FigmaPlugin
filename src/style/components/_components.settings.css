@@ -43,27 +43,50 @@
   opacity: 0.4;
 }
 
-.c-settings__input {
+.figma-light .c-settings__input {
   padding: 8px 0;
   border: 1px solid var(--propertize__color--accent);
   border-radius: 2px;
+}
+
+.figma-dark .c-settings__input {
+  padding: 8px 0;
+  border: 1px solid var(--propertize__color--tertiary);
+  border-radius: 2px;
+  background-color: var(--propertize__color--dark);
+  color: var(--propertize__color--white);
 }
 
 .c-settings__input:focus-visible {
   outline-color: var(--propertize__color--blue);
 }
 
-#settings_dbLink {
+.figma-light #settings_dbLink {
   padding-left: var(--propertize__spacing--huge);
-  background-image: var(--icon-connect);
+  background-image: var(--icon-connect-light);
   background-repeat: no-repeat;
   background-position: left;
 }
 
-#settings_clientKey,
+.figma-dark #settings_dbLink {
+  padding-left: var(--propertize__spacing--huge);
+  background-image: var(--icon-connect-dark);
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+.figma-light #settings_clientKey,
 #settings_sourceKey {
   padding-left: var(--propertize__spacing--huge);
-  background-image: var(--icon-key);
+  background-image: var(--icon-key-light);
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+.figma-dark #settings_clientKey,
+#settings_sourceKey {
+  padding-left: var(--propertize__spacing--huge);
+  background-image: var(--icon-key-dark);
   background-repeat: no-repeat;
   background-position: left;
 }

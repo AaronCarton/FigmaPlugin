@@ -7,10 +7,16 @@
   fill: var(--propertize__color--primary);
 }
 
-.is-active {
+.figma-light .is-active {
   display: block;
   color: var(--propertize__color--primary);
   fill: var(--propertize__color--primary);
+}
+
+.figma-dark .is-active {
+  display: block;
+  color: var(--propertize__color--white);
+  fill: var(--propertize__color--white);
 }
 
 .disabled {
