@@ -6,6 +6,7 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
+import multiUserManager from "./multiUserManager";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 export let lastSelectedNode: string = "";
@@ -387,6 +388,7 @@ export function initAnnotations(annotationData: Array<Annotation>) {
         value: element.value,
       },
     });
+    multiUserManager();
   }
 
   if (AnnotationElements.parentFrames !== null) {
@@ -400,6 +402,9 @@ export function initAnnotations(annotationData: Array<Annotation>) {
       }
     }
   }
+  figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
+  figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements));
+
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
 }
