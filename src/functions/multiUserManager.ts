@@ -6,8 +6,14 @@ import { frame } from "../interfaces/frame";
 function updateData(links: string, AnnotationElements: string) {
   const morphedLinks = JSON.parse(links) as Array<annotationLinkItem>;
   const morphedAnnotationElements = JSON.parse(AnnotationElements) as Array<frame>;
-  console.log("UPDATED ANNOTATIONELEMENTS:", links, "\n", "old version:", linkAnnotationToSourceNodes as Array<annotationLinkItem>);
-  console.log("UPDATED LINKS:", AnnotationElements, "\n", "old version:", AnnotationElements as AnnotationElements);
+  console.log(
+    "UPDATED ANNOTATIONELEMENTS:",
+    morphedLinks as Array<annotationLinkItem>,
+    "\n",
+    "old version:",
+    linkAnnotationToSourceNodes as Array<annotationLinkItem>,
+  );
+  console.log("UPDATED LINKS:", morphedAnnotationElements as AnnotationElements, "\n", "old version:", AnnotationElements as AnnotationElements);
   updateMultiUserVars(morphedLinks, morphedAnnotationElements);
 }
 

@@ -372,41 +372,45 @@ export function changeLayerVisibility(state: boolean) {
 }
 
 export function initAnnotations(annotationData: Array<Annotation>) {
-  createLayer();
-  makeFramesArray(annotationData);
-  // Make inputValues array needed for drawing initial annotations.
-  const inputValues: Array<{ id: string; AnnotationInput: AnnotationInput }> = [];
-  for (let i = 0; i < annotationData.length; i++) {
-    const element = annotationData[i];
-    inputValues.push({
-      id: element.nodeId,
-      AnnotationInput: {
-        dataSource: element.dataSource,
-        entity: element.entity,
-        attribute: element.attribute,
-        dataType: element.dataType,
-        value: element.value,
-      },
-    });
-  }
+  const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
+  if (!annotationLayerFound) {
+    createLayer();
 
-  if (AnnotationElements.parentFrames !== null) {
-    for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
-      const currentFrame = AnnotationElements.parentFrames[i];
-      if (currentFrame.sourceNodesLeft.length > 0) {
-        drawAnnotations(currentFrame.startpointLeft, sortNodesAccordingToYCoords(currentFrame.sourceNodesLeft), inputValues);
-      }
-      if (currentFrame.sourceNodesRight.length > 0) {
-        drawAnnotations(currentFrame.startpointRight, sortNodesAccordingToYCoords(currentFrame.sourceNodesRight), inputValues);
+    makeFramesArray(annotationData);
+    // Make inputValues array needed for drawing initial annotations.
+    const inputValues: Array<{ id: string; AnnotationInput: AnnotationInput }> = [];
+    for (let i = 0; i < annotationData.length; i++) {
+      const element = annotationData[i];
+      inputValues.push({
+        id: element.nodeId,
+        AnnotationInput: {
+          dataSource: element.dataSource,
+          entity: element.entity,
+          attribute: element.attribute,
+          dataType: element.dataType,
+          value: element.value,
+        },
+      });
+    }
+
+    if (AnnotationElements.parentFrames !== null) {
+      for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
+        const currentFrame = AnnotationElements.parentFrames[i];
+        if (currentFrame.sourceNodesLeft.length > 0) {
+          drawAnnotations(currentFrame.startpointLeft, sortNodesAccordingToYCoords(currentFrame.sourceNodesLeft), inputValues);
+        }
+        if (currentFrame.sourceNodesRight.length > 0) {
+          drawAnnotations(currentFrame.startpointRight, sortNodesAccordingToYCoords(currentFrame.sourceNodesRight), inputValues);
+        }
       }
     }
   }
-  if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames) {
+  if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames && !annotationLayerFound) {
     console.log("setting plugin data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
     figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
     figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
-    multiUserManager();
   }
+  multiUserManager();
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
 }
@@ -530,7 +534,7 @@ export function archiveAnnotation(annotation: Annotation) {
   }
 }
 
-export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFrames: Array<frame>){
+export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFrames: Array<frame>) {
   linkAnnotationToSourceNodes = links;
   AnnotationElements.parentFrames = parentFrames;
 }
