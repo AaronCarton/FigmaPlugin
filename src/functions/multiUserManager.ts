@@ -23,20 +23,18 @@ function updateData(links: string, AnnotationElements: string) {
   updateMultiUserVars(morphedLinks, morphedAnnotationElements);
 }
 
-function handleChanges() {
-  figma.on("documentchange", (event) => {
-    const rootPluginDataChange = event.documentChanges.find(
-      (change) => change.node.id === figma.root.id && change.type === "PROPERTY_CHANGE" && change.properties.includes("pluginData"),
-    );
-    if (rootPluginDataChange) {
-      const pluginLinksData = figma.root.getPluginData("MP_linkAnnotationToSourceNodes");
-      const pluginAnnotationElements = figma.root.getPluginData("MP_AnnotationElements");
-      updateData(pluginLinksData, pluginAnnotationElements);
-    }
-  });
+function handleChanges(event: DocumentChangeEvent) {
+  const rootPluginDataChange = event.documentChanges.find(
+    (change) => change.node.id === figma.root.id && change.type === "PROPERTY_CHANGE" && change.properties.includes("pluginData"),
+  );
+  if (rootPluginDataChange) {
+    const pluginLinksData = figma.root.getPluginData("MP_linkAnnotationToSourceNodes");
+    const pluginAnnotationElements = figma.root.getPluginData("MP_AnnotationElements");
+    updateData(pluginLinksData, pluginAnnotationElements);
+  }
 }
 
-export default function multiUserManager() {
+export default function multiUserManager(event: DocumentChangeEvent) {
   console.log("Updating MP data");
-  handleChanges();
+  handleChanges(event);
 }

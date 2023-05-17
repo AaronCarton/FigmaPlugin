@@ -420,10 +420,11 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   if (annotationLayerFound) {
     AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData("MP_AnnotationElements")) as Array<frame>;
     linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData("MP_linkAnnotationToSourceNodes")) as Array<annotationLinkItem>;
+    console.log("init not first connect: ", AnnotationElements.parentFrames, linkAnnotationToSourceNodes);
   }
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
-  figma.on("documentchange", () => multiUserManager());
+  figma.on("documentchange", (event: DocumentChangeEvent) => multiUserManager(event));
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
