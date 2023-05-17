@@ -1,12 +1,14 @@
 import { AnnotationElements } from "../classes/annotationElements";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
-import { linkAnnotationToSourceNodes } from "./annotationFunctions";
+import { linkAnnotationToSourceNodes, updateMultiUserVars } from "./annotationFunctions";
+import { frame } from "../interfaces/frame";
 
 function updateData(links: string, AnnotationElements: string) {
-  links = JSON.parse(links);
-  AnnotationElements = JSON.parse(AnnotationElements);
+  const morphedLinks = JSON.parse(links) as Array<annotationLinkItem>;
+  const morphedAnnotationElements = JSON.parse(AnnotationElements) as Array<frame>;
   console.log("UPDATED ANNOTATIONELEMENTS:", links, "\n", "old version:", linkAnnotationToSourceNodes as Array<annotationLinkItem>);
   console.log("UPDATED LINKS:", AnnotationElements, "\n", "old version:", AnnotationElements as AnnotationElements);
+  updateMultiUserVars(morphedLinks, morphedAnnotationElements);
 }
 
 function handleChanges() {

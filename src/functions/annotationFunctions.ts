@@ -8,7 +8,7 @@ import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 import multiUserManager from "./multiUserManager";
 
-export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
+export let linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 export let lastSelectedNode: string = "";
 
 let highlightedAnnotationLinkItem: annotationLinkItem | undefined = undefined;
@@ -465,6 +465,9 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       }
     }
   }
+  figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
+  figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
+  multiUserManager();
 }
 
 export function sendDataToFrontend() {
@@ -525,4 +528,9 @@ export function archiveAnnotation(annotation: Annotation) {
   } else {
     EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Couldn't remove annotation.");
   }
+}
+
+export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFrames: Array<frame>){
+  linkAnnotationToSourceNodes = links;
+  AnnotationElements.parentFrames = parentFrames;
 }
