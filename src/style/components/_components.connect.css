@@ -152,6 +152,16 @@
   background: none;
 }
 
+.c-connect__textarea{
+  font-size: var(--propertize__font-size--tiny);
+  border: none;
+  padding: 0 var(--propertize__spacing--small);
+  width: 100%;
+  border: 1px solid var(--propertize__color--accent);
+  border-radius: var(--propertize__border-radius);
+  resize: none;
+}
+
 .c-connect__container {
   display: none;
 }

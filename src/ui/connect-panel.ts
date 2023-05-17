@@ -1,3 +1,4 @@
+import { Console } from "console";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -12,6 +13,11 @@ const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType"
 const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
+const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
+const $valueTextArea: HTMLTextAreaElement | null = document.querySelector(".c-connect__textarea");
+const $dialog: HTMLDialogElement | null = document.querySelector(".c-connect__dialog");
+const $dialogCloseBtn: HTMLButtonElement | null = document.querySelector(".c-connect__dialog--closebtn");
+const $dialogConfirmBtn: HTMLButtonElement | null = document.querySelector(".c-connect__dialog--confirmbtn");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -80,6 +86,37 @@ function handleIconClick(trigger: HTMLElement) {
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
     inputField.focus();
+  }
+}
+
+function checkSampleValueLength(inputField: HTMLInputElement) {
+  if (inputField !== null && $showMore !== null) {
+    console.log("trigger:", $value?.value.length);
+    if (inputField?.value.length > 35) {
+      $showMore?.classList.add("is-active");
+    } else {
+      $showMore?.classList.remove("is-active");
+    }
+  }
+}
+
+function toggleShowMore() {
+  if ($value !== null && $showMore !== null && $dialog !== null && $valueTextArea !== null) {
+    // $value.hidden = !$value?.hidden;
+    // $valueTextArea.hidden = !$valueTextArea?.hidden;
+
+    $valueTextArea.style.width = "250px";
+    $valueTextArea.style.height = "150px";
+
+    $valueTextArea.value = $value.value;
+    $dialog.showModal();
+
+    // if ($valueTextArea.hidden === false) {
+    //   $showMore.textContent = "Show Less";
+    // } else {
+    //   $showMore.textContent = "Show More";
+    // }
+    //TODO: check required
   }
 }
 
@@ -295,8 +332,21 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 
   $value.addEventListener("keyup", () => {
+    checkSampleValueLength($value);
     disableCreate();
   });
+
+  $showMore?.addEventListener("click", () => {
+    toggleShowMore();
+  });
+
+  $dialogCloseBtn?.addEventListener("click", () => {
+    $dialog?.close();
+  });
+
+  // $dialogConfirmBtn?.addEventListener("click", () => {
+  //   $value?.value = $valueTextArea?.value;
+  // });
 }
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
