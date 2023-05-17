@@ -12,7 +12,7 @@
   height: 0;
 }
 
-.a-annotation-toggle__slider {
+.figma-light .a-annotation-toggle__slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -20,6 +20,19 @@
   right: 0;
   bottom: 0;
   background-color: var(--propertize__color--accent);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.figma-dark .a-annotation-toggle__slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--propertize__color--tertiary);
   -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 34px;
