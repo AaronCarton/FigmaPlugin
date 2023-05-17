@@ -412,6 +412,9 @@ export function initAnnotations(annotationData: Array<Annotation>) {
     figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
     figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
   }
+  if (annotationLayerFound) {
+    AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData("MP_AnnotationElements")) as Array<frame>;
+  }
   multiUserManager();
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
@@ -537,6 +540,10 @@ export function archiveAnnotation(annotation: Annotation) {
 }
 
 export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFrames: Array<frame>) {
-  linkAnnotationToSourceNodes = links;
-  AnnotationElements.parentFrames = parentFrames;
+  if (linkAnnotationToSourceNodes !== links) {
+    linkAnnotationToSourceNodes = links;
+  }
+  if (AnnotationElements.parentFrames !== parentFrames) {
+    AnnotationElements.parentFrames = parentFrames;
+  }
 }
