@@ -23,3 +23,11 @@ export function resizeByConnection(connection: boolean) {
     figma.ui.resize(345, 296);
   }
 }
+
+export function resizeByShowMore(isShowMore: boolean) {
+  if (isShowMore) {
+    figma.ui.resize(345, 350);
+  } else {
+    figma.ui.resize(345, 320);
+  }
+}

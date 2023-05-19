@@ -9,18 +9,16 @@ const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSou
 const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
-const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
+const $value: HTMLTextAreaElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
 const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
 const $valueTextArea: HTMLTextAreaElement | null = document.querySelector(".c-connect__textarea");
-const $dialog: HTMLDialogElement | null = document.querySelector(".c-connect__dialog");
-const $dialogCloseBtn: HTMLButtonElement | null = document.querySelector(".c-connect__dialog--closebtn");
-const $dialogConfirmBtn: HTMLButtonElement | null = document.querySelector(".c-connect__dialog--confirmbtn");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 const maxCharactersInputfield = 35;
+let isShowMoreActive = false;
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -95,13 +93,6 @@ function checkSampleValueLength() {
     } else {
       $showMore.hidden = true;
     }
-  }
-}
-
-function openDialog() {
-  if ($value !== null && $showMore !== null && $dialog !== null && $valueTextArea !== null) {
-    $valueTextArea.value = $value.value;
-    $dialog.showModal();
   }
 }
 
@@ -217,6 +208,18 @@ function validateDataType() {
   return true;
 }
 
+function replaceWithTextArea() {
+  if ($value !== null && $valueTextArea !== null) {
+    $value.hidden = true;
+    $valueTextArea.hidden = false;
+
+    $valueTextArea.value = $value.value;
+
+    $valueTextArea.required = true;
+    $value.required = false;
+  }
+}
+
 function changeFieldsOnInput(fieldName: string, state: boolean) {
   const textField = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
   const textArea = document.querySelector<HTMLElement>(`#${fieldName}-text`);
@@ -325,19 +328,31 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
     disableCreate();
   });
 
-  $showMore?.addEventListener("click", () => {
-    openDialog();
-  });
-
-  $dialogCloseBtn?.addEventListener("click", () => {
-    $dialog?.close();
-  });
-
-  $dialogConfirmBtn?.addEventListener("click", () => {
+  $valueTextArea?.addEventListener("keyup", () => {
     if ($valueTextArea !== null && $value !== null) {
       $value.value = $valueTextArea.value;
-      $dialog?.close();
-      checkSampleValueLength();
+      console.log("value", $value.value);
+    }
+  });
+
+  $showMore?.addEventListener("click", () => {
+    if ($showMore !== null) {
+      $showMore.hidden = true;
+      isShowMoreActive = true;
+
+      $value.rows = 5;
+      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, isShowMoreActive);
+      $value.classList.add("changeHeight");
+    }
+  });
+
+  $value.addEventListener("blur", () => {
+    if ($value !== null && $showMore !== null) {
+      $value.rows = 1;
+      $value.classList.remove("changeHeight");
+      $showMore.hidden = false;
+      isShowMoreActive = false;
+      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, isShowMoreActive);
     }
   });
 }
