@@ -548,10 +548,14 @@ export function archiveAnnotation(annotation: Annotation) {
         return;
       }
     });
-
+    // Update new parentFrames array for MP.
+    figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
+    console.log("not found error vector", found.vector);
     found.vector.remove();
     found.annotation.remove();
     linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(found), 1);
+    // Update new links for MP.
+    figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
     EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
   } else {
     EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Couldn't remove annotation.");
