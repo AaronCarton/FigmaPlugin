@@ -12,13 +12,18 @@
 
 .c-connect__field {
   display: flex;
+  flex-grow: 1;
   align-items: center;
   gap: var(--propertize__spacing);
 }
 
 .c-connect__field--title {
-  width: 70px;
+  width: 100px;
   color: var(--propertize__color--secondary);
+}
+
+.c-connect__field--title--sample {
+  width: 70px;
 }
 
 .c-connect__cta {
@@ -28,6 +33,46 @@
   border: none;
   background-color: var(--propertize__color--white);
   cursor: pointer;
+}
+
+.c-connect__cta--disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.c-connect__buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--propertize__spacing--large);
+  width: 100%;
+}
+
+.c-connect__remove {
+  padding: 8px 12px;
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
+  background-color: var(--propertize__color--red);
+  color: var(--propertize__color--white);
+  border: none;
+  border-radius: 10px;
+}
+
+.c-connect__remove:disabled {
+  opacity: 0.4;
+}
+
+.c-connect__create {
+  padding: 8px 12px;
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
+  background-color: var(--propertize__color--blue);
+  color: var(--propertize__color--white);
+  border: none;
+  border-radius: 10px;
+}
+
+.c-connect__create:disabled {
+  opacity: 0.4;
 }
 
 .c-icon_check_class {
@@ -43,7 +88,7 @@
 .c-connect__field--select {
   display: none;
   align-items: center;
-  width: 120px;
+  width: 100%;
   height: 33px;
   border: 1px solid transparent;
   border-radius: var(--propertize__border-radius);
@@ -61,13 +106,14 @@
 .c-connect__field--select:hover,
 .c-connect__field--select:focus {
   border: 1px solid var(--propertize__color--accent);
-  width: 190px;
   outline: none;
   color: var(--propertize__color--primary);
 }
 
 .c-connect__field--text {
   display: none;
+  width: 100%;
+  padding-right: 10px;
 }
 
 .c-connect__field--border {
@@ -75,7 +121,7 @@
   justify-content: start;
   align-items: center;
   color: var(--propertize__color--secondary);
-  width: 188px;
+  width: 100%;
   height: 31px;
   border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);

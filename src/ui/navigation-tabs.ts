@@ -1,4 +1,5 @@
-import { MessageTitle } from "../classes/messageTitles";
+import EventHub from "../services/events/EventHub";
+import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
@@ -35,18 +36,7 @@ export class NavigationTabs extends BaseComponent {
         tab.classList.add(isActive);
         if (selectedTab !== null) {
           document.getElementById(selectedTab)?.classList.add(isActive);
-          parent.postMessage(
-            {
-              pluginMessage: {
-                type: MessageTitle.changeTab,
-                payload: {
-                  tab: selectedTab,
-                  connection: connectionState,
-                },
-              },
-            },
-            "*",
-          );
+          EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_TAB, { tab: selectedTab, connection: connectionState });
         }
       }),
     );

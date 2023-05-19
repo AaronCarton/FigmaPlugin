@@ -1,5 +1,3 @@
-import { MessageTitle } from "../classes/messageTitles";
-import { createFigmaError } from "../functions/createError";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -12,6 +10,8 @@ const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
 const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
+const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
+const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -25,9 +25,32 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    EventHub.getInstance().makeEvent(Events.CLEAR_FIELDS_AT_STARTUP, () => {
-      //Clear unwanted values from form fields at startup
-      clearFields();
+    EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
+    EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
+    // Add "Enter" event listeners to input fields to trigger icon click
+    [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
+      if (!select) return;
+      // TODO: refactor this to a separate function,
+      // TODO: shares a lot of duplicate code with handleIconClick
+      const selectedAttribute = select.getAttribute("data-target");
+      const $input = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-field`);
+      const $text = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
+      const $addIcon = document.querySelector<HTMLElement>(`#${selectedAttribute}-btn`);
+      if ($input && $addIcon && $text) {
+        $input.addEventListener("keyup", (event: KeyboardEvent) => {
+          if (event.key === "Enter") {
+            handleIconClick($addIcon);
+          }
+        });
+        // cancel when clicking outside the input field
+        $input.addEventListener("blur", (ev) => {
+          // if the click is on the icon, don't cancel
+          if (ev.relatedTarget === $addIcon) return;
+          $addIcon.classList.toggle(iconCheck);
+          $text.classList.toggle(isActiveField);
+          select.classList.toggle(isActiveField);
+        });
+      }
     });
   }
 }
@@ -46,7 +69,7 @@ function handleIconClick(trigger: HTMLElement) {
           inputSelect.add(newOption);
         }
         inputSelect.value = inputField.value;
-        inputField.value = "";
+        inputField.value = ""; // clear input field after adding new option
         inputSelect.dispatchEvent(new Event("change"));
       } else {
         EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "The maximum length of the text is 35 characters.");
@@ -56,6 +79,7 @@ function handleIconClick(trigger: HTMLElement) {
     trigger.classList.toggle(iconCheck);
     inputText.classList.toggle(isActiveField);
     inputSelect.classList.toggle(isActiveField);
+    inputField.focus();
   }
 }
 
@@ -71,10 +95,13 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
   selectElement.addEventListener("change", () => {
     const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
     const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
-    if (textField && textArea) {
+    const button = document.querySelector<HTMLButtonElement>(`#${disabledId}-btn`);
+    if (textField && textArea && button) {
       if (selectElement.value.trim().length !== 0) {
         changeElement1.disabled = false;
         textField.disabled = false;
+        button.disabled = false;
+        button.classList.remove("c-connect__cta--disabled");
         textArea.classList.remove("disabled");
       }
     }
@@ -82,7 +109,7 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
 }
 
 function updateFields(message: AnnotationInput) {
-  if ($dataSource && $entity && $attribute && $dataType && $value) {
+  if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
     $dataSource.value = message.dataSource;
     $entity.value = message.entity;
     $entity.disabled = false;
@@ -91,17 +118,41 @@ function updateFields(message: AnnotationInput) {
     $dataType.value = message.dataType;
     $dataType.disabled = false;
     $value.value = message.value;
+    $removeBtn.disabled = false;
+    $removeBtn.classList.add("button-pointer");
+    $createBtn.innerText = "Update annotation";
+    $createBtn.disabled = false;
+    $createBtn.classList.add("button-pointer");
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
     changeFieldsOnInput("dataType", false);
   } else {
-    createFigmaError("Error updating fields.", 5000, true);
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
+  }
+}
+
+function setSampleValueInForm(sampleValue: string) {
+  if ($dataSource && $entity && $attribute && $dataType && $value) {
+    $dataSource.value = "";
+    $entity.value = "";
+    $entity.disabled = false;
+    $attribute.value = "";
+    $attribute.disabled = false;
+    $dataType.value = "";
+    $dataType.disabled = false;
+    $value.value = sampleValue;
+
+    changeFieldsOnInput("entity", false);
+    changeFieldsOnInput("attribute", false);
+    changeFieldsOnInput("dataType", false);
+  } else {
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
   }
 }
 
 function clearFields() {
-  if ($dataSource && $entity && $attribute && $dataType && $value) {
+  if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
     $dataSource.value = "";
     $entity.value = "";
     $entity.disabled = true;
@@ -110,18 +161,23 @@ function clearFields() {
     $dataType.value = "";
     $dataType.disabled = true;
     $value.value = "";
+    $removeBtn.disabled = true;
+    $removeBtn.classList.remove("button-pointer");
+    $createBtn.innerText = "Create annotation";
+    $createBtn.disabled = true;
+    $createBtn.classList.remove("button-pointer");
 
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);
     changeFieldsOnInput("dataType", true);
   } else {
-    createFigmaError("Error clearing fields.", 5000, true);
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
   }
 }
 
 function validateDataType() {
   const dataTypeRegex: { [key: string]: RegExp } = {
-    string: /^[\w\s]+$/,
+    string: /^[\w\s\S]+$/,
     number: /^[\d]+$/,
     int: /^[\d]+$/,
   };
@@ -138,19 +194,40 @@ function validateDataType() {
 function changeFieldsOnInput(fieldName: string, state: boolean) {
   const textField = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
   const textArea = document.querySelector<HTMLElement>(`#${fieldName}-text`);
+  const button = document.querySelector<HTMLButtonElement>(`#${fieldName}-btn`);
 
-  if (textField && textArea) {
+  if (textField && textArea && button) {
     if (state === true) {
       textField.disabled = true;
       textArea.classList.add("disabled");
+      button.classList.add("c-connect__cta--disabled");
     } else {
       textField.disabled = false;
       textArea.classList.remove("disabled");
+      button.classList.remove("c-connect__cta--disabled");
     }
   }
 }
 
-if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
+function disableCreate() {
+  if ($dataSource && $entity && $attribute && $dataType && $value && $createBtn) {
+    if (
+      $dataSource.value.trim().length !== 0 &&
+      $entity.value.trim().length !== 0 &&
+      $attribute.value.trim().length !== 0 &&
+      $dataType.value.trim().length !== 0 &&
+      $value.value.trim().length !== 0
+    ) {
+      $createBtn.disabled = false;
+      $createBtn.classList.add("button-pointer");
+    } else {
+      $createBtn.disabled = true;
+      $createBtn.classList.remove("button-pointer");
+    }
+  }
+}
+
+if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
   $buttons.forEach((icon) => {
     icon.addEventListener("click", () => {
       handleIconClick(icon);
@@ -182,22 +259,45 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value) {
       } as IAnnotation);
     }
   });
+
+  $createBtn.addEventListener("click", () => {
+    if (
+      $dataSource.value.trim().length !== 0 &&
+      $entity.value.trim().length !== 0 &&
+      $attribute.value.trim().length !== 0 &&
+      $dataType.value.trim().length !== 0 &&
+      $value.value.trim().length !== 0
+    ) {
+      EventHub.getInstance().sendCustomEvent(Events.UPSERT_ANNOTATION, {
+        dataSource: $dataSource.value.trim(),
+        entity: $entity.value.trim(),
+        attribute: $attribute.value.trim(),
+        dataType: $dataType.value.trim(),
+        value: $value.value.trim(),
+      } as IAnnotation);
+    }
+  });
+
+  $removeBtn.addEventListener("click", () => {
+    EventHub.getInstance().sendCustomEvent(Events.INIT_ARCHIVE_ANNOTATION, {
+      dataSource: $dataSource.value.trim(),
+      entity: $entity.value.trim(),
+      attribute: $attribute.value.trim(),
+      dataType: $dataType.value.trim(),
+      value: $value.value.trim(),
+    } as IAnnotation);
+  });
+
+  EventHub.getInstance().makeEvent(Events.DRAW_ANNOTATION, () => {
+    $removeBtn.disabled = false;
+    $removeBtn.classList.add("button-pointer");
+    $createBtn.innerText = "Update annotation";
+  });
+
+  $value.addEventListener("keyup", () => {
+    disableCreate();
+  });
 }
-
-window.addEventListener("message", (e) => {
-  const messageType = e.data.pluginMessage.type;
-  const payload = e.data.pluginMessage.payload;
-
-  switch (messageType) {
-    case MessageTitle.updateFields:
-      updateFields(payload.values);
-      break;
-
-    case MessageTitle.clearFields:
-      clearFields();
-      break;
-
-    default:
-      break;
-  }
+EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
+  setSampleValueInForm(sampleValue);
 });

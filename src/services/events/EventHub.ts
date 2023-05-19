@@ -1,5 +1,7 @@
 /* eslint-disable func-style */
 /* eslint-disable @typescript-eslint/no-explicit-any */ //! Should be fixed later
+import { EventMap } from "../../interfaces/interface.EventHub";
+import { Events } from "./Events";
 
 interface Event {
   type: string;
@@ -15,7 +17,7 @@ export default class EventHub {
    * Creates an instance of the EventHub if it doesn't exist and returns it if it does
    * @returns {EventHub} The instance of the EventHub
    */
-  public static getInstance(): EventHub {
+  public static getInstance() {
     if (!EventHub.instance) EventHub.instance = new EventHub();
     return EventHub.instance;
   }
@@ -25,7 +27,7 @@ export default class EventHub {
    * @param {string} eventType - The name of the event that will be registered
    * @param {function} cb - The callback function that will be invoked when the event is triggered
    */
-  makeEvent(eventType: string, cb: (message: any) => void): void {
+  makeEvent<T extends Events>(eventType: T, cb: (message: EventMap[T]) => void): void {
     if (!eventType) throw new Error("The event type cannot be empty");
     if (typeof cb !== "function") throw new TypeError("The callback must be a function");
     const prefixEventType = this.prefixEventType(eventType);
@@ -68,8 +70,9 @@ export default class EventHub {
    * Sends a custom event with a give eventType and a message to either the Figma editor or the browser
    * @param {string} eventType - The name of the event that will be sent
    * @param {any} message - The message that will be sent with the event
+   * @param {boolean} suppressLog - If true, the event will not be logged to the console
    */
-  sendCustomEvent(eventType: string, message: any): void {
+  sendCustomEvent<T extends Events>(eventType: T, message: EventMap[T], suppressLog = false): void {
     const prefixEventType = this.prefixEventType(eventType);
     const data = {
       type: prefixEventType,
@@ -81,11 +84,11 @@ export default class EventHub {
       // Send event to browser
       window.postMessage({ pluginMessage: data }, "*"); // send event across the plugin (UI.ts)
       parent.postMessage({ pluginMessage: data }, "*"); // also send event to the parent (code.ts)
-      console.debug(`[EVENT] Emit ${prefixEventType} to Browser (ui.ts)`, data);
+      if (!suppressLog) console.debug(`[EVENT] Emit ${prefixEventType} to Browser (ui.ts)`, data);
     } else {
       // Send event to Figma
       figma.ui.postMessage(data);
-      console.info(`[EVENT] Emit ${prefixEventType} to Figma (code.ts)`, data); //? Figma node doesn't seem to have a console.debug
+      if (!suppressLog) console.info(`[EVENT] Emit ${prefixEventType} to Figma (code.ts)`, data); //? Figma node doesn't seem to have a console.debug
     }
   }
 
