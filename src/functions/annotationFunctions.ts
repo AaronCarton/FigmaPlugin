@@ -528,15 +528,15 @@ export function sendDataToFrontend() {
 }
 
 export function archiveAnnotation(annotation: Annotation) {
-  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
-  console.log("found for deletion", found);
+  const foundLinkToArchive = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
+  console.log("found for deletion", foundLinkToArchive);
   // Remove annotation from array
-  if (found) {
+  if (foundLinkToArchive) {
     // Deletes found element from the parentframe array
     AnnotationElements.parentFrames.forEach((currentParent) => {
-      const leftFound = currentParent.sourceNodesLeft.find((x) => x.id === found.sourceNode.id);
+      const leftFound = currentParent.sourceNodesLeft.find((x) => x.id === foundLinkToArchive.sourceNode.id);
       if (leftFound === undefined) {
-        const rightFound = currentParent.sourceNodesRight.find((x) => x.id === found.sourceNode.id);
+        const rightFound = currentParent.sourceNodesRight.find((x) => x.id === foundLinkToArchive.sourceNode.id);
         if (rightFound === undefined) {
           return;
         } else {
@@ -550,10 +550,20 @@ export function archiveAnnotation(annotation: Annotation) {
     });
     // Update new parentFrames array for MP.
     figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
-    console.log("not found error vector", found.vector);
-    found.vector.remove();
-    found.annotation.remove();
-    linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(found), 1);
+    console.log("not found error vector", foundLinkToArchive.vector);
+    try {
+      foundLinkToArchive.vector.remove();
+    } catch (error) {
+      const foundInFigma = figma.root.findOne((x) => x.id === foundLinkToArchive.vector.id);
+      foundInFigma !== null ? foundInFigma.remove() : console.log("found was null when deleting vector");
+    }
+    try {
+      foundLinkToArchive.annotation.remove();
+    } catch (error) {
+      const foundInFigma = figma.root.findOne((x) => x.id === foundLinkToArchive.annotation.id);
+      foundInFigma !== null ? foundInFigma.remove() : console.log("found was null when deleting vector");
+    }
+    linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(foundLinkToArchive), 1);
     // Update new links for MP.
     figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
     EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
