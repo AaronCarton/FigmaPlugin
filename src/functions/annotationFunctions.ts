@@ -442,8 +442,8 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       found.data = inputValues;
       console.log("found data assigned", found.data);
       const coords =
-        found.annotation.absoluteBoundingBox && found.annotation.absoluteBoundingBox.x === 0
-          ? foundLinkedAnno?.absoluteBoundingBox
+        found.annotation.absoluteBoundingBox && found.annotation.absoluteBoundingBox.x === 0 && foundLinkedAnno !== null
+          ? foundLinkedAnno.absoluteBoundingBox
           : found.annotation.absoluteBoundingBox;
       console.log("coords", coords);
       figma.currentPage.findOne((x) => x.id === found.annotation.id)?.remove();
@@ -529,6 +529,7 @@ export function sendDataToFrontend() {
 
 export function archiveAnnotation(annotation: Annotation) {
   const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
+  console.log("found for deletion", found);
   // Remove annotation from array
   if (found) {
     // Deletes found element from the parentframe array
