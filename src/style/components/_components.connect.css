@@ -160,6 +160,8 @@
   border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);
   resize: none;
+  width: 250px;
+  height: 150px;  
 }
 
 .c-connect__container {
@@ -172,4 +174,9 @@
 
 .c-disconnected__text {
   margin: var(--propertize__spacing) 0;
+}
+
+.js-sample-value{
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

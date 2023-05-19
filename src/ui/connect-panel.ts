@@ -1,4 +1,3 @@
-import { Console } from "console";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -89,10 +88,9 @@ function handleIconClick(trigger: HTMLElement) {
   }
 }
 
-function checkSampleValueLength(inputField: HTMLInputElement) {
-  if (inputField !== null && $showMore !== null) {
-    console.log("trigger:", $value?.value.length);
-    if (inputField?.value.length > 35) {
+function checkSampleValueLength() {
+  if ($value !== null && $showMore !== null) {
+    if ($value.value.length > maxCharactersInputfield) {
       $showMore?.classList.add("is-active");
     } else {
       $showMore?.classList.remove("is-active");
@@ -100,23 +98,10 @@ function checkSampleValueLength(inputField: HTMLInputElement) {
   }
 }
 
-function toggleShowMore() {
+function openDialog() {
   if ($value !== null && $showMore !== null && $dialog !== null && $valueTextArea !== null) {
-    // $value.hidden = !$value?.hidden;
-    // $valueTextArea.hidden = !$valueTextArea?.hidden;
-
-    $valueTextArea.style.width = "250px";
-    $valueTextArea.style.height = "150px";
-
     $valueTextArea.value = $value.value;
     $dialog.showModal();
-
-    // if ($valueTextArea.hidden === false) {
-    //   $showMore.textContent = "Show Less";
-    // } else {
-    //   $showMore.textContent = "Show More";
-    // }
-    //TODO: check required
   }
 }
 
@@ -161,6 +146,8 @@ function updateFields(message: AnnotationInput) {
     $createBtn.disabled = false;
     $createBtn.classList.add("button-pointer");
 
+    checkSampleValueLength();
+
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
     changeFieldsOnInput("dataType", false);
@@ -203,6 +190,8 @@ function clearFields() {
     $createBtn.innerText = "Create annotation";
     $createBtn.disabled = true;
     $createBtn.classList.remove("button-pointer");
+
+    checkSampleValueLength();
 
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);
@@ -332,21 +321,25 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 
   $value.addEventListener("keyup", () => {
-    checkSampleValueLength($value);
+    checkSampleValueLength();
     disableCreate();
   });
 
   $showMore?.addEventListener("click", () => {
-    toggleShowMore();
+    openDialog();
   });
 
   $dialogCloseBtn?.addEventListener("click", () => {
     $dialog?.close();
   });
 
-  // $dialogConfirmBtn?.addEventListener("click", () => {
-  //   $value?.value = $valueTextArea?.value;
-  // });
+  $dialogConfirmBtn?.addEventListener("click", () => {
+    if ($valueTextArea !== null && $value !== null) {
+      $value.value = $valueTextArea.value;
+      $dialog?.close();
+      checkSampleValueLength();
+    }
+  });
 }
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
