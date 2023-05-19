@@ -337,21 +337,22 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
 
   $showMore?.addEventListener("click", () => {
     if ($showMore !== null) {
+      $value.rows = 5;
       $showMore.hidden = true;
       isShowMoreActive = true;
 
-      $value.rows = 5;
+      $value.classList.add("c-connect__enable-scroll");
       EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, isShowMoreActive);
-      $value.classList.add("changeHeight");
     }
   });
 
   $value.addEventListener("blur", () => {
     if ($value !== null && $showMore !== null) {
       $value.rows = 1;
-      $value.classList.remove("changeHeight");
       $showMore.hidden = false;
       isShowMoreActive = false;
+
+      $value.classList.remove("c-connect__enable-scroll");
       EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, isShowMoreActive);
     }
   });

@@ -153,20 +153,6 @@
   background: none;
 }
 
-.c-connect__textarea{
-  font-size: var(--propertize__font-size--tiny);
-  font-family: var(--propertize__font-family);
-  border: none;
-  padding: 0 var(--propertize__spacing--small);
-  width: 100%;
-  border: 1px solid var(--propertize__color--accent);
-  border-radius: var(--propertize__border-radius);
-  resize: none;
-  width: 250px;
-  height: 50px;  
-  overflow-y: scroll;
-}
-
 .c-connect__container {
   display: none;
 }
@@ -194,7 +180,7 @@
   text-decoration: underline;
 }
 
-.changeHeight {
+.c-connect__enable-scroll {
   overflow-y: scroll;
   resize: none;
 }
