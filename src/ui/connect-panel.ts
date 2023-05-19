@@ -91,9 +91,9 @@ function handleIconClick(trigger: HTMLElement) {
 function checkSampleValueLength() {
   if ($value !== null && $showMore !== null) {
     if ($value.value.length > maxCharactersInputfield) {
-      $showMore?.classList.add("is-active");
+      $showMore.hidden = false;
     } else {
-      $showMore?.classList.remove("is-active");
+      $showMore.hidden = true;
     }
   }
 }

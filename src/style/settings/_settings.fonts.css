@@ -3,6 +3,7 @@
     --propertize__font--fallback: Arial, sans-serif;
     --propertize__font-family: var(--propertize__font--primary), var(--propertize__font--fallback);
   
+    --propertize__font-size--minuscule: 8px;
     --propertize__font-size--tiny: 11px;
     --propertize__font-size--small: 14px;
     --propertize__font-size--large: 18px;
