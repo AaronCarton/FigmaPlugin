@@ -431,15 +431,21 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
-
+    const foundLinkedAnno = figma.currentPage.findOne((x) => x.id === found?.annotation.id);
+    console.log("found for update", found);
     if (found !== undefined) {
       // Item already has an annotation.
       found.data = inputValues;
-      const coords = found.annotation.absoluteBoundingBox;
+      console.log("found data assigned", found.data);
+      const coords =
+        found.annotation.absoluteBoundingBox && found.annotation.absoluteBoundingBox.x === 0
+          ? foundLinkedAnno?.absoluteBoundingBox
+          : found.annotation.absoluteBoundingBox;
+      console.log("coords", coords);
       figma.currentPage.findOne((x) => x.id === found.annotation.id)?.remove();
       found.annotation = createAnnotation(inputValues);
       AnnotationElements.annotationLayer.appendChild(found.annotation);
-      if (coords !== null) {
+      if (coords !== null && coords !== undefined) {
         found.annotation.x = coords.x;
         found.annotation.y = coords.y;
       }
@@ -487,7 +493,7 @@ export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
     lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
-
+    console.log("curr selection", found);
     highlightedAnnotationLinkItem === undefined
       ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
       : console.log("Highlight is not undefined");
