@@ -487,6 +487,9 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       }
     }
   }
+  // After update logic is done, update the MP data.
+  figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
+  figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
 }
 
 export function sendDataToFrontend() {
@@ -556,5 +559,6 @@ export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFram
   if (AnnotationElements.parentFrames !== parentFrames) {
     AnnotationElements.parentFrames = parentFrames;
   }
-  console.log("updated", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
+  console.log("Given MP data in update func", links, parentFrames);
+  console.log("updated local data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
 }
