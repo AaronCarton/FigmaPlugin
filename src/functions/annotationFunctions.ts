@@ -63,6 +63,10 @@ function createAnnotation(inputValues: AnnotationInput) {
 }
 
 function determineFrameSide(elem: SceneNode, parentFrame: FrameNode) {
+  if (parentFrame === undefined) {
+    const found = <FrameNode>figma.currentPage.findOne((x) => x.id === parentFrame.id);
+    found !== null ? (parentFrame = found) : console.log("no parent found");
+  }
   if (elem.absoluteTransform[0][2] < parentFrame.absoluteTransform[0][2] + parentFrame.width / 2) {
     return PropertizeConstants.sideLeft;
   } else {
@@ -457,6 +461,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       linkAnnotationToSourceNodes[linkAnnotationToSourceNodes.indexOf(found)] = found;
     } else {
       // Item doesn't have an annotation yet.
+      console.log("item that needs anno", currentItem);
       const parent = determineParentFrame(currentItem);
       const foundParent = AnnotationElements.parentFrames.find((x) => x.frame.id === parent.id);
 
