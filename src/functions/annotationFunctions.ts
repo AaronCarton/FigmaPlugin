@@ -63,9 +63,10 @@ function createAnnotation(inputValues: AnnotationInput) {
 }
 
 function determineFrameSide(elem: SceneNode, parentFrame: FrameNode) {
-  if (parentFrame === undefined) {
+  if (parentFrame.absoluteTransform === undefined) {
     const found = <FrameNode>figma.currentPage.findOne((x) => x.id === parentFrame.id);
     found !== null ? (parentFrame = found) : console.log("no parent found");
+    console.log("DetermineFrameSide parent was undefined, now found in figma", found);
   }
   if (elem.absoluteTransform[0][2] < parentFrame.absoluteTransform[0][2] + parentFrame.width / 2) {
     return PropertizeConstants.sideLeft;
@@ -219,8 +220,17 @@ function drawAnnotations(
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
   // Looping over given annotations.
+  if (sourceNodes[0].absoluteTransform === undefined) {
+    const foundSourceNodes0 = figma.currentPage.findOne((x) => x.id === sourceNodes[0].id);
+    foundSourceNodes0 !== null ? (sourceNodes[0] = foundSourceNodes0) : console.log("not found in figma");
+  }
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
+    let currentItem = sourceNodes[i];
+    if (currentItem.absoluteTransform === undefined) {
+      const foundCurrentItemInFigma = figma.currentPage.findOne((x) => x.id === currentItem.id);
+      foundCurrentItemInFigma !== null ? (currentItem = foundCurrentItemInFigma) : console.log("error while drawing, foundInFigma === null");
+    }
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
     let annotation: FrameNode | null = null;
 
@@ -254,6 +264,12 @@ function drawAnnotations(
     }
 
     annotation.x = startPoint;
+    if (sourceNodes[i].absoluteTransform === undefined) {
+      const found = figma.currentPage.findOne((x) => x.id === sourceNodes[i].id);
+      if (found !== null) {
+        sourceNodes[i] = found;
+      }
+    }
     annotation.y = determineOverlap(i, annotation, sourceNodes[i], lastAddedAnnotationY);
     lastAddedAnnotationY = annotation.y;
     AnnotationElements.annotationLayer.appendChild(annotation);
@@ -464,7 +480,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       console.log("item that needs anno", currentItem);
       const parent = determineParentFrame(currentItem);
       const foundParent = AnnotationElements.parentFrames.find((x) => x.frame.id === parent.id);
-
+      console.log("foundParent for drawing new anno", foundParent);
       if (foundParent !== undefined) {
         // Parent frame of new item found in parentFrames array.
         const side = determineFrameSide(currentItem, foundParent.frame);
