@@ -2,6 +2,10 @@
   display: none;
 }
 
+.c-filter__container {
+  display: none;
+}
+
 .c-filter__item {
   display: flex;
   align-items: center;

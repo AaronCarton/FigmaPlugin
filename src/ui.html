@@ -155,33 +155,41 @@
     <!-- #endregion -->
     <!-- #region FILTER PANEL -->
     <section class="c-filter js-panel-item" id="filter">
-      <div class="c-filter__item">
-        <span class="c-filter__item--title">Data source</span>
-        <select class="c-filter__item--select js-dataSource-filter" required>
-          <option value="" selected disabled>Choose source</option>
-        </select>
+      <div class="c-filter__container js-connection">
+        <div class="c-filter__item">
+          <span class="c-filter__item--title">Data source</span>
+          <select class="c-filter__item--select js-dataSource-filter" required>
+            <option value="" selected disabled>Choose source</option>
+          </select>
+        </div>
+        <div class="c-filter__item">
+          <span class="c-filter__item--title">Entity</span>
+          <select class="c-filter__item--select js-entity-filter" required>
+            <option value="" selected disabled>Choose entity</option>
+          </select>
+        </div>
+        <div class="c-filter__item">
+          <span class="c-filter__item--title">Attribute</span>
+          <select class="c-filter__item--select js-attribute-filter" required>
+            <option value="" selected disabled>Choose attribute</option>
+          </select>
+        </div>
+        <div class="c-filter__item">
+          <span class="c-filter__item--title">Data type</span>
+          <select class="c-filter__item--select js-dataType-filter" required>
+            <option value="" selected disabled>Choose data type</option>
+          </select>
+        </div>
+        <div class="c-filter__item c-filter__item--bottom">
+          <a class="c-filter__item--reset">reset filters</a>
+          <button class="c-filter__item--button">Filter Annotations</button>
+        </div>
       </div>
-      <div class="c-filter__item">
-        <span class="c-filter__item--title">Entity</span>
-        <select class="c-filter__item--select js-entity-filter" required>
-          <option value="" selected disabled>Choose entity</option>
-        </select>
-      </div>
-      <div class="c-filter__item">
-        <span class="c-filter__item--title">Attribute</span>
-        <select class="c-filter__item--select js-attribute-filter" required>
-          <option value="" selected disabled>Choose attribute</option>
-        </select>
-      </div>
-      <div class="c-filter__item">
-        <span class="c-filter__item--title">Data type</span>
-        <select class="c-filter__item--select js-dataType-filter" required>
-          <option value="" selected disabled>Choose data type</option>
-        </select>
-      </div>
-      <div class="c-filter__item c-filter__item--bottom">
-        <a class="c-filter__item--reset">reset filters</a>
-        <button class="c-filter__item--button">Filter Annotations</button>
+      <div class="js-disconnected c-disconnected is-active">
+        <p class="c-disconnected__text">
+          <span class="u-txt-bold">No connection</span> to database, <span class="u-txt-bold">go to the settings tab</span> to add the connection link
+          and API keys.
+        </p>
       </div>
     </section>
     <!-- #endregion -->
