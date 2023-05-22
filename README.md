@@ -18,6 +18,6 @@ To start you need to download the folder from: [link will come here]()
 
 To import the plugin, follow these steps:
 
-1. Go to Figma and select this in the top navigation bar: [Top navigation bar](./Images/header_figma.png)
-2. Go to plugins, change Recents to Development and click on: + New [Plugins field](./Images/plugins.png)
+1. Go to Figma and select this in the top navigation bar: [Image of top navigation bar](./Images/header_figma.png)
+2. Go to plugins, change Recents to Development and click on: + New [Image of plugins field](./Images/plugins.png)
 3. Once clicked on the button, you click on: Import plugin from manifest, navigate to the folder where you saved the plugin eariler. Then in the folder, select the manifest.json file and the plugin is now imported and you can start it.
