@@ -47,8 +47,6 @@ export function changeConnectionState(state: boolean) {
   connectionState = state;
   if ($connectionPanel && $noConnectionPanel) {
     if (connectionState == true) {
-      // $connectionPanel.classList.add(isActive);
-      // $noConnectionPanel.classList.remove(isActive);
       $connectionPanel.forEach((item) => {
         item.classList.add(isActive);
       });
@@ -56,8 +54,6 @@ export function changeConnectionState(state: boolean) {
         item.classList.remove(isActive);
       });
     } else {
-      // $connectionPanel.classList.remove(isActive);
-      // $noConnectionPanel.classList.add(isActive);
       $connectionPanel.forEach((item) => {
         item.classList.remove(isActive);
       });
