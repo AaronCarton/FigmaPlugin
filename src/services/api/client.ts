@@ -343,6 +343,9 @@ export default class ApiClient {
       headers: headers,
     }).catch((err) => {
       console.error("[API] Fetch Error", err); // temporary - remove later
+      err.message = "Unauthorized, please check your database URL";
+      EventHub.getInstance().sendCustomEvent(Events.API_ERROR, err.message);
+
       throw err;
     });
     console.debug(`[API] Response: ${method} ${url}`, res); // temporary - remove later
