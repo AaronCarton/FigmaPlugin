@@ -32,7 +32,7 @@ export class ConnectPanel extends BaseComponent {
   initComponent(): void {
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
-    downSizeSampleVlueChangingTab();
+    downSizeSampleValueChangingTab();
     // Add "Enter" event listeners to input fields to trigger icon click
     [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
       if (!select) return;
@@ -88,7 +88,7 @@ function handleIconClick(trigger: HTMLElement) {
     inputField.focus();
   }
 }
-function downSizeSampleVlueChangingTab() {
+function downSizeSampleValueChangingTab() {
   $tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const selectedTab = tab.getAttribute("data-target");
@@ -364,7 +364,6 @@ function downSizeSampleValue(tab: string) {
     isShowMoreActive = false;
 
     $value.classList.remove("c-connect__enable-scroll");
-    // const tab: string = "connect";
     EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
   }
 }

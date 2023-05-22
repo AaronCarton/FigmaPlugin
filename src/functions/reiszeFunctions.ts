@@ -27,11 +27,7 @@ export function resizeByConnection(connection: boolean) {
 export function resizeByShowMore(tab: string, isShowMore: boolean) {
   switch (tab) {
     case PropertizeConstants.connectTab:
-      if (isShowMore) {
-        figma.ui.resize(345, 350);
-      } else {
-        figma.ui.resize(345, 310);
-      }
+      figma.ui.resize(345, isShowMore ? 350 : 310);
       break;
     case PropertizeConstants.settingsTab:
       figma.ui.resize(345, 355);
