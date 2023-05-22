@@ -29,4 +29,5 @@ function handleChanges(event: DocumentChangeEvent) {
 export default function multiUserManager(event: DocumentChangeEvent) {
   console.log("Updating MP data");
   handleChanges(event);
+  console.log("updated MP data");
 }

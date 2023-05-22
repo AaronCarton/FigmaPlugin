@@ -220,13 +220,16 @@ function drawAnnotations(
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
   // Looping over given annotations.
-  if (sourceNodes[0].absoluteTransform === undefined) {
-    const foundSourceNodes0 = figma.currentPage.findOne((x) => x.id === sourceNodes[0].id);
-    foundSourceNodes0 !== null ? (sourceNodes[0] = foundSourceNodes0) : console.log("not found in figma");
-  }
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
     let currentItem = sourceNodes[i];
+    // Test for redrawing, 0,0 (x,y) bug
+    if (currentItem.absoluteTransform === undefined) {
+      const foundSourceNode = figma.currentPage.findOne((x) => x.id === currentItem.id);
+      foundSourceNode !== null ? (sourceNodes[i] = foundSourceNode) : console.log("not found in figma");
+      console.log("found Source Node for update", foundSourceNode);
+    }
+
     if (currentItem.absoluteTransform === undefined) {
       const foundCurrentItemInFigma = figma.currentPage.findOne((x) => x.id === currentItem.id);
       foundCurrentItemInFigma !== null ? (currentItem = foundCurrentItemInFigma) : console.log("error while drawing, foundInFigma === null");
@@ -438,8 +441,8 @@ export function initAnnotations(annotationData: Array<Annotation>) {
 
   // If you are not the first person to launch the plugin, you should get the parentframes and link array from the pluginData.
   if (annotationLayerFound) {
-    AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData("MP_AnnotationElements")) as Array<frame>;
-    linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData("MP_linkAnnotationToSourceNodes")) as Array<annotationLinkItem>;
+    AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData("MP_AnnotationElements"));
+    linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData("MP_linkAnnotationToSourceNodes"));
     console.log("init not first connect: ", AnnotationElements.parentFrames, linkAnnotationToSourceNodes);
   }
   // Listen to updates after first initial drawing of the annotations.
@@ -451,16 +454,18 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
-    const foundLinkedAnno = figma.currentPage.findOne((x) => x.id === found?.annotation.id);
+    const foundLinkedAnnoCoords = figma.currentPage.findOne((x) => x.id === found?.annotation.id)?.absoluteBoundingBox;
     console.log("found for update", found);
+    console.log("found linked anno for update", foundLinkedAnnoCoords);
     if (found !== undefined) {
       // Item already has an annotation.
       found.data = inputValues;
       console.log("found data assigned", found.data);
-      const coords =
-        found.annotation.absoluteBoundingBox && found.annotation.absoluteBoundingBox.x === 0 && foundLinkedAnno !== null
-          ? foundLinkedAnno.absoluteBoundingBox
-          : found.annotation.absoluteBoundingBox;
+      // const coords =
+      //   found.annotation.absoluteBoundingBox && found.annotation.absoluteBoundingBox.x === 0 && foundLinkedAnnoCoords !== null
+      //     ? foundLinkedAnnoCoords
+      //     : found.annotation.absoluteBoundingBox;
+      const coords = foundLinkedAnnoCoords;
       console.log("coords", coords);
       figma.currentPage.findOne((x) => x.id === found.annotation.id)?.remove();
       found.annotation = createAnnotation(inputValues);
@@ -489,6 +494,7 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         // Push item to corresponding array.
         sourceNodes.push(currentItem);
         // Redraw that updated array.
+        console.log("sourceNodes for creating new anno", sourceNodes);
         drawAnnotations(startPoint, sortNodesAccordingToYCoords(sourceNodes), inputValues);
       } else {
         // Parent frame of new item is not yet added to parentFrames Array.
