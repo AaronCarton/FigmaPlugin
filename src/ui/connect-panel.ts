@@ -14,7 +14,6 @@ const $value: HTMLTextAreaElement | null = document.querySelector(".js-sample-va
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
 const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
-const $valueTextArea: HTMLTextAreaElement | null = document.querySelector(".c-connect__textarea");
 const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
 
 const iconCheck = "c-icon_check_class";
@@ -321,14 +320,10 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 
   $value.addEventListener("keyup", () => {
-    checkSampleValueLength();
-    disableCreate();
-  });
-
-  $valueTextArea?.addEventListener("keyup", () => {
-    if ($valueTextArea !== null && $value !== null) {
-      $value.value = $valueTextArea.value;
+    if ($showMore && $value.value.length > maxCharactersInputfield) {
+      $showMore.hidden = true;
     }
+    disableCreate();
   });
 
   $showMore?.addEventListener("click", () => {
