@@ -1,6 +1,5 @@
-import { AnnotationElements } from "../classes/annotationElements";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
-import { linkAnnotationToSourceNodes, updateMultiUserVars } from "./annotationFunctions";
+import { updateMultiUserVars } from "./annotationFunctions";
 import { frame } from "../interfaces/frame";
 
 // function createMPData(links: Array<annotationLinkItem>, AnnotationElements: AnnotationElements) {
@@ -24,7 +23,7 @@ function handleChanges(event: DocumentChangeEvent) {
     console.log("pluginLinks", pluginLinksData);
     console.log("pluginAnnotationElements", pluginAnnotationElements);
     updateData(pluginLinksData, pluginAnnotationElements);
-  } 
+  }
 }
 
 export default function multiUserManager(event: DocumentChangeEvent) {
