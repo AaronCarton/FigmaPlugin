@@ -214,10 +214,12 @@ function changeFieldsOnInput(fieldName: string, state: boolean) {
     if (state === true) {
       $input.disabled = true;
       $textBlock.classList.add("disabled");
+      $btn.disabled = true;
       $btn.classList.add("c-connect__cta--disabled");
     } else {
       $input.disabled = false;
       $textBlock.classList.remove("disabled");
+      $btn.disabled = false;
       $btn.classList.remove("c-connect__cta--disabled");
     }
   }
