@@ -45,6 +45,7 @@ export interface EventMap {
   [Events.UI_UPDATE_FIELDS]: AnnotationInput;
   [Events.UI_CLEAR_FIELDS]: null;
   [Events.UI_SHOW_MORE]: boolean;
+  [Events.UI_RESET_TEXTAREA_SIZE]: null;
 
   [Events.SET_SAMPLE_VALUE_FROM_FIGMANODE]: string;
   [Events.UPDATE_NODETEXT_FROM_ODS]: string;

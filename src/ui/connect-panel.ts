@@ -182,6 +182,7 @@ function clearFields() {
     $createBtn.disabled = true;
     $createBtn.classList.remove("button-pointer");
 
+    downSizeSampleValue();
     checkSampleValueLength();
 
     changeFieldsOnInput("entity", true);
@@ -206,18 +207,6 @@ function validateDataType() {
     return false;
   }
   return true;
-}
-
-function replaceWithTextArea() {
-  if ($value !== null && $valueTextArea !== null) {
-    $value.hidden = true;
-    $valueTextArea.hidden = false;
-
-    $valueTextArea.value = $value.value;
-
-    $valueTextArea.required = true;
-    $value.required = false;
-  }
 }
 
 function changeFieldsOnInput(fieldName: string, state: boolean) {
@@ -331,7 +320,6 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   $valueTextArea?.addEventListener("keyup", () => {
     if ($valueTextArea !== null && $value !== null) {
       $value.value = $valueTextArea.value;
-      console.log("value", $value.value);
     }
   });
 
@@ -348,15 +336,27 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
 
   $value.addEventListener("blur", () => {
     if ($value !== null && $showMore !== null) {
-      $value.rows = 1;
-      $showMore.hidden = false;
-      isShowMoreActive = false;
-
-      $value.classList.remove("c-connect__enable-scroll");
-      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, isShowMoreActive);
+      if ($value.value.length > maxCharactersInputfield) {
+        downSizeSampleValue();
+      }
     }
   });
 }
+EventHub.getInstance().makeEvent(Events.UI_RESET_TEXTAREA_SIZE, () => {
+  downSizeSampleValue();
+});
+
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
 });
+
+function downSizeSampleValue() {
+  if ($value !== null && $showMore !== null) {
+    $value.rows = 1;
+    $showMore.hidden = false;
+    isShowMoreActive = false;
+
+    $value.classList.remove("c-connect__enable-scroll");
+    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, isShowMoreActive);
+  }
+}
