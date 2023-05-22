@@ -10,4 +10,12 @@ Propertize features an annotation tool that displays metadata alongside the desi
 
 Propertize was conceived with the reason of replacing complex and cluttered data tables on the wiki with a Figma plugin directly applicable to designs. This allows the client to easily evaluate the data model alongside the design and facilitate discussion.
 
+# Getting Started
 
+To start you need to download the folder from: [link will come here]()
+
+To import the plugin, follow these steps:
+
+1. Go to Figma and select this in the top navigation bar: [Figma header](./Images/header_figma.png)
+2. Go to plugins, change Recents to Development and click on: + New [Plugins field](./Images/plugins.png)
+3. Once clicked on the button, you click on: Import plugin from manifest, navigate to the folder where you saved the plugin eariler. Then in the folder, select the manifest.json file and the plugin is now imported and you can start it.
