@@ -116,7 +116,7 @@ figma.on("close", async () => {
 
 // Initialize the UI components
 loadFonts();
-["Settings", "NavigationTabs", "ConnectPanel"].forEach((componentName) => {
+["Settings", "NavigationTabs", "ConnectPanel", "FilterPanel"].forEach((componentName) => {
   console.log(`initialize${componentName}`);
 
   EventHub.getInstance().sendCustomEvent(Events.UI_INITIALIZE_COMPONENT, componentName);
