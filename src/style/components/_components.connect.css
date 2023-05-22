@@ -165,7 +165,7 @@
   margin: var(--propertize__spacing) 0;
 }
 
-.js-sample-value{
+.c-connect__sample-value {
   overflow: hidden;
   text-overflow: ellipsis;
   resize: none;

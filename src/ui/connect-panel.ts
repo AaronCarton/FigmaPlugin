@@ -324,7 +324,7 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 
   $showMore?.addEventListener("click", () => {
-    if ($showMore !== null) {
+    if ($showMore) {
       $value.rows = 5;
       $showMore.hidden = true;
       isShowMoreActive = true;
@@ -335,7 +335,7 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 
   $value.addEventListener("blur", () => {
-    if ($value !== null && $showMore !== null) {
+    if ($value && $showMore) {
       if ($value.value.length > maxCharactersInputfield) {
         downSizeSampleValue();
       }
@@ -351,7 +351,7 @@ EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sample
 });
 
 function downSizeSampleValue() {
-  if ($value !== null && $showMore !== null) {
+  if ($value && $showMore) {
     $value.rows = 1;
     $showMore.hidden = false;
     isShowMoreActive = false;
