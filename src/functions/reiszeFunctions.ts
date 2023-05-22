@@ -24,10 +24,22 @@ export function resizeByConnection(connection: boolean) {
   }
 }
 
-export function resizeByShowMore(isShowMore: boolean) {
-  if (isShowMore) {
-    figma.ui.resize(345, 350);
-  } else {
-    figma.ui.resize(345, 310);
+export function resizeByShowMore(tab: string, isShowMore: boolean) {
+  switch (tab) {
+    case PropertizeConstants.connectTab:
+      if (isShowMore) {
+        figma.ui.resize(345, 350);
+      } else {
+        figma.ui.resize(345, 310);
+      }
+      break;
+    case PropertizeConstants.settingsTab:
+      figma.ui.resize(345, 355);
+      break;
+    case PropertizeConstants.usageTab:
+      figma.ui.resize(345, 590);
+      break;
+    default:
+      break;
   }
 }

@@ -13,7 +13,7 @@ figma.showUI(__html__, { width: 345, height: 296 });
 //////* UI EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UI_CHANGE_TAB, ({ tab, connection }) => resizeByTab(tab, connection));
 EventHub.getInstance().makeEvent(Events.UI_CHANGE_VISIBILITY, (state) => changeLayerVisibility(state));
-EventHub.getInstance().makeEvent(Events.UI_SHOW_MORE, (isShowMoreActive) => resizeByShowMore(isShowMoreActive));
+EventHub.getInstance().makeEvent(Events.UI_SHOW_MORE, ({ tab, isShowMoreActive }) => resizeByShowMore(tab, isShowMoreActive));
 
 //////* LOCAL STORAGE EVENTS *//////
 EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {

@@ -1,3 +1,4 @@
+import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -14,6 +15,7 @@ const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
 const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
 const $valueTextArea: HTMLTextAreaElement | null = document.querySelector(".c-connect__textarea");
+const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -30,6 +32,7 @@ export class ConnectPanel extends BaseComponent {
   initComponent(): void {
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
+    downSizeSampleVlueChangingTab();
     // Add "Enter" event listeners to input fields to trigger icon click
     [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
       if (!select) return;
@@ -85,14 +88,19 @@ function handleIconClick(trigger: HTMLElement) {
     inputField.focus();
   }
 }
-
+function downSizeSampleVlueChangingTab() {
+  $tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const selectedTab = tab.getAttribute("data-target");
+      if (isShowMoreActive && selectedTab) {
+        downSizeSampleValue(selectedTab);
+      }
+    });
+  });
+}
 function checkSampleValueLength() {
-  if ($value !== null && $showMore !== null) {
-    if ($value.value.length > maxCharactersInputfield) {
-      $showMore.hidden = false;
-    } else {
-      $showMore.hidden = true;
-    }
+  if ($value && $showMore) {
+    $showMore.hidden = $value.value.length < maxCharactersInputfield;
   }
 }
 
@@ -182,7 +190,7 @@ function clearFields() {
     $createBtn.disabled = true;
     $createBtn.classList.remove("button-pointer");
 
-    downSizeSampleValue();
+    downSizeSampleValue("connect");
     checkSampleValueLength();
 
     changeFieldsOnInput("entity", true);
@@ -330,33 +338,33 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
       isShowMoreActive = true;
 
       $value.classList.add("c-connect__enable-scroll");
-      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, isShowMoreActive);
+      const tab: string = "connect";
+      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
     }
   });
 
   $value.addEventListener("blur", () => {
-    if ($value && $showMore) {
-      if ($value.value.length > maxCharactersInputfield) {
-        downSizeSampleValue();
-      }
+    if ($value && $showMore && $value.value.length > maxCharactersInputfield) {
+      downSizeSampleValue("connect");
     }
   });
 }
 EventHub.getInstance().makeEvent(Events.UI_RESET_TEXTAREA_SIZE, () => {
-  downSizeSampleValue();
+  downSizeSampleValue("connect");
 });
 
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
 });
 
-function downSizeSampleValue() {
+function downSizeSampleValue(tab: string) {
   if ($value && $showMore) {
     $value.rows = 1;
     $showMore.hidden = false;
     isShowMoreActive = false;
 
     $value.classList.remove("c-connect__enable-scroll");
-    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, isShowMoreActive);
+    // const tab: string = "connect";
+    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
   }
 }
