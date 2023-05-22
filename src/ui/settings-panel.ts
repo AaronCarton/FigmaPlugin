@@ -114,6 +114,8 @@ export class Settings extends BaseComponent {
 
   loadDropdowns(elementName: string, data: string[]) {
     const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
+    const $dropDownFilter: HTMLSelectElement | null = document.querySelector(`.js-${elementName}-filter`);
+
     const texts: { [key: string]: string } = {
       dataSource: "Choose source",
       entity: "Choose entity",
@@ -121,18 +123,25 @@ export class Settings extends BaseComponent {
       dataType: "Choose data type",
     };
 
-    if ($dropDown) {
+    if ($dropDown && $dropDownFilter) {
       // remove all options
       $dropDown.options.length = 0;
+      $dropDownFilter.options.length = 0;
       // add default option
       const defaultOption = new Option(texts[elementName], "");
+      const defaultOptionFilter = new Option(texts[elementName], "");
       defaultOption.disabled = true;
       defaultOption.selected = true;
+      defaultOptionFilter.disabled = true;
+      defaultOptionFilter.selected = true;
       $dropDown.add(defaultOption);
+      $dropDownFilter.add(defaultOptionFilter);
     }
     data.forEach((element) => {
       const newOption = new Option(element, element);
+      const newOptionFilter = new Option(element, element);
       $dropDown?.add(newOption);
+      $dropDownFilter?.add(newOptionFilter);
     });
   }
 
