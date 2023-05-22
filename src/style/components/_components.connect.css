@@ -110,6 +110,13 @@
   color: var(--propertize__color--primary);
 }
 
+.c-connect__field--select:disabled:hover,
+.c-connect__field--select:disabled:focus {
+  border: 1px solid transparent;
+  outline: none;
+  color: var(--propertize__color--primary);
+}
+
 .c-connect__field--text {
   display: none;
   width: 100%;
