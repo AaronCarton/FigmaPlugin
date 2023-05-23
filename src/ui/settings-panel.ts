@@ -15,6 +15,8 @@ const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_so
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 
 let projectKey: string = "";
+const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
+
 //Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-spinner");
 const $plugin: HTMLElement | null = document.querySelector(".c-content");
@@ -57,6 +59,7 @@ export class Settings extends BaseComponent {
       Object.keys(data).forEach((key) => {
         this.loadDropdowns(key, data[key]);
       });
+      this.loadDropdowns("dataType", dataTypes);
     });
 
     EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
