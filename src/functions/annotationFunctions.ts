@@ -400,7 +400,7 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   // Adding current user to the list of users.
   if (figma.currentUser) {
     addCurrentUser(figma.currentUser);
-    console.log(figma.root.getPluginData("MP_currentUsers"));
+    console.log("currentUsers in init", figma.root.getPluginData("MP_currentUsers"));
   }
 
   if (!annotationLayerFound) {

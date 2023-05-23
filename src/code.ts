@@ -117,6 +117,7 @@ figma.on("close", async () => {
   if (lastUser) {
     AnnotationElements.annotationLayer.remove();
     removeCurrentUser();
+    figma.root.setPluginData("MP_currentUser", "");
   } else {
     removeCurrentUser();
   }

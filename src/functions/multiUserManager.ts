@@ -3,10 +3,11 @@ import { updateMultiUserVars } from "./annotationFunctions";
 import { frame } from "../interfaces/frame";
 
 export function addCurrentUser(user: User) {
-  const currentUsers = figma.root.getPluginData("MP_currentUsers");
+  let currentUsers: string | Array<string> = figma.root.getPluginData("MP_currentUsers");
   console.log("currentUsers before adding", currentUsers);
-  if (currentUsers.length !== 0) {
+  if (currentUsers !== "") {
     // If not first user, add currentUser id to array.
+    currentUsers = JSON.parse(currentUsers) as Array<string>;
     currentUsers.push(user.id as string);
     figma.root.setPluginData("MP_currentUsers", JSON.stringify(currentUsers));
     console.log("user added to currentUser array: ", currentUsers);
