@@ -44,13 +44,15 @@ export default class ApiClient {
 
       const results = await api.testCredentials();
       // if client or source key is false, send error message
-      if (!results.clientKey || !results.sourceKey) {
+      if (!results.client || !results.source) {
         const invalidKeys = Object.entries(results)
           .filter(([, value]) => !value)
-          .map(([key]) => key)
-          .join(", ");
+          .map(([key]) => key);
         debugger;
-        EventHub.getInstance().sendCustomEvent(Events.API_ERROR, `Invalid key provided: ${invalidKeys}`);
+        EventHub.getInstance().sendCustomEvent(
+          Events.API_ERROR,
+          `The API ${invalidKeys.join(" and ")} key ${invalidKeys.length > 1 ? " are" : " is"} invalid. Please check your credentials.`,
+        );
         return;
       }
       api
@@ -254,7 +256,7 @@ export default class ApiClient {
    * Test the client and source API keys
    * @returns {Promise<{client: boolean, source: boolean}>} - Promise that resolves to an object containing the results of the test
    */
-  public async testCredentials(): Promise<{ clientKey: boolean; sourceKey: boolean }> {
+  public async testCredentials(): Promise<{ client: boolean; source: boolean }> {
     const clientRes = await this.fetchData("/api/propertize/test/propertize/authenticated", {
       method: "GET",
       apiKey: ApiClient.CLIENT_APIKEY,
@@ -264,8 +266,7 @@ export default class ApiClient {
       method: "GET",
       apiKey: ApiClient.SOURCE_APIKEY,
     });
-    debugger;
-    return { clientKey: clientRes.status === 200, sourceKey: sourceRes.status === 200 };
+    return { client: clientRes.status === 200, source: sourceRes.status === 200 };
   }
 
   /**
