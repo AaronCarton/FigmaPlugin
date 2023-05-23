@@ -8,6 +8,9 @@ export function resizeByTab(tab: string, connection: boolean) {
     case PropertizeConstants.settingsTab:
       figma.ui.resize(345, 355);
       break;
+    case PropertizeConstants.filterTab:
+      figma.ui.resize(345, 261);
+      break;
     case PropertizeConstants.usageTab:
       figma.ui.resize(345, 590);
       break;

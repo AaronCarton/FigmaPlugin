@@ -7,7 +7,7 @@ import { Events } from "./services/events/Events";
 import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
-import { isLastUser, isLastUser, removeCurrentUser } from "./functions/multiUserManager";
+import { isLastUser, removeCurrentUser } from "./functions/multiUserManager";
 
 figma.showUI(__html__, { width: 345, height: 296 });
 
@@ -115,7 +115,7 @@ figma.on("close", async () => {
   // If so, delete the annotion, otherwise delete user from user list
   const lastUser: boolean = isLastUser();
   if (lastUser) {
-    console.log("is last user")
+    console.log("is last user");
     AnnotationElements.annotationLayer.remove();
     removeCurrentUser();
     figma.root.setPluginData("MP_currentUser", "");

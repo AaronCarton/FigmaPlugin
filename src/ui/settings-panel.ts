@@ -50,7 +50,7 @@ export class Settings extends BaseComponent {
       }
 
       changeConnectionState(true);
-      spinnerEvents();
+      toggleSpinner();
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.value)]));
@@ -81,6 +81,7 @@ export class Settings extends BaseComponent {
 
     EventHub.getInstance().makeEvent(Events.API_ERROR, (message) => {
       $button?.removeAttribute("disabled");
+      toggleSpinner();
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, message);
     });
 
@@ -100,7 +101,7 @@ export class Settings extends BaseComponent {
       clientKey: $clientKey?.value || "",
       sourceKey: $sourceKey?.value || "",
     });
-    spinnerEvents();
+    toggleSpinner();
 
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
       baseURL: $baseURL?.value || "",
@@ -178,7 +179,7 @@ function toggleShowAnnotations() {
     $annotationToggle.checked = true;
   }
 }
-function spinnerEvents() {
+function toggleSpinner() {
   $spinner?.classList.toggle("is-active");
   $plugin?.classList.toggle("no-pointer");
 }

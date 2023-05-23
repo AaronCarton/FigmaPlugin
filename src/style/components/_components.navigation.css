@@ -23,6 +23,10 @@
   fill: var(--propertize__color--primary);
 }
 
+.c-nav__left-item.is-active .a-filter-icon {
+  fill: var(--propertize__color--primary);
+}
+
 .c-nav__right-item {
   cursor: pointer;
   color: var(--propertize__color--secondary);
