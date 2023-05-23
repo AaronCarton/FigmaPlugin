@@ -18,7 +18,7 @@ const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 const maxCharactersInputfield = 35;
 
-const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
+// const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -55,7 +55,7 @@ export class ConnectPanel extends BaseComponent {
         });
       }
     });
-    loadDataTypes(dataTypes);
+    // loadDataTypes(dataTypes);
   }
 }
 
@@ -178,14 +178,14 @@ function clearFields() {
   }
 }
 
-function loadDataTypes(data: string[]) {
-  if ($dataTypeSelect) {
-    data.forEach((dataType) => {
-      const option = new Option(dataType, dataType);
-      $dataTypeSelect.add(option);
-    });
-  }
-}
+// function loadDataTypes(data: string[]) {
+//   if ($dataTypeSelect) {
+//     data.forEach((dataType) => {
+//       const option = new Option(dataType, dataType);
+//       $dataTypeSelect.add(option);
+//     });
+//   }
+// }
 
 function validateDataType() {
   const dataTypeRegex: { [key: string]: RegExp } = {

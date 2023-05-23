@@ -13,8 +13,11 @@ const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLi
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
+const $dataTypeSelect: HTMLSelectElement | null = document.querySelector(".js-dataType");
 
 let projectKey: string = "";
+const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
+
 //Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-spinner");
 const $plugin: HTMLElement | null = document.querySelector(".c-content");
@@ -129,10 +132,18 @@ export class Settings extends BaseComponent {
       defaultOption.disabled = true;
       defaultOption.selected = true;
       $dropDown.add(defaultOption);
+      this.loadDataTypes(dataTypes);
     }
     data.forEach((element) => {
       const newOption = new Option(element, element);
       $dropDown?.add(newOption);
+    });
+  }
+
+  loadDataTypes(data: string[]) {
+    data.forEach((dataType) => {
+      const option = new Option(dataType, dataType);
+      $dataTypeSelect?.add(option);
     });
   }
 
