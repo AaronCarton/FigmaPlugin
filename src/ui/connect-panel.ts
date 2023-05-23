@@ -17,7 +17,8 @@ const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 const maxCharactersInputfield = 35;
-const dataTypeArray = ["int", "float", "char", "string", "enum", "array", "object", "bool", "date", "time", "datetime"];
+
+const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -27,7 +28,6 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    addDataTypes(dataTypeArray, $dataTypeSelect);
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
     // Add "Enter" event listeners to input fields to trigger icon click
@@ -55,6 +55,7 @@ export class ConnectPanel extends BaseComponent {
         });
       }
     });
+    loadDataTypes(dataTypes);
   }
 }
 
@@ -177,6 +178,15 @@ function clearFields() {
   }
 }
 
+function loadDataTypes(data: string[]) {
+  if ($dataTypeSelect) {
+    data.forEach((dataType) => {
+      const option = new Option(dataType, dataType);
+      $dataTypeSelect.add(option);
+    });
+  }
+}
+
 function validateDataType() {
   const dataTypeRegex: { [key: string]: RegExp } = {
     string: /^[\w\s\S]+$/,
@@ -227,15 +237,6 @@ function disableCreate() {
       $createBtn.classList.remove("button-pointer");
     }
   }
-}
-
-function addDataTypes(data: string[], dataTypeSelect: HTMLSelectElement | null) {
-  data.forEach((dataType) => {
-    const option = document.createElement("option");
-    option.value = dataType;
-    option.text = dataType;
-    dataTypeSelect?.appendChild(option);
-  });
 }
 
 if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
