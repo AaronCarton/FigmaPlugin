@@ -13,7 +13,6 @@ const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLi
 const $clientKey: HTMLInputElement | null = document.querySelector("#settings_clientKey");
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
-const $dataTypeSelect: HTMLSelectElement | null = document.querySelector(".js-dataType");
 
 let projectKey: string = "";
 const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
@@ -60,6 +59,7 @@ export class Settings extends BaseComponent {
       Object.keys(data).forEach((key) => {
         this.loadDropdowns(key, data[key]);
       });
+      this.loadDropdowns("dataType", dataTypes);
     });
 
     EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
@@ -132,7 +132,6 @@ export class Settings extends BaseComponent {
       defaultOption.disabled = true;
       defaultOption.selected = true;
       $dropDown.add(defaultOption);
-      this.loadDataTypes(dataTypes);
     }
     data.forEach((element) => {
       const newOption = new Option(element, element);
@@ -140,12 +139,12 @@ export class Settings extends BaseComponent {
     });
   }
 
-  loadDataTypes(data: string[]) {
-    data.forEach((dataType) => {
-      const option = new Option(dataType, dataType);
-      $dataTypeSelect?.add(option);
-    });
-  }
+  // loadDataTypes(data: string[]) {
+  //   data.forEach((dataType) => {
+  //     const option = new Option(dataType, dataType);
+  //     $dataTypeSelect?.add(option);
+  //   });
+  // }
 
   toggleAnnotations(e: Event) {
     const state: boolean = (<HTMLInputElement>e.target).checked;
