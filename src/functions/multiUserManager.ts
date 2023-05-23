@@ -22,7 +22,7 @@ export function removeCurrentUser() {
   const currentUsers = JSON.parse(figma.root.getPluginData("MP_currentUsers")) as Array<string>;
   if (figma.currentUser !== null) {
     const userIndex = currentUsers.indexOf(figma.currentUser.id as string);
-    currentUsers.splice(userIndex);
+    currentUsers.splice(userIndex, 1);
     console.log("deleted user ", figma.currentUser.id, " from user array: ", currentUsers);
   }
   figma.root.setPluginData("MP_currentUsers", JSON.stringify(currentUsers));
