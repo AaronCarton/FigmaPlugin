@@ -139,13 +139,6 @@ export class Settings extends BaseComponent {
     });
   }
 
-  // loadDataTypes(data: string[]) {
-  //   data.forEach((dataType) => {
-  //     const option = new Option(dataType, dataType);
-  //     $dataTypeSelect?.add(option);
-  //   });
-  // }
-
   toggleAnnotations(e: Event) {
     const state: boolean = (<HTMLInputElement>e.target).checked;
     EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_VISIBILITY, state);
