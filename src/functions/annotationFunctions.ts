@@ -3,11 +3,9 @@ import { AnnotationElements } from "../classes/annotationElements";
 import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { annotationLinkItem } from "../interfaces/annotationLinkItem";
-import { MessageTitle } from "../classes/messageTitles";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
-import { createFigmaError } from "./createError";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 export let lastSelectedNode: string = "";
@@ -476,24 +474,18 @@ export function sendDataToFrontend() {
         console.log("Found new item to highlight: ", found);
         highlight(found);
       }
-
-      figma.ui.postMessage({
-        type: MessageTitle.updateFields,
-        payload: {
-          values: found.data,
-        },
-      });
+      EventHub.getInstance().sendCustomEvent(Events.UI_UPDATE_FIELDS, found.data, true);
     }
     if (found === undefined) {
       if (figma.currentPage.selection[0].type === "TEXT") {
         EventHub.getInstance().sendCustomEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, figma.currentPage.selection[0].characters);
       } else {
-        figma.ui.postMessage({ type: MessageTitle.clearFields });
+        EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
         resetHighlightedAnnotation();
       }
     }
   } else {
-    figma.ui.postMessage({ type: MessageTitle.clearFields });
+    EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
     resetHighlightedAnnotation();
   }
 }
@@ -522,8 +514,8 @@ export function archiveAnnotation(annotation: Annotation) {
     found.vector.remove();
     found.annotation.remove();
     linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(found), 1);
-    figma.ui.postMessage({ type: MessageTitle.clearFields });
+    EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
   } else {
-    createFigmaError("Couldn't remove annotation.", 5000, true);
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Couldn't remove annotation.");
   }
 }
