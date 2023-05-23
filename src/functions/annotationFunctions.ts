@@ -413,7 +413,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   // Adding current user to the list of users.
   if (figma.currentUser) {
     addCurrentUser(figma.currentUser);
-    console.log("currentUsers in init", figma.root.getPluginData("MP_currentUsers"));
   }
 
   if (!annotationLayerFound) {
@@ -454,7 +453,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
 
   // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
   if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames && !annotationLayerFound) {
-    console.log("setting plugin data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
     figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
     figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
   }
@@ -463,7 +461,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   if (annotationLayerFound) {
     AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData("MP_AnnotationElements"));
     linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData("MP_linkAnnotationToSourceNodes"));
-    console.log("init not first connect: ", AnnotationElements.parentFrames, linkAnnotationToSourceNodes);
   }
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
@@ -475,46 +472,42 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
     const foundLinkedAnnoCoords = figma.currentPage.findOne((x) => x.id === found?.annotation.id)?.absoluteBoundingBox;
-    console.log("found for update", found);
-    console.log("found linked anno for update", foundLinkedAnnoCoords);
+
     if (found !== undefined) {
       // Item already has an annotation.
       found.data = inputValues;
-      console.log("found data assigned", found.data);
-      // const coords =
-      //   found.annotation.absoluteBoundingBox && found.annotation.absoluteBoundingBox.x === 0 && foundLinkedAnnoCoords !== null
-      //     ? foundLinkedAnnoCoords
-      //     : found.annotation.absoluteBoundingBox;
       const coords = foundLinkedAnnoCoords;
-      console.log("coords", coords);
       figma.currentPage.findOne((x) => x.id === found.annotation.id)?.remove();
       found.annotation = createAnnotation(inputValues);
       AnnotationElements.annotationLayer.appendChild(found.annotation);
+
       if (coords !== null && coords !== undefined) {
         found.annotation.x = coords.x;
         found.annotation.y = coords.y;
       }
+
       // If the highlighted item is updated = update the global var aswell to keep track of changing id of the vector and annotation
       if (highlightedAnnotationLinkItem !== undefined && found.sourceNode.id === highlightedAnnotationLinkItem.sourceNode.id) {
         highlightedAnnotationLinkItem = found;
         highlight(found);
       }
+
       linkAnnotationToSourceNodes[linkAnnotationToSourceNodes.indexOf(found)] = found;
     } else {
       // Item doesn't have an annotation yet.
-      console.log("item that needs anno", currentItem);
       const parent = determineParentFrame(currentItem);
       const foundParent = AnnotationElements.parentFrames.find((x) => x.frame.id === parent.id);
-      console.log("foundParent for drawing new anno", foundParent);
+
       if (foundParent !== undefined) {
         // Parent frame of new item found in parentFrames array.
         const side = determineFrameSide(currentItem, foundParent.frame);
         const startPoint = side === PropertizeConstants.sideLeft ? foundParent.startpointLeft : foundParent.startpointRight;
         const sourceNodes = side === PropertizeConstants.sideLeft ? foundParent.sourceNodesLeft : foundParent.sourceNodesRight;
+
         // Push item to corresponding array.
         sourceNodes.push(currentItem);
+
         // Redraw that updated array.
-        console.log("sourceNodes for creating new anno", sourceNodes);
         drawAnnotations(startPoint, sortNodesAccordingToYCoords(sourceNodes), inputValues);
       } else {
         // Parent frame of new item is not yet added to parentFrames Array.
