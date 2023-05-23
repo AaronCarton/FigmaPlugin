@@ -9,6 +9,7 @@ const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSou
 const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
+const $dataTypeSelect: HTMLSelectElement | null = document.querySelector(".js-dataType-select");
 const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
@@ -16,6 +17,7 @@ const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 const maxCharactersInputfield = 35;
+const dataTypeArray = ["int", "float", "char", "string", "enum", "array", "object", "bool", "date", "time", "datetime"];
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -25,6 +27,7 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
+    addDataTypes(dataTypeArray, $dataTypeSelect);
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
     // Add "Enter" event listeners to input fields to trigger icon click
@@ -224,6 +227,15 @@ function disableCreate() {
       $createBtn.classList.remove("button-pointer");
     }
   }
+}
+
+function addDataTypes(data: string[], dataTypeSelect: HTMLSelectElement | null) {
+  data.forEach((dataType) => {
+    const option = document.createElement("option");
+    option.value = dataType;
+    option.text = dataType;
+    dataTypeSelect?.appendChild(option);
+  });
 }
 
 if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
