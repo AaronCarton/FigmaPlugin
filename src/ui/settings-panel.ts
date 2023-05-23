@@ -81,7 +81,6 @@ export class Settings extends BaseComponent {
 
     EventHub.getInstance().makeEvent(Events.API_ERROR, (message) => {
       $button?.removeAttribute("disabled");
-      spinnerEvents();
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, message);
     });
 
