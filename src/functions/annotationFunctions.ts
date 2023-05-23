@@ -8,6 +8,7 @@ import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 import { createFigmaError } from "./createError";
+import { PropertizeColors } from "../classes/propertizeColors";
 
 export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 export let lastSelectedNode: string = "";
@@ -21,8 +22,8 @@ function createAnnotation(inputValues: AnnotationInput) {
   frame.resize(320, 130);
   page.appendChild(frame);
 
-  frame.fills = [{ type: "SOLID", color: PropertizeConstants.figmaLightBlue }];
-  frame.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+  frame.fills = [{ type: "SOLID", color: PropertizeColors.figmaLightBlue }];
+  frame.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkBlue }];
   frame.strokeWeight = 1;
   frame.strokeAlign = "CENTER";
   frame.strokeCap = "ROUND";
@@ -46,7 +47,7 @@ function createAnnotation(inputValues: AnnotationInput) {
     titlesNode.x = 15;
     titlesNode.y = 22 * index + 15;
     titlesNode.fontName = { family: "Inter", style: "Semi Bold" };
-    titlesNode.fills = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+    titlesNode.fills = [{ type: "SOLID", color: PropertizeColors.figmaBlack }];
     frame.appendChild(titlesNode);
     const valuesNode = figma.createText();
     valuesNode.name = value;
@@ -54,7 +55,7 @@ function createAnnotation(inputValues: AnnotationInput) {
     valuesNode.fontSize = 11;
     valuesNode.x = 105;
     valuesNode.y = 22 * index + 15;
-    valuesNode.fills = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+    valuesNode.fills = [{ type: "SOLID", color: PropertizeColors.figmaBlack }];
     frame.appendChild(valuesNode);
   });
 
@@ -172,7 +173,7 @@ function drawConnector(annotation: SceneNode, destination: SceneNode) {
   if (destination.absoluteBoundingBox !== null && annotation.absoluteBoundingBox !== null) {
     const line = figma.createVector();
     line.strokeCap = "ARROW_LINES";
-    line.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+    line.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkBlue }];
     line.strokeWeight = 2;
     AnnotationElements.annotationLayer.appendChild(line);
     AnnotationElements.annotationLayer.clipsContent = false;
@@ -296,11 +297,11 @@ function highlight(found: annotationLinkItem) {
   resetHighlightedAnnotation();
   // Set new highlighted annotation and vector
   if (found) {
-    found.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkRed }];
-    found.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkRed }];
-    found.annotation.fills = [{ type: "SOLID", color: PropertizeConstants.figmaRed }];
+    found.vector.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkRed }];
+    found.annotation.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkRed }];
+    found.annotation.fills = [{ type: "SOLID", color: PropertizeColors.figmaRed }];
     found.annotation.children.forEach((x) => {
-      x.fills = [{ type: "SOLID", color: PropertizeConstants.figmaWhite }];
+      x.fills = [{ type: "SOLID", color: PropertizeColors.figmaWhite }];
     });
     found.annotation.dashPattern = [0, 0];
     highlightedAnnotationLinkItem = found;
@@ -310,15 +311,15 @@ function highlight(found: annotationLinkItem) {
 function resetHighlightedAnnotation() {
   if (highlightedAnnotationLinkItem !== undefined && highlightedAnnotationLinkItem.annotation.removed === false) {
     //reset annotation
-    highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
-    highlightedAnnotationLinkItem.annotation.fills = [{ type: "SOLID", color: PropertizeConstants.figmaLightBlue }];
+    highlightedAnnotationLinkItem.annotation.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkBlue }];
+    highlightedAnnotationLinkItem.annotation.fills = [{ type: "SOLID", color: PropertizeColors.figmaLightBlue }];
     highlightedAnnotationLinkItem.annotation.dashPattern = [10, 5];
     highlightedAnnotationLinkItem.annotation.children.forEach((child) => {
       child = <FrameNode>child;
-      child.fills = [{ type: "SOLID", color: PropertizeConstants.figmaBlack }];
+      child.fills = [{ type: "SOLID", color: PropertizeColors.figmaBlack }];
     });
     //reset vector
-    highlightedAnnotationLinkItem.vector.strokes = [{ type: "SOLID", color: PropertizeConstants.figmaDarkBlue }];
+    highlightedAnnotationLinkItem.vector.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkBlue }];
   }
   highlightedAnnotationLinkItem = undefined;
 }
