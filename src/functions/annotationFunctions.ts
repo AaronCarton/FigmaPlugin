@@ -194,9 +194,12 @@ function determineOverlap(i: number, currentAnnotation: SceneNode, currentSource
   let y;
   // If the value is the first element or the absolute position of the last annotation is.
   // Lower than the y coordinate of the source node than look at last annotationY to draw the annotation.
-  i === 0 ||
+  if (i === 0) {
+    return currentSourceNode.absoluteTransform[1][2];
+  }
+
   Math.abs(lastAddedAnnotationYvalue + currentAnnotation.height - currentSourceNode.absoluteTransform[1][2]) <
-    currentSourceNode.absoluteTransform[1][2]
+  currentSourceNode.absoluteTransform[1][2]
     ? (y = currentSourceNode.absoluteTransform[1][2])
     : (y = lastAddedAnnotationYvalue + currentAnnotation.height + 5);
 
