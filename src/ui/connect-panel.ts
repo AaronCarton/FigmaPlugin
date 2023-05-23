@@ -13,9 +13,6 @@ const $value: HTMLInputElement | null = document.querySelector(".js-sample-value
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
 
-const $connectSelects = document.querySelectorAll<HTMLSelectElement>(".js-connect-select");
-const $connectInputs = document.querySelectorAll<HTMLElement>(".js-connect-input");
-
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 const maxCharactersInputfield = 35;
