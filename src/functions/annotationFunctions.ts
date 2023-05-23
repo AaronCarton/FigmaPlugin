@@ -6,7 +6,7 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
-import multiUserManager from "./multiUserManager";
+import multiUserManager, { addCurrentUser } from "./multiUserManager";
 
 export let linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 export let lastSelectedNode: string = "";
@@ -396,6 +396,13 @@ export function changeLayerVisibility(state: boolean) {
 
 export function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
+
+  // Adding current user to the list of users.
+  if (figma.currentUser) {
+    addCurrentUser(figma.currentUser);
+    console.log(figma.root.getPluginData("MP_currentUsers"));
+  }
+
   if (!annotationLayerFound) {
     createLayer();
 

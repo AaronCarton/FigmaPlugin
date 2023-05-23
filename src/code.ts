@@ -7,6 +7,7 @@ import { Events } from "./services/events/Events";
 import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
+import { isLastUser, isLastUser, removeCurrentUser } from "./functions/multiUserManager";
 
 figma.showUI(__html__, { width: 345, height: 296 });
 
@@ -110,7 +111,16 @@ figma.on("documentchange", (event: DocumentChangeEvent) => {
 });
 
 figma.on("close", async () => {
-  AnnotationElements.annotationLayer.remove();
+  // Checking if user closing the plugin is the last user in the file (that uses the plugin).
+  // If so, delete the annotion, otherwise delete user from user list
+  const lastUser: boolean = isLastUser();
+  if (lastUser) {
+    AnnotationElements.annotationLayer.remove();
+    removeCurrentUser();
+  } else {
+    removeCurrentUser();
+  }
+
   figma.closePlugin();
 });
 

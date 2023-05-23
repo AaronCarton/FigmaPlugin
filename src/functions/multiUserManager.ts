@@ -2,9 +2,39 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import { updateMultiUserVars } from "./annotationFunctions";
 import { frame } from "../interfaces/frame";
 
-// function createMPData(links: Array<annotationLinkItem>, AnnotationElements: AnnotationElements) {
-//   const linksToSend =
-// }
+export function addCurrentUser(user: User) {
+  const currentUsers = figma.root.getPluginData("MP_currentUsers");
+  console.log("currentUsers before adding", currentUsers);
+  if (currentUsers.length !== 0) {
+    // If not first user, add currentUser id to array.
+    currentUsers.push(user.id as string);
+    figma.root.setPluginData("MP_currentUsers", JSON.stringify(currentUsers));
+    console.log("user added to currentUser array: ", currentUsers);
+  } else {
+    // If first user, set currentUsers to array with only user id.
+    figma.root.setPluginData("MP_currentUsers", JSON.stringify([user.id]));
+    console.log("made currentUser array", currentUsers);
+  }
+}
+
+export function removeCurrentUser() {
+  const currentUsers = JSON.parse(figma.root.getPluginData("MP_currentUsers")) as Array<string>;
+  if (figma.currentUser !== null) {
+    const userIndex = currentUsers.indexOf(figma.currentUser.id as string);
+    currentUsers.splice(userIndex);
+    console.log("deleted user ", figma.currentUser.id, " from user array: ", currentUsers);
+  }
+  figma.root.setPluginData("MP_currentUsers", JSON.stringify(currentUsers));
+}
+
+export function isLastUser() {
+  const currentUsers = JSON.parse(figma.root.getPluginData("MP_currentUsers")) as Array<string>;
+  if (currentUsers.length === 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 function updateData(links: string, AnnotationElements: string) {
   const morphedLinks = JSON.parse(links) as Array<annotationLinkItem>;
