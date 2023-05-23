@@ -9,7 +9,6 @@ const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSou
 const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
-const $dataTypeSelect: HTMLSelectElement | null = document.querySelector(".js-dataType-select");
 const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
@@ -18,7 +17,6 @@ const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 const maxCharactersInputfield = 35;
 
-// const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -55,7 +53,6 @@ export class ConnectPanel extends BaseComponent {
         });
       }
     });
-    // loadDataTypes(dataTypes);
   }
 }
 
