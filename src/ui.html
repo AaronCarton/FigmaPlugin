@@ -52,6 +52,15 @@
           </div>
           <button class="c-connect__cta js-btn" data-target="dataSource" id="dataSource-btn"></button>
         </div>
+        <div class="c-connect__filter js-filter-item" id="dataSource-filter-item">
+          <div class="c-connect__filter--btn js-remove-filter" data-target="dataSource-filter-item">
+            <span id="dataSource-filter-text">dataSource</span>
+            <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L6 6" stroke="white" stroke-linecap="round" />
+              <path d="M1 6L6 1" stroke="white" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
             <span class="c-connect__field--title">Entity</span>
@@ -65,6 +74,15 @@
             </div>
           </div>
           <button class="c-connect__cta js-btn" disabled data-target="entity" id="entity-btn"></button>
+        </div>
+        <div class="c-connect__filter js-filter-item" id="entity-filter-item">
+          <div class="c-connect__filter--btn js-remove-filter" data-target="entity-filter-item">
+            <span id="entity-filter-text">entity</span>
+            <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L6 6" stroke="white" stroke-linecap="round" />
+              <path d="M1 6L6 1" stroke="white" stroke-linecap="round" />
+            </svg>
+          </div>
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
@@ -80,6 +98,15 @@
           </div>
           <button class="c-connect__cta js-btn" disabled data-target="attribute" id="attribute-btn"></button>
         </div>
+        <div class="c-connect__filter js-filter-item" id="attribute-filter-item">
+          <div class="c-connect__filter--btn js-remove-filter" data-target="attribute-filter-item">
+            <span id="attribute-filter-text">attribute</span>
+            <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L6 6" stroke="white" stroke-linecap="round" />
+              <path d="M1 6L6 1" stroke="white" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
             <span class="c-connect__field--title">Data type</span>
@@ -92,8 +119,16 @@
               </div>
             </div>
           </div>
-
           <button class="c-connect__cta js-btn" disabled data-target="dataType" id="dataType-btn"></button>
+        </div>
+        <div class="c-connect__filter js-filter-item" id="dataType-filter-item">
+          <div class="c-connect__filter--btn js-remove-filter" data-target="dataType-filter-item">
+            <span id="dataType-filter-text">dataType</span>
+            <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L6 6" stroke="white" stroke-linecap="round" />
+              <path d="M1 6L6 1" stroke="white" stroke-linecap="round" />
+            </svg>
+          </div>
         </div>
         <div class="c-connect__item c-connect__attribute">
           <div class="c-connect__field">
@@ -158,25 +193,25 @@
       <div class="c-filter__container js-connection">
         <div class="c-filter__item">
           <span class="c-filter__item--title">Data source</span>
-          <select class="c-filter__item--select js-dataSource-filter" required>
+          <select class="c-filter__item--select js-dataSource-filter" data-target="dataSource-filter" required>
             <option value="" selected disabled>Choose source</option>
           </select>
         </div>
         <div class="c-filter__item">
           <span class="c-filter__item--title">Entity</span>
-          <select class="c-filter__item--select js-entity-filter" required>
+          <select class="c-filter__item--select js-entity-filter" data-target="entity-filter" required>
             <option value="" selected disabled>Choose entity</option>
           </select>
         </div>
         <div class="c-filter__item">
           <span class="c-filter__item--title">Attribute</span>
-          <select class="c-filter__item--select js-attribute-filter" required>
+          <select class="c-filter__item--select js-attribute-filter" data-target="attribute-filter" required>
             <option value="" selected disabled>Choose attribute</option>
           </select>
         </div>
         <div class="c-filter__item">
           <span class="c-filter__item--title">Data type</span>
-          <select class="c-filter__item--select js-dataType-filter" required>
+          <select class="c-filter__item--select js-dataType-filter" data-target="dataType-filter" required>
             <option value="" selected disabled>Choose data type</option>
           </select>
         </div>

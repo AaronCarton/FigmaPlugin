@@ -4,6 +4,8 @@ import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
+export const $filterItems: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-filter-item");
+export const $removeFilter: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-remove-filter");
 const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
 const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSource");
 const $entity: HTMLInputElement | null = document.querySelector(".js-entity");

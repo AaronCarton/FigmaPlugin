@@ -42,6 +42,8 @@ export interface EventMap {
   [Events.UI_INITIALIZE_COMPONENT]: string;
   [Events.UI_CHANGE_TAB]: { tab: string; connection: boolean };
   [Events.UI_CHANGE_VISIBILITY]: boolean;
+  [Events.UI_CHANGE_FILTER]: number;
+  [Events.UI_REMOVE_FILTER]: number;
   [Events.UI_UPDATE_FIELDS]: AnnotationInput;
   [Events.UI_CLEAR_FIELDS]: null;
 
