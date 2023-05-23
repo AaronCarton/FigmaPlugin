@@ -99,7 +99,8 @@
           <div class="c-connect__field">
             <span class="c-connect__field--title">Sample value</span>
             <div class="c-connect__field--sample">
-              <input type="text" class="c-connect__field--input js-sample-value" required />
+              <textarea type="text" class="c-connect__field--input js-sample-value c-connect__sample-value" required></textarea>
+              <p hidden class="c-connect__show-more">Show more</p>
             </div>
           </div>
         </div>
@@ -194,33 +195,35 @@
       <div class="c-usage__alinea">
         <h3 class="c-usage__subtitle">What does the plugin?</h3>
         <p class="c-usage__alinea-paraph c-usage__alinea-paraph--top">
-          This plugin transforms your design into json, css variables, png's or svg's that you can use in your own code.
+          It allows designers to incorporate real data into their designs by connecting to a database and populating their designs with up-to-date
+          product data.
         </p>
       </div>
       <div class="c-usage__alinea">
         <h3 class="c-usage__subtitle">How to use the plugin?</h3>
-        <p class="c-usage__alinea-paraph c-usage__alinea-paraph--top">You have two options to export your file.</p>
+        <p class="c-usage__alinea-paraph c-usage__alinea-paraph--top">
+          In the settings tab, you have to fill in the credentials first before connecting to the database.
+        </p>
         <ul class="c-usage__alinea-list">
-          <li>Export your entire page</li>
-          <li>Export a selection (can exist out multiple frames)</li>
+          <li>Database url</li>
+          <li>Project API key</li>
+          <li>Source API key</li>
         </ul>
         <p class="c-usage__alinea-paraph">
-          If you choose to export a specific selection, you will have to choose how you want the design tokens to get exported. As a json file, css
-          file, png's or svg's.
+          Once connection is made, the annotations will be drawn immediately on a new layer in the Figma project. You can toggle the annotation's visibility with the button on the bottom left.
+          <hr>
         </p>
         <p class="c-usage__alinea-paraph">
-          If you choose to export your entire page, you will automaticly get a json file, css-file, png's and svg's.
+          In the connect panel you find everything to create / update / delete an annotation.
         </p>
         <p class="c-usage__alinea-paraph">
-          Next up you will get to choose what colortype you would like your files in. the options are rgb, hex, hsl or all three. After the colors you
-          can choose wich units would like, px or rem.
+          To <strong>create</strong> a new annotation you simply select a node in your Figma design and fill in the input fields for the node. When everything is filled in you can press enter or push the create annotation button. </br>
         </p>
         <p class="c-usage__alinea-paraph">
-          After you made your choises, you can export your design tokens by clicken on the 'Export' button. If you choose to export your entire page,
-          this can take a couple of seconds.
+          To <strong>update</strong> an annotation it is almost the same as creating a new annotation. First, you select a node with an alreay existing annotation and edit the values in the form. When you are done editing, you can press enter or push the update annotation button to update the annotation.
         </p>
-        <p class="c-usage__alinea-paraph c-usage__alinea-paraph--bottom">
-          You will get a pop-up to download a file or a zip, download it and you can use the files in your code!
+        <p class="c-usage__alinea-paraph">
+          To <strong>delete</strong> an existing annotation you select the node of which you want the annotation deleted; When the node is selected, you click on the remove annotation button in the connect panel. Or if you delete a node in the Figma design that has an annotation linked to it, the annotation will be removed aswell.
         </p>
       </div>
     </section>
