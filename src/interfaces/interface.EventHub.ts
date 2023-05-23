@@ -14,7 +14,6 @@ export interface LocalStoragePayload {
   baseURL: string;
   clientKey: string;
   sourceKey: string;
-  lastUpdate: string;
 }
 
 export interface EventMap {

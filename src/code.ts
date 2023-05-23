@@ -17,24 +17,21 @@ EventHub.getInstance().makeEvent(Events.UI_CHANGE_VISIBILITY, (state) => changeL
 EventHub.getInstance().makeEvent(Events.UI_SHOW_MORE, ({ tab, isShowMoreActive }) => resizeByShowMore(tab, isShowMoreActive));
 
 //////* LOCAL STORAGE EVENTS *//////
-EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
+EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey }) => {
   figma.clientStorage.setAsync("baseURL", baseURL);
   figma.clientStorage.setAsync("clientKey", clientKey);
   figma.clientStorage.setAsync("sourceKey", sourceKey);
-  figma.clientStorage.setAsync("lastUpdate", lastUpdate);
 });
 
 EventHub.getInstance().makeEvent(Events.FETCH_LOCAL_STORAGE, async () => {
   const baseURL: string = (await figma.clientStorage.getAsync("baseURL")) || "";
   const clientKey: string = (await figma.clientStorage.getAsync("clientKey")) || "";
   const sourceKey: string = (await figma.clientStorage.getAsync("sourceKey")) || "";
-  const lastUpdate: string = (await figma.clientStorage.getAsync("lastUpdate")) || "";
 
   EventHub.getInstance().sendCustomEvent(Events.LOCAL_STORAGE_FETCHED, {
     baseURL,
     clientKey,
     sourceKey,
-    lastUpdate,
   });
 });
 
