@@ -48,7 +48,6 @@ export default class ApiClient {
         const invalidKeys = Object.entries(results)
           .filter(([, value]) => !value)
           .map(([key]) => key);
-        debugger;
         EventHub.getInstance().sendCustomEvent(
           Events.API_ERROR,
           `The API ${invalidKeys.join(" and ")} key ${invalidKeys.length > 1 ? " are" : " is"} invalid. Please check your credentials.`,
