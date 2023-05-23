@@ -1,3 +1,4 @@
+import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -9,13 +10,16 @@ const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSou
 const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
-const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
+const $value: HTMLTextAreaElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
+const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
+const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 const maxCharactersInputfield = 35;
+let isShowMoreActive = false;
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -27,6 +31,7 @@ export class ConnectPanel extends BaseComponent {
   initComponent(): void {
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
+    downSizeSampleValueChangingTab();
     // Add "Enter" event listeners to input fields to trigger icon click
     [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
       if (!select) return;
@@ -82,6 +87,21 @@ function handleIconClick(trigger: HTMLElement) {
     inputField.focus();
   }
 }
+function downSizeSampleValueChangingTab() {
+  $tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const selectedTab = tab.getAttribute("data-target");
+      if (isShowMoreActive && selectedTab) {
+        downSizeSampleValue(selectedTab);
+      }
+    });
+  });
+}
+function checkSampleValueLength() {
+  if ($value && $showMore) {
+    $showMore.hidden = $value.value.length < maxCharactersInputfield;
+  }
+}
 
 function isLessCharactersThanMax(inputField: HTMLInputElement) {
   return inputField.value.length <= maxCharactersInputfield;
@@ -122,6 +142,8 @@ function updateFields(message: AnnotationInput) {
     $createBtn.innerText = "Update annotation";
     $createBtn.disabled = false;
     $createBtn.classList.add("button-pointer");
+
+    checkSampleValueLength();
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
@@ -165,6 +187,9 @@ function clearFields() {
     $createBtn.innerText = "Create annotation";
     $createBtn.disabled = true;
     $createBtn.classList.remove("button-pointer");
+
+    downSizeSampleValue("connect");
+    checkSampleValueLength();
 
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);
@@ -294,9 +319,45 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 
   $value.addEventListener("keyup", () => {
+    if ($showMore && $value.value.length > maxCharactersInputfield) {
+      $showMore.hidden = true;
+    }
     disableCreate();
   });
+
+  $showMore?.addEventListener("click", () => {
+    if ($showMore) {
+      $value.rows = 5;
+      $showMore.hidden = true;
+      isShowMoreActive = true;
+
+      $value.classList.add("c-connect__enable-scroll");
+      const tab: string = "connect";
+      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
+    }
+  });
+
+  $value.addEventListener("blur", () => {
+    if ($value && $showMore && $value.value.length > maxCharactersInputfield) {
+      downSizeSampleValue("connect");
+    }
+  });
 }
+EventHub.getInstance().makeEvent(Events.UI_RESET_TEXTAREA_SIZE, () => {
+  downSizeSampleValue("connect");
+});
+
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
 });
+
+function downSizeSampleValue(tab: string) {
+  if ($value && $showMore) {
+    $value.rows = 1;
+    $showMore.hidden = false;
+    isShowMoreActive = false;
+
+    $value.classList.remove("c-connect__enable-scroll");
+    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
+  }
+}
