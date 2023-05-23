@@ -41,6 +41,10 @@
   color: var(--propertize__color--primary);
 }
 
+.c-filter__item--select:disabled {
+  opacity: 0.4;
+}
+
 .c-filter__item--select:hover,
 .c-filter__item--select:focus {
   border: 1px solid var(--propertize__color--accent);

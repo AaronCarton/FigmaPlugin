@@ -5,10 +5,7 @@ import { $filterItems, $removeFilter } from "./connect-panel";
 
 const $resetFilter: HTMLButtonElement | null = document.querySelector(".js-reset-btn");
 const $filterButton: HTMLButtonElement | null = document.querySelector(".js-filter-btn");
-const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSource-filter");
-const $entity: HTMLInputElement | null = document.querySelector(".js-entity-filter");
-const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute-filter");
-const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType-filter");
+const $selectors: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-filter");
 let count: number = 0;
 
 export class FilterPanel extends BaseComponent {
@@ -23,13 +20,12 @@ export class FilterPanel extends BaseComponent {
   }
 }
 
-if ($resetFilter && $filterButton && $dataSource && $entity && $attribute && $dataType) {
+if ($resetFilter && $filterButton && $selectors) {
   $filterButton.addEventListener("click", () => {
     count = 0;
-    showFiltersConnectPanel($dataSource);
-    showFiltersConnectPanel($entity);
-    showFiltersConnectPanel($attribute);
-    showFiltersConnectPanel($dataType);
+    $selectors.forEach((selector) => {
+      showFiltersConnectPanel(selector);
+    });
     if ($filterItems) {
       $filterItems.forEach((item) => {
         if (item.classList.contains("is-active")) {
@@ -42,14 +38,28 @@ if ($resetFilter && $filterButton && $dataSource && $entity && $attribute && $da
   });
   $resetFilter.addEventListener("click", () => {
     count = 0;
-    $dataSource.value = "";
-    $entity.value = "";
-    $attribute.value = "";
-    $dataType.value = "";
+    $selectors.forEach((selector) => {
+      selector.value = "";
+      selector.disabled = false;
+    });
     $filterItems?.forEach((item) => {
       item.classList.remove("is-active");
     });
     EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_FILTER, count);
+  });
+  $selectors.forEach((item) => {
+    item.addEventListener("change", () => {
+      if (item.value !== "") {
+        $selectors.forEach((selector) => {
+          selector.disabled = true;
+        });
+        item.disabled = false;
+      } else {
+        $selectors.forEach((selector) => {
+          selector.disabled = false;
+        });
+      }
+    });
   });
   removeFilterItem();
 }
@@ -75,28 +85,18 @@ function removeFilterItem() {
   $removeFilter?.forEach((item) => {
     item.addEventListener("click", () => {
       const target = item.getAttribute("data-target");
-      const prop = target?.split("-")[0];
-      console.log("[PROP]: ", prop);
       const targetItem = document.querySelector<HTMLElement>(`#${target}`);
       targetItem?.classList.remove("is-active");
       count--;
       EventHub.getInstance().sendCustomEvent(Events.UI_REMOVE_FILTER, count);
-      unselectRemoved(prop!);
+      unselectRemoved();
     });
   });
 }
 
-function unselectRemoved(name: string) {
-  if (name === "dataSource" && $dataSource) {
-    $dataSource.value = "";
-  }
-  if (name === "entity" && $entity) {
-    $entity.value = "";
-  }
-  if (name === "attribute" && $attribute) {
-    $attribute.value = "";
-  }
-  if (name === "dataType" && $dataType) {
-    $dataType.value = "";
-  }
+function unselectRemoved() {
+  $selectors?.forEach((selector) => {
+    selector.disabled = false;
+    selector.value = "";
+  });
 }
