@@ -79,11 +79,10 @@ function toggleIconCheck(target: string) {
 function addValue(target: string, toggleCheck = true) {
   const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
   const $select = document.querySelector<HTMLSelectElement>(`#${target}-select`);
-  console.log("addValue", $input, $select);
 
   if ($input && $select) {
     const newOption = new Option($input.value, $input.value);
-    // Couple of checks
+    // Make sure input isn't empty, above max characters, or a duplicate value
     if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
     if (!isLessCharactersThanMax($input))
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
