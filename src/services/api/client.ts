@@ -33,7 +33,7 @@ export default class ApiClient {
     const eventHub = EventHub.getInstance();
 
     // Initialize API client
-    eventHub.makeEvent(Events.INITIALIZE_DATA, ({ projectKey, baseURL, clientKey, sourceKey }) => {
+    eventHub.makeEvent(Events.INITIALIZE_DATA, async ({ projectKey, baseURL, clientKey, sourceKey }) => {
       ApiClient.resetClient(); // Reset client first if already initialized
 
       const api = ApiClient.initialize({
@@ -42,6 +42,17 @@ export default class ApiClient {
         sourceKey,
       });
 
+      const results = await api.testCredentials();
+      // if client or source key is false, send error message
+      if (!results.clientKey || !results.sourceKey) {
+        const invalidKeys = Object.entries(results)
+          .filter(([, value]) => !value)
+          .map(([key]) => key)
+          .join(", ");
+        debugger;
+        EventHub.getInstance().sendCustomEvent(Events.API_ERROR, `Invalid key provided: ${invalidKeys}`);
+        return;
+      }
       api
         .getProject(projectKey)
         .then((project) => {
@@ -240,6 +251,24 @@ export default class ApiClient {
   ////////* HELPER FUNCTIONS *////////
 
   /**
+   * Test the client and source API keys
+   * @returns {Promise<{client: boolean, source: boolean}>} - Promise that resolves to an object containing the results of the test
+   */
+  public async testCredentials(): Promise<{ clientKey: boolean; sourceKey: boolean }> {
+    const clientRes = await this.fetchData("/api/propertize/test/propertize/authenticated", {
+      method: "GET",
+      apiKey: ApiClient.CLIENT_APIKEY,
+    });
+
+    const sourceRes = await this.fetchData("/api/propertize/test/propertize/authenticated", {
+      method: "GET",
+      apiKey: ApiClient.SOURCE_APIKEY,
+    });
+    debugger;
+    return { clientKey: clientRes.status === 200, sourceKey: sourceRes.status === 200 };
+  }
+
+  /**
    * Generic function that fetches item by ID (skips Elasticsearch indexing)
    * @template Type - Type of the item to search for (e.g. Project)
    * @param {string} itemType - Type of the item to search for (e.g. project)
@@ -354,7 +383,8 @@ export default class ApiClient {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
         case 401:
-          throw new APIError(res, "Unauthorized, please check your API key");
+          // throw new APIError(res, "Unauthorized, please check your API key");
+          break; // unauthorized requests will be handled by the checkCredentials function
         case 400:
           throw new APIError(res, "Bad request, is the item structure correct?");
         case 500:
