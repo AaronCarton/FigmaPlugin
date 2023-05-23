@@ -61,12 +61,11 @@ export class Settings extends BaseComponent {
       });
     });
 
-    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
+    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
       $baseURL?.setAttribute("value", baseURL || "");
       $clientKey?.setAttribute("value", clientKey || "");
       $sourceKey?.setAttribute("value", sourceKey || "");
       this.disableFieldsWhenNecessary();
-      this.lastUpdatedInterval(new Date(lastUpdate)); // start interval to update last updated time
 
       // TODO: emit event to initialize data right away, because we got the values from localStorage
       // KEEP THIS
@@ -92,7 +91,6 @@ export class Settings extends BaseComponent {
   }
 
   connect() {
-    const currentTime: string = new Date().toISOString();
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
       projectKey: projectKey,
       baseURL: $baseURL?.value || "",
@@ -105,7 +103,6 @@ export class Settings extends BaseComponent {
       baseURL: $baseURL?.value || "",
       clientKey: $clientKey?.value || "",
       sourceKey: $sourceKey?.value || "",
-      lastUpdate: currentTime,
     });
 
     toggleShowAnnotations();
@@ -183,7 +180,7 @@ export class Settings extends BaseComponent {
       // Clear any previous interval, start new interval to update time every 5 seconds
       clearInterval(timeInterval);
       interval(); // run once immediately
-      timeInterval = setInterval(interval, 10000);
+      timeInterval = setInterval(interval, 5000);
     }
   }
 }
