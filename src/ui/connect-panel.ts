@@ -1,3 +1,4 @@
+import { PropertizeConstants } from "../classes/propertizeConstants";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -9,13 +10,16 @@ const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSou
 const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
 const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
 const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
-const $value: HTMLInputElement | null = document.querySelector(".js-sample-value");
+const $value: HTMLTextAreaElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
+const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
+const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
 const maxCharactersInputfield = 35;
+let isShowMoreActive = false;
 
 export class ConnectPanel extends BaseComponent {
   componentType = "ConnectPanel";
@@ -28,6 +32,7 @@ export class ConnectPanel extends BaseComponent {
     initSelectors();
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
+    downSizeSampleValueChangingTab();
   }
 }
 
@@ -92,6 +97,21 @@ function addValue(target: string, toggleCheck = true) {
     if (toggleCheck) toggleIconCheck(target);
   }
 }
+function downSizeSampleValueChangingTab() {
+  $tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const selectedTab = tab.getAttribute("data-target");
+      if (isShowMoreActive && selectedTab) {
+        downSizeSampleValue(selectedTab);
+      }
+    });
+  });
+}
+function checkSampleValueLength() {
+  if ($value && $showMore) {
+    $showMore.hidden = $value.value.length < maxCharactersInputfield;
+  }
+}
 
 function isLessCharactersThanMax(inputField: HTMLInputElement) {
   return inputField.value.length <= maxCharactersInputfield;
@@ -133,6 +153,8 @@ function updateFields(message: AnnotationInput) {
     $createBtn.innerText = "Update annotation";
     $createBtn.disabled = false;
     $createBtn.classList.add("button-pointer");
+
+    checkSampleValueLength();
 
     changeFieldsOnInput("entity", false);
     changeFieldsOnInput("attribute", false);
@@ -177,6 +199,9 @@ function clearFields() {
     $createBtn.disabled = true;
     $createBtn.classList.remove("button-pointer");
 
+    downSizeSampleValue("connect");
+    checkSampleValueLength();
+
     changeFieldsOnInput("entity", true);
     changeFieldsOnInput("attribute", true);
     changeFieldsOnInput("dataType", true);
@@ -187,9 +212,15 @@ function clearFields() {
 
 function validateDataType() {
   const dataTypeRegex: { [key: string]: RegExp } = {
-    string: /^[\w\s\S]+$/,
-    number: /^[\d]+$/,
     int: /^[\d]+$/,
+    float: /^[\d]*\.[\d]+$/,
+    char: /^.+$/,
+    string: /^[\w\s\S]+$/,
+    bool: /^(true|false)+$/,
+    array: /^\[.*]+$/,
+    date: /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/,
+    time: /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/,
+    datetime: /^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/,
   };
   const dataType = $dataType?.value.trim().toLowerCase();
   const value = $value?.value.trim();
@@ -301,10 +332,45 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 
   $value.addEventListener("keyup", () => {
+    if ($showMore && $value.value.length > maxCharactersInputfield) {
+      $showMore.hidden = true;
+    }
     disableCreate();
   });
+
+  $showMore?.addEventListener("click", () => {
+    if ($showMore) {
+      $value.rows = 5;
+      $showMore.hidden = true;
+      isShowMoreActive = true;
+
+      $value.classList.add("c-connect__enable-scroll");
+      const tab: string = "connect";
+      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
+    }
+  });
+
+  $value.addEventListener("blur", () => {
+    if ($value && $showMore && $value.value.length > maxCharactersInputfield) {
+      downSizeSampleValue("connect");
+    }
+  });
 }
+EventHub.getInstance().makeEvent(Events.UI_RESET_TEXTAREA_SIZE, () => {
+  downSizeSampleValue("connect");
+});
 
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
 });
+
+function downSizeSampleValue(tab: string) {
+  if ($value && $showMore) {
+    $value.rows = 1;
+    $showMore.hidden = false;
+    isShowMoreActive = false;
+
+    $value.classList.remove("c-connect__enable-scroll");
+    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
+  }
+}
