@@ -66,8 +66,9 @@ function createAnnotation(inputValues: AnnotationInput) {
 function determineFrameSide(elem: SceneNode, parentFrame: FrameNode) {
   if (parentFrame.absoluteTransform === undefined) {
     const found = <FrameNode>figma.currentPage.findOne((x) => x.id === parentFrame.id);
-    found !== null ? (parentFrame = found) : console.log("no parent found");
-    console.log("DetermineFrameSide parent was undefined, now found in figma", found);
+    if (found !== null) {
+      parentFrame = found;
+    }
   }
   if (elem.absoluteTransform[0][2] < parentFrame.absoluteTransform[0][2] + parentFrame.width / 2) {
     return PropertizeConstants.sideLeft;
@@ -224,16 +225,19 @@ function drawAnnotations(
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
     let currentItem = sourceNodes[i];
-    // Test for redrawing, 0,0 (x,y) bug
+
     if (currentItem.absoluteTransform === undefined) {
       const foundSourceNode = figma.currentPage.findOne((x) => x.id === currentItem.id);
-      foundSourceNode !== null ? (sourceNodes[i] = foundSourceNode) : console.log("not found in figma");
-      console.log("found Source Node for update", foundSourceNode);
+      if (foundSourceNode !== null) {
+        sourceNodes[i] = foundSourceNode;
+      }
     }
 
     if (currentItem.absoluteTransform === undefined) {
       const foundCurrentItemInFigma = figma.currentPage.findOne((x) => x.id === currentItem.id);
-      foundCurrentItemInFigma !== null ? (currentItem = foundCurrentItemInFigma) : console.log("error while drawing, foundInFigma === null");
+      if (foundCurrentItemInFigma !== null) {
+        currentItem = foundCurrentItemInFigma;
+      }
     }
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
     let annotation: FrameNode | null = null;
