@@ -71,11 +71,8 @@ function determineFrameSide(elem: SceneNode, parentFrame: FrameNode) {
 
 function sortNodesAccordingToYCoords(sourceNodes: Array<SceneNode>) {
   // By sorting the nodes according to y coords we can simply say i-1 and mean the node above in the file (preventing multiple search operations to look if there is a node that has an absolute difference of less than the annotation height and thus overlapping).
-  const sorted: Array<SceneNode> = sourceNodes.slice().sort((a: SceneNode, b: SceneNode) => {
-    if (a.y < b.y) {
-      return -1;
-    }
-    return 0;
+  const sorted: Array<SceneNode> = sourceNodes.sort((a: SceneNode, b: SceneNode) => {
+    return a.y - b.y;
   });
   return sorted;
 }
