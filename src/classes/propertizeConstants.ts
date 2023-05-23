@@ -2,6 +2,7 @@ export class PropertizeConstants {
   public static readonly layerName: string = "Annotations";
   public static readonly connectTab: string = "connect";
   public static readonly settingsTab: string = "settings";
+  public static readonly filterTab: string = "filter";
   public static readonly usageTab: string = "usage";
   public static readonly dataSourceLabel: string = "Data Source";
   public static readonly entityLabel: string = "Entity";

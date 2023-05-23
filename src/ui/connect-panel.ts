@@ -1,4 +1,3 @@
-import { MessageTitle } from "../classes/messageTitles";
 import { AnnotationInput } from "../interfaces/annotationInput";
 import { IAnnotation } from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
@@ -26,6 +25,8 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
+    EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
+    EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
     // Add "Enter" event listeners to input fields to trigger icon click
     [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
       if (!select) return;
@@ -100,7 +101,6 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
         changeElement1.disabled = false;
         textField.disabled = false;
         button.disabled = false;
-        button.classList.remove("c-connect__cta--disabled");
         textArea.classList.remove("disabled");
       }
     }
@@ -299,21 +299,4 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
 }
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
   setSampleValueInForm(sampleValue);
-});
-window.addEventListener("message", (e) => {
-  const messageType = e.data.pluginMessage.type;
-  const payload = e.data.pluginMessage.payload;
-
-  switch (messageType) {
-    case MessageTitle.updateFields:
-      updateFields(payload.values);
-      break;
-
-    case MessageTitle.clearFields:
-      clearFields();
-      break;
-
-    default:
-      break;
-  }
 });
