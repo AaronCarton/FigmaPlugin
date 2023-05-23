@@ -59,7 +59,7 @@ export default class ApiClient {
             .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
             .then((response) => {
               api
-                .createAnnotation("1", annotation)
+                .createAnnotation("1", annotation) // try to create annotation to check if API source key is valid
                 .then(() => {
                   const annotations = response.results.map((res) => new Annotation(res.item));
                   ApiClient.ods_annotations = annotations; // Store annotations in cache
@@ -74,6 +74,7 @@ export default class ApiClient {
             });
         })
         .catch((error) => {
+          //API source key error
           if (error instanceof APIError) {
             EventHub.getInstance().sendCustomEvent(Events.API_ERROR, error.message);
           }
