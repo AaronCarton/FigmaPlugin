@@ -1,6 +1,6 @@
 import { PropertizeConstants } from "../classes/propertizeConstants";
 
-let height: number = 296;
+let height: number = PropertizeConstants.heightConnect;
 
 export function resizeByTab(tab: string, connection: boolean) {
   switch (tab) {
@@ -30,19 +30,11 @@ export function resizeByConnection(connection: boolean) {
 }
 
 export function resizeByFilter(count: number) {
-  if (count == 0) {
-    height = 296;
-  } else {
-    height = 296 + count * 23;
-  }
+  count == 0 ? (height = PropertizeConstants.heightConnect) : (height = PropertizeConstants.heightConnect + count * PropertizeConstants.filterHeight);
 }
 
 export function resizeByRemoveFilter(count: number) {
-  if (count == 0) {
-    height = 296;
-  } else {
-    height = 296 + count * 23;
-  }
+  count == 0 ? (height = PropertizeConstants.heightConnect) : (height = PropertizeConstants.heightConnect + count * PropertizeConstants.filterHeight);
   figma.ui.resize(345, height);
 }
 export function resizeByShowMore(tab: string, isShowMore: boolean) {

@@ -14,4 +14,6 @@ export class PropertizeConstants {
   public static readonly annotation: string = "annotation";
   public static readonly project: string = "project";
   public static readonly searchItemProperties: string[] = ["entity", "attribute", "dataSource", "dataType"];
+  public static readonly heightConnect: number = 296;
+  public static readonly filterHeight: number = 23;
 }

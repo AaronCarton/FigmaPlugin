@@ -16,7 +16,7 @@ export class FilterPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    console.log("Filter panel initialized.");
+    return;
   }
 }
 
@@ -32,7 +32,6 @@ if ($resetFilter && $filterButton && $selectors) {
           count++;
         }
       });
-      console.log("[COUNT OF ITEMS]: ", count);
       EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_FILTER, count);
     }
   });
