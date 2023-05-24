@@ -549,10 +549,14 @@ export function sendDataToFrontend() {
     EventHub.getInstance().sendCustomEvent(Events.UI_RESET_TEXTAREA_SIZE, null);
     lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
+
     console.log("curr selection", found);
-    highlightedAnnotationLinkItem === undefined
-      ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
-      : console.log("Highlight is not undefined");
+    if (found !== undefined) {
+      highlightedAnnotationLinkItem === undefined
+        ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
+        : console.log("Highlight is not undefined");
+    }
+    
     if (found !== undefined) {
       if (found !== highlightedAnnotationLinkItem) {
         console.log("Found new item to highlight: ", found);
