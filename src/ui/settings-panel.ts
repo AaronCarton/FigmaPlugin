@@ -100,9 +100,6 @@ export class Settings extends BaseComponent {
       sourceKey: $sourceKey?.value || "",
       filters: {
         projectKey: [projectKey],
-        entity: ["sometest"],
-        dataType: ["number"],
-        value: ["95", "953"],
       },
     });
     spinnerEvents();
