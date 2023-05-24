@@ -8,7 +8,9 @@
   --propertize__color--red: #c42828;
 
   --propertize__border-radius: 3px;
+  --propertize__border-radius--rounded: 9999px;
 
+  --propertize__spacing--minuscule: 3px;
   --propertize__spacing--tiny: 5px;
   --propertize__spacing--small: 8px;
   --propertize__spacing: 10px;

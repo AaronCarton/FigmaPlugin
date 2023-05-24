@@ -1,5 +1,7 @@
 import { PropertizeConstants } from "../classes/propertizeConstants";
 
+let height: number = PropertizeConstants.heightConnect;
+
 export function resizeByTab(tab: string, connection: boolean) {
   switch (tab) {
     case PropertizeConstants.connectTab:
@@ -23,10 +25,18 @@ export function resizeByConnection(connection: boolean) {
   if (connection) {
     figma.ui.resize(345, 310);
   } else {
-    figma.ui.resize(345, 296);
+    figma.ui.resize(345, height);
   }
 }
 
+export function resizeByFilter(count: number) {
+  count == 0 ? (height = PropertizeConstants.heightConnect) : (height = PropertizeConstants.heightConnect + count * PropertizeConstants.filterHeight);
+}
+
+export function resizeByRemoveFilter(count: number) {
+  count == 0 ? (height = PropertizeConstants.heightConnect) : (height = PropertizeConstants.heightConnect + count * PropertizeConstants.filterHeight);
+  figma.ui.resize(345, height);
+}
 export function resizeByShowMore(tab: string, isShowMore: boolean) {
   switch (tab) {
     case PropertizeConstants.connectTab:

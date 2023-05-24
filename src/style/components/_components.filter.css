@@ -2,6 +2,10 @@
   display: none;
 }
 
+.c-filter__container {
+  display: none;
+}
+
 .c-filter__item {
   display: flex;
   align-items: center;
@@ -34,7 +38,11 @@
   background: var(--icon-arrow) 96% center no-repeat;
   padding-inline: var(--propertize__spacing--small);
   writing-mode: horizontal-tb;
-  color: var(--propertize__color--secondary);
+  color: var(--propertize__color--primary);
+}
+
+.c-filter__item--select:disabled {
+  opacity: 0.4;
 }
 
 .c-filter__item--select:hover,
@@ -42,7 +50,6 @@
   border: 1px solid var(--propertize__color--accent);
   width: 233px;
   outline: none;
-  color: var(--propertize__color--primary);
 }
 
 .c-filter__item--reset {

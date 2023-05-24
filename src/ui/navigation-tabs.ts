@@ -5,8 +5,8 @@ import { BaseComponent } from "./baseComponent";
 const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
 const $panelItems: NodeListOf<HTMLElement> = document.querySelectorAll(".js-panel-item");
 
-const $connectionPanel: HTMLElement | null = document.querySelector(".js-connection");
-const $noConnectionPanel: HTMLElement | null = document.querySelector(".js-disconnected");
+const $connectionSections: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-connection");
+const $noConnectionSections: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-disconnected");
 
 const isActive = "is-active";
 
@@ -45,13 +45,21 @@ export class NavigationTabs extends BaseComponent {
 
 export function changeConnectionState(state: boolean) {
   connectionState = state;
-  if ($connectionPanel && $noConnectionPanel) {
+  if ($connectionSections && $noConnectionSections) {
     if (connectionState == true) {
-      $connectionPanel.classList.add(isActive);
-      $noConnectionPanel.classList.remove(isActive);
+      $connectionSections.forEach((section) => {
+        section.classList.add(isActive);
+      });
+      $noConnectionSections.forEach((section) => {
+        section.classList.remove(isActive);
+      });
     } else {
-      $connectionPanel.classList.remove(isActive);
-      $noConnectionPanel.classList.add(isActive);
+      $connectionSections.forEach((section) => {
+        section.classList.remove(isActive);
+      });
+      $noConnectionSections.forEach((section) => {
+        section.classList.add(isActive);
+      });
     }
   }
 }

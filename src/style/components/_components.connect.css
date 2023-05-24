@@ -16,6 +16,26 @@
   gap: var(--propertize__spacing);
 }
 
+.c-connect__filter {
+  display: none;
+  padding-left: calc(70px + var(--propertize__spacing));
+  margin-bottom: var(--propertize__spacing--tiny);
+}
+
+.c-connect__filter--btn {
+  display: flex;
+  align-items: center;
+  font-size: var(--propertize__font-size--minuscule);
+  gap: var(--propertize__spacing--small);
+  width: min-content;
+  background-color: var(--propertize__color--red);
+  color: var(--propertize__color--white);
+  border: none;
+  border-radius: var(--propertize__border-radius--rounded);
+  padding: var(--propertize__spacing--minuscule) var(--propertize__spacing--tiny);
+  cursor: pointer;
+}
+
 .c-connect__field--title {
   width: 70px;
   color: var(--propertize__color--secondary);
