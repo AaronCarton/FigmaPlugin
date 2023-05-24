@@ -342,10 +342,16 @@ export default class ApiClient {
       body: JSON.stringify(body),
       headers: headers,
     }).catch((err) => {
-      console.error("[API] Fetch Error", err); // temporary - remove later
+      console.error("[API] Fetch Error", err);
+      if (err instanceof TypeError && err.message === "Failed to fetch")
+        // If URL is invalid or server is down
+        EventHub.getInstance().sendCustomEvent(Events.API_ERROR, "Failed to connect to database, please check your database URL");
+      // Else a more generic error
+      else EventHub.getInstance().sendCustomEvent(Events.API_ERROR, err.message);
+
       throw err;
     });
-    console.debug(`[API] Response: ${method} ${url}`, res); // temporary - remove later
+    console.debug(`[API] Response: ${method} ${url}`, res);
 
     // Error handling
     if (!res.ok) {
