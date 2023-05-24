@@ -290,6 +290,9 @@ export default class ApiClient {
       return (i > 0 ? "/" : "") + `${key}.eq.${fValue}`;
     });
 
+    console.log("filterString", filterString.join(""));
+    console.log("filter object", filter);
+
     return await this.fetchData(`/api/search/${itemType}`, {
       method: "POST",
       apiKey: ApiClient.CLIENT_APIKEY,
