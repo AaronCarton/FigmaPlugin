@@ -165,6 +165,7 @@
   border: none;
   padding: 0 var(--propertize__spacing--small);
   width: 100%;
+  height: 30px;
 }
 
 .c-connect__field--input:focus {
@@ -205,4 +206,5 @@
 .c-connect__enable-scroll {
   overflow-y: scroll;
   resize: none;
+  height: 100px;
 }
