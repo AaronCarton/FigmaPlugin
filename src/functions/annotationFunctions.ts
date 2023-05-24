@@ -326,10 +326,12 @@ function highlight(found: annotationLinkItem) {
     found.vector.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkRed }];
     found.annotation.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkRed }];
     found.annotation.fills = [{ type: "SOLID", color: PropertizeColors.figmaRed }];
-    found.annotation.children.forEach((x) => {
-      x = x as FrameNode;
-      x.fills = [{ type: "SOLID", color: PropertizeColors.figmaWhite }];
-    });
+    if (found.annotation.children !== undefined) {
+      found.annotation.children.forEach((x) => {
+        x = x as FrameNode;
+        x.fills = [{ type: "SOLID", color: PropertizeColors.figmaWhite }];
+      });
+    }
     found.annotation.dashPattern = [0, 0];
     highlightedAnnotationLinkItem = found;
   }
@@ -549,6 +551,9 @@ export function sendDataToFrontend() {
     if (found !== undefined) {
       if (found !== highlightedAnnotationLinkItem) {
         console.log("Found new item to highlight: ", found);
+        if (found.annotation.children === undefined) {
+          found.annotation = figma.currentPage.findOne((x) => x.id === found?.annotation.id) as FrameNode;
+        }
         highlight(found);
       }
       EventHub.getInstance().sendCustomEvent(Events.UI_UPDATE_FIELDS, found.data, true);
