@@ -233,7 +233,7 @@ function validateDataType() {
 }
 
 function changeFieldsOnInput(fieldName: string, state: boolean) {
-  const $input = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
+  const $input = document.querySelector<HTMLInputElement>(`#${fieldName}-input`);
   const $textBlock = document.querySelector<HTMLElement>(`#${fieldName}-text`);
   const $btn = document.querySelector<HTMLButtonElement>(`#${fieldName}-btn`);
 
