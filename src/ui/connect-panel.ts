@@ -333,7 +333,15 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
 
   $value.addEventListener("keyup", () => {
     if ($showMore) {
-      $showMore.hidden = $value.value.length < maxCharactersInputfield;
+      if ($value.value.length > maxCharactersInputfield) {
+        $showMore.hidden = false;
+      } else {
+        $showMore.hidden = true;
+        $value.classList.remove("c-connect__enable-scroll");
+        isShowMoreActive = false;
+        const tab: string = "connect";
+        EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
+      }
     }
 
     disableCreate();
