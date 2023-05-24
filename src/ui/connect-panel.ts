@@ -332,9 +332,10 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 
   $value.addEventListener("keyup", () => {
-    if ($showMore && $value.value.length > maxCharactersInputfield) {
-      $showMore.hidden = true;
+    if ($showMore) {
+      $showMore.hidden = $value.value.length < maxCharactersInputfield;
     }
+
     disableCreate();
   });
 
