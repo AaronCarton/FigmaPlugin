@@ -457,14 +457,14 @@ export function initAnnotations(annotationData: Array<Annotation>) {
 
   // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
   if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames && !annotationLayerFound) {
-    figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
-    figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
+    figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
+    figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
   }
 
   // If you are not the first person to launch the plugin, you should get the parentframes and link array from the pluginData.
   if (annotationLayerFound) {
-    AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData("MP_AnnotationElements"));
-    linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData("MP_linkAnnotationToSourceNodes"));
+    AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_AnnotationElements));
+    linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes));
   }
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
@@ -532,8 +532,8 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
     }
   }
   // After update logic is done, update the MP data.
-  figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
-  figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
+  figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
+  figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
 }
 
 export function sendDataToFrontend() {
@@ -588,7 +588,7 @@ export function archiveAnnotation(annotation: Annotation) {
       }
     });
     // Update new parentFrames array for MP.
-    figma.root.setPluginData("MP_AnnotationElements", JSON.stringify(AnnotationElements.parentFrames));
+    figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
     console.log("not found error vector", foundLinkToArchive.vector);
     try {
       foundLinkToArchive.vector.remove();
@@ -604,7 +604,7 @@ export function archiveAnnotation(annotation: Annotation) {
     }
     linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(foundLinkToArchive), 1);
     // Update new links for MP.
-    figma.root.setPluginData("MP_linkAnnotationToSourceNodes", JSON.stringify(linkAnnotationToSourceNodes));
+    figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
     EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
   } else {
     EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Couldn't remove annotation.");

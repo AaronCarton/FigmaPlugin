@@ -14,4 +14,7 @@ export class PropertizeConstants {
   public static readonly annotation: string = "annotation";
   public static readonly project: string = "project";
   public static readonly searchItemProperties: string[] = ["entity", "attribute", "dataSource", "dataType"];
+  public static readonly MP_currentUsers: string = "MP_currentUsers";
+  public static readonly MP_linkAnnotationToSourceNodes: string = "MP_linkAnnotationToSourceNodes";
+  public static readonly MP_AnnotationElements: string = "MP_AnnotationElements";
 }
