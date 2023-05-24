@@ -92,6 +92,7 @@ function addValue(target: string, toggleCheck = true) {
     newOption.selected = true;
     $select.add(newOption);
     $input.value = "";
+    $select.dispatchEvent(new Event("change")); // Trigger change event to enable the following fields
 
     if (toggleCheck) toggleIconCheck(target);
   }

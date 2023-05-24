@@ -4,16 +4,25 @@ import Annotation, { IAnnotation } from "./interface.annotation";
 import { ODSFacet } from "./ods/interface.ODSresponse";
 
 export interface InitializeOptions {
-  projectKey: string;
   baseURL: string;
   clientKey: string;
   sourceKey: string;
+  filters: Filters;
 }
 
 export interface LocalStoragePayload {
   baseURL: string;
   clientKey: string;
   sourceKey: string;
+}
+
+export interface Filters {
+  projectKey: string[];
+  dataSource?: string[];
+  entity?: string[];
+  attribute?: string[];
+  dataType?: string[];
+  value?: string[];
 }
 
 export interface EventMap {

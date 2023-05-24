@@ -96,10 +96,12 @@ export class Settings extends BaseComponent {
 
   connect() {
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
-      projectKey: projectKey,
       baseURL: $baseURL?.value || "",
       clientKey: $clientKey?.value || "",
       sourceKey: $sourceKey?.value || "",
+      filters: {
+        projectKey: [projectKey],
+      },
     });
     toggleSpinner();
 

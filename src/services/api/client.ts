@@ -1,6 +1,7 @@
 import { ODSObject, ODSResponse, stripODS } from "../../interfaces/ods/interface.ODSresponse";
 import Annotation, { IAnnotation } from "../../interfaces/interface.annotation";
 import Project, { IProject } from "../../interfaces/interface.project";
+import { Filters } from "../../interfaces/interface.EventHub";
 import APIError from "../../interfaces/ods/interface.APIerror";
 import EventHub from "../events/EventHub";
 import { Events } from "../events/Events";
@@ -33,7 +34,7 @@ export default class ApiClient {
     const eventHub = EventHub.getInstance();
 
     // Initialize API client
-    eventHub.makeEvent(Events.INITIALIZE_DATA, ({ projectKey, baseURL, clientKey, sourceKey }) => {
+    eventHub.makeEvent(Events.INITIALIZE_DATA, ({ baseURL, clientKey, sourceKey, filters }) => {
       ApiClient.resetClient(); // Reset client first if already initialized
 
       const api = ApiClient.initialize({
@@ -43,16 +44,14 @@ export default class ApiClient {
       });
 
       api
-        .getProject(projectKey)
-        .then((project) => {
-          api
-            .searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${project?.itemKey}`, PropertizeConstants.searchItemProperties)
-            .then((response) => {
-              const annotations = response.results.map((res) => new Annotation(res.item));
-              ApiClient.ods_annotations = annotations; // Store annotations in cache
-              EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
-              EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
-            });
+        .getProject(filters.projectKey?.at(0) || "")
+        .then(() => {
+          api.searchItem<Annotation>(PropertizeConstants.annotation, filters, PropertizeConstants.searchItemProperties).then((response) => {
+            const annotations = response.results.map((res) => new Annotation(res.item));
+            ApiClient.ods_annotations = annotations; // Store annotations in cache
+            EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
+            EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
+          });
         })
         .catch((error) => {
           if (error instanceof APIError) {
@@ -207,7 +206,7 @@ export default class ApiClient {
    * @returns {Promise<Annotation[]>} - Promise that resolves to an array of annotations
    */
   public async getAnnotations(projectKey: string, includeArchived = false): Promise<Annotation[]> {
-    return this.searchItem<Annotation>(PropertizeConstants.annotation, `projectKey.eq.${projectKey}`, undefined, undefined, includeArchived).then(
+    return this.searchItem<Annotation>(PropertizeConstants.annotation, { projectKey: [projectKey] }, undefined, undefined, includeArchived).then(
       (res) => res.results.map((res) => new Annotation(res.item)),
     );
   }
@@ -280,16 +279,22 @@ export default class ApiClient {
    */
   public async searchItem<Type extends ODSObject<Type>, ParentType = undefined, ParentKey extends string = "">(
     itemType: string,
-    filter: string,
+    filter: Filters,
     facets?: string[],
     parent?: ParentKey,
     includeArchived?: boolean,
   ): Promise<ODSResponse<Type, ParentType, ParentKey>> {
+    // Construct filters, converts {projectKey: ["123"]} to "projectKey.eq.123"
+    const filterString = Object.entries(filter).map(([key, value], i) => {
+      const fValue = value.length > 1 ? `any(${value.join(",")})` : value[0]; // If multiple values, use .any() filter
+      return (i > 0 ? "/" : "") + `${key}.eq.${fValue}`;
+    });
+
     return await this.fetchData(`/api/search/${itemType}`, {
       method: "POST",
       apiKey: ApiClient.CLIENT_APIKEY,
       body: {
-        filter: filter,
+        filter: filterString.join(""),
         facets: facets?.map((f) => ({ attribute: f })),
       },
       parent: parent,
