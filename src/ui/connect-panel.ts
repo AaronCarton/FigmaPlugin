@@ -29,62 +29,72 @@ export class ConnectPanel extends BaseComponent {
   }
 
   initComponent(): void {
+    initSelectors();
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
     downSizeSampleValueChangingTab();
-    // Add "Enter" event listeners to input fields to trigger icon click
-    [$dataSource, $entity, $attribute, $dataType].forEach((select) => {
-      if (!select) return;
-      // TODO: refactor this to a separate function,
-      // TODO: shares a lot of duplicate code with handleIconClick
-      const selectedAttribute = select.getAttribute("data-target");
-      const $input = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-field`);
-      const $text = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
-      const $addIcon = document.querySelector<HTMLElement>(`#${selectedAttribute}-btn`);
-      if ($input && $addIcon && $text) {
-        $input.addEventListener("keyup", (event: KeyboardEvent) => {
-          if (event.key === "Enter") {
-            handleIconClick($addIcon);
-          }
-        });
-        // cancel when clicking outside the input field
-        $input.addEventListener("blur", (ev) => {
-          // if the click is on the icon, don't cancel
-          if (ev.relatedTarget === $addIcon) return;
-          $addIcon.classList.toggle(iconCheck);
-          $text.classList.toggle(isActiveField);
-          select.classList.toggle(isActiveField);
-        });
-      }
-    });
   }
 }
 
-function handleIconClick(trigger: HTMLElement) {
-  const selectedAttribute = trigger.getAttribute("data-target");
-  const inputSelect = document.querySelector<HTMLSelectElement>(`#${selectedAttribute}-select`);
-  const inputText = document.querySelector<HTMLElement>(`#${selectedAttribute}-text`);
-  const inputField = document.querySelector<HTMLInputElement>(`#${selectedAttribute}-field`);
+function initSelectors() {
+  // Register click events on the buttons
+  $buttons?.forEach((button) => {
+    const target = button.getAttribute("data-target") || "";
+    const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
 
-  if (selectedAttribute && inputSelect && inputText && inputField) {
-    if (isEmpty(inputField)) {
-      if (isLessCharactersThanMax(inputField)) {
-        const newOption = new Option(inputField.value, inputField.value);
-        if (!Array.from(inputSelect.options).some((option) => option.value === newOption.value)) {
-          inputSelect.add(newOption);
-        }
-        inputSelect.value = inputField.value;
-        inputField.value = ""; // clear input field after adding new option
-        inputSelect.dispatchEvent(new Event("change"));
-      } else {
-        EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "The maximum length of the text is 35 characters.");
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      button.classList.contains(iconCheck) ? addValue(target) : toggleIconCheck(target);
+    });
+
+    // Cancel the input if the user clicks outside the input field
+    $input?.addEventListener("focusout", (ev) => {
+      if (ev.relatedTarget === button) return; // if the click is on the icon, don't cancel
+      $input.value = "";
+      toggleIconCheck(target);
+    });
+
+    // Add the value if the user presses enter
+    $input?.addEventListener("keyup", (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        addValue(target, false);
+        $input.blur();
       }
-    }
+    });
+  });
+}
 
-    trigger.classList.toggle(iconCheck);
-    inputText.classList.toggle(isActiveField);
-    inputSelect.classList.toggle(isActiveField);
-    inputField.focus();
+function toggleIconCheck(target: string) {
+  console.log("toggleIconCheck", target);
+
+  const $btn = document.querySelector<HTMLElement>(`#${target}-btn`);
+  const $textBlock = document.querySelector<HTMLElement>(`#${target}-text`);
+  const $select = document.querySelector<HTMLSelectElement>(`#${target}-select`);
+  const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
+
+  $btn?.classList.toggle(iconCheck);
+  $textBlock?.classList.toggle(isActiveField);
+  $select?.classList.toggle(isActiveField);
+  if (!$select?.classList.contains(isActiveField)) $input?.focus();
+}
+
+function addValue(target: string, toggleCheck = true) {
+  const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
+  const $select = document.querySelector<HTMLSelectElement>(`#${target}-select`);
+
+  if ($input && $select) {
+    const newOption = new Option($input.value, $input.value);
+    // Make sure input isn't empty, above max characters, or a duplicate value
+    if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
+    if (!isLessCharactersThanMax($input))
+      EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
+    if (Array.from($select.options).some((option) => option.value === newOption.value)) return; // don't add duplicate values
+    // Add the new option to the select
+    newOption.selected = true;
+    $select.add(newOption);
+    $input.value = "";
+
+    if (toggleCheck) toggleIconCheck(target);
   }
 }
 function downSizeSampleValueChangingTab() {
@@ -108,20 +118,21 @@ function isLessCharactersThanMax(inputField: HTMLInputElement) {
 }
 
 function isEmpty(inputField: HTMLInputElement) {
-  return inputField.value.trim().length !== 0;
+  return inputField.value.trim().length === 0;
 }
 
 function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
   selectElement.addEventListener("change", () => {
-    const textField = document.querySelector<HTMLInputElement>(`#${disabledId}-field`);
-    const textArea = document.querySelector<HTMLElement>(`#${disabledId}-text`);
-    const button = document.querySelector<HTMLButtonElement>(`#${disabledId}-btn`);
-    if (textField && textArea && button) {
+    const $input = document.querySelector<HTMLInputElement>(`#${disabledId}-input`);
+    const $textBlock = document.querySelector<HTMLElement>(`#${disabledId}-text`);
+    const $btn = document.querySelector<HTMLButtonElement>(`#${disabledId}-btn`);
+    if ($input && $textBlock && $btn) {
       if (selectElement.value.trim().length !== 0) {
         changeElement1.disabled = false;
-        textField.disabled = false;
-        button.disabled = false;
-        textArea.classList.remove("disabled");
+        $input.disabled = false;
+        $btn.disabled = false;
+        $btn.classList.remove("c-connect__cta--disabled");
+        $textBlock.classList.remove("disabled");
       }
     }
   });
@@ -222,19 +233,21 @@ function validateDataType() {
 }
 
 function changeFieldsOnInput(fieldName: string, state: boolean) {
-  const textField = document.querySelector<HTMLInputElement>(`#${fieldName}-field`);
-  const textArea = document.querySelector<HTMLElement>(`#${fieldName}-text`);
-  const button = document.querySelector<HTMLButtonElement>(`#${fieldName}-btn`);
+  const $input = document.querySelector<HTMLInputElement>(`#${fieldName}-input`);
+  const $textBlock = document.querySelector<HTMLElement>(`#${fieldName}-text`);
+  const $btn = document.querySelector<HTMLButtonElement>(`#${fieldName}-btn`);
 
-  if (textField && textArea && button) {
+  if ($input && $textBlock && $btn) {
     if (state === true) {
-      textField.disabled = true;
-      textArea.classList.add("disabled");
-      button.classList.add("c-connect__cta--disabled");
+      $input.disabled = true;
+      $textBlock.classList.add("disabled");
+      $btn.disabled = true;
+      $btn.classList.add("c-connect__cta--disabled");
     } else {
-      textField.disabled = false;
-      textArea.classList.remove("disabled");
-      button.classList.remove("c-connect__cta--disabled");
+      $input.disabled = false;
+      $textBlock.classList.remove("disabled");
+      $btn.disabled = false;
+      $btn.classList.remove("c-connect__cta--disabled");
     }
   }
 }
@@ -258,12 +271,6 @@ function disableCreate() {
 }
 
 if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
-  $buttons.forEach((icon) => {
-    icon.addEventListener("click", () => {
-      handleIconClick(icon);
-    });
-  });
-
   checkFields($dataSource, $entity, "entity");
   checkFields($entity, $attribute, "attribute");
   checkFields($attribute, $dataType, "dataType");
