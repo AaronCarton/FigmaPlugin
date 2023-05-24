@@ -34,7 +34,7 @@ export default class ApiClient {
     const eventHub = EventHub.getInstance();
 
     // Initialize API client
-    eventHub.makeEvent(Events.INITIALIZE_DATA, ({ baseURL, clientKey, sourceKey, filters }) => {
+    eventHub.makeEvent(Events.INITIALIZE_DATA, async ({ baseURL, clientKey, sourceKey, filters }) => {
       ApiClient.resetClient(); // Reset client first if already initialized
 
       const api = ApiClient.initialize({
@@ -43,6 +43,18 @@ export default class ApiClient {
         sourceKey,
       });
 
+      const results = await api.validateODSCredentials();
+      // if client or source key is false, send error message
+      if (!results.client || !results.source) {
+        const invalidKeys = Object.entries(results)
+          .filter(([, value]) => !value)
+          .map(([key]) => key);
+        EventHub.getInstance().sendCustomEvent(
+          Events.API_ERROR,
+          `The API ${invalidKeys.join(" and ")} key ${invalidKeys.length > 1 ? " are" : " is"} invalid. Please check your credentials.`,
+        );
+        return;
+      }
       api
         .getProject(filters.projectKey?.at(0) || "")
         .then(() => {
@@ -54,6 +66,7 @@ export default class ApiClient {
           });
         })
         .catch((error) => {
+          //API source key error
           if (error instanceof APIError) {
             EventHub.getInstance().sendCustomEvent(Events.API_ERROR, error.message);
           }
@@ -238,6 +251,24 @@ export default class ApiClient {
   ////////* HELPER FUNCTIONS *////////
 
   /**
+   * Test the client and source API keys
+   * @returns {Promise<{client: boolean, source: boolean}>} - Promise that resolves to an object containing the results of the test
+   */
+  public async validateODSCredentials(): Promise<{ client: boolean; source: boolean }> {
+    const clientRes = await this.fetchData("/api/propertize/test/propertize/authenticated", {
+      method: "GET",
+      apiKey: ApiClient.CLIENT_APIKEY,
+    });
+
+    const sourceRes = await this.fetchData("/api/propertize/test/propertize/authenticated", {
+      method: "GET",
+      apiKey: ApiClient.SOURCE_APIKEY,
+    });
+
+    return { client: clientRes.status !== 401, source: sourceRes.status !== 401 };
+  }
+
+  /**
    * Generic function that fetches item by ID (skips Elasticsearch indexing)
    * @template Type - Type of the item to search for (e.g. Project)
    * @param {string} itemType - Type of the item to search for (e.g. project)
@@ -364,7 +395,7 @@ export default class ApiClient {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
         case 401:
-          throw new APIError(res, "Unauthorized, please check your API key");
+          break; // Unauthorized requests will be handled by the checkCredentials function
         case 400:
           throw new APIError(res, "Bad request, is the item structure correct?");
         case 500:
