@@ -556,7 +556,7 @@ export function sendDataToFrontend() {
         ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
         : console.log("Highlight is not undefined");
     }
-    
+
     if (found !== undefined) {
       if (found !== highlightedAnnotationLinkItem) {
         console.log("Found new item to highlight: ", found);
