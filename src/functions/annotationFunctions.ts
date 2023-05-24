@@ -6,9 +6,10 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
+import multiUserManager, { addCurrentUser } from "./multiUserManager";
 import { PropertizeColors } from "../classes/propertizeColors";
 
-export const linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
+export let linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
 export let lastSelectedNode: string = "";
 
 let highlightedAnnotationLinkItem: annotationLinkItem | undefined = undefined;
@@ -63,6 +64,12 @@ function createAnnotation(inputValues: AnnotationInput) {
 }
 
 function determineFrameSide(elem: SceneNode, parentFrame: FrameNode) {
+  if (parentFrame.absoluteTransform === undefined) {
+    const found = <FrameNode>figma.currentPage.findOne((x) => x.id === parentFrame.id);
+    if (found !== null) {
+      parentFrame = found;
+    }
+  }
   if (elem.absoluteTransform[0][2] < parentFrame.absoluteTransform[0][2] + parentFrame.width / 2) {
     return PropertizeConstants.sideLeft;
   } else {
@@ -217,6 +224,21 @@ function drawAnnotations(
   // Looping over given annotations.
   let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
   for (let i = 0; i < sourceNodes.length; i++) {
+    let currentItem = sourceNodes[i];
+
+    if (currentItem.absoluteTransform === undefined) {
+      const foundSourceNode = figma.currentPage.findOne((x) => x.id === currentItem.id);
+      if (foundSourceNode !== null) {
+        sourceNodes[i] = foundSourceNode;
+      }
+    }
+
+    if (currentItem.absoluteTransform === undefined) {
+      const foundCurrentItemInFigma = figma.currentPage.findOne((x) => x.id === currentItem.id);
+      if (foundCurrentItemInFigma !== null) {
+        currentItem = foundCurrentItemInFigma;
+      }
+    }
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id == sourceNodes[i].id);
     let annotation: FrameNode | null = null;
 
@@ -250,6 +272,12 @@ function drawAnnotations(
     }
 
     annotation.x = startPoint;
+    if (sourceNodes[i].absoluteTransform === undefined) {
+      const found = figma.currentPage.findOne((x) => x.id === sourceNodes[i].id);
+      if (found !== null) {
+        sourceNodes[i] = found;
+      }
+    }
     annotation.y = determineOverlap(i, annotation, sourceNodes[i], lastAddedAnnotationY);
     lastAddedAnnotationY = annotation.y;
     AnnotationElements.annotationLayer.appendChild(annotation);
@@ -299,6 +327,7 @@ function highlight(found: annotationLinkItem) {
     found.annotation.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkRed }];
     found.annotation.fills = [{ type: "SOLID", color: PropertizeColors.figmaRed }];
     found.annotation.children.forEach((x) => {
+      x = x as FrameNode;
       x.fills = [{ type: "SOLID", color: PropertizeColors.figmaWhite }];
     });
     found.annotation.dashPattern = [0, 0];
@@ -383,60 +412,90 @@ export function changeLayerVisibility(state: boolean) {
 }
 
 export function initAnnotations(annotationData: Array<Annotation>) {
-  createLayer();
-  makeFramesArray(annotationData);
-  // Make inputValues array needed for drawing initial annotations.
-  const inputValues: Array<{ id: string; AnnotationInput: AnnotationInput }> = [];
-  for (let i = 0; i < annotationData.length; i++) {
-    const element = annotationData[i];
-    inputValues.push({
-      id: element.nodeId,
-      AnnotationInput: {
-        dataSource: element.dataSource,
-        entity: element.entity,
-        attribute: element.attribute,
-        dataType: element.dataType,
-        value: element.value,
-      },
-    });
+  const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
+
+  // Adding current user to the list of users.
+  if (figma.currentUser) {
+    addCurrentUser(figma.currentUser);
   }
 
-  if (AnnotationElements.parentFrames !== null) {
-    for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
-      const currentFrame = AnnotationElements.parentFrames[i];
-      if (currentFrame.sourceNodesLeft.length > 0) {
-        drawAnnotations(currentFrame.startpointLeft, sortNodesAccordingToYCoords(currentFrame.sourceNodesLeft), inputValues);
-      }
-      if (currentFrame.sourceNodesRight.length > 0) {
-        drawAnnotations(currentFrame.startpointRight, sortNodesAccordingToYCoords(currentFrame.sourceNodesRight), inputValues);
+  if (!annotationLayerFound) {
+    createLayer();
+
+    makeFramesArray(annotationData);
+    // Make inputValues array needed for drawing initial annotations.
+    const inputValues: Array<{ id: string; AnnotationInput: AnnotationInput }> = [];
+    for (let i = 0; i < annotationData.length; i++) {
+      const element = annotationData[i];
+      inputValues.push({
+        id: element.nodeId,
+        AnnotationInput: {
+          dataSource: element.dataSource,
+          entity: element.entity,
+          attribute: element.attribute,
+          dataType: element.dataType,
+          value: element.value,
+        },
+      });
+    }
+
+    if (AnnotationElements.parentFrames !== null) {
+      for (let i = 0; i < AnnotationElements.parentFrames.length; i++) {
+        const currentFrame = AnnotationElements.parentFrames[i];
+        if (currentFrame.sourceNodesLeft.length > 0) {
+          drawAnnotations(currentFrame.startpointLeft, sortNodesAccordingToYCoords(currentFrame.sourceNodesLeft), inputValues);
+        }
+        if (currentFrame.sourceNodesRight.length > 0) {
+          drawAnnotations(currentFrame.startpointRight, sortNodesAccordingToYCoords(currentFrame.sourceNodesRight), inputValues);
+        }
       }
     }
+  } else {
+    // If layer is found => set annotationLayer to found annotation layer.
+    AnnotationElements.annotationLayer = annotationLayerFound as FrameNode;
+  }
+
+  // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
+  if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames && !annotationLayerFound) {
+    figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
+    figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
+  }
+
+  // If you are not the first person to launch the plugin, you should get the parentframes and link array from the pluginData.
+  if (annotationLayerFound) {
+    AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_AnnotationElements));
+    linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes));
   }
   // Listen to updates after first initial drawing of the annotations.
   figma.on("documentchange", (event: DocumentChangeEvent) => handleConnectorRedraws(event));
+  figma.on("documentchange", (event: DocumentChangeEvent) => multiUserManager(event));
 }
 
 export function updateAnnotations(selection: Array<SceneNode>, inputValues: AnnotationInput) {
   for (let i = 0; i < selection.length; i++) {
     const currentItem: SceneNode = selection[i];
     const found: annotationLinkItem | undefined = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === currentItem.id);
+    const foundLinkedAnnoCoords = figma.currentPage.findOne((x) => x.id === found?.annotation.id)?.absoluteBoundingBox;
 
     if (found !== undefined) {
       // Item already has an annotation.
       found.data = inputValues;
-      const coords = found.annotation.absoluteBoundingBox;
+      const coords = foundLinkedAnnoCoords;
       figma.currentPage.findOne((x) => x.id === found.annotation.id)?.remove();
       found.annotation = createAnnotation(inputValues);
       AnnotationElements.annotationLayer.appendChild(found.annotation);
-      if (coords !== null) {
+
+      if (coords !== null && coords !== undefined) {
         found.annotation.x = coords.x;
         found.annotation.y = coords.y;
       }
+
       // If the highlighted item is updated = update the global var aswell to keep track of changing id of the vector and annotation
       if (highlightedAnnotationLinkItem !== undefined && found.sourceNode.id === highlightedAnnotationLinkItem.sourceNode.id) {
         highlightedAnnotationLinkItem = found;
         highlight(found);
       }
+
       linkAnnotationToSourceNodes[linkAnnotationToSourceNodes.indexOf(found)] = found;
     } else {
       // Item doesn't have an annotation yet.
@@ -448,8 +507,10 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
         const side = determineFrameSide(currentItem, foundParent.frame);
         const startPoint = side === PropertizeConstants.sideLeft ? foundParent.startpointLeft : foundParent.startpointRight;
         const sourceNodes = side === PropertizeConstants.sideLeft ? foundParent.sourceNodesLeft : foundParent.sourceNodesRight;
+
         // Push item to corresponding array.
         sourceNodes.push(currentItem);
+
         // Redraw that updated array.
         drawAnnotations(startPoint, sortNodesAccordingToYCoords(sourceNodes), inputValues);
       } else {
@@ -470,6 +531,9 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
       }
     }
   }
+  // After update logic is done, update the MP data.
+  figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
+  figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
 }
 
 export function sendDataToFrontend() {
@@ -477,7 +541,7 @@ export function sendDataToFrontend() {
     EventHub.getInstance().sendCustomEvent(Events.UI_RESET_TEXTAREA_SIZE, null);
     lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
-
+    console.log("curr selection", found);
     highlightedAnnotationLinkItem === undefined
       ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
       : console.log("Highlight is not undefined");
@@ -504,31 +568,57 @@ export function sendDataToFrontend() {
 }
 
 export function archiveAnnotation(annotation: Annotation) {
-  const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
+  const foundLinkToArchive = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === annotation.nodeId);
+  console.log("found for deletion", foundLinkToArchive);
   // Remove annotation from array
-  if (found) {
+  if (foundLinkToArchive) {
     // Deletes found element from the parentframe array
     AnnotationElements.parentFrames.forEach((currentParent) => {
-      const leftFound = currentParent.sourceNodesLeft.find((x) => x.id === found.sourceNode.id);
+      const leftFound = currentParent.sourceNodesLeft.find((x) => x.id === foundLinkToArchive.sourceNode.id);
       if (leftFound === undefined) {
-        const rightFound = currentParent.sourceNodesRight.find((x) => x.id === found.sourceNode.id);
+        const rightFound = currentParent.sourceNodesRight.find((x) => x.id === foundLinkToArchive.sourceNode.id);
         if (rightFound === undefined) {
           return;
         } else {
-          const deleted = currentParent.sourceNodesRight.splice(currentParent.sourceNodesRight.indexOf(rightFound));
+          currentParent.sourceNodesRight.splice(currentParent.sourceNodesRight.indexOf(rightFound));
           return;
         }
       } else {
-        const deleted = currentParent.sourceNodesLeft.splice(currentParent.sourceNodesLeft.indexOf(leftFound));
+        currentParent.sourceNodesLeft.splice(currentParent.sourceNodesLeft.indexOf(leftFound));
         return;
       }
     });
-
-    found.vector.remove();
-    found.annotation.remove();
-    linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(found), 1);
+    // Update new parentFrames array for MP.
+    figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
+    console.log("not found error vector", foundLinkToArchive.vector);
+    try {
+      foundLinkToArchive.vector.remove();
+    } catch (error) {
+      const foundInFigma = figma.root.findOne((x) => x.id === foundLinkToArchive.vector.id);
+      foundInFigma !== null ? foundInFigma.remove() : console.log("found was null when deleting vector");
+    }
+    try {
+      foundLinkToArchive.annotation.remove();
+    } catch (error) {
+      const foundInFigma = figma.root.findOne((x) => x.id === foundLinkToArchive.annotation.id);
+      foundInFigma !== null ? foundInFigma.remove() : console.log("found was null when deleting vector");
+    }
+    linkAnnotationToSourceNodes.splice(linkAnnotationToSourceNodes.indexOf(foundLinkToArchive), 1);
+    // Update new links for MP.
+    figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
     EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
   } else {
     EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Couldn't remove annotation.");
   }
+}
+
+export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFrames: Array<frame>) {
+  if (linkAnnotationToSourceNodes !== links) {
+    linkAnnotationToSourceNodes = links;
+  }
+  if (AnnotationElements.parentFrames !== parentFrames) {
+    AnnotationElements.parentFrames = parentFrames;
+  }
+  console.log("Given MP data in update func", links, parentFrames);
+  console.log("updated local data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
 }
