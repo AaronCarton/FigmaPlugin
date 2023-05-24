@@ -1,8 +1,7 @@
 import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
-import { resizeByFilter, resizeByRemoveFilter, resizeByTab } from "./functions/reiszeFunctions";
-import { resizeByShowMore } from "./functions/reiszeFunctions";
+import { resizeByFilter, resizeByRemoveFilter, resizeByShowMore, resizeByTab } from "./functions/reiszeFunctions";
 import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
 import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
@@ -115,8 +114,10 @@ figma.on("close", async () => {
   figma.closePlugin();
 });
 
-// Initialize the UI components
+//////* INITIALIZATION FONTS *//////
 loadFonts();
+
+//////* INITIALIZATION UI COMPONENTS *//////
 ["Settings", "NavigationTabs", "ConnectPanel", "FilterPanel"].forEach((componentName) => {
   console.log(`initialize${componentName}`);
 

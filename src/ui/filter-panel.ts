@@ -1,11 +1,12 @@
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
-import { $filterItems, $removeFilter } from "./connect-panel";
 
-const $resetFilter: HTMLButtonElement | null = document.querySelector(".js-reset-btn");
+const $resetFilterButton: HTMLButtonElement | null = document.querySelector(".js-reset-btn");
 const $filterButton: HTMLButtonElement | null = document.querySelector(".js-filter-btn");
-const $selectors: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-filter");
+const $filterItems: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-filter-item");
+const $removeFilter: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-remove-filter");
+const $filterSelectors: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-filter");
 let count: number = 0;
 
 export class FilterPanel extends BaseComponent {
@@ -16,51 +17,56 @@ export class FilterPanel extends BaseComponent {
   }
 
   initComponent(): void {
-    return;
+    initializeFilterFunction();
   }
 }
 
-if ($resetFilter && $filterButton && $selectors) {
-  $filterButton.addEventListener("click", () => {
-    count = 0;
-    $selectors.forEach((selector) => {
-      showFiltersConnectPanel(selector);
-    });
-    if ($filterItems) {
-      $filterItems.forEach((item) => {
-        if (item.classList.contains("is-active")) {
-          count++;
-        }
+function initializeFilterFunction() {
+  if ($resetFilterButton && $filterButton && $filterSelectors) {
+    $filterButton.addEventListener("click", () => {
+      count = 0;
+      $filterSelectors.forEach((selector) => {
+        showFiltersConnectPanel(selector);
       });
-      EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_FILTER, count);
-    }
-  });
-  $resetFilter.addEventListener("click", () => {
-    count = 0;
-    $selectors.forEach((selector) => {
-      selector.value = "";
-      selector.disabled = false;
-    });
-    $filterItems?.forEach((item) => {
-      item.classList.remove("is-active");
-    });
-    EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_FILTER, count);
-  });
-  $selectors.forEach((item) => {
-    item.addEventListener("change", () => {
-      if (item.value !== "") {
-        $selectors.forEach((selector) => {
-          selector.disabled = true;
+      if ($filterItems) {
+        $filterItems.forEach((item) => {
+          if (item.classList.contains("is-active")) {
+            count++;
+          }
         });
-        item.disabled = false;
-      } else {
-        $selectors.forEach((selector) => {
-          selector.disabled = false;
-        });
+        EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_FILTER, count);
       }
     });
-  });
-  removeFilterItem();
+
+    $resetFilterButton.addEventListener("click", () => {
+      count = 0;
+      $filterSelectors.forEach((selector) => {
+        selector.value = "";
+        selector.disabled = false;
+      });
+      $filterItems?.forEach((item) => {
+        item.classList.remove("is-active");
+      });
+      EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_FILTER, count);
+    });
+
+    $filterSelectors.forEach((selector) => {
+      selector.addEventListener("change", () => {
+        if (selector.value !== "") {
+          $filterSelectors.forEach((selector) => {
+            selector.disabled = true;
+          });
+          selector.disabled = false;
+        } else {
+          $filterSelectors.forEach((selector) => {
+            selector.disabled = false;
+          });
+        }
+      });
+    });
+
+    removeFilterItem();
+  }
 }
 
 function showFiltersConnectPanel(input: HTMLInputElement) {
@@ -72,11 +78,9 @@ function showFiltersConnectPanel(input: HTMLInputElement) {
       targetItem.classList.add("is-active");
       targetText.innerHTML = input.value;
     }
-  } else {
-    if (targetItem && targetText) {
-      targetItem.classList.remove("is-active");
-      targetText.innerHTML = "";
-    }
+  } else if (targetItem && targetText) {
+    targetItem.classList.remove("is-active");
+    targetText.innerHTML = "";
   }
 }
 
@@ -94,7 +98,7 @@ function removeFilterItem() {
 }
 
 function unselectRemoved() {
-  $selectors?.forEach((selector) => {
+  $filterSelectors?.forEach((selector) => {
     selector.disabled = false;
     selector.value = "";
   });
