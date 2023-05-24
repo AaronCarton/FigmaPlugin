@@ -1,38 +1,37 @@
 import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
-import { resizeByTab } from "./functions/reiszeFunctions";
+import { resizeByShowMore, resizeByTab } from "./functions/reiszeFunctions";
 import EventHub from "./services/events/EventHub";
 import { Events } from "./services/events/Events";
 import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
+import { isLastUser, removeCurrentUser } from "./functions/multiUserManager";
 
 figma.showUI(__html__, { width: 345, height: 296 });
 
 //////* UI EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UI_CHANGE_TAB, ({ tab, connection }) => resizeByTab(tab, connection));
 EventHub.getInstance().makeEvent(Events.UI_CHANGE_VISIBILITY, (state) => changeLayerVisibility(state));
+EventHub.getInstance().makeEvent(Events.UI_SHOW_MORE, ({ tab, isShowMoreActive }) => resizeByShowMore(tab, isShowMoreActive));
 
 //////* LOCAL STORAGE EVENTS *//////
-EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
+EventHub.getInstance().makeEvent(Events.SET_LOCAL_STORAGE, ({ baseURL, clientKey, sourceKey }) => {
   figma.clientStorage.setAsync("baseURL", baseURL);
   figma.clientStorage.setAsync("clientKey", clientKey);
   figma.clientStorage.setAsync("sourceKey", sourceKey);
-  figma.clientStorage.setAsync("lastUpdate", lastUpdate);
 });
 
 EventHub.getInstance().makeEvent(Events.FETCH_LOCAL_STORAGE, async () => {
   const baseURL: string = (await figma.clientStorage.getAsync("baseURL")) || "";
   const clientKey: string = (await figma.clientStorage.getAsync("clientKey")) || "";
   const sourceKey: string = (await figma.clientStorage.getAsync("sourceKey")) || "";
-  const lastUpdate: string = (await figma.clientStorage.getAsync("lastUpdate")) || "";
 
   EventHub.getInstance().sendCustomEvent(Events.LOCAL_STORAGE_FETCHED, {
     baseURL,
     clientKey,
     sourceKey,
-    lastUpdate,
   });
 });
 
@@ -110,7 +109,17 @@ figma.on("documentchange", (event: DocumentChangeEvent) => {
 });
 
 figma.on("close", async () => {
-  AnnotationElements.annotationLayer.remove();
+  // Checking if user closing the plugin is the last user in the file (that uses the plugin).
+  // If so, delete the annotion, otherwise delete user from user list
+  const lastUser: boolean = isLastUser();
+  if (lastUser) {
+    AnnotationElements.annotationLayer.remove();
+    removeCurrentUser();
+    figma.root.setPluginData("MP_currentUser", "");
+  } else {
+    removeCurrentUser();
+  }
+
   figma.closePlugin();
 });
 
