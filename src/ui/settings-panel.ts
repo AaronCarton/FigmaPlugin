@@ -1,3 +1,4 @@
+import { getTimeAgo } from "../functions/getTimeAgo";
 import Annotation from "../interfaces/interface.annotation";
 import { ODSFacet } from "../interfaces/ods/interface.ODSresponse";
 import ApiClient from "../services/api/client";
@@ -15,9 +16,13 @@ const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_so
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 
 let projectKey: string = "";
+const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
+
 //Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-spinner");
 const $plugin: HTMLElement | null = document.querySelector(".c-content");
+
+let timeInterval: number;
 
 export class Settings extends BaseComponent {
   componentType = "Settings";
@@ -41,33 +46,29 @@ export class Settings extends BaseComponent {
   initializeEventHubEvents() {
     ApiClient.initializeEvents();
     EventHub.getInstance().makeEvent(Events.ANNOTATIONS_FETCHED, (annotations: Annotation[]) => {
-      const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
-
       if ($button && $date) {
         $button.innerHTML = "Refresh";
-        $date.innerText = currentTime;
         $button.disabled = false;
+
+        this.lastUpdatedInterval(new Date()); // restart last updated interval
       }
 
       changeConnectionState(true);
-      spinnerEvents();
+      toggleSpinner();
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.value)]));
       Object.keys(data).forEach((key) => {
         this.loadDropdowns(key, data[key]);
       });
+      this.loadDropdowns("dataType", dataTypes);
     });
 
-    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey, lastUpdate }) => {
+    EventHub.getInstance().makeEvent(Events.LOCAL_STORAGE_FETCHED, ({ baseURL, clientKey, sourceKey }) => {
       $baseURL?.setAttribute("value", baseURL || "");
       $clientKey?.setAttribute("value", clientKey || "");
       $sourceKey?.setAttribute("value", sourceKey || "");
       this.disableFieldsWhenNecessary();
-
-      if ($date) {
-        $date.innerText = lastUpdate || "";
-      }
 
       // TODO: emit event to initialize data right away, because we got the values from localStorage
       // KEEP THIS
@@ -81,6 +82,7 @@ export class Settings extends BaseComponent {
 
     EventHub.getInstance().makeEvent(Events.API_ERROR, (message) => {
       $button?.removeAttribute("disabled");
+      toggleSpinner();
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, message);
     });
 
@@ -93,20 +95,18 @@ export class Settings extends BaseComponent {
   }
 
   connect() {
-    const currentTime: string = new Date().toLocaleString("en-GB").replace(",", "");
     EventHub.getInstance().sendCustomEvent(Events.INITIALIZE_DATA, {
       projectKey: projectKey,
       baseURL: $baseURL?.value || "",
       clientKey: $clientKey?.value || "",
       sourceKey: $sourceKey?.value || "",
     });
-    spinnerEvents();
+    toggleSpinner();
 
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
       baseURL: $baseURL?.value || "",
       clientKey: $clientKey?.value || "",
       sourceKey: $sourceKey?.value || "",
-      lastUpdate: currentTime,
     });
 
     toggleShowAnnotations();
@@ -181,13 +181,28 @@ export class Settings extends BaseComponent {
     $clientKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
     $sourceKey?.addEventListener("keyup", this.disableFieldsWhenNecessary);
   }
+
+  lastUpdatedInterval(date: Date) {
+    if ($date) {
+      // eslint-disable-next-line func-style
+      const interval = () => {
+        if ($date) {
+          $date.innerText = getTimeAgo(date);
+        }
+      };
+      // Clear any previous interval, start new interval to update time every 5 seconds
+      clearInterval(timeInterval);
+      interval(); // run once immediately
+      timeInterval = setInterval(interval, 5000);
+    }
+  }
 }
 function toggleShowAnnotations() {
   if ($annotationToggle) {
     $annotationToggle.checked = true;
   }
 }
-function spinnerEvents() {
+function toggleSpinner() {
   $spinner?.classList.toggle("is-active");
   $plugin?.classList.toggle("no-pointer");
 }

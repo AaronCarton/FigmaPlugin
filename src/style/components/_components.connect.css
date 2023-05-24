@@ -97,6 +97,7 @@
 
 .c-connect__attribute {
   margin-bottom: 0;
+  height: auto;
 }
 
 .c-connect__field--select {
@@ -152,7 +153,7 @@
   justify-content: start;
   align-items: center;
   width: 230px;
-  height: 31px;
+  height: auto;
   border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);
 }
@@ -182,4 +183,24 @@
 
 .c-disconnected__text {
   margin: var(--propertize__spacing) 0;
+}
+
+.c-connect__sample-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  resize: none;
+  padding: 5px;
+  font-family: var(--propertize__font-family);
+}
+
+.c-connect__show-more {
+  font-size: var(--propertize__font-size--tiny);
+  color: var(--propertize__color--red);
+  width: 85px;
+  text-decoration: underline;
+}
+
+.c-connect__enable-scroll {
+  overflow-y: scroll;
+  resize: none;
 }
