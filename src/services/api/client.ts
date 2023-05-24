@@ -266,7 +266,7 @@ export default class ApiClient {
       apiKey: ApiClient.SOURCE_APIKEY,
     });
 
-    return { client: clientRes.status === 200, source: sourceRes.status === 200 };
+    return { client: clientRes.status !== 401, source: sourceRes.status !== 401 };
   }
 
   /**
