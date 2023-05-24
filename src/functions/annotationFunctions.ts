@@ -6,7 +6,7 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
-import multiUserManager, { addCurrentUser } from "./multiUserManager";
+import multiUserManager, { addCurrentUser, isFirstUser } from "./multiUserManager";
 import { PropertizeColors } from "../classes/propertizeColors";
 
 export let linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
@@ -322,6 +322,10 @@ function highlight(found: annotationLinkItem) {
   // Reset previous
   resetHighlightedAnnotation();
   // Set new highlighted annotation and vector
+  if (found.vector.strokes === undefined || found.annotation.children === undefined) {
+    found.vector = figma.currentPage.findOne((x) => x.id === found.vector.id) as VectorNode;
+    found.annotation = figma.currentPage.findOne((x) => x.id === found.annotation.id) as FrameNode;
+  }
   if (found) {
     found.vector.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkRed }];
     found.annotation.strokes = [{ type: "SOLID", color: PropertizeColors.figmaDarkRed }];
@@ -415,13 +419,7 @@ export function changeLayerVisibility(state: boolean) {
 
 export function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
-
-  // Adding current user to the list of users.
-  if (figma.currentUser) {
-    addCurrentUser(figma.currentUser);
-  }
-
-  if (!annotationLayerFound) {
+  if (isFirstUser()) {
     createLayer();
 
     makeFramesArray(annotationData);
@@ -458,13 +456,21 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   }
 
   // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
-  if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames && !annotationLayerFound) {
-    figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
-    figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
+  if (isFirstUser()) {
+    if (figma.currentUser) {
+      addCurrentUser(figma.currentUser);
+    }
+    //figma.root.setPluginData(PropertizeConstants.MP_currentUsers, "");
+    if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames) {
+      figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
+      figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
+    }
   }
-
   // If you are not the first person to launch the plugin, you should get the parentframes and link array from the pluginData.
-  if (annotationLayerFound) {
+  else {
+    if (figma.currentUser) {
+      addCurrentUser(figma.currentUser);
+    }
     AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_AnnotationElements));
     linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes));
   }
@@ -547,12 +553,12 @@ export function sendDataToFrontend() {
     highlightedAnnotationLinkItem === undefined
       ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
       : console.log("Highlight is not undefined");
-
     if (found !== undefined) {
       if (found !== highlightedAnnotationLinkItem) {
         console.log("Found new item to highlight: ", found);
-        if (found.annotation.children === undefined) {
+        if (found.annotation.children === undefined || found.annotation.children.length === 0) {
           found.annotation = figma.currentPage.findOne((x) => x.id === found?.annotation.id) as FrameNode;
+          console.log(found.annotation);
         }
         highlight(found);
       }

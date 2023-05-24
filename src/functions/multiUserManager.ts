@@ -8,7 +8,9 @@ export function addCurrentUser(user: User) {
   if (currentUsers !== "") {
     // If not first user, add currentUser id to array.
     currentUsers = JSON.parse(currentUsers) as Array<string>;
-    currentUsers.push(user.id as string);
+    if (!currentUsers.find((x) => x === (figma.currentUser?.id as string))) {
+      currentUsers.push(user.id as string);
+    }
     figma.root.setPluginData(PropertizeConstants.MP_currentUsers, JSON.stringify(currentUsers));
   } else {
     // If first user, set currentUsers to array with only user id.
@@ -28,6 +30,15 @@ export function removeCurrentUser() {
 export function isLastUser() {
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (currentUsers.length === 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function isFirstUser() {
+  const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
+  if (currentUsers.length === 0) {
     return true;
   } else {
     return false;
