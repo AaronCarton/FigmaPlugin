@@ -383,7 +383,6 @@ export default class ApiClient {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
         case 401:
-          // throw new APIError(res, "Unauthorized, please check your API key");
           break; // unauthorized requests will be handled by the checkCredentials function
         case 400:
           throw new APIError(res, "Bad request, is the item structure correct?");
