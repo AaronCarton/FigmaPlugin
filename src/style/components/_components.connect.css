@@ -32,6 +32,7 @@
 
 .c-connect__cta:disabled {
   opacity: 0.4;
+  cursor: inherit;
 }
 
 .c-connect__buttons {
@@ -111,6 +112,7 @@
   border: 1px solid transparent;
   outline: none;
   color: var(--propertize__color--primary);
+  width: 120px;
 }
 
 .c-connect__field--text {
