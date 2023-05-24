@@ -42,7 +42,7 @@ export default class ApiClient {
         sourceKey,
       });
 
-      const results = await api.testCredentials();
+      const results = await api.validateODSCredentials();
       // if client or source key is false, send error message
       if (!results.client || !results.source) {
         const invalidKeys = Object.entries(results)
@@ -255,7 +255,7 @@ export default class ApiClient {
    * Test the client and source API keys
    * @returns {Promise<{client: boolean, source: boolean}>} - Promise that resolves to an object containing the results of the test
    */
-  public async testCredentials(): Promise<{ client: boolean; source: boolean }> {
+  public async validateODSCredentials(): Promise<{ client: boolean; source: boolean }> {
     const clientRes = await this.fetchData("/api/propertize/test/propertize/authenticated", {
       method: "GET",
       apiKey: ApiClient.CLIENT_APIKEY,
@@ -265,6 +265,7 @@ export default class ApiClient {
       method: "GET",
       apiKey: ApiClient.SOURCE_APIKEY,
     });
+
     return { client: clientRes.status === 200, source: sourceRes.status === 200 };
   }
 
@@ -383,7 +384,7 @@ export default class ApiClient {
         case 404:
           break; // Not found should not throw an error, just return null (see getById)
         case 401:
-          break; // unauthorized requests will be handled by the checkCredentials function
+          break; // Unauthorized requests will be handled by the checkCredentials function
         case 400:
           throw new APIError(res, "Bad request, is the item structure correct?");
         case 500:
