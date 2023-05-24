@@ -203,8 +203,12 @@
   text-decoration: underline;
 }
 
+.c-connect__enable-scroll + .c-connect__show-more {
+  display: none;
+}
+
 .c-connect__enable-scroll {
   overflow-y: scroll;
   resize: none;
-  height: 100px;
+  height: 75px;
 }
