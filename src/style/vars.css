@@ -8,6 +8,7 @@
   --propertize__color--red: #c42828;
 
   --propertize__border-radius: 3px;
+  --propertize__border-radius--large: 5px;
   --propertize__border-radius--rounded: 9999px;
 
   --propertize__spacing--minuscule: 3px;
