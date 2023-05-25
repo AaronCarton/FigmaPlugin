@@ -22,7 +22,8 @@ export function removeCurrentUser() {
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (figma.currentUser !== null) {
     const userIndex = currentUsers.indexOf(figma.currentUser.id as string);
-    currentUsers.splice(userIndex, 1);
+    const deleted = currentUsers.splice(userIndex, 1);
+    console.log("deleted", deleted);
   }
   figma.root.setPluginData(PropertizeConstants.MP_currentUsers, JSON.stringify(currentUsers));
 }
@@ -30,17 +31,21 @@ export function removeCurrentUser() {
 export function isLastUser() {
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (currentUsers.length === 1) {
+    console.log("is last user", currentUsers);
     return true;
   } else {
+    console.log("is not last user", currentUsers);
     return false;
   }
 }
 
 export function isFirstUser() {
-  const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
-  if (currentUsers.length === 0) {
+  const currentUsers = figma.root.getPluginData(PropertizeConstants.MP_currentUsers);
+  if (currentUsers === "") {
+    console.log("is first user", currentUsers);
     return true;
   } else {
+    console.log("is not first user", currentUsers);
     return false;
   }
 }
