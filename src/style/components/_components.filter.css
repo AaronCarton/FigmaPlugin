@@ -81,6 +81,15 @@
   cursor: pointer;
 }
 
+.c-filter__item--button:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--propertize__color--red);
+}
+
+.c-filter__item--button:disabled:hover {
+  text-decoration: none;
+}
+
 .c-filter__item--button:disabled {
   opacity: 0.4;
   cursor: inherit;
