@@ -17,6 +17,9 @@ export class PropertizeConstants {
   public static readonly MP_currentUsers: string = "MP_currentUsers";
   public static readonly MP_linkAnnotationToSourceNodes: string = "MP_linkAnnotationToSourceNodes";
   public static readonly MP_AnnotationElements: string = "MP_AnnotationElements";
+  public static readonly widthPlugin: number = 345;
   public static readonly heightConnect: number = 296;
-  public static readonly filterHeight: number = 23;
+  public static readonly heightSettings: number = 333;
+  public static readonly heightFilter: number = 261;
+  public static readonly heightUsage: number = 500;
 }

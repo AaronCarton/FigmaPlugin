@@ -1,13 +1,9 @@
-import EventHub from "../services/events/EventHub";
-import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const $resetFilterButton: HTMLButtonElement | null = document.querySelector(".js-reset-btn");
 const $filterButton: HTMLButtonElement | null = document.querySelector(".js-filter-btn");
-const $filterItems: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-filter-item");
-const $removeFilter: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-remove-filter");
 const $filterSelectors: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-filter");
-let count: number = 0;
+const $isFilterActive: HTMLElement | null = document.querySelector(".js-filter-active");
 
 export class FilterPanel extends BaseComponent {
   componentType = "FilterPanel";
@@ -22,32 +18,24 @@ export class FilterPanel extends BaseComponent {
 }
 
 function initializeFilterFunction() {
-  if ($resetFilterButton && $filterButton && $filterSelectors) {
+  if ($resetFilterButton && $filterButton && $filterSelectors && $isFilterActive) {
     $filterButton.addEventListener("click", () => {
-      count = 0;
       $filterSelectors.forEach((selector) => {
         showFiltersConnectPanel(selector);
       });
-      if ($filterItems) {
-        $filterItems.forEach((item) => {
-          if (item.classList.contains("is-active")) {
-            count++;
-          }
-        });
-        EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_FILTER, count);
-      }
+      $isFilterActive.style.opacity = "1";
+      $resetFilterButton.disabled = false;
+      $filterButton.disabled = true;
     });
 
     $resetFilterButton.addEventListener("click", () => {
-      count = 0;
       $filterSelectors.forEach((selector) => {
         selector.value = "";
         selector.disabled = false;
       });
-      $filterItems?.forEach((item) => {
-        item.classList.remove("is-active");
-      });
-      EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_FILTER, count);
+      $isFilterActive.style.opacity = "0";
+      $resetFilterButton.disabled = true;
+      $filterButton.disabled = false;
     });
 
     $filterSelectors.forEach((selector) => {
@@ -55,17 +43,18 @@ function initializeFilterFunction() {
         if (selector.value !== "") {
           $filterSelectors.forEach((selector) => {
             selector.disabled = true;
+            $filterButton.disabled = true;
           });
           selector.disabled = false;
+          $filterButton.disabled = false;
         } else {
           $filterSelectors.forEach((selector) => {
             selector.disabled = false;
+            $filterButton.disabled = false;
           });
         }
       });
     });
-
-    removeFilterItem();
   }
 }
 
@@ -82,24 +71,4 @@ function showFiltersConnectPanel(input: HTMLInputElement) {
     targetItem.classList.remove("is-active");
     targetText.innerHTML = "";
   }
-}
-
-function removeFilterItem() {
-  $removeFilter?.forEach((item) => {
-    item.addEventListener("click", () => {
-      const target = item.getAttribute("data-target");
-      const targetItem = document.querySelector<HTMLElement>(`#${target}`);
-      targetItem?.classList.remove("is-active");
-      count--;
-      EventHub.getInstance().sendCustomEvent(Events.UI_REMOVE_FILTER, count);
-      unselectRemoved();
-    });
-  });
-}
-
-function unselectRemoved() {
-  $filterSelectors?.forEach((selector) => {
-    selector.disabled = false;
-    selector.value = "";
-  });
 }
