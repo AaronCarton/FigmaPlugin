@@ -221,8 +221,17 @@ function drawAnnotations(
 ) {
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
+
   // Looping over given annotations.
-  let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
+  let lastAddedAnnotationY: number = 0;
+  if (sourceNodes[0].absoluteTransform !== null) {
+    lastAddedAnnotationY = sourceNodes[0].absoluteTransform[1][2];
+  } else {
+    const foundY = figma.currentPage.findOne((x) => x.id === sourceNodes[0].id)?.absoluteTransform[1][2];
+    if (foundY) {
+      lastAddedAnnotationY = foundY;
+    }
+  }
   for (let i = 0; i < sourceNodes.length; i++) {
     let currentItem = sourceNodes[i];
 
