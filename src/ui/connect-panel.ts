@@ -84,9 +84,11 @@ function addValue(target: string, toggleCheck = true) {
   if ($input && $select) {
     const newOption = new Option($input.value, $input.value);
     // Make sure input isn't empty, above max characters, or a duplicate value
-    if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
+    if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Please enter a value." });
     if (!isLessCharactersThanMax($input))
-      EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
+      EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, {
+        message: `The maximum length of the text is ${maxCharactersInputfield} characters.`,
+      });
     if (Array.from($select.options).some((option) => option.value === newOption.value)) return; // don't add duplicate values
     // Add the new option to the select
     newOption.selected = true;
@@ -160,7 +162,7 @@ function updateFields(message: AnnotationInput) {
     changeFieldsOnInput("attribute", false);
     changeFieldsOnInput("dataType", false);
   } else {
-    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Error updating fields." });
   }
 }
 
@@ -179,7 +181,7 @@ function setSampleValueInForm(sampleValue: string) {
     changeFieldsOnInput("attribute", false);
     changeFieldsOnInput("dataType", false);
   } else {
-    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Error updating fields." });
   }
 }
 
@@ -206,7 +208,7 @@ function clearFields() {
     changeFieldsOnInput("attribute", true);
     changeFieldsOnInput("dataType", true);
   } else {
-    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Error updating fields.");
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Error updating fields." });
   }
 }
 
@@ -226,7 +228,7 @@ function validateDataType() {
   const value = $value?.value.trim();
 
   if (dataType && value && !dataTypeRegex[dataType]?.test(value)) {
-    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Sample value does not match data type.");
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Sample value does not match data type." });
     return false;
   }
   return true;

@@ -43,6 +43,8 @@ export default class ApiClient {
         sourceKey,
       });
 
+      eventHub.sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Validating credentials...", type: "INFO", duration: 3000, cancelPrevious: true });
+
       const results = await api.validateODSCredentials();
       // if client or source key is false, send error message
       if (!results.client || !results.source) {
@@ -58,6 +60,7 @@ export default class ApiClient {
       api
         .getProject(filters.projectKey?.at(0) || "")
         .then(() => {
+          eventHub.sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Fetching annotations...", type: "INFO", duration: 3000, cancelPrevious: true });
           api.searchItem<Annotation>(PropertizeConstants.annotation, filters, PropertizeConstants.searchItemProperties).then((response) => {
             const annotations = response.results.map((res) => new Annotation(res.item));
             ApiClient.ods_annotations = annotations; // Store annotations in cache
@@ -73,7 +76,7 @@ export default class ApiClient {
         });
     });
 
-    eventHub.makeEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, (message: any) => {
+    eventHub.makeEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, (message) => {
       const index = ApiClient.ods_annotations.findIndex((annotation) => annotation.nodeId === message.annotation.nodeId);
       if (index !== -1) {
         const foundAnno = ApiClient.ods_annotations[index];
