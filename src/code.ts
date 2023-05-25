@@ -10,6 +10,7 @@ import { stripODS } from "./interfaces/ods/interface.ODSresponse";
 import { isLastUser, removeCurrentUser } from "./functions/multiUserManager";
 
 figma.showUI(__html__, { width: 345, height: 296 });
+let notification: NotificationHandler | undefined; // Store the current notification to be able to close it sooner
 
 //////* UI EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UI_CHANGE_TAB, ({ tab, connection }) => resizeByTab(tab, connection));
@@ -96,7 +97,14 @@ EventHub.getInstance().makeEvent(Events.ANNOTATION_ARCHIVED, (annotation: Annota
 });
 
 //////* FIGMA EVENTS *//////
-EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
+EventHub.getInstance().makeEvent(Events.FIGMA_MESSAGE, ({ message, type = "ERROR", duration, cancelPrevious = false }) => {
+  if (cancelPrevious) notification?.cancel(); // Cancel the previous notification if it exists, to avoid stacking
+  notification = figma.notify(message, {
+    timeout: duration || 5000,
+    error: type == "ERROR",
+    onDequeue: () => (notification = undefined), // Remove the notification reference when it times out
+  });
+});
 
 figma.on("selectionchange", () => {
   sendDataToFrontend();

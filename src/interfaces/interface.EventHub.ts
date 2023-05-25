@@ -25,6 +25,24 @@ export interface Filters {
   value?: string[];
 }
 
+export interface FigmaMessage {
+  message: string;
+  /**
+   * Whether to show a notification as an info or error
+   * @default "ERROR"
+   */
+  type?: "INFO" | "ERROR";
+  /**
+   * How long to show the notification for
+   * @default 5000
+   */
+  duration?: number;
+  /** Whether to cancel any current notifications to avoid stacking them in a queue
+   * @default false
+   */
+  cancelPrevious?: boolean;
+}
+
 export interface EventMap {
   [Events.INITIALIZE_DATA]: InitializeOptions;
   [Events.ANNOTATIONS_FETCHED]: Annotation[];
@@ -44,7 +62,7 @@ export interface EventMap {
   [Events.SET_LOCAL_STORAGE]: LocalStoragePayload;
   [Events.FETCH_PROJECT_KEY]: null;
   [Events.PROJECT_KEY_FETCHED]: string;
-  [Events.FIGMA_ERROR]: string;
+  [Events.FIGMA_MESSAGE]: FigmaMessage;
   [Events.API_ERROR]: string;
 
   [Events.UI_INITIALIZE_COMPONENT]: string;
