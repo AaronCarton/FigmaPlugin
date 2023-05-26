@@ -440,7 +440,7 @@ export async function initAnnotations(annotationData: Array<Annotation>) {
     addCurrentUser(figma.currentUser);
   }
   console.log("Is this the first user?", isFirstUserValue);
-  if (isFirstUserValue) {
+  if (isFirstUserValue || annotationLayerFound === null) {
     createLayer();
 
     makeFramesArray(annotationData);

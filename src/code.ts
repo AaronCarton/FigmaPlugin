@@ -124,6 +124,7 @@ figma.on("close", async () => {
     AnnotationElements.annotationLayer.remove();
     figma.closePlugin();
   } else {
+    removeCurrentUser();
     figma.closePlugin();
   }
 });
