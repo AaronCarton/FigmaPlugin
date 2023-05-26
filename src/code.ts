@@ -116,17 +116,16 @@ figma.on("close", async () => {
   // If so, delete the annotion, otherwise delete user from user list
   const lastUser: boolean = await isLastUser();
   console.log("isLastUser", lastUser);
-  if (lastUser) {
+  if (lastUser === true) {
     // Reset all MP values
     figma.root.setPluginData(PropertizeConstants.MP_currentUsers, "");
     figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, "");
     figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, "");
     AnnotationElements.annotationLayer.remove();
+    figma.closePlugin();
   } else {
-    removeCurrentUser();
+    figma.closePlugin();
   }
-
-  figma.closePlugin();
 });
 
 //////* INITIALIZATION FONTS *//////

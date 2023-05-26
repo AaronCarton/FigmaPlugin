@@ -436,8 +436,9 @@ export async function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
   const isFirstUserValue: boolean = await isFirstUser();
   if (figma.currentUser) {
+    console.log("arr before everything", figma.root.getPluginData(PropertizeConstants.MP_currentUsers));
     console.log("me", figma.currentUser.id);
-    addCurrentUser(figma.currentUser);
+   //addCurrentUser(figma.currentUser);
   }
   console.log("user value", isFirstUserValue);
   if (isFirstUserValue) {

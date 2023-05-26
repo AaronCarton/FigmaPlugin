@@ -9,9 +9,10 @@ export function addCurrentUser(user: User) {
   if (!isFirstUserValue) {
     // If not first user, add currentUser id to array.
     currentUsers = JSON.parse(currentUsers) as Array<string>;
-    if (!currentUsers.find((x) => x === (figma.currentUser?.id as string))) {
-      currentUsers.push(user.id as string);
+    if (currentUsers.find((x) => x === (figma.currentUser?.id as string))) {
       console.log("user was already in array");
+    } else {
+      currentUsers.push(user.id as string);
     }
     figma.root.setPluginData(PropertizeConstants.MP_currentUsers, JSON.stringify(currentUsers));
   } else {
@@ -21,27 +22,30 @@ export function addCurrentUser(user: User) {
 }
 
 export function removeCurrentUser() {
+  console.log("removing current user");
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (figma.currentUser !== null) {
     const userIndex = currentUsers.indexOf(figma.currentUser.id as string);
+    console.log(userIndex, "userIndex");
     const deleted = currentUsers.splice(userIndex, 1);
     console.log("deleted", deleted);
   }
   figma.root.setPluginData(PropertizeConstants.MP_currentUsers, JSON.stringify(currentUsers));
 }
 
-export async function isLastUser() {
+export function isLastUser() {
   if (figma.activeUsers.length === 1) {
     console.log("is only user in file");
     return true;
   }
 
-  const currentUsers = (await JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers))) as Array<string>;
+  const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (currentUsers.length === 1) {
     console.log("is last user", currentUsers);
     return true;
   } else {
     console.log("is not last user", currentUsers);
+    removeCurrentUser();
     return false;
   }
 }
@@ -66,6 +70,10 @@ export async function isFirstUser() {
     return true;
   } else {
     console.log("is not first user", currentUsers);
+    if (figma.currentUser !== null) {
+      addCurrentUser(figma.currentUser);
+    }
+
     return false;
   }
 }
