@@ -30,6 +30,11 @@ export function removeCurrentUser() {
 }
 
 export function isLastUser() {
+  if (figma.activeUsers.length === 1) {
+    console.log("is only user in file");
+    return true;
+  }
+
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (currentUsers.length === 1) {
     console.log("is last user", currentUsers);
@@ -52,8 +57,11 @@ export async function isFirstUser() {
     console.log("is first user", currentUsers);
     return true;
   }
+
   const currentUsersArray = (await JSON.parse(currentUsers)) as Array<string>;
-  if (currentUsersArray.find((x) => x === (figma.currentUser?.id as string))) {
+  console.log("arr", currentUsersArray);
+  if (currentUsersArray.find((x) => x === (figma.currentUser?.id as string)) !== null && currentUsersArray.length === 1) {
+    console.log("found already and is only in array", currentUsersArray);
     return true;
   } else {
     console.log("is not first user", currentUsers);

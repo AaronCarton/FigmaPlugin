@@ -117,7 +117,10 @@ figma.on("close", async () => {
   const lastUser: boolean = isLastUser();
   console.log("isLastUser", lastUser);
   if (lastUser) {
+    // Reset all MP values
     figma.root.setPluginData(PropertizeConstants.MP_currentUsers, "");
+    figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, "");
+    figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, "");
     AnnotationElements.annotationLayer.remove();
   } else {
     removeCurrentUser();

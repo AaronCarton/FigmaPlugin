@@ -6,7 +6,7 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
-import multiUserManager, { addCurrentUser, isFirstUser } from "./multiUserManager";
+import multiUserManager, { addCurrentUser, isFirstUser, isFirstUser } from "./multiUserManager";
 import { PropertizeColors } from "../classes/propertizeColors";
 
 export let linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
@@ -432,9 +432,11 @@ export function changeLayerVisibility(state: boolean) {
   }
 }
 
-export function initAnnotations(annotationData: Array<Annotation>) {
+export async function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
-  if (isFirstUser()) {
+  const isFirstUserValue: boolean = await isFirstUser();
+  console.log("user value", isFirstUserValue);
+  if (isFirstUserValue) {
     createLayer();
 
     makeFramesArray(annotationData);
@@ -471,7 +473,7 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   }
 
   // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
-  if (isFirstUser()) {
+  if (isFirstUserValue) {
     if (figma.currentUser) {
       addCurrentUser(figma.currentUser);
     }
