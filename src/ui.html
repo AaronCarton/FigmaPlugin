@@ -1,4 +1,5 @@
 <body>
+  <script src="./functions/multiselect-dropdown.js" ></script>
   <nav class="c-nav">
     <section class="c-nav__left">
       <div class="c-nav__left-item js-tab is-active" data-target="connect">
@@ -40,7 +41,7 @@
           <div class="c-connect__field">
             <span class="c-connect__field--title">Data source</span>
             <select name="dataSource-select" id="dataSource-select"
-              class="c-connect__field--select js-dataSource is-active" required>
+              class="c-connect__field--select js-dataSource is-active" required multiple multiselect-search="true" multiselect-select-all="true">
               <option value="" selected disabled hidden>Choose source</option>
             </select>
             <div class="c-connect__field--text" id="dataSource-text">
