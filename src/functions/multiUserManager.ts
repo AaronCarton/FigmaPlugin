@@ -5,7 +5,8 @@ import { PropertizeConstants } from "../classes/propertizeConstants";
 
 export function addCurrentUser(user: User) {
   let currentUsers: string | Array<string> = figma.root.getPluginData(PropertizeConstants.MP_currentUsers);
-  if (currentUsers !== "") {
+  const isFirstUserValue = isFirstUser();
+  if (!isFirstUserValue) {
     // If not first user, add currentUser id to array.
     currentUsers = JSON.parse(currentUsers) as Array<string>;
     if (!currentUsers.find((x) => x === (figma.currentUser?.id as string))) {
@@ -29,13 +30,13 @@ export function removeCurrentUser() {
   figma.root.setPluginData(PropertizeConstants.MP_currentUsers, JSON.stringify(currentUsers));
 }
 
-export function isLastUser() {
+export async function isLastUser() {
   if (figma.activeUsers.length === 1) {
     console.log("is only user in file");
     return true;
   }
 
-  const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
+  const currentUsers = (await JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers))) as Array<string>;
   if (currentUsers.length === 1) {
     console.log("is last user", currentUsers);
     return true;
@@ -60,7 +61,7 @@ export async function isFirstUser() {
 
   const currentUsersArray = (await JSON.parse(currentUsers)) as Array<string>;
   console.log("arr", currentUsersArray);
-  if (currentUsersArray.find((x) => x === (figma.currentUser?.id as string)) !== null && currentUsersArray.length === 1) {
+  if (currentUsersArray.find((x) => x === (figma.currentUser?.id as string)) !== undefined && currentUsersArray.length === 1) {
     console.log("found already and is only in array", currentUsersArray);
     return true;
   } else {

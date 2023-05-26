@@ -435,6 +435,10 @@ export function changeLayerVisibility(state: boolean) {
 export async function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
   const isFirstUserValue: boolean = await isFirstUser();
+  if (figma.currentUser) {
+    console.log("me", figma.currentUser.id);
+    addCurrentUser(figma.currentUser);
+  }
   console.log("user value", isFirstUserValue);
   if (isFirstUserValue) {
     createLayer();
@@ -474,9 +478,6 @@ export async function initAnnotations(annotationData: Array<Annotation>) {
 
   // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
   if (isFirstUserValue) {
-    if (figma.currentUser) {
-      addCurrentUser(figma.currentUser);
-    }
     //figma.root.setPluginData(PropertizeConstants.MP_currentUsers, "");
     if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames) {
       figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
@@ -485,9 +486,6 @@ export async function initAnnotations(annotationData: Array<Annotation>) {
   }
   // If you are not the first person to launch the plugin, you should get the parentframes and link array from the pluginData.
   else {
-    if (figma.currentUser) {
-      addCurrentUser(figma.currentUser);
-    }
     AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_AnnotationElements));
     linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes));
   }

@@ -114,7 +114,7 @@ figma.on("documentchange", (event: DocumentChangeEvent) => {
 figma.on("close", async () => {
   // Checking if user closing the plugin is the last user in the file (that uses the plugin).
   // If so, delete the annotion, otherwise delete user from user list
-  const lastUser: boolean = isLastUser();
+  const lastUser: boolean = await isLastUser();
   console.log("isLastUser", lastUser);
   if (lastUser) {
     // Reset all MP values
