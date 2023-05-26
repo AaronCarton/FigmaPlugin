@@ -55,11 +55,17 @@ export async function isFirstUser() {
   // If user is only user in file, he must be first running the plugin
   if (figma.activeUsers.length === 1) {
     console.log("is only user in file");
+    if (figma.currentUser !== null) {
+      addCurrentUser(figma.currentUser);
+    }
     return true;
   }
 
   if (currentUsers === "") {
     console.log("is first user", currentUsers);
+    if (figma.currentUser !== null) {
+      addCurrentUser(figma.currentUser);
+    }
     return true;
   }
 
