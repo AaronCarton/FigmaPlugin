@@ -175,6 +175,12 @@ function makeFramesArray(initData: Array<Annotation> | null) {
 }
 
 function drawConnector(annotation: SceneNode, destination: SceneNode) {
+  if (annotation === undefined) {
+    const annotationFound = figma.currentPage.findOne((x) => x.id === annotation.id);
+    if (annotationFound) {
+      annotation = annotationFound;
+    }
+  }
   if (destination.absoluteBoundingBox !== null && annotation.absoluteBoundingBox !== null) {
     const line = figma.createVector();
     line.strokeCap = "ARROW_LINES";
@@ -224,7 +230,7 @@ function drawAnnotations(
 
   // Looping over given annotations.
   let lastAddedAnnotationY: number = 0;
-  if (sourceNodes[0].absoluteTransform !== null) {
+  if (sourceNodes[0].absoluteTransform !== null || sourceNodes[0].absoluteTransform !== undefined || sourceNodes[0] !== undefined) {
     lastAddedAnnotationY = sourceNodes[0].absoluteTransform[1][2];
   } else {
     const foundY = figma.currentPage.findOne((x) => x.id === sourceNodes[0].id)?.absoluteTransform[1][2];

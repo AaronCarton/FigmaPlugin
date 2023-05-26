@@ -10,6 +10,7 @@ export function addCurrentUser(user: User) {
     currentUsers = JSON.parse(currentUsers) as Array<string>;
     if (!currentUsers.find((x) => x === (figma.currentUser?.id as string))) {
       currentUsers.push(user.id as string);
+      console.log("user was already in array");
     }
     figma.root.setPluginData(PropertizeConstants.MP_currentUsers, JSON.stringify(currentUsers));
   } else {
@@ -39,10 +40,20 @@ export function isLastUser() {
   }
 }
 
-export function isFirstUser() {
+export async function isFirstUser() {
   const currentUsers = figma.root.getPluginData(PropertizeConstants.MP_currentUsers);
+  // If user is only user in file, he must be first running the plugin
+  if (figma.activeUsers.length === 1) {
+    console.log("is only user in file");
+    return true;
+  }
+
   if (currentUsers === "") {
     console.log("is first user", currentUsers);
+    return true;
+  }
+  const currentUsersArray = (await JSON.parse(currentUsers)) as Array<string>;
+  if (currentUsersArray.find((x) => x === (figma.currentUser?.id as string))) {
     return true;
   } else {
     console.log("is not first user", currentUsers);
