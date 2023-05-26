@@ -435,12 +435,11 @@ export function changeLayerVisibility(state: boolean) {
 export async function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
   const isFirstUserValue: boolean = await isFirstUser();
+  //Add current user to the usersArray.
   if (figma.currentUser) {
-    console.log("arr before everything", figma.root.getPluginData(PropertizeConstants.MP_currentUsers));
-    console.log("me", figma.currentUser.id);
     addCurrentUser(figma.currentUser);
   }
-  console.log("user value", isFirstUserValue);
+  console.log("Is this the first user?", isFirstUserValue);
   if (isFirstUserValue) {
     createLayer();
 
@@ -478,7 +477,7 @@ export async function initAnnotations(annotationData: Array<Annotation>) {
   }
 
   // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
-  if (isFirstUserValue) {
+  if (isFirstUserValue === true) {
     //figma.root.setPluginData(PropertizeConstants.MP_currentUsers, "");
     if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames) {
       figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));

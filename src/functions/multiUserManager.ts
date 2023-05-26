@@ -9,8 +9,8 @@ export function addCurrentUser(user: User) {
   if (isFirstUserValue === false) {
     // If not first user, add currentUser id to array.
     currentUsers = JSON.parse(currentUsers) as Array<string>;
-    if (currentUsers.find((x) => x === (figma.currentUser?.id as string))) {
-      console.log("user was already in array");
+    if (currentUsers.find((x) => x === (figma.currentUser?.id as string)) !== undefined) {
+      console.log("user was already in array, not adding it again");
     } else {
       currentUsers.push(user.id as string);
     }
@@ -22,30 +22,29 @@ export function addCurrentUser(user: User) {
 }
 
 export function removeCurrentUser() {
-  console.log("removing current user");
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (figma.currentUser !== null) {
     const userIndex = currentUsers.indexOf(figma.currentUser.id as string);
-    console.log(userIndex, "userIndex");
     const deleted = currentUsers.splice(userIndex, 1);
-    console.log("deleted", deleted);
+    console.log("current user deleted", deleted);
   }
   figma.root.setPluginData(PropertizeConstants.MP_currentUsers, JSON.stringify(currentUsers));
 }
 
 export function isLastUser() {
+  //Only one user in figma file while closing? => always last user running the plugin.
   if (figma.activeUsers.length === 1) {
     console.log("is only user in file");
     return true;
   }
 
+  //If there are more people in the file we have to check if there are still people running the plugin.
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (currentUsers.length === 1) {
     console.log("is last user", currentUsers);
     return true;
   } else {
     console.log("is not last user", currentUsers);
-    removeCurrentUser();
     return false;
   }
 }
@@ -58,28 +57,17 @@ export function isFirstUser() {
     return true;
   }
 
+  //If currentUsers is empty, user is also first user to run plugin (if pluginData values are not existing/not set they return "" when getting).
   if (currentUsers === "") {
     console.log("is first user", currentUsers);
     return true;
   }
 
   const currentUsersArray = JSON.parse(currentUsers) as Array<string>;
-  console.log("arr", currentUsersArray);
-  console.log(
-    "found user already or not",
-    currentUsersArray.find((x) => x === (figma.currentUser?.id as string)),
-    "in",
-    currentUsersArray,
-  );
+
   if (currentUsersArray.find((x) => x === (figma.currentUser?.id as string)) !== undefined && currentUsersArray.length === 1) {
-    console.log("found already and is only in array", currentUsersArray);
     return true;
   } else {
-    console.log("is not first user", currentUsers);
-    if (figma.currentUser !== null) {
-      addCurrentUser(figma.currentUser);
-    }
-
     return false;
   }
 }
