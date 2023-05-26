@@ -139,7 +139,8 @@ export class Settings extends BaseComponent {
       $dropDown.add(defaultOption);
       $dropDownFilter.add(defaultOptionFilter);
     }
-    data.forEach((element) => {
+    const sortedData = data.sort();
+    sortedData.forEach((element) => {
       const newOption = new Option(element, element);
       const newOptionFilter = new Option(element, element);
       $dropDown?.add(newOption);
