@@ -9,8 +9,7 @@
     "lint": "eslint . --ext .ts",
     "test": "jest",
     "test:api": "jest tests/apiClient.test.ts",
-    "test:eventHub": "jest tests/eventHub.test.ts --env=jsdom"  
-
+    "test:eventHub": "jest tests/eventHub.test.ts --env=jsdom"
   },
   "author": "",
   "license": "",
@@ -39,6 +38,7 @@
     "esbuild": "0.17.11",
     "node-watch": "^0.7.3",
     "rimraf": "^4.4.0",
+    "select2": "^4.1.0-rc.0",
     "ts-node": "^10.9.1"
   },
   "volta": {
