@@ -546,7 +546,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
-    EventHub.getInstance().sendCustomEvent(Events.UI_RESET_TEXTAREA_SIZE, null);
     lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
 
