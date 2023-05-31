@@ -1,4 +1,10 @@
-import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
+import {
+  changeLayerVisibility,
+  archiveAnnotation,
+  initAnnotations,
+  sendDataToFrontend,
+  linkAnnotationToSourceNodes,
+} from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByFilter, resizeByRemoveFilter, resizeByShowMore, resizeByTab } from "./functions/reiszeFunctions";
@@ -10,6 +16,21 @@ import { stripODS } from "./interfaces/ods/interface.ODSresponse";
 import { isLastUser, removeCurrentUser } from "./functions/multiUserManager";
 
 figma.showUI(__html__, { width: 345, height: 296 });
+
+figma.on("documentchange", (event) => {
+  event.documentChanges.forEach((change) => {
+    if (change.type === "PROPERTY_CHANGE") {
+      console.log("PROPERTY_CHANGE", change);
+      if (change.node.type === "TEXT") {
+        console.log("TEXT", change.node);
+        const linkItem = linkAnnotationToSourceNodes.find(
+          (linkItem) => change.node.removed === false && linkItem.annotation.id === change.node.parent?.id,
+        );
+        console.log("linkItem", linkItem);
+      }
+    }
+  });
+});
 
 //////* UI EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UI_CHANGE_TAB, ({ tab, connection }) => resizeByTab(tab, connection));
