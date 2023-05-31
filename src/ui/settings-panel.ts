@@ -15,7 +15,7 @@ const $clientKey: HTMLInputElement | null = document.querySelector("#settings_cl
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 
-let projectKey: string = "";
+export let projectKey: string = "";
 const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
 
 //Spinner
@@ -54,7 +54,7 @@ export class Settings extends BaseComponent {
       }
 
       changeConnectionState(true);
-      toggleSpinner();
+      toggleSpinner(false);
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
       const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.value)]));
@@ -82,7 +82,7 @@ export class Settings extends BaseComponent {
 
     EventHub.getInstance().makeEvent(Events.API_ERROR, (message) => {
       $button?.removeAttribute("disabled");
-      toggleSpinner();
+      toggleSpinner(false);
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, message);
     });
 
@@ -103,7 +103,7 @@ export class Settings extends BaseComponent {
         projectKey: [projectKey],
       },
     });
-    toggleSpinner();
+    toggleSpinner(true);
 
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
       baseURL: $baseURL?.value || "",
@@ -204,7 +204,12 @@ function toggleShowAnnotations() {
     $annotationToggle.checked = true;
   }
 }
-function toggleSpinner() {
-  $spinner?.classList.toggle("is-active");
-  $plugin?.classList.toggle("no-pointer");
+export function toggleSpinner(state: boolean) {
+  if (state) {
+    $spinner?.classList.add("is-active");
+    $plugin?.classList.add("no-pointer");
+  } else if (!state) {
+    $spinner?.classList.remove("is-active");
+    $plugin?.classList.remove("no-pointer");
+  }
 }

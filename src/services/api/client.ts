@@ -73,6 +73,17 @@ export default class ApiClient {
         });
     });
 
+    eventHub.makeEvent(Events.APPLY_FILTERS, async (filters: Filters) => {
+      ApiClient.getInstance()
+        .searchItem<Annotation>(PropertizeConstants.annotation, filters, PropertizeConstants.searchItemProperties)
+        .then((response) => {
+          const annotations = response.results.map((res) => new Annotation(res.item));
+          ApiClient.ods_annotations = annotations; // Store annotations in cache
+          EventHub.getInstance().sendCustomEvent(Events.ANNOTATIONS_FETCHED, annotations);
+          EventHub.getInstance().sendCustomEvent(Events.FACETS_FETCHED, response.facets);
+        });
+    });
+
     eventHub.makeEvent(Events.UPDATE_ANNOTATION_BY_TEXTNODE, (message: any) => {
       const index = ApiClient.ods_annotations.findIndex((annotation) => annotation.nodeId === message.annotation.nodeId);
       if (index !== -1) {
