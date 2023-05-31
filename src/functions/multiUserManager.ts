@@ -38,7 +38,9 @@ export function isLastUser() {
 
 export function isFirstUser() {
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
-  if (currentUsers.length === 0) {
+  // If no users or only the current user, return true.
+  debugger;
+  if (currentUsers.length === 0 || (currentUsers.length === 1 && currentUsers[0] === figma?.currentUser?.id)) {
     return true;
   } else {
     return false;
