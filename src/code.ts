@@ -113,6 +113,7 @@ figma.on("close", async () => {
   // If so, delete the annotion, otherwise delete user from user list
   const lastUser: boolean = isLastUser();
   if (lastUser) {
+    debugger;
     AnnotationElements.annotationLayer.remove();
     removeCurrentUser();
     figma.root.setPluginData("MP_currentUser", "");

@@ -418,10 +418,11 @@ export function changeLayerVisibility(state: boolean) {
 }
 
 export function initAnnotations(annotationData: Array<Annotation>) {
+  debugger;
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
   if (isFirstUser()) {
     createLayer();
-
+    debugger;
     makeFramesArray(annotationData);
     // Make inputValues array needed for drawing initial annotations.
     const inputValues: Array<{ id: string; AnnotationInput: AnnotationInput }> = [];
