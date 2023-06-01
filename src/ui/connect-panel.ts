@@ -5,10 +5,10 @@ import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
-const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSource-trigger");
-const $entity: HTMLInputElement | null = document.querySelector(".js-entity-trigger");
-const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute-trigger");
-const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType-trigger");
+const $dataSource: HTMLButtonElement | null = document.querySelector(".js-dataSource-trigger");
+const $entity: HTMLButtonElement | null = document.querySelector(".js-entity-trigger");
+const $attribute: HTMLButtonElement | null = document.querySelector(".js-attribute-trigger");
+const $dataType: HTMLButtonElement | null = document.querySelector(".js-dataType-trigger");
 const $value: HTMLTextAreaElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
@@ -216,7 +216,7 @@ function isEmpty(inputField: HTMLInputElement) {
   return inputField.value.trim().length === 0;
 }
 
-function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
+function checkFields(selectElement: HTMLButtonElement, changeElement1: HTMLButtonElement, disabledId: string) {
   selectElement.addEventListener("change", () => {
     const $input = document.querySelector<HTMLInputElement>(`#${disabledId}-input`);
     const $textBlock = document.querySelector<HTMLElement>(`#${disabledId}-text`);
@@ -236,11 +236,15 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
 function updateFields(message: AnnotationInput) {
   if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
     $dataSource.value = message.dataSource;
+    $dataSource.innerHTML = message.dataSource;
     $entity.value = message.entity;
+    $entity.innerHTML = message.entity;
     $entity.disabled = false;
     $attribute.value = message.attribute;
+    $attribute.innerHTML = message.attribute;
     $attribute.disabled = false;
     $dataType.value = message.dataType;
+    $dataType.innerHTML = message.dataType;
     $dataType.disabled = false;
     $value.value = message.value;
     $removeBtn.disabled = false;
@@ -281,11 +285,15 @@ function setSampleValueInForm(sampleValue: string) {
 function clearFields() {
   if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
     $dataSource.value = "";
+    $dataSource.innerHTML = "Choose source";
     $entity.value = "";
+    $entity.innerHTML = "Choose entity";
     $entity.disabled = true;
     $attribute.value = "";
+    $attribute.innerHTML = "Choose attribute";
     $attribute.disabled = true;
     $dataType.value = "";
+    $dataType.innerHTML = "Choose data type";
     $dataType.disabled = true;
     $value.value = "";
     $removeBtn.disabled = true;
