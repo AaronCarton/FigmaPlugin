@@ -332,8 +332,6 @@ export default class ApiClient {
       return (i > 0 ? "/" : "") + `${key}.eq.${fValue}`;
     });
 
-    console.log(filterString.join(""));
-
     return await this.fetchData(`/api/search/${itemType}`, {
       method: "POST",
       apiKey: ApiClient.CLIENT_APIKEY,
