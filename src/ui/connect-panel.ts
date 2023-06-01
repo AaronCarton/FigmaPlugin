@@ -303,7 +303,7 @@ function clearFields() {
     $attribute.innerHTML = "Choose attribute";
     $attribute.disabled = true;
     $dataType.value = "";
-    $dataType.innerHTML = "Choose data type";
+    $dataType.innerHTML = "Choose type";
     $dataType.disabled = true;
     $value.value = "";
     $removeBtn.disabled = true;
