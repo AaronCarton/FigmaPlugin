@@ -115,7 +115,7 @@ export class Settings extends BaseComponent {
   }
 
   loadDropdowns(elementName: string, data: string[]) {
-    const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
+    const $dropDown: HTMLElement | null = document.querySelector(`#${elementName}-dropdown`);
     const $dropDownFilter: HTMLSelectElement | null = document.querySelector(`.js-${elementName}-filter`);
 
     const texts: { [key: string]: string } = {
@@ -125,26 +125,34 @@ export class Settings extends BaseComponent {
       dataType: "Choose data type",
     };
 
-    if ($dropDown && $dropDownFilter) {
+    if ($dropDownFilter) {
       // remove all options
-      $dropDown.options.length = 0;
+      // $dropDown.options.length = 0;
       $dropDownFilter.options.length = 0;
       // add default option
-      const defaultOption = new Option(texts[elementName], "");
+      // const defaultOption = new Option(texts[elementName], "");
       const defaultOptionFilter = new Option(texts[elementName], "");
-      defaultOption.disabled = true;
-      defaultOption.selected = true;
+      // defaultOption.disabled = true;
+      // defaultOption.selected = true;
       defaultOptionFilter.disabled = true;
       defaultOptionFilter.selected = true;
-      $dropDown.add(defaultOption);
+      // $dropDown.add(defaultOption);
       $dropDownFilter.add(defaultOptionFilter);
     }
+
     const sortedData = data.sort();
     sortedData.forEach((element) => {
-      const newOption = new Option(element, element);
+      // const newOption = new Option(element, element);
       const newOptionFilter = new Option(element, element);
-      $dropDown?.add(newOption);
+      // $dropDown?.add(newOption);
       $dropDownFilter?.add(newOptionFilter);
+      const newOption = document.createElement("button");
+      newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${elementName}-item`);
+      newOption.value = element;
+      newOption.setAttribute("data-target", `${elementName}`);
+      newOption.innerHTML = element;
+      newOption.disabled = false;
+      $dropDown?.appendChild(newOption);
     });
   }
 
