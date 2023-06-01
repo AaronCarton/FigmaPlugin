@@ -153,29 +153,35 @@ function addValue(target: string, toggleCheck = true) {
   const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${target}-select`);
 
   if ($input && $select) {
-    if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
-    else {
-      if (checkIfItemAlreadyExists(target, $input.value)) console.log("Already exists");
-      else {
-        if (!isLessCharactersThanMax($input))
+    if (!isEmpty($input)) {
+      if (!checkIfItemAlreadyExists(target, $input.value)) {
+        if (!isLessCharactersThanMax($input)) {
           EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
-        const newOption = document.createElement("button");
-        newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${target}-item`);
-        newOption.value = $input.value;
-        newOption.setAttribute("data-target", `${target}`);
-        newOption.innerHTML = $input.value;
-        newOption.disabled = false;
-        $select.appendChild(newOption);
-        $targetSelect?.dispatchEvent(new Event("change"));
+        }
+        addOptionToDropdown(target, $input, $select, $targetSelect);
       }
+
       if ($targetSelect) {
         $targetSelect.innerHTML = $input.value;
         $targetSelect.value = $input.value;
       }
       $input.value = "";
       if (toggleCheck) toggleIconCheck(target);
+    } else {
+      EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
     }
   }
+}
+
+function addOptionToDropdown(target: string, $input: HTMLInputElement, $select: HTMLSelectElement, $targetSelect: HTMLButtonElement | null) {
+  const newOption = document.createElement("button");
+  newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${target}-item`);
+  newOption.value = $input.value;
+  newOption.setAttribute("data-target", `${target}`);
+  newOption.innerHTML = $input.value;
+  newOption.disabled = false;
+  $select.appendChild(newOption);
+  $targetSelect?.dispatchEvent(new Event("change"));
 }
 
 function checkIfItemAlreadyExists(target: string, value: string) {
