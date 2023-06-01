@@ -154,25 +154,27 @@ function addValue(target: string, toggleCheck = true) {
 
   if ($input && $select) {
     if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
-    if (!isLessCharactersThanMax($input))
-      EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
-    if (checkIfItemAlreadyExists(target, $input.value)) console.log("Already exists");
     else {
-      const newOption = document.createElement("button");
-      newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${target}-item`);
-      newOption.value = $input.value;
-      newOption.setAttribute("data-target", `${target}`);
-      newOption.innerHTML = $input.value;
-      newOption.disabled = false;
-      $select.appendChild(newOption);
-      $select.dispatchEvent(new Event("change"));
+      if (checkIfItemAlreadyExists(target, $input.value)) console.log("Already exists");
+      else {
+        if (!isLessCharactersThanMax($input))
+          EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
+        const newOption = document.createElement("button");
+        newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${target}-item`);
+        newOption.value = $input.value;
+        newOption.setAttribute("data-target", `${target}`);
+        newOption.innerHTML = $input.value;
+        newOption.disabled = false;
+        $select.appendChild(newOption);
+        $targetSelect?.dispatchEvent(new Event("change"));
+      }
+      if ($targetSelect) {
+        $targetSelect.innerHTML = $input.value;
+        $targetSelect.value = $input.value;
+      }
+      $input.value = "";
+      if (toggleCheck) toggleIconCheck(target);
     }
-    if ($targetSelect) {
-      $targetSelect.innerHTML = $input.value;
-      $targetSelect.value = $input.value;
-    }
-    $input.value = "";
-    if (toggleCheck) toggleIconCheck(target);
   }
 }
 
