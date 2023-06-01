@@ -74,7 +74,9 @@ function listenToSelectors() {
       trigger.addEventListener("click", () => {
         const $dataTarget: string | null = trigger.getAttribute("data-target");
         const $dropDownTarget: HTMLElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
+        const $searchTarget: HTMLInputElement | null = document.querySelector(`#${$dataTarget}-search`);
         $dropDownTarget?.classList.toggle("show");
+        $searchTarget?.focus();
         if ($dataTarget) {
           listenToDropdownItems($dataTarget);
         }
