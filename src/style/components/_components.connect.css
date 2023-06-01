@@ -212,3 +212,115 @@
   resize: none;
   height: 75px;
 }
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--propertize__color--secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--propertize__color--secondary);
+}
+
+.c-connect__field--select {
+  display: block;
+  align-items: center;
+  text-align: left;
+  width: 120px;
+  height: 33px;
+  border: 1px solid transparent;
+  border-radius: var(--propertize__border-radius);
+  font-family: var(--propertize__font-family);
+  font-size: var(--propertize__font-size--tiny);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: var(--icon-arrow) 96% center no-repeat;
+  padding-inline: var(--propertize__spacing--small);
+  writing-mode: horizontal-tb;
+  color: var(--propertize__color--primary);
+}
+
+.c-connect__field--select:hover,
+.c-connect__field--select:focus {
+  border: 1px solid var(--propertize__color--accent);
+  width: 190px;
+  outline: none;
+  color: var(--propertize__color--primary);
+}
+
+.c-connect__field--select:disabled:hover,
+.c-connect__field--select:disabled:focus {
+  border: 1px solid transparent;
+  outline: none;
+  color: var(--propertize__color--primary);
+  width: 120px;
+}
+
+.c-connect__field--search {
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  font-size: 11px;
+  width: 190px;
+  padding: 6px 0px 6px 8px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+.c-connect__field--search:focus {
+  outline: 1px solid var(--propertize__color--red);
+  border-bottom: 1px solid transparent;
+}
+
+.dropdown {
+  display: block;
+}
+
+.is-active {
+  display: block;
+}
+
+.c-connect__field--dropdown {
+  display: none;
+  position: absolute;
+  background-color: var(--propertize__color--white);
+  width: 190px;
+  border: 1px solid #ddd;
+  z-index: 1;
+  max-height: 150px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 5px;
+}
+
+.a-dropdown-item {
+  display: block;
+  font-size: 11px;
+  width: 100%;
+  padding: 4px 0px 4px 8px;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  border: none;
+  background-color: transparent;
+}
+
+.a-dropdown-item:hover {
+  background-color: var(--propertize__color--red);
+  color: var(--propertize__color--white);
+  cursor: pointer;
+}
+
+.c-dropdown-area {
+  display: none;
+}
+
+.show {
+  display: block;
+}

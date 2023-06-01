@@ -5,15 +5,19 @@ import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
-const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSource");
-const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
-const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
-const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
+const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSource-trigger");
+const $entity: HTMLInputElement | null = document.querySelector(".js-entity-trigger");
+const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute-trigger");
+const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType-trigger");
 const $value: HTMLTextAreaElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
 const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
 const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
+
+const $dropDownItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-dropdown-item");
+const $searchBoxes: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-search");
+const $propertyTriggers: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-select");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -32,6 +36,7 @@ export class ConnectPanel extends BaseComponent {
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
     downSizeSampleValueChangingTab();
+    listenToSelectors();
   }
 }
 
@@ -63,12 +68,69 @@ function initSelectors() {
   });
 }
 
-function toggleIconCheck(target: string) {
-  console.log("toggleIconCheck", target);
+function listenToSelectors() {
+  if ($dropDownItems && $searchBoxes && $propertyTriggers) {
+    $propertyTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const $dataTarget: string | null = trigger.getAttribute("data-target");
+        const $dropDownTarget: HTMLElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
+        $dropDownTarget?.classList.toggle("show");
+      });
+    });
 
+    $searchBoxes.forEach((searchBox) => {
+      searchBox.addEventListener("keyup", () => {
+        const $dataTarget: string | null = searchBox.getAttribute("data-target");
+        const $dropDownTargetItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(`.js-dropdown-${$dataTarget}-item`);
+        $dropDownTargetItems?.forEach((item) => {
+          if (item.value.toUpperCase().indexOf(searchBox.value.toUpperCase()) > -1) {
+            item.style.display = "block";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      });
+    });
+
+    $dropDownItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const $dataTarget: string | null = item.getAttribute("data-target");
+        const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-select`);
+        const $dropDownTarget: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
+        if ($targetSelect && $dropDownTarget) {
+          $targetSelect.innerHTML = item.innerHTML;
+          $targetSelect.value = item.value;
+          $dropDownTarget.classList.remove("show");
+        }
+      });
+    });
+
+    clickOutside("dataSource");
+    clickOutside("entity");
+    clickOutside("attribute");
+    clickOutside("dataType");
+  }
+}
+
+function clickOutside(target: string) {
+  const $area: HTMLElement | null = document.querySelector(`.js-dropdown-${target}-area`);
+  const $panel: HTMLButtonElement | null = document.querySelector(`#${target}-dropdown`);
+
+  document.addEventListener("click", (event: any) => {
+    if ($area && $panel) {
+      const isClickedInside = $area.contains(event.target);
+      if (!isClickedInside) {
+        $panel.classList.remove("show");
+      }
+    }
+  });
+}
+
+function toggleIconCheck(target: string) {
+  console.log("Check");
   const $btn = document.querySelector<HTMLElement>(`#${target}-btn`);
   const $textBlock = document.querySelector<HTMLElement>(`#${target}-text`);
-  const $select = document.querySelector<HTMLSelectElement>(`#${target}-select`);
+  const $select = document.querySelector<HTMLElement>(`.js-dropdown-${target}-area`);
   const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
 
   $btn?.classList.toggle(iconCheck);
@@ -79,24 +141,38 @@ function toggleIconCheck(target: string) {
 
 function addValue(target: string, toggleCheck = true) {
   const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
-  const $select = document.querySelector<HTMLSelectElement>(`#${target}-select`);
+  const $select = document.querySelector<HTMLSelectElement>(`#${target}-dropdown`);
+  console.log(target);
+  const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${target}-select`);
+  const $dropDownTargetItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(`.js-dropdown-${target}-item`);
 
   if ($input && $select) {
-    const newOption = new Option($input.value, $input.value);
+    const newOption = document.createElement("button");
     // Make sure input isn't empty, above max characters, or a duplicate value
+    newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${target}-item`);
+    newOption.value = $input.value;
+    newOption.setAttribute("data-target", `${target}`);
+    newOption.innerHTML = $input.value;
+    newOption.disabled = false;
     if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
     if (!isLessCharactersThanMax($input))
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
-    if (Array.from($select.options).some((option) => option.value === newOption.value)) return; // don't add duplicate values
+    // if (Array.from($select.options).some((option) => option.value === newOption.value)) return; // don't add duplicate values
     // Add the new option to the select
-    newOption.selected = true;
-    $select.add(newOption);
+
+    $select.appendChild(newOption);
+    if ($targetSelect) {
+      $targetSelect.innerHTML = $input.value;
+      $targetSelect.value = $input.value;
+    }
     $input.value = "";
     $select.dispatchEvent(new Event("change")); // Trigger change event to enable the following fields
 
     if (toggleCheck) toggleIconCheck(target);
+    console.log(newOption);
   }
 }
+
 function downSizeSampleValueChangingTab() {
   $tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -107,6 +183,7 @@ function downSizeSampleValueChangingTab() {
     });
   });
 }
+
 function checkSampleValueLength() {
   if ($value && $showMore) {
     $showMore.hidden = $value.value.length < maxCharactersInputfield;
