@@ -420,6 +420,7 @@ export function changeLayerVisibility(state: boolean) {
 export function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
   if (isFirstUser()) {
+    clearAnnotationData(); // remove any leftover annotation data
     createLayer();
     makeFramesArray(annotationData);
     // Make inputValues array needed for drawing initial annotations.
@@ -634,4 +635,10 @@ export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFram
   }
   console.log("Given MP data in update func", links, parentFrames);
   console.log("updated local data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
+}
+
+export function clearAnnotationData() {
+  AnnotationElements.parentFrames = []; // clear parentFrames
+  // update MP data
+  figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
 }
