@@ -15,7 +15,7 @@ const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-
 const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
 const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
 
-const $dropDownItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-dropdown-item");
+// const $dropDownItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-dropdown-item");
 const $searchBoxes: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-search");
 const $propertyTriggers: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-select");
 
@@ -69,12 +69,15 @@ function initSelectors() {
 }
 
 function listenToSelectors() {
-  if ($dropDownItems && $searchBoxes && $propertyTriggers) {
+  if ($searchBoxes && $propertyTriggers) {
     $propertyTriggers.forEach((trigger) => {
       trigger.addEventListener("click", () => {
         const $dataTarget: string | null = trigger.getAttribute("data-target");
         const $dropDownTarget: HTMLElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
         $dropDownTarget?.classList.toggle("show");
+        if ($dataTarget) {
+          listenToDropdownItems($dataTarget);
+        }
       });
     });
 
@@ -89,19 +92,6 @@ function listenToSelectors() {
             item.style.display = "none";
           }
         });
-      });
-    });
-
-    $dropDownItems.forEach((item) => {
-      item.addEventListener("click", () => {
-        const $dataTarget: string | null = item.getAttribute("data-target");
-        const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-select`);
-        const $dropDownTarget: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
-        if ($targetSelect && $dropDownTarget) {
-          $targetSelect.innerHTML = item.innerHTML;
-          $targetSelect.value = item.value;
-          $dropDownTarget.classList.remove("show");
-        }
       });
     });
 
@@ -126,6 +116,23 @@ function clickOutside(target: string) {
   });
 }
 
+function listenToDropdownItems(target: string) {
+  const $dropDownItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(`.js-dropdown-${target}-item`);
+
+  $dropDownItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const $dataTarget: string | null = item.getAttribute("data-target");
+      const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-select`);
+      const $dropDownTarget: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
+      if ($targetSelect && $dropDownTarget) {
+        $targetSelect.innerHTML = item.innerHTML;
+        $targetSelect.value = item.value;
+        $dropDownTarget.classList.remove("show");
+      }
+    });
+  });
+}
+
 function toggleIconCheck(target: string) {
   console.log("Check");
   const $btn = document.querySelector<HTMLElement>(`#${target}-btn`);
@@ -144,32 +151,43 @@ function addValue(target: string, toggleCheck = true) {
   const $select = document.querySelector<HTMLSelectElement>(`#${target}-dropdown`);
   console.log(target);
   const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${target}-select`);
-  const $dropDownTargetItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(`.js-dropdown-${target}-item`);
 
   if ($input && $select) {
-    const newOption = document.createElement("button");
-    // Make sure input isn't empty, above max characters, or a duplicate value
-    newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${target}-item`);
-    newOption.value = $input.value;
-    newOption.setAttribute("data-target", `${target}`);
-    newOption.innerHTML = $input.value;
-    newOption.disabled = false;
     if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
     if (!isLessCharactersThanMax($input))
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
-    // if (Array.from($select.options).some((option) => option.value === newOption.value)) return; // don't add duplicate values
-    // Add the new option to the select
-
-    $select.appendChild(newOption);
+    if (checkIfItemAlreadyExists(target, $input.value)) console.log("Already exists");
+    else {
+      const newOption = document.createElement("button");
+      newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${target}-item`);
+      newOption.value = $input.value;
+      newOption.setAttribute("data-target", `${target}`);
+      newOption.innerHTML = $input.value;
+      newOption.disabled = false;
+      $select.appendChild(newOption);
+      $select.dispatchEvent(new Event("change"));
+    }
     if ($targetSelect) {
       $targetSelect.innerHTML = $input.value;
       $targetSelect.value = $input.value;
     }
     $input.value = "";
-    $select.dispatchEvent(new Event("change")); // Trigger change event to enable the following fields
-
     if (toggleCheck) toggleIconCheck(target);
-    console.log(newOption);
+  }
+}
+
+function checkIfItemAlreadyExists(target: string, value: string) {
+  const $targetDropdown = document.querySelector<HTMLSelectElement>(`#${target}-dropdown`);
+  if ($targetDropdown) {
+    for (const childNode of $targetDropdown.childNodes) {
+      if (childNode.nodeType === Node.ELEMENT_NODE) {
+        const button = childNode as HTMLButtonElement;
+        if (button.tagName === "BUTTON" && button.textContent === value) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
 
