@@ -169,6 +169,7 @@ function addValue(target: string, toggleCheck = true) {
       if (!checkIfItemAlreadyExists(target, $input.value)) {
         if (!isLessCharactersThanMax($input)) {
           EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
+          return;
         }
         addOptionToDropdown(target, $input, $select, $targetSelect);
       }
@@ -176,6 +177,8 @@ function addValue(target: string, toggleCheck = true) {
       if ($targetSelect) {
         $targetSelect.innerHTML = $input.value;
         $targetSelect.value = $input.value;
+        console.log("targettest:", $targetSelect.value);
+        $targetSelect?.dispatchEvent(new Event("change"));
       }
       $input.value = "";
       if (toggleCheck) toggleIconCheck(target);
@@ -193,7 +196,6 @@ function addOptionToDropdown(target: string, $input: HTMLInputElement, $select: 
   newOption.innerHTML = $input.value;
   newOption.disabled = false;
   $select.appendChild(newOption);
-  $targetSelect?.dispatchEvent(new Event("change"));
 }
 
 function checkIfItemAlreadyExists(target: string, value: string) {
