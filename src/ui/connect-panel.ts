@@ -203,7 +203,7 @@ function checkIfItemAlreadyExists(target: string, value: string) {
     for (const childNode of $targetDropdown.childNodes) {
       if (childNode.nodeType === Node.ELEMENT_NODE) {
         const button = childNode as HTMLButtonElement;
-        if (button.tagName === "BUTTON" && button.textContent === value) {
+        if (button.tagName === "BUTTON" && button.textContent?.trim() === value.trim()) {
           return true;
         }
       }

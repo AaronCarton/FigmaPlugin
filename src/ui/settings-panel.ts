@@ -117,7 +117,6 @@ export class Settings extends BaseComponent {
   loadDropdowns(elementName: string, data: string[]) {
     const $dropDown: HTMLElement | null = document.querySelector(`#${elementName}-dropdown`);
     const $dropDownFilter: HTMLSelectElement | null = document.querySelector(`.js-${elementName}-filter`);
-
     const texts: { [key: string]: string } = {
       dataSource: "Choose source",
       entity: "Choose entity",
@@ -129,6 +128,7 @@ export class Settings extends BaseComponent {
       // remove all options
       // $dropDown.options.length = 0;
       $dropDownFilter.options.length = 0;
+
       // add default option
       // const defaultOption = new Option(texts[elementName], "");
       const defaultOptionFilter = new Option(texts[elementName], "");
@@ -138,6 +138,14 @@ export class Settings extends BaseComponent {
       defaultOptionFilter.selected = true;
       // $dropDown.add(defaultOption);
       $dropDownFilter.add(defaultOptionFilter);
+    }
+
+    //remove dropdown items when refreshing -> no duplicates
+    const dropDownElements = $dropDown?.getElementsByTagName("button");
+    if (dropDownElements) {
+      Array.from(dropDownElements).forEach((element) => {
+        element.remove();
+      });
     }
 
     const sortedData = data.sort();
