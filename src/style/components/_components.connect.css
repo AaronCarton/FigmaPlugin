@@ -264,6 +264,10 @@
   width: 120px;
 }
 
+.c-connect__field--select:disabled {
+  opacity: 0.4;
+}
+
 .c-connect__field--search {
   box-sizing: border-box;
   background-repeat: no-repeat;
