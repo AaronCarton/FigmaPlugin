@@ -10,7 +10,7 @@ export function addCurrentUser(user: User) {
     // If not first user, add currentUser id to array.
     currentUsers = JSON.parse(currentUsers) as Array<string>;
     if (currentUsers.find((x) => x === (figma.currentUser?.id as string)) !== undefined) {
-      console.log("user was already in array, not adding it again");
+      console.warn("user was already in array, not adding it again");
     } else {
       currentUsers.push(user.id as string);
     }
@@ -25,7 +25,6 @@ export function removeCurrentUser() {
   const currentUsers = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers)) as Array<string>;
   if (figma.currentUser !== null) {
     const userIndex = currentUsers.indexOf(figma.currentUser.id as string);
-    console.log("userIndex", userIndex);
     const deleted = currentUsers.splice(userIndex, 1);
     console.log("current user deleted", deleted);
   }
@@ -54,7 +53,6 @@ export function isFirstUser() {
   const currentUsers = figma.root.getPluginData(PropertizeConstants.MP_currentUsers);
   // If user is only user in file, he must be first running the plugin
   if (figma.activeUsers.length === 1) {
-    console.log("is only user in file");
     return true;
   }
 
