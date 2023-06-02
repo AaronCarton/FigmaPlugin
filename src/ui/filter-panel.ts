@@ -60,7 +60,6 @@ function applyFilters() {
     }
   });
   filters["projectKey"] = [projectKey];
-  console.log(filters);
 
   toggleSpinner(true);
   EventHub.getInstance().sendCustomEvent(Events.APPLY_FILTERS, filters as unknown as Filters);
