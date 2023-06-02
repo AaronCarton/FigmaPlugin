@@ -177,7 +177,6 @@ function addValue(target: string, toggleCheck = true) {
       if ($targetSelect) {
         $targetSelect.innerHTML = $input.value;
         $targetSelect.value = $input.value;
-        console.log("targettest:", $targetSelect.value);
         $targetSelect?.dispatchEvent(new Event("change"));
       }
       $input.value = "";
