@@ -138,6 +138,7 @@ function listenToDropdownItems(target: string) {
       if ($targetSelect && $dropDownTarget) {
         $targetSelect.innerHTML = item.innerHTML;
         $targetSelect.value = item.value;
+        $targetSelect?.dispatchEvent(new Event("change"));
         $dropDownTarget.classList.remove("show");
       }
     });
@@ -237,6 +238,7 @@ function isEmpty(inputField: HTMLInputElement) {
 
 function checkFields(selectElement: HTMLButtonElement, changeElement1: HTMLButtonElement, disabledId: string) {
   selectElement.addEventListener("change", () => {
+    console.log("[change]: ", selectElement.value);
     const $input = document.querySelector<HTMLInputElement>(`#${disabledId}-input`);
     const $textBlock = document.querySelector<HTMLElement>(`#${disabledId}-text`);
     const $btn = document.querySelector<HTMLButtonElement>(`#${disabledId}-btn`);
