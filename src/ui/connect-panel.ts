@@ -78,12 +78,13 @@ function initDropdownSearch() {
 
 function toggleDropdown() {
   if ($propertySelectors) {
-    $propertySelectors.forEach((trigger) => {
-      trigger.addEventListener("click", () => {
-        const $dataTarget: string | null = trigger.getAttribute("data-target");
+    $propertySelectors.forEach((selector) => {
+      selector.addEventListener("click", () => {
+        const $dataTarget: string | null = selector.getAttribute("data-target");
         const $dropDownTarget: HTMLElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
         const $searchTarget: HTMLInputElement | null = document.querySelector(`#${$dataTarget}-search`);
         $dropDownTarget?.classList.toggle("is-active");
+        selector.classList.toggle("c-connect__field--select__hold-focus");
         $searchTarget?.focus();
         if ($dataTarget) {
           listenToDropdownItems($dataTarget);
@@ -114,12 +115,14 @@ function searchInDropdown() {
 function clickOutside(target: string) {
   const $area: HTMLElement | null = document.querySelector(`.js-dropdown-${target}-area`);
   const $panel: HTMLButtonElement | null = document.querySelector(`#${target}-dropdown`);
+  const $selectTarget: HTMLButtonElement | null = document.querySelector(`#${target}-select`);
 
   document.addEventListener("click", (event: any) => {
     if ($area && $panel) {
       const isClickedInside = $area.contains(event.target);
       if (!isClickedInside) {
         $panel.classList.remove("is-active");
+        $selectTarget?.classList.remove("c-connect__field--select__hold-focus");
       }
     }
   });
@@ -133,11 +136,13 @@ function listenToDropdownItems(target: string) {
       const $dataTarget: string | null = item.getAttribute("data-target");
       const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-select`);
       const $dropDownTarget: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
+      const $selectTarget: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-select`);
       if ($targetSelect && $dropDownTarget) {
         $targetSelect.innerHTML = item.innerHTML;
         $targetSelect.value = item.value;
         $targetSelect?.dispatchEvent(new Event("change"));
         $dropDownTarget.classList.remove("is-active");
+        $selectTarget?.classList.remove("c-connect__field--select__hold-focus");
       }
     });
   });

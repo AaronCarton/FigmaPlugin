@@ -128,6 +128,13 @@
   color: var(--propertize__color--primary);
 }
 
+.c-connect__field--select__hold-focus {
+  border: 1px solid var(--propertize__color--accent);
+  width: 190px;
+  outline: none;
+  color: var(--propertize__color--primary);
+}
+
 .c-connect__field--select:disabled:hover,
 .c-connect__field--select:disabled:focus {
   border: 1px solid transparent;
@@ -169,8 +176,8 @@
   max-height: 75px;
   overflow-y: auto;
   overflow-x: hidden;
-  border-radius: 5px;
-  box-shadow: 2px 2px 4px 0px gray;
+  /* border-radius: 5px; */
+  box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.2);
 }
 
 .c-connect__field--text {
