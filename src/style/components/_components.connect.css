@@ -195,10 +195,9 @@
   width: 190px;
   border: 1px solid #ddd;
   z-index: 1;
-  max-height: 100px;
+  max-height: calc(var(--propertize__spacing--huge) * 5);
   overflow-y: auto;
   overflow-x: hidden;
-  /* border-radius: 5px; */
   box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.2);
 }
 
@@ -280,5 +279,5 @@
 .c-connect__enable-scroll {
   overflow-y: scroll;
   resize: none;
-  height: 75px;
+  height: calc(var(--propertize__spacing--huge) * 3.75);
 }
