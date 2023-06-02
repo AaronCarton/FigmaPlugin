@@ -230,15 +230,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   resize: none;
-  padding: 5px;
+  padding: var(--propertize__spacing--tiny);
   font-family: var(--propertize__font-family);
 }
 
 .c-connect__show-more {
   font-size: var(--propertize__font-size--tiny);
   color: var(--propertize__color--red);
-  width: 85px;
+  margin: auto;
+  margin-right: var(--propertize__spacing--tiny);
+  width: calc(var(--propertize__spacing--huge) * 4.25);
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .c-connect__enable-scroll + .c-connect__show-more {

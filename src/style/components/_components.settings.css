@@ -7,6 +7,7 @@
   flex-direction: column;
   font-size: var(--propertize__font-size--tiny);
   line-height: 16px;
+  margin-bottom: 0;
 }
 
 .c-settings__row {
@@ -33,6 +34,10 @@
   color: var(--propertize__color--white);
   border: none;
   border-radius: 10px;
+}
+
+.c-settings__update {
+  margin: 0;
 }
 
 .button-pointer {
