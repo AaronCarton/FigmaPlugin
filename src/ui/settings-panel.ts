@@ -128,6 +128,8 @@ export class Settings extends BaseComponent {
     };
 
     if ($dropDown && $dropDownFilter) {
+      // temporarily store the filter value
+      const filterValue = $dropDownFilter.value;
       // remove all options
       $dropDown.options.length = 0;
       $dropDownFilter.options.length = 0;
@@ -140,13 +142,16 @@ export class Settings extends BaseComponent {
       defaultOptionFilter.selected = true;
       $dropDown.add(defaultOption);
       $dropDownFilter.add(defaultOptionFilter);
+      // add all options
+      data.forEach((element) => {
+        const newOption = new Option(element, element);
+        const newOptionFilter = new Option(element, element);
+        $dropDown?.add(newOption);
+        $dropDownFilter?.add(newOptionFilter);
+      });
+      // set the filter value back
+      $dropDownFilter.value = filterValue;
     }
-    data.forEach((element) => {
-      const newOption = new Option(element, element);
-      const newOptionFilter = new Option(element, element);
-      $dropDown?.add(newOption);
-      $dropDownFilter?.add(newOptionFilter);
-    });
   }
 
   toggleAnnotations(e: Event) {
