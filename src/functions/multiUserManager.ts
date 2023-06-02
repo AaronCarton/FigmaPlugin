@@ -50,21 +50,14 @@ export function isLastUser() {
 }
 
 export function isFirstUser() {
-  const currentUsers = figma.root.getPluginData(PropertizeConstants.MP_currentUsers);
+  const currentUsers: string[] = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_currentUsers) || "[]");
   // If user is only user in file, he must be first running the plugin
   if (figma.activeUsers.length === 1) {
     return true;
   }
 
-  //If currentUsers is empty, user is also first user to run plugin (if pluginData values are not existing/not set they return "" when getting).
-  if (currentUsers === "") {
-    console.log("is first user", currentUsers);
-    return true;
-  }
-
-  const currentUsersArray = JSON.parse(currentUsers) as Array<string>;
-
-  if (currentUsersArray.find((x) => x === (figma.currentUser?.id as string)) !== undefined && currentUsersArray.length === 1) {
+  // If no users, or only current user, return true (if pluginData values are not existing/not set they return "" when getting).
+  if (currentUsers.length === 0 || (currentUsers.length === 1 && currentUsers[0] === figma.currentUser?.id)) {
     return true;
   } else {
     return false;
@@ -79,7 +72,7 @@ function updateData(links: string, AnnotationElements: string) {
 
 function handleChanges(event: DocumentChangeEvent) {
   const rootPluginDataChange = event.documentChanges.find(
-    (change) => change.node.id === figma.root.id && change.type === "PROPERTY_CHANGE" && change.properties.includes("pluginData"),
+    (change) => change.type === "PROPERTY_CHANGE" && change.node.id === figma.root.id && change.properties.includes("pluginData"),
   );
   if (rootPluginDataChange && rootPluginDataChange.origin === "REMOTE") {
     // If changes happened remotely, update the local data.
