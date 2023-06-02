@@ -38,6 +38,7 @@ function initializeFilterFunction() {
       $isFilterActive.style.opacity = "0";
       $resetFilterButton.disabled = true;
       $filterButton.disabled = true;
+      applyFilters();
     });
 
     $filterSelectors.forEach((selector) => {
