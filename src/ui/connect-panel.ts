@@ -36,7 +36,7 @@ export class ConnectPanel extends BaseComponent {
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
     downSizeSampleValueChangingTab();
-    listenToSelectors();
+    initDropdownSearch();
   }
 }
 
@@ -68,8 +68,18 @@ function initSelectors() {
   });
 }
 
-function listenToSelectors() {
-  if ($searchBoxes && $propertyTriggers) {
+function initDropdownSearch() {
+  toggleDropdown();
+  searchInDropdown();
+
+  clickOutside("dataSource");
+  clickOutside("entity");
+  clickOutside("attribute");
+  clickOutside("dataType");
+}
+
+function toggleDropdown() {
+  if ($propertyTriggers) {
     $propertyTriggers.forEach((trigger) => {
       trigger.addEventListener("click", () => {
         const $dataTarget: string | null = trigger.getAttribute("data-target");
@@ -82,7 +92,11 @@ function listenToSelectors() {
         }
       });
     });
+  }
+}
 
+function searchInDropdown() {
+  if ($searchBoxes) {
     $searchBoxes.forEach((searchBox) => {
       searchBox.addEventListener("keyup", () => {
         const $dataTarget: string | null = searchBox.getAttribute("data-target");
@@ -96,11 +110,6 @@ function listenToSelectors() {
         });
       });
     });
-
-    clickOutside("dataSource");
-    clickOutside("entity");
-    clickOutside("attribute");
-    clickOutside("dataType");
   }
 }
 
@@ -303,7 +312,7 @@ function clearFields() {
     $attribute.innerHTML = "Choose attribute";
     $attribute.disabled = true;
     $dataType.value = "";
-    $dataType.innerHTML = "Choose data type";
+    $dataType.innerHTML = "Choose type";
     $dataType.disabled = true;
     $value.value = "";
     $removeBtn.disabled = true;
