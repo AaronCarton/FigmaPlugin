@@ -7,7 +7,6 @@ import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 import { changeConnectionState } from "./navigation-tabs";
 
-//input elements
 export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
 export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
@@ -18,7 +17,6 @@ const $annotationToggle: HTMLInputElement | null = document.querySelector("#anno
 let projectKey: string = "";
 const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
 
-//Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-spinner");
 const $plugin: HTMLElement | null = document.querySelector(".c-content");
 
@@ -50,7 +48,7 @@ export class Settings extends BaseComponent {
         $button.innerHTML = "Refresh";
         $button.disabled = false;
 
-        this.lastUpdatedInterval(new Date()); // restart last updated interval
+        this.lastUpdatedInterval(new Date());
       }
 
       changeConnectionState(true);
@@ -125,22 +123,13 @@ export class Settings extends BaseComponent {
     };
 
     if ($dropDownFilter) {
-      // remove all options
-      // $dropDown.options.length = 0;
       $dropDownFilter.options.length = 0;
-
-      // add default option
-      // const defaultOption = new Option(texts[elementName], "");
       const defaultOptionFilter = new Option(texts[elementName], "");
-      // defaultOption.disabled = true;
-      // defaultOption.selected = true;
       defaultOptionFilter.disabled = true;
       defaultOptionFilter.selected = true;
-      // $dropDown.add(defaultOption);
       $dropDownFilter.add(defaultOptionFilter);
     }
 
-    //remove dropdown items when refreshing -> no duplicates
     const dropDownElements = $dropDown?.getElementsByTagName("button");
     if (dropDownElements) {
       Array.from(dropDownElements).forEach((element) => {
@@ -150,9 +139,7 @@ export class Settings extends BaseComponent {
 
     const sortedData = data.sort();
     sortedData.forEach((element) => {
-      // const newOption = new Option(element, element);
       const newOptionFilter = new Option(element, element);
-      // $dropDown?.add(newOption);
       $dropDownFilter?.add(newOptionFilter);
       const newOption = document.createElement("button");
       newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${elementName}-item`);
@@ -171,7 +158,7 @@ export class Settings extends BaseComponent {
 
   disableFieldsWhenNecessary() {
     if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null && $sourceKey !== null) {
-      //replace makes sure people can not connect with empty strings (for example pressing spacebar)
+      // Replace makes sure people can not connect with empty strings (for example pressing spacebar).
       if ($baseURL.value.replace(/\s/g, "") !== "") {
         $clientKey.disabled = false;
       } else {
@@ -209,9 +196,9 @@ export class Settings extends BaseComponent {
           $date.innerText = getTimeAgo(date);
         }
       };
-      // Clear any previous interval, start new interval to update time every 5 seconds
+      // Clear any previous interval, start new interval to update time every 5 seconds.
       clearInterval(timeInterval);
-      interval(); // run once immediately
+      interval();
       timeInterval = setInterval(interval, 5000);
     }
   }

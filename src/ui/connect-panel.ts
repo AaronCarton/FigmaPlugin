@@ -5,6 +5,8 @@ import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
+const $searchBoxes: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-search");
+const $propertySelectors: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-select");
 const $dataSource: HTMLButtonElement | null = document.querySelector(".js-dataSource-trigger");
 const $entity: HTMLButtonElement | null = document.querySelector(".js-entity-trigger");
 const $attribute: HTMLButtonElement | null = document.querySelector(".js-attribute-trigger");
@@ -14,10 +16,6 @@ const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
 const $showMore: HTMLElement | null = document.querySelector(".c-connect__show-more");
 const $tabs: NodeListOf<HTMLElement> = document.querySelectorAll(".js-tab");
-
-// const $dropDownItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-dropdown-item");
-const $searchBoxes: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-search");
-const $propertyTriggers: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-select");
 
 const iconCheck = "c-icon_check_class";
 const isActiveField = "is-active";
@@ -79,13 +77,13 @@ function initDropdownSearch() {
 }
 
 function toggleDropdown() {
-  if ($propertyTriggers) {
-    $propertyTriggers.forEach((trigger) => {
+  if ($propertySelectors) {
+    $propertySelectors.forEach((trigger) => {
       trigger.addEventListener("click", () => {
         const $dataTarget: string | null = trigger.getAttribute("data-target");
         const $dropDownTarget: HTMLElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
         const $searchTarget: HTMLInputElement | null = document.querySelector(`#${$dataTarget}-search`);
-        $dropDownTarget?.classList.toggle("show");
+        $dropDownTarget?.classList.toggle("is-active");
         $searchTarget?.focus();
         if ($dataTarget) {
           listenToDropdownItems($dataTarget);
@@ -121,7 +119,7 @@ function clickOutside(target: string) {
     if ($area && $panel) {
       const isClickedInside = $area.contains(event.target);
       if (!isClickedInside) {
-        $panel.classList.remove("show");
+        $panel.classList.remove("is-active");
       }
     }
   });
@@ -139,7 +137,7 @@ function listenToDropdownItems(target: string) {
         $targetSelect.innerHTML = item.innerHTML;
         $targetSelect.value = item.value;
         $targetSelect?.dispatchEvent(new Event("change"));
-        $dropDownTarget.classList.remove("show");
+        $dropDownTarget.classList.remove("is-active");
       }
     });
   });
