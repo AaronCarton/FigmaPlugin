@@ -84,7 +84,7 @@ function toggleDropdown() {
         const $dropDownTarget: HTMLElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
         const $searchTarget: HTMLInputElement | null = document.querySelector(`#${$dataTarget}-search`);
         $dropDownTarget?.classList.toggle("is-active");
-        selector.classList.toggle("c-connect__field--select__hold-focus");
+        selector.classList.toggle("hold-focus");
         $searchTarget?.focus();
         if ($dataTarget) {
           listenToDropdownItems($dataTarget);
@@ -122,7 +122,7 @@ function clickOutside(target: string) {
       const isClickedInside = $area.contains(event.target);
       if (!isClickedInside) {
         $panel.classList.remove("is-active");
-        $selectTarget?.classList.remove("c-connect__field--select__hold-focus");
+        $selectTarget?.classList.remove("hold-focus");
       }
     }
   });
@@ -142,7 +142,7 @@ function listenToDropdownItems(target: string) {
         $targetSelect.value = item.value;
         $targetSelect?.dispatchEvent(new Event("change"));
         $dropDownTarget.classList.remove("is-active");
-        $selectTarget?.classList.remove("c-connect__field--select__hold-focus");
+        $selectTarget?.classList.remove("hold-focus");
       }
     });
   });
