@@ -1,0 +1,29 @@
+.m-text {
+  display: none;
+}
+
+.m-text__border {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  color: var(--propertize__color--secondary);
+  width: 188px;
+  height: 31px;
+  border: 1px solid var(--propertize__color--accent);
+  border-radius: var(--propertize__border-radius);
+}
+.m-text__border--input {
+  font-size: var(--propertize__font-size--tiny);
+  border: none;
+  padding: 0 var(--propertize__spacing--small);
+  width: 100%;
+  height: 30px;
+}
+
+.m-text__border--input:focus {
+  outline: none;
+}
+
+.m-text__border--input:disabled {
+  background: none;
+}

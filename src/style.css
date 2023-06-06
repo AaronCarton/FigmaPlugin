@@ -1,6 +1,7 @@
 @import "./style/vars.css";
 @import "./style/components/components.css";
 @import "./style/elements/elements.css";
+@import "./style/molecules/molecules.css";
 @import "./style/atoms/atoms.css";
 @import "./style/utilities/utilities.css";
 @import "./style/settings/settings.css";

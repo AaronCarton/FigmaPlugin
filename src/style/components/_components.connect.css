@@ -123,99 +123,6 @@
   height: auto;
 }
 
-.c-connect__dropdown--select {
-  display: block;
-  align-items: center;
-  text-align: left;
-  width: 120px;
-  height: 33px;
-  border: 1px solid transparent;
-  border-radius: var(--propertize__border-radius);
-  font-family: var(--propertize__font-family);
-  font-size: var(--propertize__font-size--tiny);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background: var(--icon-arrow) 96% center no-repeat;
-  padding-inline: var(--propertize__spacing--small);
-  writing-mode: horizontal-tb;
-  color: var(--propertize__color--primary);
-}
-
-.c-connect__dropdown--select:hover,
-.c-connect__dropdown--select:focus {
-  border: 1px solid var(--propertize__color--accent);
-  width: 190px;
-  outline: none;
-  color: var(--propertize__color--primary);
-}
-
-.hold-focus {
-  border: 1px solid var(--propertize__color--accent);
-  width: 190px;
-  outline: none;
-  color: var(--propertize__color--primary);
-}
-
-.c-connect__dropdown--select:disabled:hover,
-.c-connect__dropdown--select:disabled:focus {
-  border: 1px solid transparent;
-  outline: none;
-  color: var(--propertize__color--primary);
-  width: 120px;
-}
-
-.c-connect__dropdown--select:disabled {
-  opacity: 0.4;
-}
-
-.c-connect__list--search {
-  box-sizing: border-box;
-  background-repeat: no-repeat;
-  font-size: 11px;
-  width: 190px;
-  padding: 6px 0px 6px 8px;
-  border: none;
-  border-bottom: 1px solid #ddd;
-}
-
-.c-connect__list--search:focus {
-  outline: 1px solid var(--propertize__color--red);
-  border-bottom: 1px solid transparent;
-}
-
-.c-connect__dropdown {
-  display: none;
-}
-
-.c-connect__list {
-  display: none;
-  position: absolute;
-  background-color: var(--propertize__color--white);
-  width: 190px;
-  border: 1px solid #ddd;
-  z-index: 1;
-  max-height: calc(var(--propertize__spacing--huge) * 5);
-  overflow-y: auto;
-  overflow-x: hidden;
-  box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.2);
-}
-
-.c-connect__field--text {
-  display: none;
-}
-
-.c-connect__field--border {
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  color: var(--propertize__color--secondary);
-  width: 188px;
-  height: 31px;
-  border: 1px solid var(--propertize__color--accent);
-  border-radius: var(--propertize__border-radius);
-}
-
 .c-connect__field--sample {
   display: flex;
   justify-content: start;
@@ -224,22 +131,6 @@
   height: auto;
   border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);
-}
-
-.c-connect__field--input {
-  font-size: var(--propertize__font-size--tiny);
-  border: none;
-  padding: 0 var(--propertize__spacing--small);
-  width: 100%;
-  height: 30px;
-}
-
-.c-connect__field--input:focus {
-  outline: none;
-}
-
-.c-connect__field--input:disabled {
-  background: none;
 }
 
 .c-connect__container {
