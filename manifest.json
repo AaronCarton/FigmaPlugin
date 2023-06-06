@@ -8,5 +8,5 @@
   "editorType": ["figma"],
   "ui": "dist/ui.html",
   "enablePrivatePluginApi": true,
-  "permissions": ["currentuser"]
+  "permissions": ["currentuser", "activeusers"]
 }

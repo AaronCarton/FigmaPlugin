@@ -8,6 +8,7 @@ import Annotation, { IAnnotation } from "./interfaces/interface.annotation";
 import { updateAnnotations } from "./functions/annotationFunctions";
 import { stripODS } from "./interfaces/ods/interface.ODSresponse";
 import { isLastUser, removeCurrentUser } from "./functions/multiUserManager";
+import { PropertizeConstants } from "./classes/propertizeConstants";
 
 figma.showUI(__html__, { width: 345, height: 296 });
 
@@ -113,16 +114,19 @@ figma.on("documentchange", (event: DocumentChangeEvent) => {
 figma.on("close", async () => {
   // Checking if user closing the plugin is the last user in the file (that uses the plugin).
   // If so, delete the annotion, otherwise delete user from user list
-  const lastUser: boolean = isLastUser();
-  if (lastUser) {
+  const lastUser: boolean = await isLastUser();
+  console.log("isLastUser", lastUser);
+  if (lastUser === true) {
+    // Reset all MP values
+    figma.root.setPluginData(PropertizeConstants.MP_currentUsers, "");
+    figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, "");
+    figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, "");
     AnnotationElements.annotationLayer.remove();
-    removeCurrentUser();
-    figma.root.setPluginData("MP_currentUser", "");
+    figma.closePlugin();
   } else {
     removeCurrentUser();
+    figma.closePlugin();
   }
-
-  figma.closePlugin();
 });
 
 //////* INITIALIZATION FONTS *//////
