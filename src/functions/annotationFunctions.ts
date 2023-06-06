@@ -390,13 +390,13 @@ function createLayer() {
 
 function handleConnectorRedraws(event: DocumentChangeEvent) {
   if (AnnotationElements.parentFrames.length > 0 && AnnotationElements.annotationLayer.visible === true) {
-    //Get data of changed nodes.
+    // Get data of changed nodes.
     const changedNodeData = event.documentChanges;
     const listOfChangedAnnotationSourceNodes = [];
     for (let i = 0; i < changedNodeData.length; i++) {
       const changedNode = changedNodeData[i];
 
-      //Make searchable = if found in here => changedNode is a sourcenode of an annotation
+      // Make searchable = if found in here => changedNode is a sourcenode of an annotation.
       const searchMap = JSON.stringify(AnnotationElements.parentFrames);
       const includesChangedNode = searchMap.match(changedNode.id);
 
@@ -408,7 +408,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
 
     // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
-      //find linkedAnnotation
+      // Find linkedAnnotation.
       const linkedAnnotation = linkAnnotationToSourceNodes.find((item) => item.sourceNode.id === changedNode.id);
 
       // Find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation.
@@ -435,7 +435,7 @@ export function changeLayerVisibility(state: boolean) {
 export async function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
   const isFirstUserValue: boolean = await isFirstUser();
-  //Add current user to the usersArray.
+  // Add current user to the usersArray.
   if (figma.currentUser) {
     addCurrentUser(figma.currentUser);
   }
@@ -478,7 +478,6 @@ export async function initAnnotations(annotationData: Array<Annotation>) {
 
   // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
   if (isFirstUserValue === true) {
-    //figma.root.setPluginData(PropertizeConstants.MP_currentUsers, "");
     if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames) {
       figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
       figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
