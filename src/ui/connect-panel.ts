@@ -149,7 +149,6 @@ function listenToDropdownItems(target: string) {
 }
 
 function toggleIconCheck(target: string) {
-  console.log("Check");
   const $btn = document.querySelector<HTMLElement>(`#${target}-btn`);
   const $textBlock = document.querySelector<HTMLElement>(`#${target}-text`);
   const $select = document.querySelector<HTMLElement>(`.js-dropdown-${target}-area`);
@@ -164,7 +163,6 @@ function toggleIconCheck(target: string) {
 function addValue(target: string, toggleCheck = true) {
   const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
   const $select = document.querySelector<HTMLSelectElement>(`#${target}-dropdown`);
-  console.log(target);
   const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${target}-select`);
 
   if ($input && $select) {
