@@ -1,4 +1,10 @@
-import { changeLayerVisibility, archiveAnnotation, initAnnotations, sendDataToFrontend } from "./functions/annotationFunctions";
+import {
+  changeLayerVisibility,
+  archiveAnnotation,
+  initAnnotations,
+  sendDataToFrontend,
+  linkAnnotationToSourceNodes,
+} from "./functions/annotationFunctions";
 import { AnnotationElements } from "./classes/annotationElements";
 import { loadFonts } from "./functions/loadFonts";
 import { resizeByShowMore, resizeByTab } from "./functions/reiszeFunctions";
@@ -104,7 +110,12 @@ figma.on("selectionchange", () => {
 figma.on("documentchange", (event: DocumentChangeEvent) => {
   event.documentChanges.forEach((change) => {
     if (change.type === "DELETE") {
-      EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id } as IAnnotation);
+      // Check if deleted node is a source node that is in linkAnnotationToSourceNodes
+      // otherwise ARCHIVE_ANNOTATION will be triggered when the plugin redraws the annotation layer
+      // causing it to try and archive Annotation nodes instead.
+      if (linkAnnotationToSourceNodes.map((link) => link.sourceNode.id).includes(change.node.id)) {
+        EventHub.getInstance().sendCustomEvent(Events.ARCHIVE_ANNOTATION, { nodeId: change.node.id } as IAnnotation);
+      }
     }
   });
 });

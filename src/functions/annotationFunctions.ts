@@ -6,7 +6,7 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
-import multiUserManager, { addCurrentUser, isFirstUser, isFirstUser } from "./multiUserManager";
+import multiUserManager, { addCurrentUser, isFirstUser } from "./multiUserManager";
 import { PropertizeColors } from "../classes/propertizeColors";
 
 export let linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
@@ -441,8 +441,8 @@ export async function initAnnotations(annotationData: Array<Annotation>) {
   }
   console.log("Is this the first user?", isFirstUserValue);
   if (isFirstUserValue || annotationLayerFound === null) {
+    clearAnnotationData(); // remove any leftover annotation data
     createLayer();
-
     makeFramesArray(annotationData);
     // Make inputValues array needed for drawing initial annotations.
     const inputValues: Array<{ id: string; AnnotationInput: AnnotationInput }> = [];
@@ -560,7 +560,6 @@ export function updateAnnotations(selection: Array<SceneNode>, inputValues: Anno
 
 export function sendDataToFrontend() {
   if (figma.currentPage.selection[0] !== undefined) {
-    EventHub.getInstance().sendCustomEvent(Events.UI_RESET_TEXTAREA_SIZE, null);
     lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
 
@@ -650,4 +649,10 @@ export function updateMultiUserVars(links: Array<annotationLinkItem>, parentFram
   }
   console.log("Given MP data in update func", links, parentFrames);
   console.log("updated local data", linkAnnotationToSourceNodes, AnnotationElements.parentFrames);
+}
+
+export function clearAnnotationData() {
+  AnnotationElements.parentFrames = []; // clear parentFrames
+  // update MP data
+  figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
 }

@@ -38,6 +38,8 @@ export interface EventMap {
   [Events.ARCHIVE_ANNOTATION]: IAnnotation;
   [Events.ANNOTATION_ARCHIVED]: Annotation;
 
+  [Events.APPLY_FILTERS]: Filters;
+
   [Events.TOGGLE_ANNOTATIONS]: null;
   [Events.FETCH_LOCAL_STORAGE]: null;
   [Events.LOCAL_STORAGE_FETCHED]: LocalStoragePayload;

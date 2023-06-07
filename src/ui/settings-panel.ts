@@ -7,6 +7,7 @@ import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 import { changeConnectionState } from "./navigation-tabs";
 
+//input elements
 export const $button: HTMLButtonElement | null = document.querySelector(".c-settings__btnConnect");
 export const $date: HTMLElement | null = document.querySelector(".c-settings__date");
 const $baseURL: HTMLInputElement | null = document.querySelector("#settings_dbLink");
@@ -14,9 +15,10 @@ const $clientKey: HTMLInputElement | null = document.querySelector("#settings_cl
 const $sourceKey: HTMLInputElement | null = document.querySelector("#settings_sourceKey");
 const $annotationToggle: HTMLInputElement | null = document.querySelector("#annotationToggle");
 
-let projectKey: string = "";
+export let projectKey: string = "";
 const dataTypes = ["int", "float", "char", "string", "bool", "enum", "array", "date", "time", "datetime"];
 
+//Spinner
 const $spinner: HTMLElement | null = document.querySelector(".c-spinner");
 const $plugin: HTMLElement | null = document.querySelector(".c-content");
 
@@ -48,16 +50,18 @@ export class Settings extends BaseComponent {
         $button.innerHTML = "Refresh";
         $button.disabled = false;
 
-        this.lastUpdatedInterval(new Date());
+        this.lastUpdatedInterval(new Date()); // restart last updated interval
       }
 
       changeConnectionState(true);
-      toggleSpinner();
+      toggleSpinner(false);
     });
     EventHub.getInstance().makeEvent(Events.FACETS_FETCHED, (facets: ODSFacet[]) => {
-      const data = Object.fromEntries(facets.map((f) => [f.name, f.values.map((v) => v.value)]));
-      Object.keys(data).forEach((key) => {
-        this.loadDropdowns(key, data[key]);
+      facets.forEach(({ name, values }) => {
+        this.loadDropdowns(
+          name,
+          values.map((value) => value.value),
+        );
       });
       this.loadDropdowns("dataType", dataTypes);
     });
@@ -80,7 +84,7 @@ export class Settings extends BaseComponent {
 
     EventHub.getInstance().makeEvent(Events.API_ERROR, (message) => {
       $button?.removeAttribute("disabled");
-      toggleSpinner();
+      toggleSpinner(false);
       EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, message);
     });
 
@@ -101,7 +105,7 @@ export class Settings extends BaseComponent {
         projectKey: [projectKey],
       },
     });
-    toggleSpinner();
+    toggleSpinner(true);
 
     EventHub.getInstance().sendCustomEvent(Events.SET_LOCAL_STORAGE, {
       baseURL: $baseURL?.value || "",
@@ -113,8 +117,9 @@ export class Settings extends BaseComponent {
   }
 
   loadDropdowns(elementName: string, data: string[]) {
-    const $dropDown: HTMLElement | null = document.querySelector(`#${elementName}-dropdown`);
+    const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
     const $dropDownFilter: HTMLSelectElement | null = document.querySelector(`.js-${elementName}-filter`);
+
     const texts: { [key: string]: string } = {
       dataSource: "Choose source",
       entity: "Choose entity",
@@ -122,33 +127,31 @@ export class Settings extends BaseComponent {
       dataType: "Choose data type",
     };
 
-    if ($dropDownFilter) {
+    if ($dropDown && $dropDownFilter) {
+      // temporarily store the filter value
+      const filterValue = $dropDownFilter.value;
+      // remove all options
+      $dropDown.options.length = 0;
       $dropDownFilter.options.length = 0;
+      // add default option
+      const defaultOption = new Option(texts[elementName], "");
       const defaultOptionFilter = new Option(texts[elementName], "");
+      defaultOption.disabled = true;
+      defaultOption.selected = true;
       defaultOptionFilter.disabled = true;
       defaultOptionFilter.selected = true;
+      $dropDown.add(defaultOption);
       $dropDownFilter.add(defaultOptionFilter);
-    }
-
-    const dropDownElements = $dropDown?.getElementsByTagName("button");
-    if (dropDownElements) {
-      Array.from(dropDownElements).forEach((element) => {
-        element.remove();
+      // add all options
+      data.forEach((element) => {
+        const newOption = new Option(element, element);
+        const newOptionFilter = new Option(element, element);
+        $dropDown?.add(newOption);
+        $dropDownFilter?.add(newOptionFilter);
       });
+      // set the filter value back
+      $dropDownFilter.value = filterValue;
     }
-
-    const sortedData = data.sort();
-    sortedData.forEach((element) => {
-      const newOptionFilter = new Option(element, element);
-      $dropDownFilter?.add(newOptionFilter);
-      const newOption = document.createElement("button");
-      newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${elementName}-item`);
-      newOption.value = element;
-      newOption.setAttribute("data-target", `${elementName}`);
-      newOption.innerHTML = element;
-      newOption.disabled = false;
-      $dropDown?.appendChild(newOption);
-    });
   }
 
   toggleAnnotations(e: Event) {
@@ -158,7 +161,7 @@ export class Settings extends BaseComponent {
 
   disableFieldsWhenNecessary() {
     if ($baseURL !== null && $clientKey !== null && $annotationToggle !== null && $button !== null && $sourceKey !== null) {
-      // Replace makes sure people can not connect with empty strings (for example pressing spacebar).
+      //replace makes sure people can not connect with empty strings (for example pressing spacebar)
       if ($baseURL.value.replace(/\s/g, "") !== "") {
         $clientKey.disabled = false;
       } else {
@@ -196,9 +199,9 @@ export class Settings extends BaseComponent {
           $date.innerText = getTimeAgo(date);
         }
       };
-      // Clear any previous interval, start new interval to update time every 5 seconds.
+      // Clear any previous interval, start new interval to update time every 5 seconds
       clearInterval(timeInterval);
-      interval();
+      interval(); // run once immediately
       timeInterval = setInterval(interval, 5000);
     }
   }
@@ -208,7 +211,12 @@ function toggleShowAnnotations() {
     $annotationToggle.checked = true;
   }
 }
-function toggleSpinner() {
-  $spinner?.classList.toggle("is-active");
-  $plugin?.classList.toggle("no-pointer");
+export function toggleSpinner(state: boolean) {
+  if (state) {
+    $spinner?.classList.add("is-active");
+    $plugin?.classList.add("no-pointer");
+  } else if (!state) {
+    $spinner?.classList.remove("is-active");
+    $plugin?.classList.remove("no-pointer");
+  }
 }
