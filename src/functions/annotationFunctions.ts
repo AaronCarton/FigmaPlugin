@@ -441,6 +441,7 @@ export async function initAnnotations(annotationData: Array<Annotation>) {
   }
   console.log("Is this the first user?", isFirstUserValue);
   if (isFirstUserValue || annotationLayerFound === null) {
+    clearAnnotationData(); // remove any leftover annotation data
     createLayer();
     makeFramesArray(annotationData);
     // Make inputValues array needed for drawing initial annotations.
