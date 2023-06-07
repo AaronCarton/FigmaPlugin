@@ -117,9 +117,8 @@ export class Settings extends BaseComponent {
   }
 
   loadDropdowns(elementName: string, data: string[]) {
-    const $dropDown: HTMLSelectElement | null = document.querySelector(`.js-${elementName}`);
+    const $dropDown: HTMLElement | null = document.querySelector(`#${elementName}-dropdown`);
     const $dropDownFilter: HTMLSelectElement | null = document.querySelector(`.js-${elementName}-filter`);
-
     const texts: { [key: string]: string } = {
       dataSource: "Choose source",
       entity: "Choose entity",
@@ -127,31 +126,33 @@ export class Settings extends BaseComponent {
       dataType: "Choose data type",
     };
 
-    if ($dropDown && $dropDownFilter) {
-      // temporarily store the filter value
-      const filterValue = $dropDownFilter.value;
-      // remove all options
-      $dropDown.options.length = 0;
+    if ($dropDownFilter) {
       $dropDownFilter.options.length = 0;
-      // add default option
-      const defaultOption = new Option(texts[elementName], "");
       const defaultOptionFilter = new Option(texts[elementName], "");
-      defaultOption.disabled = true;
-      defaultOption.selected = true;
       defaultOptionFilter.disabled = true;
       defaultOptionFilter.selected = true;
-      $dropDown.add(defaultOption);
       $dropDownFilter.add(defaultOptionFilter);
-      // add all options
-      data.forEach((element) => {
-        const newOption = new Option(element, element);
-        const newOptionFilter = new Option(element, element);
-        $dropDown?.add(newOption);
-        $dropDownFilter?.add(newOptionFilter);
-      });
-      // set the filter value back
-      $dropDownFilter.value = filterValue;
     }
+
+    const dropDownElements = $dropDown?.getElementsByTagName("button");
+    if (dropDownElements) {
+      Array.from(dropDownElements).forEach((element) => {
+        element.remove();
+      });
+    }
+
+    const sortedData = data.sort();
+    sortedData.forEach((element) => {
+      const newOptionFilter = new Option(element, element);
+      $dropDownFilter?.add(newOptionFilter);
+      const newOption = document.createElement("button");
+      newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${elementName}-item`);
+      newOption.value = element;
+      newOption.setAttribute("data-target", `${elementName}`);
+      newOption.innerHTML = element;
+      newOption.disabled = false;
+      $dropDown?.appendChild(newOption);
+    });
   }
 
   toggleAnnotations(e: Event) {
