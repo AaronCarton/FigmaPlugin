@@ -39,7 +39,7 @@
       <div class="js-connection c-connect__container">
         <div class="c-connect__item">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Data source</span>
+            <span class="c-connect__title">Data source</span>
             <div class="m-dropdown js-dropdown-dataSource-area js-dropdown-area is-active">
               <button
                 class="m-dropdown__select js-dataSource-trigger js-select"
@@ -58,13 +58,13 @@
                   placeholder="Search..."
                   id="dataSource-search"
                   data-target="dataSource"
-                  class="js-search m-dropdown__list--search"
+                  class="js-search m-dropdown__search"
                 />
               </div>
             </div>
             <div class="m-text" id="dataSource-text">
               <div class="m-text__border">
-                <input type="text" class="m-text__border--input" id="dataSource-input" value="" />
+                <input type="text" class="m-text__input" id="dataSource-input" value="" />
               </div>
             </div>
           </div>
@@ -72,7 +72,7 @@
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Entity</span>
+            <span class="c-connect__title">Entity</span>
             <div class="m-dropdown  js-dropdown-entity-area js-dropdown-area is-active">
               <button
                 class="m-dropdown__select js-entity-trigger js-select"
@@ -89,13 +89,13 @@
                   placeholder="Search..."
                   id="entity-search"
                   data-target="entity"
-                  class="js-search m-dropdown__list--search"
+                  class="js-search m-dropdown__search"
                 />
               </div>
             </div>
             <div class="m-text disabled" id="entity-text">
               <div class="m-text__border">
-                <input type="text" class="m-text__border--input" id="entity-input" disabled />
+                <input type="text" class="m-text__input" id="entity-input" disabled />
               </div>
             </div>
           </div>
@@ -103,7 +103,7 @@
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Attribute</span>
+            <span class="c-connect__title">Attribute</span>
             <div class="m-dropdown  js-dropdown-attribute-area js-dropdown-area is-active">
               <button
                 class="m-dropdown__select js-attribute-trigger js-select"
@@ -123,13 +123,13 @@
                   placeholder="Search..."
                   id="attribute-search"
                   data-target="attribute"
-                  class="js-search m-dropdown__list--search"
+                  class="js-search m-dropdown__search"
                 />
               </div>
             </div>
             <div class="m-text disabled" id="attribute-text">
               <div class="m-text__border">
-                <input type="text" class="m-text__border--input" id="attribute-input" disabled />
+                <input type="text" class="m-text__input" id="attribute-input" disabled />
               </div>
             </div>
           </div>
@@ -137,7 +137,7 @@
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Data type</span>
+            <span class="c-connect__title">Data type</span>
             <div class="m-dropdown  js-dropdown-dataType-area js-dropdown-area is-active">
               <button
                 class="m-dropdown__select js-dataType-trigger js-select"
@@ -157,13 +157,13 @@
                   placeholder="Search..."
                   id="dataType-search"
                   data-target="dataType"
-                  class="js-search m-dropdown__list--search"
+                  class="js-search m-dropdown__search"
                 />
               </div>
             </div>
             <div class="m-text disabled" id="dataType-text">
               <div class="m-text__border">
-                <input type="text" class="m-text__border--input" id="dataType-input" disabled />
+                <input type="text" class="m-text__input" id="dataType-input" disabled />
               </div>
             </div>
           </div>
@@ -171,9 +171,9 @@
         </div>
         <div class="c-connect__item c-connect__attribute">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Sample value</span>
-            <div class="c-connect__field--sample">
-              <textarea type="text" class="m-text__border--input js-sample-value c-connect__sample-value"
+            <span class="c-connect__title">Sample value</span>
+            <div class="c-connect__sample">
+              <textarea type="text" class="m-text__input js-sample-value c-connect__sample-value"
                 required></textarea>
               <p hidden class="c-connect__show-more">Show more</p>
             </div>
@@ -185,7 +185,7 @@
         </div>
         <div>
           <div>
-            <input type="hidden" class="m-text__border--input js-node-id" value="" />
+            <input type="hidden" class="m-text__input js-node-id" value="" />
           </div>
         </div>
       </div>
@@ -234,33 +234,33 @@
     <section class="c-filter js-panel-item" id="filter">
       <div class="c-filter__container js-connection">
         <div class="c-filter__item">
-          <span class="c-filter__item--title">Data source</span>
-          <select class="c-filter__item--select js-dataSource-filter js-filter" data-target="dataSource-filter"
+          <span class="c-filter__title">Data source</span>
+          <select class="c-filter__select js-dataSource-filter js-filter" data-target="dataSource-filter"
             required>
             <option value="" selected disabled>Choose source</option>
           </select>
         </div>
         <div class="c-filter__item">
-          <span class="c-filter__item--title">Entity</span>
-          <select class="c-filter__item--select js-entity-filter js-filter" data-target="entity-filter" required>
+          <span class="c-filter__title">Entity</span>
+          <select class="c-filter__select js-entity-filter js-filter" data-target="entity-filter" required>
             <option value="" selected disabled>Choose entity</option>
           </select>
         </div>
         <div class="c-filter__item">
-          <span class="c-filter__item--title">Attribute</span>
-          <select class="c-filter__item--select js-attribute-filter js-filter" data-target="attribute-filter" required>
+          <span class="c-filter__title">Attribute</span>
+          <select class="c-filter__select js-attribute-filter js-filter" data-target="attribute-filter" required>
             <option value="" selected disabled>Choose attribute</option>
           </select>
         </div>
         <div class="c-filter__item">
-          <span class="c-filter__item--title">Data type</span>
-          <select class="c-filter__item--select js-dataType-filter js-filter" data-target="dataType-filter" required>
+          <span class="c-filter__title">Data type</span>
+          <select class="c-filter__select js-dataType-filter js-filter" data-target="dataType-filter" required>
             <option value="" selected disabled>Choose data type</option>
           </select>
         </div>
         <div class="c-filter__item c-filter__item--bottom">
-          <button class="c-filter__item--reset js-reset-btn" disabled>reset filters</button>
-          <button class="c-filter__item--button js-filter-btn" disabled>Filter Annotations</button>
+          <button class="c-filter__reset js-reset-btn" disabled>reset filters</button>
+          <button class="c-filter__button js-filter-btn" disabled>Filter Annotations</button>
         </div>
       </div>
       <div class="js-disconnected c-disconnected is-active">

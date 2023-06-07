@@ -12,7 +12,7 @@
   border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);
 }
-.m-text__border--input {
+.m-text__input {
   font-size: var(--propertize__font-size--tiny);
   border: none;
   padding: 0 var(--propertize__spacing--small);
@@ -20,10 +20,10 @@
   height: 30px;
 }
 
-.m-text__border--input:focus {
+.m-text__input:focus {
   outline: none;
 }
 
-.m-text__border--input:disabled {
+.m-text__input:disabled {
   background: none;
 }

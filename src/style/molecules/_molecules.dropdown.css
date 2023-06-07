@@ -44,7 +44,7 @@
   opacity: 0.4;
 }
 
-.m-dropdown__list--search {
+.m-dropdown__search {
   box-sizing: border-box;
   background-repeat: no-repeat;
   font-size: 11px;
@@ -54,7 +54,7 @@
   border-bottom: 1px solid #ddd;
 }
 
-.m-dropdown__list--search:focus {
+.m-dropdown__search:focus {
   outline: 1px solid var(--propertize__color--red);
   border-bottom: 1px solid transparent;
 }
