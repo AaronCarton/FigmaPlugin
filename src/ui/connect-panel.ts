@@ -492,7 +492,7 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 }
 EventHub.getInstance().makeEvent(Events.UI_RESET_TEXTAREA_SIZE, () => {
-  downSizeSampleValue("connect");
+  downSizeSampleValue("usage");
 });
 
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
@@ -505,7 +505,7 @@ function downSizeSampleValue(tab: string) {
     $showMore.hidden = false;
     isShowMoreActive = false;
 
+    console.log("downSizeSampleValue: ", tab);
     $value.classList.remove("c-connect__enable-scroll");
-    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
   }
 }
