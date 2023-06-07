@@ -36,7 +36,7 @@ export class NavigationTabs extends BaseComponent {
         tab.classList.add(isActive);
         if (selectedTab !== null) {
           document.getElementById(selectedTab)?.classList.add(isActive);
-          EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_TAB, { tab: selectedTab, connection: connectionState });
+          EventHub.getInstance().sendCustomEvent(Events.UI_CHANGE_TAB, { tab: selectedTab, connection: connectionState }, true);
         }
       }),
     );
