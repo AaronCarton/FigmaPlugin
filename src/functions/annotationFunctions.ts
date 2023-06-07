@@ -6,7 +6,7 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
-import multiUserManager, { addCurrentUser, isFirstUser, isFirstUser } from "./multiUserManager";
+import multiUserManager, { addCurrentUser, isFirstUser } from "./multiUserManager";
 import { PropertizeColors } from "../classes/propertizeColors";
 
 export let linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
