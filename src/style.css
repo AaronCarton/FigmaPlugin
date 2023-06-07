@@ -1,4 +1,5 @@
 @import "./style/vars.css";
+@import "./style/molecules/molecules.css";
 @import "./style/components/components.css";
 @import "./style/elements/elements.css";
 @import "./style/atoms/atoms.css";

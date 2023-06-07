@@ -5,10 +5,12 @@ import { Events } from "../services/events/Events";
 import { BaseComponent } from "./baseComponent";
 
 const $buttons: NodeListOf<HTMLElement> | null = document.querySelectorAll(".js-btn");
-const $dataSource: HTMLInputElement | null = document.querySelector(".js-dataSource");
-const $entity: HTMLInputElement | null = document.querySelector(".js-entity");
-const $attribute: HTMLInputElement | null = document.querySelector(".js-attribute");
-const $dataType: HTMLInputElement | null = document.querySelector(".js-dataType");
+const $searchBoxes: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-search");
+const $propertySelectors: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".js-select");
+const $dataSource: HTMLButtonElement | null = document.querySelector(".js-dataSource-trigger");
+const $entity: HTMLButtonElement | null = document.querySelector(".js-entity-trigger");
+const $attribute: HTMLButtonElement | null = document.querySelector(".js-attribute-trigger");
+const $dataType: HTMLButtonElement | null = document.querySelector(".js-dataType-trigger");
 const $value: HTMLTextAreaElement | null = document.querySelector(".js-sample-value");
 const $removeBtn: HTMLButtonElement | null = document.querySelector(".js-remove-btn");
 const $createBtn: HTMLButtonElement | null = document.querySelector(".js-create-btn");
@@ -32,6 +34,7 @@ export class ConnectPanel extends BaseComponent {
     EventHub.getInstance().makeEvent(Events.UI_UPDATE_FIELDS, (annoInput) => updateFields(annoInput));
     EventHub.getInstance().makeEvent(Events.UI_CLEAR_FIELDS, () => clearFields());
     downSizeSampleValueChangingTab();
+    initDropdownSearch();
   }
 }
 
@@ -63,12 +66,92 @@ function initSelectors() {
   });
 }
 
-function toggleIconCheck(target: string) {
-  console.log("toggleIconCheck", target);
+function initDropdownSearch() {
+  toggleDropdown();
+  searchInDropdown();
 
+  clickOutside("dataSource");
+  clickOutside("entity");
+  clickOutside("attribute");
+  clickOutside("dataType");
+}
+
+function toggleDropdown() {
+  if ($propertySelectors) {
+    $propertySelectors.forEach((selector) => {
+      selector.addEventListener("click", () => {
+        const $dataTarget: string | null = selector.getAttribute("data-target");
+        const $dropDownTarget: HTMLElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
+        const $searchTarget: HTMLInputElement | null = document.querySelector(`#${$dataTarget}-search`);
+        $dropDownTarget?.classList.toggle("is-active");
+        selector.classList.toggle("hold-focus");
+        $searchTarget?.focus();
+        if ($dataTarget) {
+          listenToDropdownItems($dataTarget);
+        }
+      });
+    });
+  }
+}
+
+function searchInDropdown() {
+  if ($searchBoxes) {
+    $searchBoxes.forEach((searchBox) => {
+      searchBox.addEventListener("keyup", () => {
+        const $dataTarget: string | null = searchBox.getAttribute("data-target");
+        const $dropDownTargetItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(`.js-dropdown-${$dataTarget}-item`);
+        $dropDownTargetItems?.forEach((item) => {
+          if (item.value.toUpperCase().indexOf(searchBox.value.toUpperCase()) > -1) {
+            item.style.display = "block";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      });
+    });
+  }
+}
+
+function clickOutside(target: string) {
+  const $area: HTMLElement | null = document.querySelector(`.js-dropdown-${target}-area`);
+  const $panel: HTMLButtonElement | null = document.querySelector(`#${target}-dropdown`);
+  const $selectTarget: HTMLButtonElement | null = document.querySelector(`#${target}-select`);
+
+  document.addEventListener("click", (event: any) => {
+    if ($area && $panel) {
+      const isClickedInside = $area.contains(event.target);
+      if (!isClickedInside) {
+        $panel.classList.remove("is-active");
+        $selectTarget?.classList.remove("hold-focus");
+      }
+    }
+  });
+}
+
+function listenToDropdownItems(target: string) {
+  const $dropDownItems: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(`.js-dropdown-${target}-item`);
+
+  $dropDownItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const $dataTarget: string | null = item.getAttribute("data-target");
+      const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-select`);
+      const $dropDownTarget: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-dropdown`);
+      const $selectTarget: HTMLButtonElement | null = document.querySelector(`#${$dataTarget}-select`);
+      if ($targetSelect && $dropDownTarget) {
+        $targetSelect.innerHTML = item.innerHTML;
+        $targetSelect.value = item.value;
+        $targetSelect?.dispatchEvent(new Event("change"));
+        $dropDownTarget.classList.remove("is-active");
+        $selectTarget?.classList.remove("hold-focus");
+      }
+    });
+  });
+}
+
+function toggleIconCheck(target: string) {
   const $btn = document.querySelector<HTMLElement>(`#${target}-btn`);
   const $textBlock = document.querySelector<HTMLElement>(`#${target}-text`);
-  const $select = document.querySelector<HTMLSelectElement>(`#${target}-select`);
+  const $select = document.querySelector<HTMLElement>(`.js-dropdown-${target}-area`);
   const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
 
   $btn?.classList.toggle(iconCheck);
@@ -79,24 +162,57 @@ function toggleIconCheck(target: string) {
 
 function addValue(target: string, toggleCheck = true) {
   const $input = document.querySelector<HTMLInputElement>(`#${target}-input`);
-  const $select = document.querySelector<HTMLSelectElement>(`#${target}-select`);
+  const $select = document.querySelector<HTMLSelectElement>(`#${target}-dropdown`);
+  const $targetSelect: HTMLButtonElement | null = document.querySelector(`#${target}-select`);
 
   if ($input && $select) {
-    const newOption = new Option($input.value, $input.value);
-    // Make sure input isn't empty, above max characters, or a duplicate value
-    if (isEmpty($input)) EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
-    if (!isLessCharactersThanMax($input))
-      EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
-    if (Array.from($select.options).some((option) => option.value === newOption.value)) return; // don't add duplicate values
-    // Add the new option to the select
-    newOption.selected = true;
-    $select.add(newOption);
-    $input.value = "";
-    $select.dispatchEvent(new Event("change")); // Trigger change event to enable the following fields
+    if (!isEmpty($input)) {
+      if (!checkIfItemAlreadyExists(target, $input.value)) {
+        if (!isLessCharactersThanMax($input)) {
+          EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, `The maximum length of the text is ${maxCharactersInputfield} characters.`);
+          return;
+        }
+        addOptionToDropdown(target, $input, $select, $targetSelect);
+      }
 
-    if (toggleCheck) toggleIconCheck(target);
+      if ($targetSelect) {
+        $targetSelect.innerHTML = $input.value;
+        $targetSelect.value = $input.value;
+        $targetSelect?.dispatchEvent(new Event("change"));
+      }
+      $input.value = "";
+      if (toggleCheck) toggleIconCheck(target);
+    } else {
+      EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Please enter a value.");
+    }
   }
 }
+
+function addOptionToDropdown(target: string, $input: HTMLInputElement, $select: HTMLSelectElement, $targetSelect: HTMLButtonElement | null) {
+  const newOption = document.createElement("button");
+  newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${target}-item`);
+  newOption.value = $input.value;
+  newOption.setAttribute("data-target", `${target}`);
+  newOption.innerHTML = $input.value;
+  newOption.disabled = false;
+  $select.appendChild(newOption);
+}
+
+function checkIfItemAlreadyExists(target: string, value: string) {
+  const $targetDropdown = document.querySelector<HTMLSelectElement>(`#${target}-dropdown`);
+  if ($targetDropdown) {
+    for (const childNode of $targetDropdown.childNodes) {
+      if (childNode.nodeType === Node.ELEMENT_NODE) {
+        const button = childNode as HTMLButtonElement;
+        if (button.tagName === "BUTTON" && button.textContent?.trim() === value.trim()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}
+
 function downSizeSampleValueChangingTab() {
   $tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -107,6 +223,7 @@ function downSizeSampleValueChangingTab() {
     });
   });
 }
+
 function checkSampleValueLength() {
   if ($value && $showMore) {
     $showMore.hidden = $value.value.length < maxCharactersInputfield;
@@ -121,8 +238,9 @@ function isEmpty(inputField: HTMLInputElement) {
   return inputField.value.trim().length === 0;
 }
 
-function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputElement, disabledId: string) {
+function checkFields(selectElement: HTMLButtonElement, changeElement1: HTMLButtonElement, disabledId: string) {
   selectElement.addEventListener("change", () => {
+    console.log("[change]: ", selectElement.value);
     const $input = document.querySelector<HTMLInputElement>(`#${disabledId}-input`);
     const $textBlock = document.querySelector<HTMLElement>(`#${disabledId}-text`);
     const $btn = document.querySelector<HTMLButtonElement>(`#${disabledId}-btn`);
@@ -141,11 +259,15 @@ function checkFields(selectElement: HTMLInputElement, changeElement1: HTMLInputE
 function updateFields(message: AnnotationInput) {
   if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
     $dataSource.value = message.dataSource;
+    $dataSource.innerHTML = message.dataSource;
     $entity.value = message.entity;
+    $entity.innerHTML = message.entity;
     $entity.disabled = false;
     $attribute.value = message.attribute;
+    $attribute.innerHTML = message.attribute;
     $attribute.disabled = false;
     $dataType.value = message.dataType;
+    $dataType.innerHTML = message.dataType;
     $dataType.disabled = false;
     $value.value = message.value;
     $removeBtn.disabled = false;
@@ -186,11 +308,15 @@ function setSampleValueInForm(sampleValue: string) {
 function clearFields() {
   if ($dataSource && $entity && $attribute && $dataType && $value && $removeBtn && $createBtn) {
     $dataSource.value = "";
+    $dataSource.innerHTML = "Choose source";
     $entity.value = "";
+    $entity.innerHTML = "Choose entity";
     $entity.disabled = true;
     $attribute.value = "";
+    $attribute.innerHTML = "Choose attribute";
     $attribute.disabled = true;
     $dataType.value = "";
+    $dataType.innerHTML = "Choose type";
     $dataType.disabled = true;
     $value.value = "";
     $removeBtn.disabled = true;
@@ -366,7 +492,7 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
   });
 }
 EventHub.getInstance().makeEvent(Events.UI_RESET_TEXTAREA_SIZE, () => {
-  downSizeSampleValue("connect");
+  downSizeSampleValue("usage");
 });
 
 EventHub.getInstance().makeEvent(Events.SET_SAMPLE_VALUE_FROM_FIGMANODE, (sampleValue: string) => {
@@ -379,7 +505,7 @@ function downSizeSampleValue(tab: string) {
     $showMore.hidden = false;
     isShowMoreActive = false;
 
+    console.log("downSizeSampleValue: ", tab);
     $value.classList.remove("c-connect__enable-scroll");
-    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
   }
 }

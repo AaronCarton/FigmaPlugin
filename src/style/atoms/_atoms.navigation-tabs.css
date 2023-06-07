@@ -15,3 +15,13 @@
   display: flex;
   align-items: center;
 }
+
+.a-filter-active {
+  height: 5px;
+  width: 5px;
+  margin-left: 2px;
+  margin-bottom: 10px;
+  background-color: var(--propertize__color--red);
+  border-radius: var(--propertize__border-radius--rounded);
+  opacity: 0;
+}
