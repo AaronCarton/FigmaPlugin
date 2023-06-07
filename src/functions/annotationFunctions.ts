@@ -6,7 +6,7 @@ import { annotationLinkItem } from "../interfaces/annotationLinkItem";
 import Annotation from "../interfaces/interface.annotation";
 import EventHub from "../services/events/EventHub";
 import { Events } from "../services/events/Events";
-import multiUserManager, { addCurrentUser, isFirstUser } from "./multiUserManager";
+import multiUserManager, { addCurrentUser, isFirstUser, isFirstUser } from "./multiUserManager";
 import { PropertizeColors } from "../classes/propertizeColors";
 
 export let linkAnnotationToSourceNodes: Array<annotationLinkItem> = [];
@@ -175,6 +175,12 @@ function makeFramesArray(initData: Array<Annotation> | null) {
 }
 
 function drawConnector(annotation: SceneNode, destination: SceneNode) {
+  if (annotation === undefined) {
+    const annotationFound = figma.currentPage.findOne((x) => x.id === annotation.id);
+    if (annotationFound) {
+      annotation = annotationFound;
+    }
+  }
   if (destination.absoluteBoundingBox !== null && annotation.absoluteBoundingBox !== null) {
     const line = figma.createVector();
     line.strokeCap = "ARROW_LINES";
@@ -221,8 +227,17 @@ function drawAnnotations(
 ) {
   AnnotationElements.annotationLayer.x = 0;
   AnnotationElements.annotationLayer.y = 0;
+
   // Looping over given annotations.
-  let lastAddedAnnotationY: number = sourceNodes[0].absoluteTransform[1][2];
+  let lastAddedAnnotationY: number = 0;
+  if (sourceNodes[0].absoluteTransform !== null || sourceNodes[0].absoluteTransform !== undefined || sourceNodes[0] !== undefined) {
+    lastAddedAnnotationY = sourceNodes[0].absoluteTransform[1][2];
+  } else {
+    const foundY = figma.currentPage.findOne((x) => x.id === sourceNodes[0].id)?.absoluteTransform[1][2];
+    if (foundY) {
+      lastAddedAnnotationY = foundY;
+    }
+  }
   for (let i = 0; i < sourceNodes.length; i++) {
     let currentItem = sourceNodes[i];
 
@@ -375,13 +390,13 @@ function createLayer() {
 
 function handleConnectorRedraws(event: DocumentChangeEvent) {
   if (AnnotationElements.parentFrames.length > 0 && AnnotationElements.annotationLayer.visible === true) {
-    //Get data of changed nodes.
+    // Get data of changed nodes.
     const changedNodeData = event.documentChanges;
     const listOfChangedAnnotationSourceNodes = [];
     for (let i = 0; i < changedNodeData.length; i++) {
       const changedNode = changedNodeData[i];
 
-      //Make searchable = if found in here => changedNode is a sourcenode of an annotation
+      // Make searchable = if found in here => changedNode is a sourcenode of an annotation.
       const searchMap = JSON.stringify(AnnotationElements.parentFrames);
       const includesChangedNode = searchMap.match(changedNode.id);
 
@@ -393,7 +408,7 @@ function handleConnectorRedraws(event: DocumentChangeEvent) {
 
     // When changed nodes are found: redraw them.
     listOfChangedAnnotationSourceNodes.forEach((changedNode) => {
-      //find linkedAnnotation
+      // Find linkedAnnotation.
       const linkedAnnotation = linkAnnotationToSourceNodes.find((item) => item.sourceNode.id === changedNode.id);
 
       // Find old vector connector and delete + update linkAnnotationToSourceNodes with the new vector for that annotation.
@@ -417,10 +432,15 @@ export function changeLayerVisibility(state: boolean) {
   }
 }
 
-export function initAnnotations(annotationData: Array<Annotation>) {
+export async function initAnnotations(annotationData: Array<Annotation>) {
   const annotationLayerFound = figma.currentPage.findOne((element) => element.name === "Annotations");
-  if (isFirstUser()) {
-    clearAnnotationData(); // remove any leftover annotation data
+  const isFirstUserValue: boolean = await isFirstUser();
+  // Add current user to the usersArray.
+  if (figma.currentUser) {
+    addCurrentUser(figma.currentUser);
+  }
+  console.log("Is this the first user?", isFirstUserValue);
+  if (isFirstUserValue || annotationLayerFound === null) {
     createLayer();
     makeFramesArray(annotationData);
     // Make inputValues array needed for drawing initial annotations.
@@ -456,11 +476,7 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   }
 
   // If layer is not found (you are first person in document that launches plugin), you should update the pluginData with the most recent values.
-  if (isFirstUser()) {
-    if (figma.currentUser) {
-      addCurrentUser(figma.currentUser);
-    }
-    //figma.root.setPluginData(PropertizeConstants.MP_currentUsers, "");
+  if (isFirstUserValue === true) {
     if (linkAnnotationToSourceNodes && AnnotationElements.parentFrames) {
       figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
       figma.root.setPluginData(PropertizeConstants.MP_AnnotationElements, JSON.stringify(AnnotationElements.parentFrames));
@@ -468,9 +484,6 @@ export function initAnnotations(annotationData: Array<Annotation>) {
   }
   // If you are not the first person to launch the plugin, you should get the parentframes and link array from the pluginData.
   else {
-    if (figma.currentUser) {
-      addCurrentUser(figma.currentUser);
-    }
     AnnotationElements.parentFrames = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_AnnotationElements));
     linkAnnotationToSourceNodes = JSON.parse(figma.root.getPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes));
   }
