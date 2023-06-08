@@ -1,0 +1,16 @@
+.a-dropdown-item {
+  display: block;
+  font-size: 11px;
+  width: 100%;
+  padding: 4px 0px 4px 8px;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  border: none;
+  background-color: transparent;
+}
+
+.a-dropdown-item:hover {
+  background-color: var(--propertize__color--red);
+  color: var(--propertize__color--white);
+  cursor: pointer;
+}
