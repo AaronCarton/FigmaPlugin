@@ -45,10 +45,8 @@ EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
 
 //////* ANNOTATION EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotation) => {
-  if (figma.currentPage.selection.length === 0)
-    return EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Select something to create an annotation." });
-  if (figma.currentPage.selection.length > 1)
-    return EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Only one node can be selected." });
+  if (figma.currentPage.selection.length === 0) return figma.notify("Select something to create an annotation.", { error: true, timeout: 3000 });
+  if (figma.currentPage.selection.length > 1) return figma.notify("Select something to create an annotation.", { error: true, timeout: 3000 });
   annotation.projectKey = figma.fileKey || "";
   annotation.nodeId = figma.currentPage.selection[0].id;
 
