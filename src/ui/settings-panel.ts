@@ -114,7 +114,7 @@ export class Settings extends BaseComponent {
 
   loadDropdowns(elementName: string, data: string[]) {
     const $dropDown: HTMLElement | null = document.querySelector(`#${elementName}-dropdown`);
-    const $dropDownFilter: HTMLSelectElement | null = document.querySelector(`.js-${elementName}-filter`);
+    const $dropDownFilter: HTMLSelectElement | null = document.querySelector(`#${elementName}-filter-dropdown`);
     const texts: { [key: string]: string } = {
       dataSource: "Choose source",
       entity: "Choose entity",
@@ -122,32 +122,34 @@ export class Settings extends BaseComponent {
       dataType: "Choose data type",
     };
 
-    if ($dropDownFilter) {
-      $dropDownFilter.options.length = 0;
-      const defaultOptionFilter = new Option(texts[elementName], "");
-      defaultOptionFilter.disabled = true;
-      defaultOptionFilter.selected = true;
-      $dropDownFilter.add(defaultOptionFilter);
-    }
-
     const dropDownElements = $dropDown?.getElementsByTagName("button");
-    if (dropDownElements) {
+    const dropDownFilterElements = $dropDownFilter?.getElementsByTagName("button");
+
+    if (dropDownElements && dropDownFilterElements) {
       Array.from(dropDownElements).forEach((element) => {
+        element.remove();
+      });
+      Array.from(dropDownFilterElements).forEach((element) => {
         element.remove();
       });
     }
 
     const sortedData = data.sort();
     sortedData.forEach((element) => {
-      const newOptionFilter = new Option(element, element);
-      $dropDownFilter?.add(newOptionFilter);
       const newOption = document.createElement("button");
+      const newOptionFilter = document.createElement("button");
       newOption.classList.add("a-dropdown-item", "js-dropdown-item", `js-dropdown-${elementName}-item`);
+      newOptionFilter.classList.add("a-dropdown-item", "js-dropdown-filter-item", `js-dropdown-${elementName}-filter-item`);
       newOption.value = element;
+      newOptionFilter.value = element;
       newOption.setAttribute("data-target", `${elementName}`);
+      newOptionFilter.setAttribute("data-target", `${elementName}`);
       newOption.innerHTML = element;
+      newOptionFilter.innerHTML = element;
       newOption.disabled = false;
+      newOptionFilter.disabled = false;
       $dropDown?.appendChild(newOption);
+      $dropDownFilter?.appendChild(newOptionFilter);
     });
   }
 
