@@ -39,14 +39,32 @@
       <div class="js-connection c-connect__container">
         <div class="c-connect__item">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Data source</span>
-            <select name="dataSource-select" id="dataSource-select"
-              class="c-connect__field--select js-dataSource is-active" required>
-              <option value="" selected disabled hidden>Choose source</option>
-            </select>
-            <div class="c-connect__field--text" id="dataSource-text">
-              <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" id="dataSource-input" value="" />
+            <span class="c-connect__title">Data source</span>
+            <div class="m-dropdown js-dropdown-dataSource-area js-dropdown-area is-active">
+              <button
+                class="m-dropdown__select js-dataSource-trigger js-select"
+                data-target="dataSource"
+                id="dataSource-select"
+                value=""
+              >
+                Choose source
+              </button>
+              <div
+                id="dataSource-dropdown"
+                class="m-dropdown__list js-dropdown"
+              >
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  id="dataSource-search"
+                  data-target="dataSource"
+                  class="js-search m-dropdown__search"
+                />
+              </div>
+            </div>
+            <div class="m-text" id="dataSource-text">
+              <div class="m-text__border">
+                <input type="text" class="m-text__input" id="dataSource-input" value="" />
               </div>
             </div>
           </div>
@@ -54,14 +72,30 @@
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Entity</span>
-            <select name="entity-select" id="entity-select" class="c-connect__field--select js-entity is-active"
-              required disabled>
-              <option value="" selected disabled hidden>Choose entity</option>
-            </select>
-            <div class="c-connect__field--text disabled" id="entity-text">
-              <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" id="entity-input" disabled />
+            <span class="c-connect__title">Entity</span>
+            <div class="m-dropdown  js-dropdown-entity-area js-dropdown-area is-active">
+              <button
+                class="m-dropdown__select js-entity-trigger js-select"
+                data-target="entity"
+                id="entity-select"
+                value=""
+                disabled
+              >
+                Choose entity
+              </button>
+              <div id="entity-dropdown" class="m-dropdown__list js-dropdown">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  id="entity-search"
+                  data-target="entity"
+                  class="js-search m-dropdown__search"
+                />
+              </div>
+            </div>
+            <div class="m-text disabled" id="entity-text">
+              <div class="m-text__border">
+                <input type="text" class="m-text__input" id="entity-input" disabled />
               </div>
             </div>
           </div>
@@ -69,14 +103,33 @@
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Attribute</span>
-            <select name="attribute-select" id="attribute-select"
-              class="c-connect__field--select js-attribute is-active" required disabled>
-              <option value="" selected disabled hidden>Choose attribute</option>
-            </select>
-            <div class="c-connect__field--text disabled" id="attribute-text">
-              <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" id="attribute-input" disabled />
+            <span class="c-connect__title">Attribute</span>
+            <div class="m-dropdown  js-dropdown-attribute-area js-dropdown-area is-active">
+              <button
+                class="m-dropdown__select js-attribute-trigger js-select"
+                data-target="attribute"
+                id="attribute-select"
+                value=""
+                disabled
+              >
+                Choose attribute
+              </button>
+              <div
+                id="attribute-dropdown"
+                class="m-dropdown__list js-dropdown"
+              >
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  id="attribute-search"
+                  data-target="attribute"
+                  class="js-search m-dropdown__search"
+                />
+              </div>
+            </div>
+            <div class="m-text disabled" id="attribute-text">
+              <div class="m-text__border">
+                <input type="text" class="m-text__input" id="attribute-input" disabled />
               </div>
             </div>
           </div>
@@ -84,14 +137,33 @@
         </div>
         <div class="c-connect__item">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Data type</span>
-            <select name="dataType-select" id="dataType-select" class="c-connect__field--select js-dataType is-active"
-              required disabled>
-              <option value="" selected disabled hidden>Choose type</option>
-            </select>
-            <div class="c-connect__field--text disabled" id="dataType-text">
-              <div class="c-connect__field--border">
-                <input type="text" class="c-connect__field--input" id="dataType-input" disabled />
+            <span class="c-connect__title">Data type</span>
+            <div class="m-dropdown  js-dropdown-dataType-area js-dropdown-area is-active">
+              <button
+                class="m-dropdown__select js-dataType-trigger js-select"
+                data-target="dataType"
+                id="dataType-select"
+                value=""
+                disabled
+              >
+                Choose type
+              </button>
+              <div
+                id="dataType-dropdown"
+                class="m-dropdown__list js-dropdown"
+              >
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  id="dataType-search"
+                  data-target="dataType"
+                  class="js-search m-dropdown__search"
+                />
+              </div>
+            </div>
+            <div class="m-text disabled" id="dataType-text">
+              <div class="m-text__border">
+                <input type="text" class="m-text__input" id="dataType-input" disabled />
               </div>
             </div>
           </div>
@@ -99,9 +171,9 @@
         </div>
         <div class="c-connect__item c-connect__attribute">
           <div class="c-connect__field">
-            <span class="c-connect__field--title">Sample value</span>
-            <div class="c-connect__field--sample">
-              <textarea type="text" class="c-connect__field--input js-sample-value c-connect__sample-value"
+            <span class="c-connect__title">Sample value</span>
+            <div class="c-connect__sample">
+              <textarea type="text" class="m-text__input js-sample-value c-connect__sample-value"
                 required></textarea>
               <p hidden class="c-connect__show-more">Show more</p>
             </div>
@@ -113,7 +185,7 @@
         </div>
         <div>
           <div>
-            <input type="hidden" class="c-connect__field--input js-node-id" value="" />
+            <input type="hidden" class="m-text__input js-node-id" value="" />
           </div>
         </div>
       </div>
@@ -162,33 +234,33 @@
     <section class="c-filter js-panel-item" id="filter">
       <div class="c-filter__container js-connection">
         <div class="c-filter__item">
-          <span class="c-filter__item--title">Data source</span>
-          <select class="c-filter__item--select js-dataSource-filter js-filter" name="dataSource" data-target="dataSource-filter"
+          <span class="c-filter__title">Data source</span>
+          <select class="c-filter__select js-dataSource-filter js-filter" name="dataSource" data-target="dataSource-filter"
             required>
             <option value="" selected disabled>Choose source</option>
           </select>
         </div>
         <div class="c-filter__item">
-          <span class="c-filter__item--title">Entity</span>
-          <select class="c-filter__item--select js-entity-filter js-filter" name="entity" data-target="entity-filter" required>
+          <span class="c-filter__title">Entity</span>
+          <select class="c-filter__select js-entity-filter js-filter" name="entity" data-target="entity-filter" required>
             <option value="" selected disabled>Choose entity</option>
           </select>
         </div>
         <div class="c-filter__item">
-          <span class="c-filter__item--title">Attribute</span>
-          <select class="c-filter__item--select js-attribute-filter js-filter" name="attribute" data-target="attribute-filter" required>
+          <span class="c-filter__title">Attribute</span>
+          <select class="c-filter__select js-attribute-filter js-filter" name="attribute" data-target="attribute-filter" required>
             <option value="" selected disabled>Choose attribute</option>
           </select>
         </div>
         <div class="c-filter__item">
-          <span class="c-filter__item--title">Data type</span>
-          <select class="c-filter__item--select js-dataType-filter js-filter" name="dataType" data-target="dataType-filter" required>
+          <span class="c-filter__title">Data type</span>
+          <select class="c-filter__select js-dataType-filter js-filter" name="dataType" data-target="dataType-filter" required>
             <option value="" selected disabled>Choose data type</option>
           </select>
         </div>
         <div class="c-filter__item c-filter__item--bottom">
-          <button class="c-filter__item--reset js-reset-btn" disabled>reset filters</button>
-          <button class="c-filter__item--button js-filter-btn" disabled>Filter Annotations</button>
+          <button class="c-filter__reset js-reset-btn" disabled>reset filters</button>
+          <button class="c-filter__button js-filter-btn" disabled>Filter Annotations</button>
         </div>
       </div>
       <div class="js-disconnected c-disconnected is-active">
@@ -246,9 +318,23 @@
           To <strong>delete</strong> an existing annotation you select the node of which you want the annotation
           deleted; When the node is selected, you click on the remove annotation button in the connect panel. Or if you
           delete a node in the Figma design that has an annotation linked to it, the annotation will be removed aswell.
+          <hr>
+        </p>
+        <p class="c-usage__alinea-paraph">
+          In the filter panel you find everything to filter annotations on properties (data source, entity, attribute, data type).
+        </p>
+        <p class="c-usage__alinea-paraph">
+          To <strong>filter</strong> the annotations you first have to select one or more properties on which the annotations need to be filtered. When you have selected the properties you can click on the 'Filter annotations' button. The annotations will be filtered and only the annotations that match the selected properties will be shown.
+        </p><p class="c-usage__alinea-paraph">
+          To <strong>reset</strong> the filter you can click on the 'reset filters' button. This will reset all the filters and show all the annotations again.
+        </p>
+        <p class="c-usage__alinea-paraph">
+          A <strong>red bubble</strong> will appear on the filter-tab on top of the plugin when filters are active. When there are no filters active, the red bubble will disappear.
         </p>
       </div>
     </section>
     <!-- #endregion -->
   </div>
 </body>
+
+

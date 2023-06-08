@@ -36,7 +36,7 @@
   cursor: pointer;
 }
 
-.c-connect__field--title {
+.c-connect__title {
   width: 70px;
   color: var(--propertize__color--secondary);
 }
@@ -123,56 +123,7 @@
   height: auto;
 }
 
-.c-connect__field--select {
-  display: none;
-  align-items: center;
-  width: 120px;
-  height: 33px;
-  border: 1px solid transparent;
-  border-radius: var(--propertize__border-radius);
-  font-family: var(--propertize__font-family);
-  font-size: var(--propertize__font-size--tiny);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background: var(--icon-arrow) 96% center no-repeat;
-  padding-inline: var(--propertize__spacing--small);
-  writing-mode: horizontal-tb;
-  color: var(--propertize__color--secondary);
-}
-
-.c-connect__field--select:hover,
-.c-connect__field--select:focus {
-  border: 1px solid var(--propertize__color--accent);
-  width: 190px;
-  outline: none;
-  color: var(--propertize__color--primary);
-}
-
-.c-connect__field--select:disabled:hover,
-.c-connect__field--select:disabled:focus {
-  border: 1px solid transparent;
-  outline: none;
-  color: var(--propertize__color--primary);
-  width: 120px;
-}
-
-.c-connect__field--text {
-  display: none;
-}
-
-.c-connect__field--border {
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  color: var(--propertize__color--secondary);
-  width: 188px;
-  height: 31px;
-  border: 1px solid var(--propertize__color--accent);
-  border-radius: var(--propertize__border-radius);
-}
-
-.c-connect__field--sample {
+.c-connect__sample {
   display: flex;
   justify-content: start;
   align-items: center;
@@ -180,22 +131,6 @@
   height: auto;
   border: 1px solid var(--propertize__color--accent);
   border-radius: var(--propertize__border-radius);
-}
-
-.c-connect__field--input {
-  font-size: var(--propertize__font-size--tiny);
-  border: none;
-  padding: 0 var(--propertize__spacing--small);
-  width: 100%;
-  height: 30px;
-}
-
-.c-connect__field--input:focus {
-  outline: none;
-}
-
-.c-connect__field--input:disabled {
-  background: none;
 }
 
 .c-connect__container {
@@ -235,5 +170,5 @@
 .c-connect__enable-scroll {
   overflow-y: scroll;
   resize: none;
-  height: 75px;
+  height: calc(var(--propertize__spacing--huge) * 3.75);
 }

@@ -6,7 +6,7 @@ import { projectKey, toggleSpinner } from "./settings-panel";
 
 const $resetFilterButton: HTMLButtonElement | null = document.querySelector(".js-reset-btn");
 const $filterButton: HTMLButtonElement | null = document.querySelector(".js-filter-btn");
-const $filterSelectors: NodeListOf<HTMLSelectElement> | null = document.querySelectorAll(".js-filter");
+const $filterSelectors: NodeListOf<HTMLInputElement> | null = document.querySelectorAll(".js-filter");
 const $isFilterActive: HTMLElement | null = document.querySelector(".js-filter-active");
 
 export class FilterPanel extends BaseComponent {
