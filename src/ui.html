@@ -235,28 +235,120 @@
       <div class="c-filter__container js-connection">
         <div class="c-filter__item">
           <span class="c-filter__title">Data source</span>
-          <select class="c-filter__select js-dataSource-filter js-filter" data-target="dataSource-filter"
+          <!-- <select class="c-filter__select js-dataSource-filter js-filter" data-target="dataSource-filter"
             required>
             <option value="" selected disabled>Choose source</option>
-          </select>
+          </select> -->
+          <div class="m-dropdown js-dropdown-dataSource-filter-area js-dropdown--filter-area is-active">
+            <button
+              class="m-dropdown__select m-dropdown__select--filter js-dataSource-filter-trigger js-filter"
+              data-target="dataSource"
+              id="dataSource-filter"
+              name="dataType"
+              value=""
+            >
+              Choose source
+            </button>
+            <div
+              id="dataSource-filter-dropdown"
+              class="m-dropdown__list js-filter-dropdown"
+            >
+              <input
+                type="text"
+                placeholder="Search..."
+                id="dataSource-filter-search"
+                data-target="dataSource"
+                class="js-filter-search m-dropdown__search m-dropdown__search--filter"
+              />
+            </div>
+          </div>
         </div>
         <div class="c-filter__item">
           <span class="c-filter__title">Entity</span>
-          <select class="c-filter__select js-entity-filter js-filter" data-target="entity-filter" required>
+          <!-- <select class="c-filter__select js-entity-filter js-filter" data-target="entity-filter" required>
             <option value="" selected disabled>Choose entity</option>
-          </select>
+          </select> -->
+          <div class="m-dropdown js-dropdown-entity-filter-area js-dropdown--filter-area is-active">
+            <button
+              class="m-dropdown__select m-dropdown__select--filter js-entity-filter-trigger js-filter"
+              data-target="entity"
+              id="entity-filter"
+              name="dataType"
+              value=""
+            >
+              Choose entity
+            </button>
+            <div
+              id="entity-filter-dropdown"
+              class="m-dropdown__list js-filter-dropdown"
+            >
+              <input
+                type="text"
+                placeholder="Search..."
+                id="entity-filter-search"
+                data-target="entity"
+                class="js-filter-search m-dropdown__search m-dropdown__search--filter"
+              />
+            </div>
+          </div>
         </div>
         <div class="c-filter__item">
           <span class="c-filter__title">Attribute</span>
-          <select class="c-filter__select js-attribute-filter js-filter" data-target="attribute-filter" required>
+          <!-- <select class="c-filter__select js-attribute-filter js-filter" data-target="attribute-filter" required>
             <option value="" selected disabled>Choose attribute</option>
-          </select>
+          </select> -->
+          <div class="m-dropdown js-dropdown-attribute-filter-area js-dropdown--filter-area is-active">
+            <button
+              class="m-dropdown__select m-dropdown__select--filter js-attribute-filter-trigger js-filter"
+              data-target="attribute"
+              id="attribute-filter"
+              name="dataType"
+              value=""
+            >
+              Choose attribute
+            </button>
+            <div
+              id="attribute-filter-dropdown"
+              class="m-dropdown__list js-filter-dropdown"
+            >
+              <input
+                type="text"
+                placeholder="Search..."
+                id="attribute-filter-search"
+                data-target="attribute"
+                class="js-filter-search m-dropdown__search m-dropdown__search--filter"
+              />
+            </div>
+          </div>
         </div>
         <div class="c-filter__item">
           <span class="c-filter__title">Data type</span>
-          <select class="c-filter__select js-dataType-filter js-filter" data-target="dataType-filter" required>
+          <!-- <select class="c-filter__select js-dataType-filter js-filter" data-target="dataType-filter" required>
             <option value="" selected disabled>Choose data type</option>
-          </select>
+          </select> -->
+          <div class="m-dropdown js-dropdown-dataType-filter-area js-dropdown--filter-area is-active">
+            <button
+              class="m-dropdown__select m-dropdown__select--filter js-dataType-filter-trigger js-filter"
+              data-target="dataType"
+              id="dataType-filter"
+              name="dataType"
+              value=""
+            >
+              Choose type
+            </button>
+            <div
+              id="dataType-filter-dropdown"
+              class="m-dropdown__list js-filter-dropdown"
+            >
+              <input
+                type="text"
+                placeholder="Search..."
+                id="dataType-filter-search"
+                data-target="dataType"
+                class="js-filter-search m-dropdown__search m-dropdown__search--filter"
+              />
+            </div>
+          </div>
         </div>
         <div class="c-filter__item c-filter__item--bottom">
           <button class="c-filter__reset js-reset-btn" disabled>reset filters</button>
