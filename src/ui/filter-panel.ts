@@ -18,7 +18,33 @@ export class FilterPanel extends BaseComponent {
 
   initComponent(): void {
     initializeFilterFunction();
+    initListeners();
   }
+}
+function initListeners(): void {
+  console.log("initListeners");
+
+  EventHub.getInstance().makeEvent(Events.ANNOTATION_UPSERTED, (annotation) => {
+    // add the annotation values to the filter selectors
+    $filterSelectors?.forEach((selector) => {
+      console.log(selector.name);
+
+      switch (selector.name) {
+        case "dataSource":
+          selector.add(new Option(annotation.dataSource, annotation.dataSource));
+          break;
+        case "entity":
+          selector.add(new Option(annotation.entity, annotation.entity));
+          break;
+        case "attribute":
+          selector.add(new Option(annotation.attribute, annotation.attribute));
+          break;
+        case "dataType":
+          selector.add(new Option(annotation.dataType, annotation.dataType));
+          break;
+      }
+    });
+  });
 }
 
 function initializeFilterFunction() {
