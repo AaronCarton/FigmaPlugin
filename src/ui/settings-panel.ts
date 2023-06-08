@@ -123,6 +123,8 @@ export class Settings extends BaseComponent {
       attribute: "Choose attribute",
       dataType: "Choose data type",
     };
+    // temporarily store the filter value
+    const filterValue = $dropDownFilter?.value;
 
     if ($dropDownFilter) {
       $dropDownFilter.options.length = 0;
@@ -130,15 +132,6 @@ export class Settings extends BaseComponent {
       defaultOptionFilter.disabled = true;
       defaultOptionFilter.selected = true;
       $dropDownFilter.add(defaultOptionFilter);
-      // add all options
-      data.forEach((element) => {
-        const newOption = new Option(element, element);
-        const newOptionFilter = new Option(element, element);
-        $dropDown?.add(newOption);
-        $dropDownFilter?.add(newOptionFilter);
-      });
-      // set the filter value back
-      $dropDownFilter.value = filterValue;
     }
 
     const dropDownElements = $dropDown?.getElementsByTagName("button");
@@ -160,6 +153,8 @@ export class Settings extends BaseComponent {
       newOption.disabled = false;
       $dropDown?.appendChild(newOption);
     });
+    // set the filter value back
+    if (filterValue) $dropDownFilter.value = filterValue;
   }
 
   toggleAnnotations(e: Event) {
