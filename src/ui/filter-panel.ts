@@ -22,13 +22,9 @@ export class FilterPanel extends BaseComponent {
   }
 }
 function initListeners(): void {
-  console.log("initListeners");
-
   EventHub.getInstance().makeEvent(Events.ANNOTATION_UPSERTED, (annotation) => {
     // add the annotation values to the filter selectors
     $filterSelectors?.forEach((selector) => {
-      console.log(selector.name);
-
       switch (selector.name) {
         case "dataSource":
           selector.add(new Option(annotation.dataSource, annotation.dataSource));

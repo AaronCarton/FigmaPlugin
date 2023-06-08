@@ -563,7 +563,7 @@ export function sendDataToFrontend() {
     lastSelectedNode = figma.currentPage.selection[0].id;
     const found = linkAnnotationToSourceNodes.find((x) => x.sourceNode.id === figma.currentPage.selection[0].id);
 
-    console.log("curr selection", found);
+    // console.log("curr selection", found);
     if (found !== undefined) {
       highlightedAnnotationLinkItem === undefined
         ? ((highlightedAnnotationLinkItem = found), highlight(<annotationLinkItem>found))
