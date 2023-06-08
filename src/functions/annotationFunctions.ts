@@ -636,7 +636,7 @@ export function archiveAnnotation(annotation: Annotation) {
     figma.root.setPluginData(PropertizeConstants.MP_linkAnnotationToSourceNodes, JSON.stringify(linkAnnotationToSourceNodes));
     EventHub.getInstance().sendCustomEvent(Events.UI_CLEAR_FIELDS, null, true);
   } else {
-    EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Couldn't remove annotation.");
+    EventHub.getInstance().sendCustomEvent(Events.FIGMA_MESSAGE, { message: "Couldn't remove annotation." });
   }
 }
 

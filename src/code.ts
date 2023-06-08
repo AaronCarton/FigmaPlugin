@@ -17,6 +17,7 @@ import { isLastUser, removeCurrentUser } from "./functions/multiUserManager";
 import { PropertizeConstants } from "./classes/propertizeConstants";
 
 figma.showUI(__html__, { width: 345, height: 296 });
+let notification: NotificationHandler | undefined; // Store the current notification to be able to close it sooner
 
 //////* UI EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UI_CHANGE_TAB, ({ tab, connection }) => resizeByTab(tab, connection));
@@ -50,9 +51,8 @@ EventHub.getInstance().makeEvent(Events.FETCH_PROJECT_KEY, () => {
 
 //////* ANNOTATION EVENTS *//////
 EventHub.getInstance().makeEvent(Events.UPSERT_ANNOTATION, (annotation: IAnnotation) => {
-  if (figma.currentPage.selection.length === 0)
-    return EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Select something to create an annotation.");
-  if (figma.currentPage.selection.length > 1) return EventHub.getInstance().sendCustomEvent(Events.FIGMA_ERROR, "Only one node can be selected.");
+  if (figma.currentPage.selection.length === 0) return figma.notify("Select something to create an annotation.", { error: true, timeout: 3000 });
+  if (figma.currentPage.selection.length > 1) return figma.notify("Select something to create an annotation.", { error: true, timeout: 3000 });
   annotation.projectKey = figma.fileKey || "";
   annotation.nodeId = figma.currentPage.selection[0].id;
 
@@ -101,7 +101,14 @@ EventHub.getInstance().makeEvent(Events.ANNOTATION_ARCHIVED, (annotation: Annota
 });
 
 //////* FIGMA EVENTS *//////
-EventHub.getInstance().makeEvent(Events.FIGMA_ERROR, (error: string) => figma.notify(error, { timeout: 5000, error: true }));
+EventHub.getInstance().makeEvent(Events.FIGMA_MESSAGE, ({ message, type = "ERROR", duration, cancelPrevious = false }) => {
+  if (cancelPrevious) notification?.cancel(); // Cancel the previous notification if it exists, to avoid stacking
+  notification = figma.notify(message, {
+    timeout: duration || 5000,
+    error: type == "ERROR",
+    onDequeue: () => (notification = undefined), // Remove the notification reference when it times out
+  });
+});
 
 figma.on("selectionchange", () => {
   sendDataToFrontend();
