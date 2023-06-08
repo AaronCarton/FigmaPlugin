@@ -340,7 +340,7 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
         $value.classList.remove("c-connect__enable-scroll");
         isShowMoreActive = false;
         const tab: string = "connect";
-        EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
+        EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive }, true);
       }
     }
 
@@ -355,7 +355,7 @@ if ($buttons && $dataSource && $entity && $attribute && $dataType && $value && $
 
       $value.classList.add("c-connect__enable-scroll");
       const tab: string = "connect";
-      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
+      EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive }, true);
     }
   });
 
@@ -380,6 +380,6 @@ function downSizeSampleValue(tab: string) {
     isShowMoreActive = false;
 
     $value.classList.remove("c-connect__enable-scroll");
-    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive });
+    EventHub.getInstance().sendCustomEvent(Events.UI_SHOW_MORE, { tab, isShowMoreActive }, true);
   }
 }
